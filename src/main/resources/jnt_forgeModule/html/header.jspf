@@ -1,0 +1,61 @@
+<%@ taglib prefix="jcr" uri="http://www.jahia.org/tags/jcr" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="utility" uri="http://www.jahia.org/tags/utilityLib" %>
+<%@ taglib prefix="template" uri="http://www.jahia.org/tags/templateLib" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="functions" uri="http://www.jahia.org/tags/functions" %>
+<%@ taglib prefix="user" uri="http://www.jahia.org/tags/user" %>
+<%@ taglib prefix="query" uri="http://www.jahia.org/tags/queryLib" %>
+<%--@elvariable id="currentNode" type="org.jahia.services.content.JCRNodeWrapper"--%>
+<%--@elvariable id="out" type="java.io.PrintWriter"--%>
+<%--@elvariable id="script" type="org.jahia.services.render.scripting.Script"--%>
+<%--@elvariable id="scriptInfo" type="java.lang.String"--%>
+<%--@elvariable id="workspace" type="java.lang.String"--%>
+<%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
+<%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
+<%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
+<%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
+
+<template:addResources type="javascript" resources="jquery.js, html5shiv.js, forge.js"/>
+<template:addResources type="css" resources="forge.css"/>
+
+<c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
+<c:if test="${isDeveloper}">
+    <c:set var="viewAsUser" value="${not empty param['viewAs'] && param['viewAs'] eq 'user'}" />
+</c:if>
+<c:set var="isForgeAdmin" value="${jcr:hasPermission(renderContext.site, 'jahiaForgeModerateModule')}"/>
+
+<c:if test="${isDeveloper || isForgeAdmin}">
+    <template:addResources type="javascript" resources="jquery.js,bootstrap-transition.js,bootstrap-alert.js,
+        bootstrap-collapse.js,bootstrap-dropdown.js,bootstrap-tooltip.js,bootstrap-popover.js
+        ,bootstrap-scrollspy.js,bootstrap-tab.js,bootstrap-typehead.js,bootstrap-affix.js"/>
+    <template:addResources type="javascript" resources="select2.js, bootstrap-editable.js, wysihtml5-0.3.0.js, bootstrap-wysihtml5.js, wysihtml5.js"/>
+    <template:addResources type="css" resources="select2.css, select2-bootstrap.css, bootstrap-editable.css,
+        forge.edition.css, jquery.fileupload.css, bootstrap-wysihtml5.css"/>
+</c:if>
+
+<c:set var="id" value="${currentNode.identifier}"/>
+<c:set var="title" value="${currentNode.properties['jcr:title'].string}"/>
+
+<jcr:node var="iconFolder" path="${renderContext.mainResource.node.path}/icon" />
+<c:forEach var="iconItem" items="${iconFolder.nodes}">
+    <c:set var="icon" value="${iconItem}"/>
+</c:forEach>
+
+<%@include file="../../commons/authorName.jspf"%>
+
+<c:set var="nbOfVotes"
+       value="${not empty currentNode.properties['j:nbOfVotes'] ? currentNode.properties['j:nbOfVotes'].long : null}"/>
+
+<template:include view="hidden.sql">
+    <template:param name="getLatestVersion" value="true"/>
+</template:include>
+<template:addCacheDependency flushOnPathMatchingRegexp="${currentNode.path}/.*"/>
+
+<c:if test="${isDeveloper && not viewAsUser}">
+
+    <c:url var="postURL" value="${url.base}${currentNode.path}"/>
+    <fmt:message var="labelEmptyOrganisation" key="jnt_forgeEntry.label.developer.emptyOrganisation"/>
+    <fmt:message var="labelEmptyFullName" key="jnt_forgeEntry.label.developer.emptyFullName"/>
+</c:if>
