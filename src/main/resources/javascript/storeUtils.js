@@ -72,9 +72,6 @@ function moduleDoAddReview(modulePath, form) {
     }, "json");
 }
 
-jahiaAPIStandardCall(context, "default", locale, "nodes", nodeIdentifier, "PUT", jsonString, ajaxReloadCallback, formError);
-
-
 /**
  * This function make an ajax call to the Jahia API and return the result of this call
  * @param urlContext
@@ -148,12 +145,31 @@ function saveCkEditorChanges(editor, rowId, nodeIdentifier, locale, callback, er
     jahiaAPIStandardCall(context, "live", locale, "nodes", nodeIdentifier, "PUT", myJSONText, callback, errorCallback);
 }
 
+/**
+ * Switch between two divs
+ * @param id
+ */
 function switchDiv(id){
     var div= $("#"+id);
     var textDiv = div.find(".original_text");
     var editableDiv = div.find(".editable_text");
     textDiv.toggleClass( "hide" );
     editableDiv.toggleClass( "hide" );
+    var authorURLSubmit = div.find("#authorURLSubmit");
+    if(authorURLSubmit.length){
+        console.log("IN IF !");
+        console.log(authorURLSubmit.width());
+        console.log(div.find(".form-control").width());
+        div.find(".form-control").attr("style","width:"+authorURLSubmit.width()+"px");
+        console.log(div.find(".form-control").width());
+    }
+
+    /*
+        var authorFormSubmitWidth = $("#authorURLDiv #authorURLSubmit").width();
+        console.log($("div#authorURLSubmit").width());
+        console.log("Buttons Width : "+authorFormSubmitWidth);
+        $("#authorURLDiv .form-control").width(authorFormSubmitWidth);
+     */
 }
 function submitText(id, divToSwitch, textClass, ckeditor){
     if(ckeditor){
@@ -161,7 +177,9 @@ function submitText(id, divToSwitch, textClass, ckeditor){
         var editorId = id + "_editor";
         var editor = CKEDITOR.instances[editorId];
         saveCkEditorChanges(editor, id, nodeId, currentLocale, function(a,b){
-            var texttag = $("."+textClass);
+            console.log("Saved it ");
+            var texttag = $("#"+divToSwitch+" ."+textClass);
+            console.log("Text class : "+ textClass);
             texttag.empty();
             texttag.html(editor.getData().trim());
             switchDiv(divToSwitch);
@@ -186,4 +204,40 @@ function submitText(id, divToSwitch, textClass, ckeditor){
         });
 
     }
+}
+
+/*Icon edition function*/
+function submitIcon(loadingURL,postURL, nodeId){
+    console.log("Icon submitted !");
+    $("#icon_upload_"+nodeId).submit();
+    //Get form pictures
+    var data = new FormData();
+    $.each($('#icon_input_'+nodeId)[0].files, function(i, file) {
+        data.append('file'+i, file);
+    });
+    //Add JCR Creation information
+    data['jcrNodeType']="jnt:file";
+    data['jcrReturnContentType']='json';
+    data['jcrReturnContentTypeOverride']='application/json; charset=UTF-8';
+    //Remove previews and put loading gif instead
+    $("#icon_upload_"+nodeId).empty();
+    $("#icon_upload_"+nodeId).append('<img class="pull-center" src="'+loadingURL+'" style="margin-left:45.5%"/>');
+    //Send pictures to server for node creation
+    $.ajax({
+     url: postURL,
+        data: data,
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+     success: function(data){
+         console.log("SUCCESS!");
+         var jsonData = $.parseJSON(data);
+         window.location.reload();
+         //Reset Form
+         $('#icon_upload_' + nodeId)[0].reset();
+         return false;
+     }
+    });
+    return false;
 }

@@ -1,3 +1,58 @@
+<div id="review-modal" class="modal fade review-modal" role="dialog">
+    <div class="modal-dialog reviewDialog">
+        <div class="modal-content">
+            <template:tokenizedForm>
+                <form id="reviewForm" action="${currentNodeUrl}.addReview.do" method="post">
+                    <input type="hidden" name="returnUrl" value="${currentNode.path}.store-module-v2"/>
+                    <div class="modal-header">
+                        <input name="j:lastVote" id="input-id" type="text" class="rating" data-min="0" data-max="5" data-step="1" >
+                    </div>
+                    <div class="modal-body review-modal-form" id="review">
+                        <c:if test="${not renderContext.loggedIn}">
+                            <div class="group">
+                                <input name="pseudo" type="text" required="" tabindex="1">
+                                <span class="bar"></span>
+                                <label class="label"><fmt:message key="jnt_review.label.pseudo"/></label>
+                            </div>
+                        </c:if>
+                        <div class="group">
+                            <input name="jcr:title" type="text" required="" tabindex="2">
+                            <span class="bar"></span>
+                            <label class="label"><fmt:message key="jnt_review.label.title"/></label>
+                        </div>
+                        <div class="group">
+                            <textarea name="content" type="text" required="" tabindex="3"></textarea>
+                            <span class="bar"></span>
+                            <label class="label"><fmt:message key="jnt_review.label.body"/></label>
+                        </div>
+                        <c:if test="${not renderContext.loggedIn}">
+                            <div class="control-group">
+                                <label class="control-label" for="captcha"><fmt:message key="jnt_review.label.captcha"/></label>
+                                <div class="controls">
+                                    <template:captcha/>
+                                </div>
+                                <c:if test="${not empty sessionScope.formError}">
+                                    <label class="error">${fn:escapeXml(sessionScope.formError)}</label>
+                                </c:if>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="captcha"><fmt:message key="jnt_review.label.captcha.enter"/></label>
+                                <div class="controls">
+                                    <input type="text" id="captcha" name="jcrCaptcha" tabindex="4"/>
+                                </div>
+                            </div>
+                        </c:if>
+                        <button type="submit" class="btn btn-primary button buttonBlue" tabindex="4"><fmt:message key="jnt_review.label.submit"/>
+                            <div class="ripples buttonRipples">
+                                <span class="ripplesCircle"></span>
+                            </div>
+                        </button>
+                    </div>
+                </form>
+            </template:tokenizedForm>
+        </div>
+    </div>
+</div>
 <div class="review-container">
     <div class="total-rev" data-toggle="modal" data-target="#review-modal">
         <div class="tot-title">${entireRating}</div>
@@ -18,56 +73,9 @@
             <span class="reviews-num" aria-label=" ${ratingCount} ratings ">${ratingCount}</span> total </div>
     </div>
 </div>
-<button type="text" class="btn btn-info btn-lg pull-right detailButton addReviewButton" data-toggle="modal" data-target="#review-modal">
-    <span class="write-review-button-icon"></span>Write a Review
+<button type="text" class="btn btn-default pull-right detailButton addReviewButton" data-toggle="modal" data-target="#review-modal">
+    <span class="write-review-button-icon"></span><fmt:message key="jnt_addReview.label.writeReview"/>
 </button>
-<div id="review-modal" class="modal fade review-modal" role="dialog">
-    <div class="modal-dialog reviewDialog">
-        <div class="modal-content">
-            <template:tokenizedForm>
-                <form id="reviewForm" action="${currentNodeUrl}.addReview.do" method="post">
-                    <input type="hidden" name="returnUrl" value="${currentNode.path}.store-module-v2"/>
-                    <div class="modal-header">
-                        <input name="j:lastVote" id="input-id" type="text" class="rating" data-min="0" data-max="5" data-step="1" >
-                    </div>
-                    <div class="modal-body review-modal-form" id="review">
-
-                        <div class="group">
-                            <input name="jcr:title" type="text" required=""><span class="bar"></span>
-                            <label>Title</label>
-                        </div>
-                        <div class="group">
-                            <textarea name="content" type="text" required=""></textarea><span class="bar"></span>
-                            <label>Message</label>
-                        </div>
-                        <c:if test="${not renderContext.loggedIn}">
-                            <div class="control-group">
-                                <label class="control-label" for="captcha"><fmt:message key="jnt_review.label.captcha"/></label>
-                                <div class="controls">
-                                    <template:captcha/>
-                                </div>
-                                <c:if test="${not empty sessionScope.formError}">
-                                    <label class="error">${fn:escapeXml(sessionScope.formError)}</label>
-                                </c:if>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" for="captcha"><fmt:message key="jnt_review.label.captcha.enter"/></label>
-                                <div class="controls">
-                                    <input type="text" id="captcha" name="jcrCaptcha"/>
-                                </div>
-                            </div>
-                        </c:if>
-                        <button type="submit" class="btn btn-primary button buttonBlue">Submit
-                            <div class="ripples buttonRipples">
-                                <span class="ripplesCircle"></span>
-                            </div>
-                        </button>
-                    </div>
-                </form>
-            </template:tokenizedForm>
-        </div>
-    </div>
-</div>
 <c:if test="${renderContext.editMode}">
     <fmt:message key="jnt_reviewsList.label.reviewsList"/>
 </c:if>
@@ -130,7 +138,7 @@
                 </c:otherwise>
             </c:choose>
             <div class="review-coments-cont">
-            <c:forEach items="${reviews.nodes}" var="review">
+            <c:forEach items="${reviews.nodes}" var="review" varStatus="revStatus">
 
                 <c:set var="createdBy" value="${review.properties['jcr:createdBy'].string}"/>
                 <c:set var="rating" value="${review.properties['rating'].long}"/>
@@ -143,47 +151,68 @@
                         $('.total-rev').attr('data-target','#');
                     </script>
                 </c:if>
-                <c:if test="${createdBy ne 'guest'}">
-                    <jcr:node var="revUser" path="${user:lookupUser(createdBy).localPath}"/>
-                    <jcr:nodeProperty node="${revUser}" name="j:publicProperties" var="publicProperties" />
+                <c:choose>
+                    <c:when test="${createdBy ne 'guest'}">
+                        <jcr:node var="revUser" path="${user:lookupUser(createdBy).localPath}"/>
+                        <jcr:nodeProperty node="${revUser}" name="j:publicProperties" var="publicProperties" />
 
-                    <c:forEach items="${publicProperties}" var="value">
-                        <c:set var="publicPropertiesAsString" value="${value.string} ${publicPropertiesAsString}"/>
-                    </c:forEach>
+                        <c:forEach items="${publicProperties}" var="value">
+                            <c:set var="publicPropertiesAsString" value="${value.string} ${publicPropertiesAsString}"/>
+                        </c:forEach>
+                        <jcr:nodeProperty var="revPicture" node="${revUser}" name="j:picture"/>
 
-                    <jcr:nodeProperty var="revPicture" node="${revUser}" name="j:picture"/>
-
-                    <c:if test="${fn:contains(publicPropertiesAsString,'j:firstName')}">
-                        <c:set var="firstName" value="${user.properties['j:firstName'].string}"/>
-                    </c:if>
-                    <c:if test="${fn:contains(publicPropertiesAsString,'j:lastName')}">
-                        <c:set var="lastName" value="${user.properties['j:lastName'].string}"/>
-                    </c:if>
-                </c:if>
+                        <c:if test="${fn:contains(publicPropertiesAsString,'j:firstName')}">
+                            <c:set var="firstName" value="${user.properties['j:firstName'].string}"/>
+                        </c:if>
+                        <c:if test="${fn:contains(publicPropertiesAsString,'j:lastName')}">
+                            <c:set var="lastName" value="${user.properties['j:lastName'].string}"/>
+                        </c:if>
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="pseudo" value="${fn:escapeXml(review.properties['pseudo'].string)}"/>
+                    </c:otherwise>
+                </c:choose>
                 <c:set var="content" value="${review.properties['content'].string}" />
                 <c:if test="${fn:length(fn:trim(content)) gt 0}">
-
-
                             <div class="ac-review">
-                                <c:if test="${not empty revPicture}">
-                                    <img
-                                            src="${revPicture.node.thumbnailUrls['avatar_60']}"
-                                            <c:choose>
-                                                <c:when test="${not empty firstName || not empty lastName}">
-                                                    alt="${fn:escapeXml(firstName)}<c:if test="${not empty firstName}">&nbsp;</c:if>${fn:escapeXml(lastName)}"
-                                                </c:when>
-                                                <c:otherwise>
-                                                    alt="${createdBy}"
-                                                </c:otherwise>
-                                            </c:choose>
-                                            itemprop="image"/>
-                                </c:if>
-                                <c:if test="${empty revPicture}"><img alt="" src="<c:url value='/modules/default/images/userbig.png'/>"/></c:if>
+                                &nbsp;
+                                <c:choose>
+                                    <c:when test="${createdBy ne 'guest'}">
+                                        <c:if test="${not empty revPicture}">
+                                            <img
+                                                    src="${revPicture.node.thumbnailUrls['avatar_60']}"
+                                                    <c:choose>
+                                                        <c:when test="${not empty firstName || not empty lastName}">
+                                                            alt="${fn:escapeXml(firstName)}<c:if test="${not empty lastName}">&nbsp;</c:if>${fn:escapeXml(lastName)}"
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            alt="${createdBy}"
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    itemprop="image"/>
+                                        </c:if>
+                                        <c:if test="${empty revPicture}"><img alt="" src="<c:url value='/modules/default/images/userbig.png'/>"/></c:if>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img alt="" src="<c:url value='/modules/default/images/userbig.png'/>"/>
+                                    </c:otherwise>
+                                </c:choose>
+
+
                                 <div class="ac-com-right">
-                                    <div class="com-name">Posted by ${review.creationUser}</div>
-        <span><time itemprop="datePublished" datetime="<fmt:formatDate value="${created}" pattern="yyyy-MM-dd" />">
+                                    <div class="com-name">Posted by
+                                        <c:choose>
+                                            <c:when test="${createdBy != 'guest'}">
+                                                ${review.creationUser}
+                                            </c:when>
+                                            <c:otherwise>
+                                                ${pseudo}
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+        <div><time itemprop="datePublished" datetime="<fmt:formatDate value="${created}" pattern="yyyy-MM-dd" />">
                     <fmt:formatDate value="${created}" dateStyle="long" />
-                </time></span>
+                </time></div>
                                     <div class="com-stars">
                                         <c:set var="worstRating" value="1"/>
                                         <c:set var="bestRating" value="5"/>
@@ -201,14 +230,6 @@
                                     <div class="com-title">${fn:escapeXml(title)}</div>
                                     <div class="ac-comtxt">${fn:escapeXml(content)}</div>
                                 </div>
-                                <c:if test="${jcr:hasPermission(review, 'jcr:write')}">
-                                    <div class="manageButton">
-                                        <c:set var="isForgeAdmin" value="${jcr:hasPermission(renderContext.site, 'jahiaForgeModerateModule')}"/>
-                                        <c:if test="${isForgeAdmin}">
-                                                <%@include file="../../commons/adminButtons.jspf"%>
-                                        </c:if>
-                                    </div>
-                                </c:if>
                             </div>
                 </c:if>
             </c:forEach>
@@ -238,12 +259,7 @@
                             </c:if>
 
                             <div class="review-coments-cont">
-                                <template:module node="${review}" view="storev2">
-                                    <%-- <template:param name="module.cache.additional.key" value="${review.identifier}"/>
-                                     <template:param name="cache.mainResource.flushParent" value="true"/>
-                                     <template:param name="isForgeAdmin" value="${isForgeAdmin}"/>
-                                     <template:param name="isReportedOverall" value="${isReportedOverall}"/>--%>
-                                </template:module>
+                                <template:module node="${review}" view="storev2"/>
                             </div>
                         </c:if>
                     </c:if>

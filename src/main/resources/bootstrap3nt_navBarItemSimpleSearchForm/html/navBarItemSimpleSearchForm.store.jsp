@@ -24,7 +24,7 @@
             <s:pagePath value="${searchPath}" display="false" includeChildren="true" />
             <s:site value="${renderContext.site.name}" includeReferencesFrom="systemsite"  display="false"/>
             <s:language value="${renderContext.mainResource.locale}" display="false"/>
-            <s:nodeType value="jmix:forgeElement" selectionOptions="jmix:forgeElement,jnt:forgeModule,jnt:forgePackage" display="true"/>
+            <s:nodeType value="jmix:forgeElement" selectionOptions="jmix:forgeElement,jnt:forgeModule,jnt:forgePackage" display="false"/>
         </div>
     </s:form>
 </c:if>

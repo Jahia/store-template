@@ -20,7 +20,7 @@
     <title>${fn:escapeXml(renderContext.mainResource.node.displayableName)}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Import Google font (Lato) -->
-    <link href='http://fonts.googleapis.com/css?family=Lato:400,700,300' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lato:400,700,300' rel='stylesheet' type='text/css'>
 
     <%-- Fav and touch icons --%>
     <link rel="shortcut icon" href="<c:url value='${url.currentModule}/icon/favicon.ico'/>" type="image/x-icon">
@@ -46,13 +46,14 @@
     <link href="<c:url value='${url.currentModule}/css/appStore.css'/>" rel='stylesheet' type='text/css'>
 
 </head>
-<body>
+<body <c:if test="${renderContext.mainResource.resolvedTemplate eq 'changelog2'}"> class="changeLogWrapper"</c:if>>
 <template:addResources type="javascript" resources="jquery.min.js"/>
-<template:addResources type="javascript" resources="bootstrap.min.js"/>
+<template:addResources type="javascript" resources="jquery-ui.min.js"/>
+<template:addResources type="javascript" resources="libraries/bootstrap.min.js"/>
 <template:addResources type="javascript" resources="libraries/isotope.min.js"/>
-<template:addResources type="javascript" resources="bootstrap-editable.js"/>
 <template:addResources type="css" resources="bootstrap.css"/>
 <template:addResources type="css" resources="appstore.css"/>
+<template:addResources type="css" resources="bootstrap.icon-large.min.css"/>
 <template:area path="pageContent"/>
 <template:area path="footer"/>
 <c:if test="${renderContext.editMode}">

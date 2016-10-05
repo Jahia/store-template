@@ -99,6 +99,17 @@
 </template:addResources>
 <ul class="nav navbar-nav navbar-right">
     <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><fmt:message key="jnt_storefilter.label.certification"/> <span class="caret"></span></a>
+        <ul id="certification" class="dropdown-menu filters" data-filter-group="certifications">
+            <li class="active default"><a href="#" data-filter=""><fmt:message key="jnt_storefilter.label.all"/> </a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href='#' data-filter='.certification-reviewed'>Reviewed</a></li>
+            <li><a href='#' data-filter='.certification-supported'>Supported</a></li>
+            <li><a href='#' data-filter='.certification-both'>Reviewed and supported</a></li>
+            <li><a href='#' data-filter='.certification-none'>Not reviewed and not supported</a></li>
+        </ul>
+    </li>
+    <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><fmt:message key="jnt_storefilter.label.tags"/> <span class="caret"></span></a>
         <ul id="tag" class="dropdown-menu filters" data-filter-group="tags">
             <li class="active default"><a href="#" data-filter=""><fmt:message key="jnt_storefilter.label.all"/> </a></li>

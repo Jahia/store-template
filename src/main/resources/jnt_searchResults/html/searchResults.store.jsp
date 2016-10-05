@@ -136,7 +136,7 @@
                         </script>
                     </c:forEach>
                     <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12 item moduleCard <c:if test="${category != null}">category-${category.identifier}</c:if>">
-                        <template:module node="${module}" view="storev2"/>
+                        <template:module node="${module}" view="v2"/>
                     </div>
                 </s:resultIterator>
             </div>

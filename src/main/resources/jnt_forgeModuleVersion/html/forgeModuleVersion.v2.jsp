@@ -48,66 +48,68 @@
     </template:addResources>
 
 </c:if>
+    <div class="row">
+        <div class="clearfix moduleVersionHeader">
 
-<div class="clearfix moduleVersionHeader">
+            <div class="pull-left">
+                <h3>${versionNumber.string}</h3>
+            </div>
 
-    <div class="pull-left">
-        <h3>${versionNumber.string}</h3>
+            <div class="pull-right">
+
+                <a class="btn btn-small detailButton" href="${currentNode.properties.url.string}"
+                   onclick="countDownload('<c:url value="${url.base}${currentNode.path}"/>')">
+                    <fmt:message key="jnt_forgeEntry.label.downloadVersion">
+                        <fmt:param value="${versionNumber.string}"/>
+                    </fmt:message>
+                </a>
+
+                <c:if test="${isDeveloper && not viewAsUser}">
+                    <c:url value="${url.base}${currentNode.path}" var="currentNodePath"/>
+                    <c:if test="${published.boolean}">
+                        <button id="publishVersion-${id}" class="btn btn-small publishVersion btn-success"
+                                data-value="false" data-target="${currentNodePath}">
+                            <fmt:message key="jnt_forgeEntry.label.developer.unpublish"/>
+                        </button>
+                    </c:if>
+                    <c:if test="${not published.boolean}">
+                        <button id="unpublishVersion-${id}" class="btn btn-small publishVersion btn-danger"
+                                data-value="true" data-target="${currentNodePath}">
+                            <fmt:message key="jnt_forgeEntry.label.developer.publish"/>
+                        </button>
+                    </c:if>
+
+                </c:if>
+
+            </div>
+        </div>
     </div>
-
-    <div class="pull-right">
-
-        <a class="btn btn-small" href="${currentNode.properties.url.string}"
-           onclick="countDownload('<c:url value="${url.base}${currentNode.path}"/>')">
-            <fmt:message key="jnt_forgeEntry.label.downloadVersion">
-                <fmt:param value="${versionNumber.string}"/>
-            </fmt:message>
-        </a>
-
+    <div class="row">
         <c:if test="${isDeveloper && not viewAsUser}">
-            <c:url value="${url.base}${currentNode.path}" var="currentNodePath"/>
-            <c:if test="${published.boolean}">
-                <button id="publishVersion-${id}" class="btn btn-small publishVersion btn-success"
-                        data-value="false" data-target="${currentNodePath}">
-                    <fmt:message key="jnt_forgeEntry.label.developer.unpublish"/>
-                </button>
-            </c:if>
-            <c:if test="${not published.boolean}">
-                <button id="unpublishVersion-${id}" class="btn btn-small publishVersion btn-danger"
-                        data-value="true" data-target="${currentNodePath}">
-                    <fmt:message key="jnt_forgeEntry.label.developer.publish"/>
-                </button>
-            </c:if>
-
+            <p class="editable-toggle">
+                <a id="toggle-changeLog-${currentNode.identifier}" href="#"><i class="glyphicon glyphicon-pencil"></i>&nbsp;<fmt:message
+                        key="jnt_forgeEntry.label.edit"/></a>
+            </p>
+            <div data-original-title="<fmt:message
+                key="jnt_forgeEntryVersion.label.changeLog"/>" data-toggle="manual" data-name="changeLog" data-type="wysihtml5"
+            data-pk="1" id="changeLog-${currentNode.identifier}" class="editable">
         </c:if>
 
+        ${changeLog.string}
+
+        <c:if test="${isDeveloper && not viewAsUser}">
+            </div>
+        </c:if>
     </div>
-</div>
-
-<c:if test="${isDeveloper && not viewAsUser}">
-    <p class="editable-toggle">
-        <a id="toggle-changeLog-${currentNode.identifier}" href="#"><i class="glyphicon glyphicon-pencil"></i>&nbsp;<fmt:message
-                key="jnt_forgeEntry.label.edit"/></a>
-    </p>
-    <div data-original-title="<fmt:message
-        key="jnt_forgeEntryVersion.label.changeLog"/>" data-toggle="manual" data-name="changeLog" data-type="wysihtml5"
-    data-pk="1" id="changeLog-${currentNode.identifier}" class="editable">
-</c:if>
-
-${changeLog.string}
-
-<c:if test="${isDeveloper && not viewAsUser}">
-    </div>
-</c:if>
-
-<footer>
-    <dl class="inline">
-        <dt><fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion"/></dt>
-        <dd>
+<footer class="row versionFooter">
+    <div class="inline">
+        <span>
+            <strong><fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion"/></strong>
+        </span>
+        <span>
             ${requiredVersion.node.displayableName}
-        </dd>
-        <dt><fmt:message key="jnt_forgeEntry.label.updated"/></dt>
-        <dd><fmt:formatDate value="${currentNode.properties['jcr:lastModified'].date.time}" pattern="yyyy-MM-dd" /></dd>
-    </dl>
+        </span> <strong>&nbsp;-&nbsp;</strong>
+        <span><strong><fmt:message key="jnt_forgeEntry.label.updated"/></strong></span>
+        <span><fmt:formatDate value="${currentNode.properties['jcr:lastModified'].date.time}" pattern="yyyy-MM-dd" /></span>
+    </div>
 </footer>
-

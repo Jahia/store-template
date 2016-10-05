@@ -6,3 +6,15 @@
 - butonlabel (string) mandatory internationalized
 
 [jnt:storeFilter] > jnt:content, bootstrap3mix:navBarItem
+
+[jmix:forgeSettings] mixin
+   extends = jnt:virtualsite
+ - forgeSettingsUrl (string)
+ - forgeSettingsId (string)
+ - forgeSettingsUser (string)
+ - forgeSettingsPassword (string) hidden
+ - rootCategory (weakreference)
+
+[jnt:forgeSettings] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent
+
+[jnt:categorySettings] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent

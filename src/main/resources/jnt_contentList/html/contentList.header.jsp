@@ -3,14 +3,27 @@
 <%--@elvariable id="currentNode" type="org.jahia.services.content.JCRNodeWrapper"--%>
 <%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
 <%-- Les styles--%>
-<template:addResources type="css" resources="bootstrap.min.css"/>
-<template:addResources type="javascript" resources="jquery.min.js,bootstrap.min.js"/>
-<template:addResources type="css" resources="appStore.css"/>
-<header <c:if test="${!(renderContext.mainResource.resolvedTemplate eq 'default' or renderContext.mainResource.resolvedTemplate eq 'home')}">class="detail fixed" data-spy="affix" data-offset-top="0"</c:if>>
-<c:forEach items="${currentNode.nodes}" var="subchild">
-    <template:module node="${subchild}" editable="false"/><%= System.getProperty("line.separator") %>
-</c:forEach>
+<c:set var="isHomePage" value="${renderContext.mainResource.node.identifier eq renderContext.site.home.identifier}"/>
+<c:set var="isSearchResultPage" value="${(renderContext.mainResource.node.primaryNodeType.name eq 'jnt:page') and (renderContext.mainResource.node.name eq 'search-results')}"/>
+<c:if test="${isHomePage or isSearchResultPage}">
+    <template:addResources type="javascript" resources="libraries/isotope.min.js"/>
+</c:if>
+<template:addResources type="css" resources="appstore.css"/>
+<template:addResources type="javascript" resources="libraries/storeUtils.js"/>
+<header
+        <c:choose>
+            <c:when test="${isHomePage or isSearchResultPage}">
+                class="home"
+            </c:when>
+            <c:otherwise>
+                class="detail fixed" data-spy="affix" data-offset-top="0"
+            </c:otherwise>
+        </c:choose>
+>
+    <c:forEach items="${currentNode.nodes}" var="subchild">
+        <template:module node="${subchild}" editable="false"/>
+    </c:forEach>
 </header>
-<c:if test="${renderContext.mainResource.resolvedTemplate eq 'store-module-v2'}">
+<c:if test="${!(isHomePage or isSearchResultPage)}">
     <div class="top-color-sep"></div>
 </c:if>

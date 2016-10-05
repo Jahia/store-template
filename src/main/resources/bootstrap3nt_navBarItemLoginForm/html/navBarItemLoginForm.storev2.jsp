@@ -183,9 +183,16 @@
                     <li role="separator" class="divider"></li>
                     <li>
                         <c:url value='${renderContext.site.url}' var="settingsUrl"/>
-                        <a href="${fn:replace(settingsUrl,'.html','.store-admin.html')}">
+                        <a href="${fn:replace(settingsUrl,'.html','.store-admin2.html')}">
                             <i class="glyphicon glyphicon-cog"></i>
-                            Forge settings
+                            <fmt:message key="jnt_forgeModule.forgeSetting"/>
+                        </a>
+                    </li>
+                    <li>
+                        <c:url value='${renderContext.site.url}' var="settingsUrl"/>
+                        <a href="${fn:replace(settingsUrl,'.html','.my-modules.html')}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                            <fmt:message key="jnt_forgeModule.myModules"/>
                         </a>
                     </li>
                 </c:if>

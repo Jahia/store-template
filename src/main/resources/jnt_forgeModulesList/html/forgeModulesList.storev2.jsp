@@ -20,7 +20,16 @@
 </template:addResources>
 <div class="row forge" style="position: relative; height: 1000px;">
     <c:forEach items="${moduleMap.currentList}" var="module" varStatus="status" begin="${moduleMap.begin}" end="${moduleMap.end}">
-
+        <c:set value=" certification-none " var="certification"/>
+        <c:choose>
+            <c:when test="${module.properties['reviewedByJahia'].boolean and module.properties['supportedByJahia'].boolean}">
+                <c:set var="certification" value=" certification-both  certification-reviewed  certification-supported "/>
+            </c:when>
+            <c:otherwise>
+                <c:if test="${module.properties['reviewedByJahia'].boolean}"> <c:set var="certification" value=" certification-reviewed "/> </c:if>
+                <c:if test="${module.properties['supportedByJahia'].boolean}"> <c:set var="certification" value=" certification-supported "/> </c:if>
+            </c:otherwise>
+        </c:choose>
         <c:forEach items="${module.properties['j:defaultCategory']}" var="cat" varStatus="vs">
             <c:set var="categoryIdentifier" value="${cat.string}"/>
             <jcr:node var="category" uuid="${categoryIdentifier}"/>
@@ -37,8 +46,8 @@
                 modulesTags['${module.identifier}'].push('${currentTag.string}');
             </script>
         </c:forEach>
-        <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12 item moduleCard <c:if test="${category != null}">category-${category.identifier}</c:if>">
-            <template:module node="${module}" view="storev2"/>
+        <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12 item moduleCard <c:if test="${category != null}">category-${category.identifier}</c:if> ${certification}">
+            <template:module node="${module}" view="v2"/>
         </div>
     </c:forEach>
 </div>

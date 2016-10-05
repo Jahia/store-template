@@ -4,6 +4,9 @@
 <%@ taglib prefix="template" uri="http://www.jahia.org/tags/templateLib" %>
 <%--@elvariable id="currentNode" type="org.jahia.services.content.JCRNodeWrapper"--%>
 <%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
+<c:set var="isHomePage" value="${renderContext.mainResource.node.identifier eq renderContext.site.home.identifier}"/>
+<c:set var="isSearchResultPage" value="${(renderContext.mainResource.node.primaryNodeType.name eq 'jnt:page') and (renderContext.mainResource.node.name eq 'search-results')}"/>
+
 <c:set value="${renderContext.site.properties['j:title'].string}" var="title"/>
 <jcr:nodeProperty node="${currentNode}" name="j:styleName" var="styleName"/>
 <jcr:nodeProperty node="${currentNode}" name="option" var="option"/>
@@ -30,13 +33,13 @@
             <c:set var="navbarClasses" value="${navbarClasses} ${styleName.string}"/>
         </c:if>
 
-        <nav class="${navbarClasses}" <c:if test="${!(renderContext.mainResource.resolvedTemplate eq 'default' or renderContext.mainResource.resolvedTemplate eq 'home')}">class="affix-top"</c:if>>
-            <c:if test="${!(renderContext.mainResource.resolvedTemplate eq 'default' or renderContext.mainResource.resolvedTemplate eq 'home')}">
+        <nav class="${navbarClasses}" <c:if test="${!(isHomePage or isSearchResultPage)}">class="affix"</c:if>>
+            <c:if test="${!(isHomePage or isSearchResultPage)}">
                 <ul class="nav nav-pills pull-left">
                     <li>
                         <a class="back-link" href="${renderContext.site.home.url}">
                             <img src="<c:url value='${url.currentModule}/img/ic_arrow_back_white_36px.svg'/>">
-                            <span class="page-title">Jahia Public Store</span>
+                            <span class="page-title">${renderContext.site.displayableName}</span>
                         </a>
                     </li>
                 </ul>

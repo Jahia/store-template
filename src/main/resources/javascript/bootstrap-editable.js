@@ -4027,7 +4027,7 @@
 
     //buttons
     $.fn.editableform.buttons = '<button type="submit" class="btn btn-primary editable-submit"><i class="glyphicon glyphicon-ok icon-white"></i></button>'+
-        '<button type="button" class="btn editable-cancel"><i class="glyphicon glyphicon-remove"></i></button>';
+        '<button type="button" class="btn editable-cancel"><i class="icon icon-remove glyphicon glyphicon-remove"></i></button>';
 
     //error classes
     $.fn.editableform.errorGroupClass = 'error';

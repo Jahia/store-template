@@ -20,17 +20,30 @@
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <%@include file="header.jspf"%>
-<template:addResources type="css" resources="star-rating.min.css"/>
-<template:addResources type="css" resources="starjquery.fileupload.css"/>
-<template:addResources type="css" resources="appStore.css"/>
-<template:addResources type="css" resources="appStore.css, forge.css, forge.edition.css, jquery.fileupload.css, bootstrap3-wysihtml5.min.css, bootstrap-editable.css, bootstrap-wysihtml5.css, jqtree.css, select2.css, select2.bootstrap.css"/>
-<template:addResources type="javascript" resources="ckeditor.js"/>
-<template:addResources type="javascript" resources="jquery.fileupload-with-ui.min.js"/>
-<template:addResources type="javascript" resources="libraries/star-rating.min.js"/>
-<template:addResources type="javascript" resources="libraries/locales/${renderContext.mainResourceLocale}.js"/>
+<template:addResources type="css" resources="libraries/star-rating.min.css, jquery-ui.smoothness.css"/>
+<template:addResources type="css" resources="libraries/bootstrap3-wysihtml5.min.css,
+                                             libraries/bootstrap-editable.css,
+                                             libraries/jqtree.css,
+                                             libraries/select2.css,
+                                             libraries/select2.bootstrap.css"/>
+<template:addResources type="css" resources="libraries/fileinput.min.css"/>
+<template:addResources type="javascript" resources="jquery.min.js"/>
+<template:addResources type="javascript" resources="ckeditor.js, jquery.validate.js"/>
+<template:addResources type="javascript" resources="libraries/jquery-ui.min.js,
+                                                    libraries/select2.js,
+                                                    libraries/bootstrap-editable.min.js,
+                                                    libraries/star-rating.min.js,
+                                                    libraries/locales/${renderContext.mainResourceLocale}.js"/>
+
+<template:addResources type="javascript" resources="libraries/fileinput/plugins/canvas-to-blob.min.js,
+                                                    libraries/fileinput/plugins/sortable.min.js,
+                                                    libraries/fileinput/plugins/purify.min.js,
+                                                    libraries/fileinput/fileinput.min.js,
+                                                    libraries/fileinput/themes/fa/theme.js,
+                                                    libraries/fileinput/locales/${renderContext.mainResourceLocale}.js
+                                                    "/>
 <template:addResources type="javascript" resources="storeUtils.js"/>
-<template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js,jquery.autocomplete.js"/>
-<template:addResources type="javascript" resources="bootstrap-editable.js"/>
+<template:addResources type="css" resources="appStore.css"/>
 <template:addCacheDependency flushOnPathMatchingRegexp="${currentNode.path}/.*"/>
 <jcr:sql
         var="query"
@@ -39,6 +52,11 @@
 />
 <c:set var="sortedModules" value="${forge:sortByVersion(query.nodes)}"/>
 <c:set target="${moduleMap}" property="latestVersion" value="${forge:latestVersion(sortedModules)}" />
+<template:include view="hidden.sql">
+    <template:param name="getLatestVersion" value="true"/>
+</template:include>
+<c:set value="${moduleMap.latestVersion}" var="latestVersion"/>
+<jcr:nodeProperty node="${latestVersion}" name="relatedJahiaVersion" var="requiredVersion"/>
 <c:set target="${moduleMap}" property="previousVersions" value="${forge:previousVersions(sortedModules)}" />
 <c:set target="${moduleMap}" property="nextVersions" value="${forge:nextVersions(sortedModules)}" />
 
@@ -48,6 +66,7 @@
 <c:set var="authorURL" value="${currentNode.properties['authorURL'].string}"/>
 <c:set var="userEmail" value="${author.properties['j:email']}"/>
 <c:url var="postURL" value="${url.base}${currentNode.path}"/>
+<c:set var="howToInstall" value="${currentNode.properties['howToInstall'].string}"/>
 <c:set var="id" value="${currentNode.identifier}"/>
 <c:set var="isForgeAdmin" value="${jcr:hasPermission(renderContext.site, 'jahiaForgeModerateModule')}"/>
 <c:set var="title" value="${currentNode.properties['jcr:title'].string}"/>
@@ -55,23 +74,29 @@
 <c:if test="${isDeveloper}">
     <c:set var="viewAsUser" value="${not empty param['viewAs'] && param['viewAs'] eq 'user'}" />
 </c:if>
+
 <c:set var="worstRating" value="1"/>
 <c:set var="bestRating" value="5"/>
 <c:set var="ratingNbr" value="${fn:length(jcr:getNodes(currentNode, 'jnt:review'))}"/>
 <jcr:node var="reviews" path="${currentNode.path}/reviews"/>
-<c:set var="ratingTotal" value="${0}"/>
-<c:set var="ratingCount" value="${0}"/>
-<c:forEach var="review" items="${reviews.nodes}">
-    <c:set var="ratingCount" value="${ratingCount+1}"/>
-    <c:set var="ratingTotal" value="${ratingTotal+review.properties['rating'].long}"/>
-</c:forEach>
-<c:set var="averageRating" value="${fn:replace(ratingTotal/ratingCount,',','.')}"/>
-<c:set var="splittedAverage" value="${fn:split(averageRating, '.')}"/>
-<c:set var="entireRating" value="${splittedAverage[0]}"/>
-<c:if test="${fn:length(splittedAverage)>1}">
-    <c:set var="firstDigit" value="${fn:substring(splittedAverage[1],0,1)}"/>
-    <c:if test="${firstDigit ge 5}">
-        <c:set var="entireRating" value="${entireRating+1}"/>
+<c:set var="entireRating" value="0"/>
+<c:if test="${reviews != null}">
+    <c:set var="ratingTotal" value="0"/>
+    <c:set var="ratingCount" value="0"/>
+    <c:forEach var="review" items="${reviews.nodes}">
+        <c:set var="ratingCount" value="${ratingCount+1}"/>
+        <c:set var="ratingTotal" value="${ratingTotal+review.properties['rating'].long}"/>
+    </c:forEach>
+    <c:if test="${ratingCount > 0}">
+        <c:set var="averageRating" value="${fn:replace(ratingTotal/ratingCount,',','.')}"/>
+        <c:set var="splittedAverage" value="${fn:split(averageRating, '.')}"/>
+        <c:set var="entireRating" value="${splittedAverage[0]}"/>
+        <c:if test="${fn:length(splittedAverage)>1}">
+            <c:set var="firstDigit" value="${fn:substring(splittedAverage[1],0,1)}"/>
+            <c:if test="${firstDigit ge 5}">
+                <c:set var="entireRating" value="${entireRating+1}"/>
+            </c:if>
+        </c:if>
     </c:if>
 </c:if>
 
@@ -109,7 +134,6 @@
     <c:set var="category" value="${cat}"/>
 </c:forEach>
 <c:url value='${url.base}${currentNode.path}' var="currentNodeUrl"/>
-<c:set var="moduleUrl" value="${fn:replace(currentNodeUrl, '.html','.store-module-v2.html')}"/>
 <c:set var="tags" value="${currentNode.properties['j:tagList']}"/>
 
 <c:set var="moduleCategories" value="${renderContext.site.properties['rootCategory'].node}"/>
@@ -183,8 +207,12 @@
                 $(b).addClass(tagClasses[a%tagClasses.length]);
             });
 
+            $('#editPictures, #editVideos').on('hidden.bs.modal', function () {
+                window.location.reload();
+            });
+
             //Make the tags Editable with a popover
-           $('#tags-${id}').editable({
+            $('#tags-${id}').editable({
                 inputclass: 'input-large',
                 select2: {
                     tags: true,
@@ -271,6 +299,30 @@
                 <jsp:param name="postURL" value='${postURL}'/>
                 </jsp:include>
             });
+
+            <c:if test="${empty authorOrganisation}">
+            $('#authorName-information-${id}').on('shown', function(e, editable) {
+                $(this).next('.editable-container').find('.editable-input select option[value="organisation"]').attr("disabled","true");
+            });
+            </c:if>
+
+            <c:if test="${empty authorFullName || authorFullName eq authorUsername}">
+            $('#authorName-information-${id}').on('shown', function(e, editable) {
+                $(this).next('.editable-container').find('.editable-input select option[value="fullName"]').attr("disabled","true");
+            });
+            </c:if>
+
+            $('#authorName-information-${id}').editable({
+                source: [{value:'username', text:'${authorUsername}'},
+                    {value:'fullName', text:'${not empty authorFullName &&  authorFullName ne authorUsername ? authorFullName : labelEmptyFullName}'},
+                    {value:'organisation', text: '${not empty authorOrganisation ? authorOrganisation : labelEmptyOrganisation}'}],
+                value: '${authorNameDisplayedAs}',
+                <jsp:include page="../../commons/bootstrap-editable-options.jsp">
+                <jsp:param name="postURL" value="${postURL}"/>
+                <jsp:param name="customSuccess" value="document.location = '${currentNode.url}';"/>
+                </jsp:include>
+            });
+
             //Video Remove Function
             <c:if test="${hasVideoNode}">
             $('#remove-video-${id}').click(function() {
@@ -285,7 +337,6 @@
                 var textarea = $(object);
                 CKEDITOR.replace(textarea.attr('id'));
             });
-
 
             $('#moduleForgeAdminPanel').find('.forgeAdminBtn').click(function() {
 
@@ -303,6 +354,17 @@
 
             });
 
+            // INPUTS
+            // Input label
+
+            $('input, textarea').blur(function() {
+                var $this = $(this);
+                if ($this.val())
+                    $this.addClass('used');
+                else
+                    $this.removeClass('used');
+            });
+
         });
     </script>
 </template:addResources>
@@ -310,8 +372,28 @@
     <div class="col-md-12">
         <div class="media">
             <div class="media-left">
-                <img class="moduleIcon" src="${not empty icon.url ? icon.url : iconUrl}" style="margin-top: 10px"
+                <c:if test="${isDeveloper && not viewAsUser}">
+                <a data-toggle="tooltip" data-placement="left" title="<fmt:message key="jnt_forgeEntry.label.UpdateIcon"/>" href="#" onclick="document.getElementById('icon_input_${currentNode.identifier}').click();">
+                </c:if>
+                    <img class="moduleIcon" src="${not empty icon.url ? icon.url : iconUrl}" style="margin-top: 10px;"
                      alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"/>
+                <c:if test="${isDeveloper && not viewAsUser}">
+                </a>
+                </c:if>
+                <c:if test="${isDeveloper && not viewAsUser}">
+                    <div>
+                        <c:url value='${url.base}${renderContext.mainResource.node.path}.updateModuleIcon.do' var="iconPostURL"/>
+                        <c:url value='${url.currentModule}/img/loading.gif' var="loadingURL"/>
+                        <form class="icon_upload" id="icon_upload_${currentNode.identifier}"
+                              action="${iconPostURL}" method="POST" enctype="multipart/form-data">
+                            <div id="icon_upload-${currentNode.identifier}" class="btn btn-block">
+                                <input type="file" class="hide" id="icon_input_${currentNode.identifier}" name="file" onchange="submitIcon('${loadingURL}','${iconPostURL}','${currentNode.identifier}')"/>
+                                <input  type="hidden" name="redirectURL" value="${renderContext.mainResource.node.path}"/>
+                                <input type="hidden" name="jcrNodeType" value="jnt:file"/>
+                            </div>
+                        </form>
+                    </div>
+                </c:if>
             </div>
             <div class="media-body heading">
                 <h3 class="media-heading">${title}</h3>
@@ -336,7 +418,16 @@
                 <c:forEach items="${assignedTags}" var="tag" varStatus="status">
                     <span class="label moduleTag">${fn:escapeXml(tag.string)}</span>
                 </c:forEach>
-                <div class="author">${authorName}</div>
+                <div class="author">
+                        <c:if test="${isDeveloper && not viewAsUser}">
+                            <a data-original-title="<fmt:message key="jnt_forgeEntry.label.askAuthorNameDisplayedAs"/>" data-placement="right" data-name="authorNameDisplayedAs" data-pk="1" data-type="select"
+                               id="authorName-information-${id}" href="#" class="editable editable-click">
+                        </c:if>
+                        ${authorName}
+                        <c:if test="${isDeveloper && not viewAsUser}">
+                            </a>
+                        </c:if>
+                </div>
                 <div class="rating">
                     <c:forEach var="i" begin="${worstRating}" end="${bestRating}">
                         <c:choose>
@@ -348,63 +439,101 @@
                             </c:otherwise>
                         </c:choose>
                     </c:forEach>
-                </div>
-                <c:choose>
-                    <c:when test="${isDeveloper && not viewAsUser}">
+                    <div class="developperEmail">
                         <c:choose>
-                            <c:when test="${authorIsOrganisation}">
-                                <a id="authorEmail-${id}" class="pull-right btn btn-small btn-primary"
-                                   data-type="text" data-name="authorEmail" href="#"><fmt:message key="jnt_forgeEntry.label.editAuthorEmail"/></a>
+                            <c:when test="${isDeveloper && not viewAsUser}">
+                                <c:choose>
+                                    <c:when test="${authorIsOrganisation}">
+                                        <a id="authorEmail-${id}" class="pull-right btn btn-small btn-primary"
+                                           data-type="text" data-name="authorEmail" href="#"><fmt:message key="jnt_forgeEntry.label.editAuthorEmail"/></a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a id="authorEmail-${id}" class="pull-right btn btn-small btn-primary" href="#">${not empty userEmail ? userEmail.string : labelEmpty}</a>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:when>
                             <c:otherwise>
-                                <a id="authorEmail-${id}" class="pull-right btn btn-small btn-primary" href="#">${not empty userEmail ? userEmail.string : labelEmpty}</a>
+                                <c:if test="${not empty authorEmail}">
+                                </c:if>
+                                <c:choose>
+                                    <c:when test="${authorIsOrganisation && not empty authorEmail}">
+                                        <a class="pull-right btn btn-small btn-primary" href="mailto:${authorEmail}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message key="jnt_forgeEntry.label.authorEmail"/></a>
+                                    </c:when>
+                                    <c:when test="${not authorIsOrganisation && not empty userEmail}">
+                                        <a class="pull-right btn btn-small btn-primary" href="mailto:${userEmail.string}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message key="jnt_forgeEntry.label.authorEmail"/></a>
+                                    </c:when>
+                                </c:choose>
                             </c:otherwise>
                         </c:choose>
-                    </c:when>
-                    <c:otherwise>
-                        <c:if test="${not empty authorEmail}">
-                        </c:if>
-                        <c:choose>
-                            <c:when test="${authorIsOrganisation && not empty authorEmail}">
-                                <a class="pull-right btn btn-small btn-primary" href="mailto:${authorEmail}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message key="jnt_forgeEntry.label.authorEmail"/></a>
-                            </c:when>
-                            <c:when test="${not authorIsOrganisation && not empty userEmail}">
-                                <a class="pull-right btn btn-small btn-primary" href="mailto:${userEmail.string}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message key="jnt_forgeEntry.label.authorEmail"/></a>
-                            </c:when>
-                        </c:choose>
-                    </c:otherwise>
-                </c:choose>
-
+                    </div>
+                </div>
+                <div class="labelisation">
+                    <c:if test="${currentNode.properties['reviewedByJahia'].boolean}">
+                <span class="label label-success">
+                    <i class="glyphicon glyphicon-ok icon-white"></i>
+                    <fmt:message key="jnt_forgeEntry.label.admin.reviewedByJahia"/>
+                </span>&nbsp;
+                    </c:if>
+                    <c:if test="${currentNode.properties['supportedByJahia'].boolean}">
+                <span class="label label-warning">
+                    <i class="glyphicon glyphicon-wrench icon-white"></i>
+                    <fmt:message key="jnt_forgeEntry.label.admin.supportedByJahia"/>
+                </span>
+                    </c:if>
+                </div>
+            </div>
+            <div class="ck_editable" id="descriptionDiv">
+                <h4><fmt:message key="jnt_forgeEntry.label.moduleDescription"/></h4>
+                <div class="original_text" <c:if test="${isDeveloper && not viewAsUser}">onclick="switchDiv('descriptionDiv')"</c:if>>
+                    <p id="description" class="textarea">${description}</p>
+                </div>
+                <c:if test="${isDeveloper && not viewAsUser}">
+                    <div class="editable_text hide">
+                        <textarea class="ckarea" name="description" id="description_editor" rows="10" cols="80">
+                            <c:out value="${description}"/>
+                        </textarea>
+                        <button class="btn btn-primary" type="button" onclick="submitText('description', 'descriptionDiv', 'original_text', true)"><fmt:message key="save"/></button>
+                        <button class="btn btn-default" type="button" onclick="switchDiv('descriptionDiv')"><fmt:message key="cancel"/></button>
+                    </div>
+                </c:if>
             </div>
             <div class="carousel">
                 <!--<img src="http://placehold.it/1110x620?text=Slider+goes+here">-->
-                <template:module node="${screenshots}" view="appStoreV2"/>
+                <template:module node="${screenshots}" view="v2">
+                    <template:param name="id" value="${currentNode.identifier}"/>
+                </template:module>
             </div>
-            <c:if test="${isDeveloper && not viewAsUser}">
-                <button type="button" class="btn btn-info btn-lg pull-right detailButton" data-toggle="modal" data-target="#editPictures">Edit Pictures</button>
-                <div id="editPictures" class="modal fade" role="dialog">
+
+            <c:if test="${isForgeAdmin or isDeveloper && not viewAsUser}">
+                <div id="editPictures" class="modal fade" role="dialog" tabindex="-1" data-focus-on="input:first">
                     <div class="modal-dialog editPicturesDialog">
                         <div class="modal-content">
                             <div class="modal-body" id="editPicture">
-                                <c:set var="screenshotUrl" value="${fn:replace(renderContext.request.requestURI,'.store-module-v2' , '.screenshots' )}"/>
-                                <iframe src="${screenshotUrl}"></iframe>
-                                <template:module node="${currentNode}" view="screenshotsV2"/><br/>
+                                <template:include view="screenshotsv2"/><br/>
                             </div>
                         </div>
                     </div>
                 </div>
-                <c:if test="${hasVideoNode}">
-                    <div id="forgeModuleVideoWrapper-${id}" class="forgeModuleVideo">
-                        <template:module path="${videoNode.path}" view="forge"/>
+                <div id="editVideos" class="modal fade" role="dialog">
+                    <div class="modal-dialog editVideoDialog">
+                        <div class="modal-content">
+                            <div class="modal-body" id="editVideo">
+                                <template:include view="videov2"/><br/>
+                            </div>
+                        </div>
                     </div>
-                </c:if>
-                <%@include file="editVideos.jspf"%>
+                </div>
+            </c:if>
+            <c:if test="${hasVideoNode}">
+                <div id="forgeModuleVideoWrapper-${id}" class="forgeModuleVideo">
+                    <template:module path="${videoNode.path}" view="forge"/>
+                </div>
             </c:if>
             <div class="media-body content">
                 <c:if test="${isForgeAdmin or isDeveloper}">
                     <div id="moduleForgeAdminPanel">
-                        <h4><fmt:message key="jnt_forgeEntry.label.admin.title"/></h4>
-                        <c:if test="${isForgeAdmin}">
+                    <h4><fmt:message key="jnt_forgeEntry.label.admin.title"/></h4>
+                    <c:if test="${isForgeAdmin}">
                         <div class="btn-group">
                             <button class="forgeAdminBtn btn btn-small ${reviewedByJahia ? 'btn-success' : 'btn-danger'}"
                                     data-value="${reviewedByJahia}" data-name="reviewedByJahia">
@@ -415,57 +544,46 @@
                                 <fmt:message key="jnt_forgeEntry.label.admin.supportedByJahia"/>
                             </button>
                         </div>
-                        </c:if>
-                        <c:if test="${isDeveloper}">
-                            <div class="btn-group">
-                                <button id="publishModule-${id}" class="btn btn-small ${published ? 'btn-success': 'btn-danger'}" data-value="${!published}" onclick="publishModule(${!published})">
-                                    <c:choose>
-                                        <c:when test="${published}"><fmt:message key="jnt_forgeEntry.label.developer.unpublish"/></c:when>
-                                        <c:otherwise><fmt:message key="jnt_forgeEntry.label.developer.publish"/></c:otherwise>
-                                    </c:choose>
-                                </button>
-                                <button id="deleteModule-${id}" class="btn btn-small" data-toggle="modal" data-target="#deleteModuleModal-${id}">
-                                    <fmt:message key="jnt_forgeEntry.label.developer.delete"/>
-                                </button>
-                            </div>
-                            <div id="deleteModuleModal-${id}" class="modal fade" role="dialog" aria-labelledby="deleteModuleModal-${id}" aria-hidden="true">
-                                <div class="modal-dialog deleteDialog">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                        <h3 id="deleteModuleModal-${id}"><fmt:message key="jnt_forgeModule.label.developer.modal.delete.header"/></h3>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>
-                                            <fmt:message key="jnt_forgeModule.label.developer.modal.delete.body">
-                                                <fmt:param value="${currentNode.displayableName}"/>
-                                            </fmt:message>
-                                        </p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button class="btn" data-dismiss="modal" aria-hidden="true"><fmt:message key="jnt_review.label.admin.modal.delete.cancel"/></button>
-                                        <button class="btn btn-primary" id="confirmDeleteModule-${id}" onclick="deleteModule()"><fmt:message key="jnt_review.label.admin.modal.delete.confirm"/></button>
-                                    </div>
+                    </c:if>
+                    <c:if test="${isDeveloper}">
+                        <div class="btn-group">
+                            <button id="publishModule-${id}" class="btn btn-small ${published ? 'btn-success': 'btn-danger'}" data-value="${!published}" onclick="publishModule(${!published})">
+                                <c:choose>
+                                    <c:when test="${published}"><fmt:message key="jnt_forgeEntry.label.developer.unpublish"/></c:when>
+                                    <c:otherwise><fmt:message key="jnt_forgeEntry.label.developer.publish"/></c:otherwise>
+                                </c:choose>
+                            </button>
+                            <button id="deleteModule-${id}" class="btn btn-small" data-toggle="modal" data-target="#deleteModuleModal-${id}">
+                                <fmt:message key="jnt_forgeEntry.label.developer.delete"/>
+                            </button>
+                        </div>
+                        <div id="deleteModuleModal-${id}" class="modal fade" role="dialog" aria-labelledby="deleteModuleModal-${id}" aria-hidden="true">
+                            <div class="modal-dialog deleteDialog">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h3 id="deleteModuleModal-${id}"><fmt:message key="jnt_forgeModule.label.developer.modal.delete.header"/></h3>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        <fmt:message key="jnt_forgeModule.label.developer.modal.delete.body">
+                                            <fmt:param value="${currentNode.displayableName}"/>
+                                        </fmt:message>
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn" data-dismiss="modal" aria-hidden="true"><fmt:message key="jnt_review.label.admin.modal.delete.cancel"/></button>
+                                    <button class="btn btn-primary" id="confirmDeleteModule-${id}" onclick="deleteModule()"><fmt:message key="jnt_review.label.admin.modal.delete.confirm"/></button>
                                 </div>
                             </div>
                         </div>
+
+                            <button id="editPicturesButton" type="button" class="btn btn-default detailButton pull-right" data-toggle="modal" data-target="#editPictures"><fmt:message key="jnt_forgeEntry.label.editPictures"/></button>
+                            <button type="button" class="btn btn-default detailButton pull-right" data-toggle="modal" data-target="#editVideos"><fmt:message key="jnt_forgeEntry.label.editVideo"/></button>
+                        </div>
                     </c:if>
+
                 </c:if>
 
-                <h4><fmt:message key="jnt_forgeEntry.label.moduleDescription"/></h4>
-                <div class="ck_editable" id="descriptionDiv">
-                    <div class="original_text" <c:if test="${isDeveloper && not viewAsUser}">onclick="switchDiv('descriptionDiv')"</c:if>>
-                        <p id="description" class="textarea">${description}</p>
-                    </div>
-                    <c:if test="${isDeveloper && not viewAsUser}">
-                    <div class="editable_text hide">
-                        <textarea class="ckarea" name="description" id="description_editor" rows="10" cols="80">
-                            <c:out value="${description}"/>
-                        </textarea>
-                        <button type="button" onclick="submitText('description', 'descriptionDiv', 'original_text')">Submit</button>
-                        <button type="button" onclick="switchDiv('descriptionDiv')">Cancel</button>
-                    </div>
-                    </c:if>
-                </div>
                 <h4><fmt:message key="forge.module.label.additionalInformation"/></h4>
 
                 <div class="more-info-container">
@@ -481,17 +599,23 @@
                     </div>
 
                     <div class="meta-info">
-                        <div class="title"><fmt:message key="jnt_forgeEntry.label.updated"/></div>
+                        <div class="title">
+                            <fmt:message key="jnt_forgeEntry.label.updated" var="updatedLabel"/>
+                            ${fn:replace(updatedLabel,':','')}
+                        </div>
                         <div class="content"><time itemprop="datePublished">
                             <fmt:formatDate value="${latestVersion.properties['jcr:lastModified'].date.time}" pattern="yyyy-MM-dd" />
                         </time></div>
                     </div>
 
                     <div class="meta-info">
-                        <div class="title"><fmt:message key="jnt_forgeEntry.label.version"/></div>
+                        <div class="title">
+                            <fmt:message key="jnt_forgeEntry.label.version" var="versionLabel"/>
+                            ${fn:replace(versionLabel,':','')}
+                        </div>
 
                         <div class="content">
-                            <button type="button" class="btn btn-info btn-lg detailButton" data-toggle="modal" data-target="#changeLogModal">
+                            <button type="button" class="btn btn-default detailButton" data-toggle="modal" data-target="#changeLogModal">
                                 <c:choose>
                                     <c:when test="${not empty versionNumber.string}">
                                         ${versionNumber.string}
@@ -506,8 +630,8 @@
                             <div id="changeLogModal" class="modal fade" role="dialog">
                                 <div class="modal-dialog changeLogDialog">
                                     <div class="modal-content">
-                                        <c:set var="changelog" value="${fn:replace(renderContext.request.requestURI,'.store-module-v2' , '.changelog' )}"/>
-                                        <iframe src="${changelog}"></iframe>
+                                        <iframe src="${fn:replace(currentNode.url,".html",".changelog2.html")}"></iframe>
+                                        <%--<template:include view="changeLogv2"/>--%>
                                     </div>
                                 </div>
                             </div>
@@ -515,127 +639,149 @@
                     </div>
 
                     <div class="meta-info">
-                        <div class="title"><fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion"/></div>
-                        <div class="content">${requiredVersion.node.displayableName}</div>
-                    </div>
-
-                    <div class="meta-info">
-                        <div class="title"><fmt:message key="jnt_forgeEntry.label.authorName"/></div>
-                        <div class="content">${authorName}</div>
-                    </div>
-
-                    <div class="meta-info">
-                        <div class="title"><fmt:message key="jnt_forgeEntry.label.category"/></div>
+                        <div class="title">
+                            <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion" var="JahiaVersionLabel"/>
+                            ${fn:replace(JahiaVersionLabel,':','')}
+                        </div>
                         <div class="content">
-                            <c:if test="${isDeveloper && not viewAsUser}">
-                            <a data-original-title="<fmt:message key="jnt_forgeEntry.label.askCategory"/>" data-name="j:defaultCategory" data-pk="1" data-type="select"
-                               id="category-${id}" href="#" class="editable editable-click">
-                                </c:if>
-                                ${not empty category ? category.node.displayableName : labelNotSelected}
-                                <c:if test="${isDeveloper && not viewAsUser}">
-                            </a>
-                            </c:if>
-                        ${categoryNode.displayableName}
-
+                            ${fn:replace(latestVersion.properties['requiredVersion'].node.displayableName,'version-','')}<br/>
                         </div>
                     </div>
+
+                    <div class="meta-info">
+                        <div class="title">
+                            <fmt:message key="jnt_forgeEntry.label.authorName" var="authorLabel"/>
+                            ${fn:replace(authorLabel,':','')}
+                        </div>
+                        <div class="content">${authorName}</div>
+                    </div>
+                    <c:if test="${(isDeveloper && not viewAsUser) or not empty category}">
+                        <div class="meta-info">
+                            <div class="title"><fmt:message key="jnt_forgeEntry.label.category"/></div>
+                            <div class="content">
+                                <c:if test="${isDeveloper && not viewAsUser}">
+                                <a data-original-title="<fmt:message key="jnt_forgeEntry.label.askCategory"/>" data-name="j:defaultCategory" data-pk="1" data-type="select"
+                                   id="category-${id}" href="#" class="editable editable-click">
+                                    </c:if>
+                                    ${not empty category ? category.node.displayableName : labelNotSelected}
+                                    <c:if test="${isDeveloper && not viewAsUser}">
+                                </a>
+                                </c:if>
+                                ${categoryNode.displayableName}
+
+                            </div>
+                        </div>
+                    </c:if>
                     <c:if test="${isDeveloper && not viewAsUser}">
                         <div class="meta-info ui-widget">
                             <div class="title">Add Tags</div>
                             <a href="#" id="tags-${id}" class="editable editable-click" data-type="select2" data-pk="1" data-original-title="<fmt:message key="jnt_forgeEntry.label.developer.addTag"/>">
                                 <c:forEach items="${assignedTags}" var="tag" varStatus="status">${fn:escapeXml(tag.string)}${not status.last ? ', ' : ''}</c:forEach>
                             </a>
-
-                            <%--<input type="text" class="tagInput" value=""/><button class="btn btn-primary" onclick="addTag()"><i class="glyphicon glyphicon-ok"></i></button>--%>
                         </div>
                     </c:if>
-                    <div class="meta-info">
-                        <jcr:node var="categoryNode" uuid="${category.string}"/>
-                        <div class="title">Category</div>
-                        <div class="content">${categoryNode.displayableName}</div>
-                    </div>
 
-                    <div class="meta-info">
+                    <div class="meta-info large">
                         <c:choose>
                             <c:when test="${isDeveloper && not viewAsUser}">
-                                <div class="ck_editable" id="authorDiv">
-                                    <div class="original_text" <c:if test="${isDeveloper && not viewAsUser}">onclick="switchDiv('authorDiv')"</c:if>>
-                                        <a id="authorURL-${id}" class="btn btn-small btn-primary"
+                                <div class="ck_editable" id="authorURLDiv">
+                                    <div class="original_text" <c:if test="${isDeveloper && not viewAsUser}">onclick="switchDiv('authorURLDiv')"</c:if>>
+                                        <span id="authorURL-${id}" class="btn btn-default detailButton"
                                            data-original-title="<fmt:message key="jnt_forgeEntry.label.editAuthorURL"/>" data-pk="1"
-                                           data-type="text" data-name="authorURL" href="#" ><fmt:message key="jnt_forgeEntry.label.editAuthorURL"/></a>
+                                           data-type="text" data-name="authorURL" ><fmt:message key="jnt_forgeEntry.label.editAuthorURL"/></span>
                                     </div>
                                     <div class="editable_text hide">
-                                        <input name="authorURL" id="authorURL" value="<c:out value="${authorURL}"/>"/>
-                                        <button type="button" onclick="submitText('authorURL', 'authorDiv', 'original_text', false)">Submit</button>
-                                        <button type="button" onclick="switchDiv('authorDiv')">Cancel</button>
+                                        <input class="form-control" name="authorURL" id="authorURL" value="<c:out value="${authorURL}"/>"/>
+                                        <div id="authorURLSubmit" class="submit-buttons">
+                                            <button class="btn btn-primary" type="button" onclick="submitText('authorURL', 'authorURLDiv', 'original_text', false)"><fmt:message key="save"/></button>
+                                            <button class="btn btn-default pull-right" type="button" onclick="switchDiv('authorURLDiv')"><fmt:message key="cancel"/></button>
+                                        </div>
                                     </div>
                                 </div>
                             </c:when>
                             <c:otherwise>
                                 <c:if test="${not empty authorURL}">
-                                    <a class="btn btn-small btn-primary" target="_blank" href="${authorURL}"><fmt:message key="jnt_forgeEntry.label.authorURL"/></a>
+                                    <a class="btn btn-default detailButton" target="_blank" href="${authorURL}"><fmt:message key="jnt_forgeEntry.label.authorURL"/></a>
                                 </c:if>
                             </c:otherwise>
                         </c:choose>
 
                     </div>
                 </div>
-
-                <button type="button" class="btn btn-info btn-lg pull-right detailButton" data-toggle="modal" data-target="#faqModal">F.A.Q</button>
-                <div id="faqModal" class="modal fade" role="dialog">
-                    <div class="modal-dialog faqDialog">
-                        <div class="modal-content">
-                            <div class="ck_editable" id="faqDiv">
-                                <div class="original_text" <c:if test="${isDeveloper && not viewAsUser}">onclick="switchDiv('faqDiv')"</c:if>>
-                                    <p id="FAQ" class="textarea">${FAQ}</p>
-                                </div>
-                                <c:if test="${isDeveloper && not viewAsUser}">
-                                    <div class="editable_text hide">
-                                    <textarea class="ckarea" name="FAQ" id="FAQ_editor" rows="10" cols="80">
-                                         <c:out value="${FAQ}"/>
-                                    </textarea>
-                                    <button type="button" onclick="submitText('FAQ', 'faqDiv', 'original_text')">Submit</button>
-                                    <button type="button" onclick="switchDiv('faqDiv')">Cancel</button>
+                <c:if test="${(isDeveloper && not viewAsUser) or not empty FAQ}">
+                    <button type="button" class="btn btn-default pull-right detailButton" data-toggle="modal" data-target="#faqModal" <c:if test="${empty FAQ}">onclick="switchDiv('faqDiv')"</c:if>><fmt:message key="jnt_forgeModule.FAQ"/></button>
+                    <div id="faqModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog faqDialog">
+                            <div class="modal-content">
+                                <div class="ck_editable" id="faqDiv">
+                                    <h2 class="modal-title"><fmt:message key="jnt_forgeEntry.label.FAQ"/></h2>
+                                    <div class="original_text" <c:if test="${isDeveloper && not viewAsUser}">onclick="switchDiv('faqDiv')"</c:if>>
+                                        <p id="FAQ" class="textarea">
+                                            ${FAQ}
+                                        </p>
                                     </div>
-                                </c:if>
+                                    <c:if test="${isDeveloper && not viewAsUser}">
+                                        <div class="editable_text hide">
+                                        <textarea class="ckarea" name="FAQ" id="FAQ_editor" rows="10" cols="80">
+                                             <c:out value="${FAQ}"/>
+                                        </textarea>
+                                        <div class="ckButtonsDiv pull-center">
+                                            <button class="btn btn-primary" type="button" onclick="submitText('FAQ', 'faqDiv', 'original_text', true)"><fmt:message key="save"/></button>
+                                            <button class="btn btn-default" type="button" onclick="switchDiv('faqDiv')"><fmt:message key="cancel"/></button>
+                                        </div>
+                                        </div>
+                                    </c:if>
+                                </div>
                             </div>
-                            <%--
-                            <div class="modal-body edit_area" id="faq">
-                                ${FAQ}
-                            </div>
-                            --%>
                         </div>
                     </div>
-                </div>
+                </c:if>
+                <c:if test="${fn:length( fn:trim( functions:removeHtmlTags( fn:replace(howToInstall, '&nbsp;', ' ') ))) eq 0
+                && (not isDeveloper || viewAsUser)}">
+                    <c:set var="emptyHowToInstall" value="true"/>
+                </c:if>
+                <c:if test="${(isDeveloper && not viewAsUser) or not emptyHowToInstall}">
+                    <button id="howToInstallButton" type="button" class="btn btn-default pull-right detailButton" data-toggle="modal" data-target="#howToInstallModal" <c:if test="${emptyHowToInstall}">onclick="switchDiv('howToInstallDiv')"</c:if>><fmt:message key="jnt_forgeEntry.installation"/></button>
+                    <div id="howToInstallModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog howToInstallDialog">
+                            <div class="modal-content">
+                                <div class="ck_editable" id="howToInstallDiv">
+                                    <div class="original_text" <c:if test="${isDeveloper && not viewAsUser}">onclick="switchDiv('howToInstallDiv')"</c:if>>
+                                        <h2><fmt:message key="jnt_forgeModule.howToInstall"/></h2>
+                                        <p id="howToInstall" class="textarea">
+                                                ${howToInstall}
+                                        </p>
+                                    </div>
+                                    <c:if test="${isDeveloper && not viewAsUser}">
+                                        <div class="editable_text hide">
+                                        <textarea class="ckarea" name="howToInstall" id="howToInstall_editor" rows="10" cols="80">
+                                             <c:out value="${howToInstall}"/>
+                                        </textarea>
+                                            <div class="ckButtonsDiv pull-center">
+                                                <button class="btn btn-primary" type="button" onclick="submitText('howToInstall', 'howToInstallDiv', 'original_text', true)"><fmt:message key="save"/></button>
+                                                <button class="btn btn-default" type="button" onclick="switchDiv('howToInstallDiv')"><fmt:message key="cancel"/></button>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+                <c:if test="${(isDeveloper && not viewAsUser)}">
+                    <button id="permissionsButton" type="button" class="btn btn-default pull-right detailButton" data-toggle="modal" data-target="#permissionsModal"><fmt:message key="jnt_forgeEntry.modulePermissions"/></button>
+                    <div id="permissionsModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog permissionsDialog">
+                            <div class="modal-content">
+                                <div class="container">
+                                    <iframe src="${fn:replace(currentNode.url,".html",".permissions.html")}"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
                 <h4>User Reviews</h4>
                 <%@ include file="reviews.jspf"%>
-                <%--
-                    <c:choose>
-                        <c:when test="${isDeveloper && not viewAsUser}">
-                            <section class="moduleTags">
-                                <h5><fmt:message key="jnt_forgeEntry.label.tags"/></h5>
-                                <a href="#" id="tags-${id}" class="editable editable-click" data-type="select2" data-pk="1" data-original-title="<fmt:message key="jnt_forgeEntry.label.developer.addTag"/>">
-                                    <c:forEach items="${assignedTags}" var="tag" varStatus="status">${fn:escapeXml(tag.string)}${not status.last ? ', ' : ''}</c:forEach>
-                                </a>
-                            </section>
-                        </c:when>
-                        <c:otherwise>
-                            <c:if test="${not empty assignedTags}">
-
-                                <section class="moduleTags">
-
-                                    <h5><fmt:message key="jnt_forgeEntry.label.tags"/></h5>
-                                    <ul class="inline unstyled">
-                                        <c:forEach items="${assignedTags}" var="tag" varStatus="status">
-                                            <li class="tag">${fn:escapeXml(tag.string)}</li>
-                                        </c:forEach>
-                                    </ul>
-
-                                </section>
-                            </c:if>
-                        </c:otherwise>
-                    </c:choose>
-                    --%>
             </div>
         </div>
     </div>
