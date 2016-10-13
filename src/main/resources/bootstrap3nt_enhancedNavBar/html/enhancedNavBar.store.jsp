@@ -32,26 +32,30 @@
         <c:if test="${not empty styleName}">
             <c:set var="navbarClasses" value="${navbarClasses} ${styleName.string}"/>
         </c:if>
-
-        <nav class="${navbarClasses}" <c:if test="${!(isHomePage or isSearchResultPage)}">class="affix"</c:if>>
-            <c:if test="${!(isHomePage or isSearchResultPage)}">
+        <c:forEach items="${jcr:getChildrenOfType(currentNode, 'bootstrap3mix:navBarItem')}" var="child"
+                   varStatus="status">
+            <nav class="${navbarClasses}" <c:if test="${!(isHomePage or isSearchResultPage)}">class="affix"</c:if>>
                 <ul class="nav nav-pills pull-left">
-                    <li>
-                        <a class="back-link" href="${renderContext.site.home.url}">
-                            <img src="<c:url value='${url.currentModule}/img/ic_arrow_back_white_36px.svg'/>">
-                            <span class="page-title">${renderContext.site.displayableName}</span>
-                        </a>
-                    </li>
-                </ul>
-            </c:if>
 
-            <ul class="nav nav-pills pull-right">
-                <c:forEach items="${jcr:getChildrenOfType(currentNode, 'bootstrap3mix:navBarItem')}" var="child"
-                           varStatus="status">
-                    <template:module node="${child}"/>
-                </c:forEach>
-            </ul>
-        </nav>
+                    <c:if test="${!(isHomePage or isSearchResultPage)}">
+                        <li>
+                            <a class="back-link" href="${renderContext.site.home.url}">
+                                <img src="<c:url value='${url.currentModule}/img/ic_arrow_back_white_36px.svg'/>">
+                                <span class="page-title">${renderContext.site.displayableName}</span>
+                            </a>
+                        </li>
+                    </c:if>
+                    <c:if test="${child.properties['position'].string eq 'left'}">
+                        <template:module node="${child}"/>
+                    </c:if>
+                </ul>
+                <ul class="nav nav-pills pull-right">
+                    <c:if test="${child.properties['position'].string eq 'right'}">
+                        <template:module node="${child}"/>
+                    </c:if>
+                </ul>
+            </nav>
+        </c:forEach>
         <h3 class="text-muted"><c:if test="${not empty title}">${title}</c:if></h3>
     </c:otherwise>
 </c:choose>

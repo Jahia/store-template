@@ -41,6 +41,10 @@
     <script type="text/javascript">
         var newPictures = {};
         $(document).ready(function() {
+
+            $(".btn-file").on("click",function(){
+                $(".screenshots-help-message").empty();
+            });
             //Sort pictures functions
             $(function () {
                 $(".grid").sortable({
@@ -150,6 +154,16 @@
     </div>
 </template:tokenizedForm>
 <div id="fileListRow" class="row grid col-xs-12">
+    <c:if test="${empty moduleMap.currentList}">
+        <div class="screenshots-help-message pull-right">
+            <div>
+                <span class="glyphicon glyphicon-arrow-up"></span>
+            </div>
+            <div>
+                <fmt:message key="jnt_forgeEntry.empty.screenshots"/>
+            </div>
+        </div>
+    </c:if>
     <c:forEach var="moduleScreenshot" items="${moduleMap.currentList}" varStatus="status">
         <div class="well col-xs-3 tile moduleScreenshot" data-name="${moduleScreenshot.name}" data-parent-path="${moduleScreenshot.parent.path}">
             <img class="move-screenshot col-xs-6 img-responsive pull-left" src="${moduleScreenshot.thumbnailUrls['thumbnail2']}"/>

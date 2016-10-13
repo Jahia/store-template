@@ -19,7 +19,7 @@
 <%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
-<%@include file="header.jspf"%>
+<%@include file="headerv2.jspf"%>
 <template:addResources type="css" resources="libraries/star-rating.min.css, jquery-ui.smoothness.css"/>
 <template:addResources type="css" resources="libraries/bootstrap3-wysihtml5.min.css,
                                              libraries/bootstrap-editable.css,
@@ -206,7 +206,11 @@
             $(".moduleTag").each(function(a,b){
                 $(b).addClass(tagClasses[a%tagClasses.length]);
             });
-
+            <c:if test="${isDeveloper && not viewAsUser}">
+                $(".moduleIcon").hover(function(){
+                    $(".icon_overlay").show();
+                });
+            </c:if>
             $('#editPictures, #editVideos').on('hidden.bs.modal', function () {
                 window.location.reload();
             });
@@ -376,7 +380,10 @@
                 <a data-toggle="tooltip" data-placement="left" title="<fmt:message key="jnt_forgeEntry.label.UpdateIcon"/>" href="#" onclick="document.getElementById('icon_input_${currentNode.identifier}').click();">
                 </c:if>
                     <img class="moduleIcon" src="${not empty icon.url ? icon.url : iconUrl}" style="margin-top: 10px;"
-                     alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"/>
+                     alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>" style="display:block;"/>
+                    <c:if test="${isDeveloper && not viewAsUser}">
+                        <img class="icon_overlay" src="<c:url value='${url.currentModule}/img/edit-overlay.png'/>"/>
+                    </c:if>
                 <c:if test="${isDeveloper && not viewAsUser}">
                 </a>
                 </c:if>
@@ -497,16 +504,21 @@
                     </div>
                 </c:if>
             </div>
-            <div class="carousel">
-                <!--<img src="http://placehold.it/1110x620?text=Slider+goes+here">-->
-                <template:module node="${screenshots}" view="v2">
-                    <template:param name="id" value="${currentNode.identifier}"/>
-                </template:module>
-            </div>
+            <c:if test="${not empty jcr:getChildrenOfType(screenshots,'jnt:file')}">
+                <div class="carousel">
+                    <template:module node="${screenshots}" view="v2">
+                        <template:param name="id" value="${currentNode.identifier}"/>
+                    </template:module>
+                </div>
+            </c:if>
 
             <c:if test="${isForgeAdmin or isDeveloper && not viewAsUser}">
                 <div id="editPictures" class="modal fade" role="dialog" tabindex="-1" data-focus-on="input:first">
                     <div class="modal-dialog editPicturesDialog">
+                        <div class="modal-header">
+                            <button type="button" class="close pull-right" data-dismiss="modal">&times;</button>
+                            <h2><fmt:message key="jnt_forgeEntry.screenshotsManagement"/></h2>
+                        </div>
                         <div class="modal-content">
                             <div class="modal-body" id="editPicture">
                                 <template:include view="screenshotsv2"/><br/>
@@ -514,8 +526,12 @@
                         </div>
                     </div>
                 </div>
-                <div id="editVideos" class="modal fade" role="dialog">
+                <div id="editVideos" class="modal fade" role="dialog" tabindex="-1">
                     <div class="modal-dialog editVideoDialog">
+                        <div class="modal-header">
+                            <button type="button" class="close pull-right" data-dismiss="modal">&times;</button>
+                            <h2><fmt:message key="jnt_forgeEntry.label.video"/></h2>
+                        </div>
                         <div class="modal-content">
                             <div class="modal-body" id="editVideo">
                                 <template:include view="videov2"/><br/>
@@ -526,7 +542,7 @@
             </c:if>
             <c:if test="${hasVideoNode}">
                 <div id="forgeModuleVideoWrapper-${id}" class="forgeModuleVideo">
-                    <template:module path="${videoNode.path}" view="forge"/>
+                    <template:module path="${videoNode.path}" view="lightbox"/>
                 </div>
             </c:if>
             <div class="media-body content">
@@ -557,7 +573,7 @@
                                 <fmt:message key="jnt_forgeEntry.label.developer.delete"/>
                             </button>
                         </div>
-                        <div id="deleteModuleModal-${id}" class="modal fade" role="dialog" aria-labelledby="deleteModuleModal-${id}" aria-hidden="true">
+                        <div id="deleteModuleModal-${id}" class="modal fade" role="dialog" aria-labelledby="deleteModuleModal-${id}" aria-hidden="true" tabindex="-1">
                             <div class="modal-dialog deleteDialog">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -615,7 +631,7 @@
                         </div>
 
                         <div class="content">
-                            <button type="button" class="btn btn-default detailButton" data-toggle="modal" data-target="#changeLogModal">
+                            <a class="link_text" data-toggle="modal" data-target="#changeLogModal" href="#">
                                 <c:choose>
                                     <c:when test="${not empty versionNumber.string}">
                                         ${versionNumber.string}
@@ -625,10 +641,14 @@
                                     </c:otherwise>
                                 </c:choose>
 
-                            </button>
+                            </a>
 
-                            <div id="changeLogModal" class="modal fade" role="dialog">
+                            <div id="changeLogModal" class="modal fade" role="dialog" tabindex="-1">
                                 <div class="modal-dialog changeLogDialog">
+                                    <div class="modal-header">
+                                        <button type="button" class="close pull-right" data-dismiss="modal">&times;</button>
+                                        <h2><fmt:message key="jnt_forgeEntry.versions"/></h2>
+                                    </div>
                                     <div class="modal-content">
                                         <iframe src="${fn:replace(currentNode.url,".html",".changelog2.html")}"></iframe>
                                         <%--<template:include view="changeLogv2"/>--%>
@@ -686,9 +706,9 @@
                             <c:when test="${isDeveloper && not viewAsUser}">
                                 <div class="ck_editable" id="authorURLDiv">
                                     <div class="original_text" <c:if test="${isDeveloper && not viewAsUser}">onclick="switchDiv('authorURLDiv')"</c:if>>
-                                        <span id="authorURL-${id}" class="btn btn-default detailButton"
+                                        <span id="authorURL-${id}" class="link_text"
                                            data-original-title="<fmt:message key="jnt_forgeEntry.label.editAuthorURL"/>" data-pk="1"
-                                           data-type="text" data-name="authorURL" ><fmt:message key="jnt_forgeEntry.label.editAuthorURL"/></span>
+                                           data-type="text" data-name="authorURL" href="#"><fmt:message key="jnt_forgeEntry.label.editAuthorURL"/></span>
                                     </div>
                                     <div class="editable_text hide">
                                         <input class="form-control" name="authorURL" id="authorURL" value="<c:out value="${authorURL}"/>"/>
@@ -701,7 +721,7 @@
                             </c:when>
                             <c:otherwise>
                                 <c:if test="${not empty authorURL}">
-                                    <a class="btn btn-default detailButton" target="_blank" href="${authorURL}"><fmt:message key="jnt_forgeEntry.label.authorURL"/></a>
+                                    <a class="link_text" target="_blank" href="${authorURL}"><fmt:message key="jnt_forgeEntry.label.authorURL"/></a>
                                 </c:if>
                             </c:otherwise>
                         </c:choose>
@@ -710,11 +730,14 @@
                 </div>
                 <c:if test="${(isDeveloper && not viewAsUser) or not empty FAQ}">
                     <button type="button" class="btn btn-default pull-right detailButton" data-toggle="modal" data-target="#faqModal" <c:if test="${empty FAQ}">onclick="switchDiv('faqDiv')"</c:if>><fmt:message key="jnt_forgeModule.FAQ"/></button>
-                    <div id="faqModal" class="modal fade" role="dialog">
+                    <div id="faqModal" class="modal fade" role="dialog" tabindex="-1">
                         <div class="modal-dialog faqDialog">
                             <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close pull-right" data-dismiss="modal">&times;</button>
+                                    <h2><fmt:message key="jnt_forgeEntry.label.FAQ"/></h2>
+                                </div>
                                 <div class="ck_editable" id="faqDiv">
-                                    <h2 class="modal-title"><fmt:message key="jnt_forgeEntry.label.FAQ"/></h2>
                                     <div class="original_text" <c:if test="${isDeveloper && not viewAsUser}">onclick="switchDiv('faqDiv')"</c:if>>
                                         <p id="FAQ" class="textarea">
                                             ${FAQ}
@@ -742,12 +765,15 @@
                 </c:if>
                 <c:if test="${(isDeveloper && not viewAsUser) or not emptyHowToInstall}">
                     <button id="howToInstallButton" type="button" class="btn btn-default pull-right detailButton" data-toggle="modal" data-target="#howToInstallModal" <c:if test="${emptyHowToInstall}">onclick="switchDiv('howToInstallDiv')"</c:if>><fmt:message key="jnt_forgeEntry.installation"/></button>
-                    <div id="howToInstallModal" class="modal fade" role="dialog">
+                    <div id="howToInstallModal" class="modal fade" role="dialog" tabindex="-1">
                         <div class="modal-dialog howToInstallDialog">
+                            <div class="modal-header">
+                                <button type="button" class="close pull-right" data-dismiss="modal">&times;</button>
+                                <h2><fmt:message key="jnt_forgeModule.howToInstall"/></h2>
+                            </div>
                             <div class="modal-content">
                                 <div class="ck_editable" id="howToInstallDiv">
                                     <div class="original_text" <c:if test="${isDeveloper && not viewAsUser}">onclick="switchDiv('howToInstallDiv')"</c:if>>
-                                        <h2><fmt:message key="jnt_forgeModule.howToInstall"/></h2>
                                         <p id="howToInstall" class="textarea">
                                                 ${howToInstall}
                                         </p>
@@ -770,8 +796,12 @@
                 </c:if>
                 <c:if test="${(isDeveloper && not viewAsUser)}">
                     <button id="permissionsButton" type="button" class="btn btn-default pull-right detailButton" data-toggle="modal" data-target="#permissionsModal"><fmt:message key="jnt_forgeEntry.modulePermissions"/></button>
-                    <div id="permissionsModal" class="modal fade" role="dialog">
+                    <div id="permissionsModal" class="modal fade" role="dialog" tabindex="-1">
                         <div class="modal-dialog permissionsDialog">
+                            <div class="modal-header">
+                                <button type="button" class="close pull-right" data-dismiss="modal">&times;</button>
+                                <h2><fmt:message key="jnt_forgeEntry.permissionsManagement"/></h2>
+                            </div>
                             <div class="modal-content">
                                 <div class="container">
                                     <iframe src="${fn:replace(currentNode.url,".html",".permissions.html")}"></iframe>

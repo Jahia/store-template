@@ -52,7 +52,7 @@
                         </c:otherwise>
                     </c:choose>
                 </div>
-                <div id="navbar" class="navbar-collapse collapse">
+                <div id="navbar-collapse_${currentNode.identifier}" class="navbar-collapse collapse">
                     <c:forEach items="${navbaritems}" var="child"
                                varStatus="searchStatus">
                         <template:module node="${child}"/>

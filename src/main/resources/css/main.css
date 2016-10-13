@@ -29,6 +29,12 @@ header h3 {
     font-weight: 400;
     text-shadow: 2px 2px 2px rgba(74, 74, 74, 0.8);
 }
+
+.jumbotron h1 p{
+    font-weight: 400 !important;
+    text-shadow: 2px 2px 2px rgba(74, 74, 74, 0.8) !important;
+}
+
 .btn-primary {
     background-color: #00A0E3;
     text-transform: uppercase;

@@ -14,7 +14,7 @@
     <c:if test="${not empty position}">
         <c:set var="pullClass" value=" navbar-${position.string}" />
     </c:if>
-    <s:form method="post" class="navbar-form navbar-left hidden-xs ${pullClass}" action="${searchUrl}" role="search" id="search">
+    <s:form method="post" class="navbar-form navbar-left hidden-xs ${pullClass}" action="${searchUrl}" role="search" id="search" >
         <i class="fa fa-search"></i>
         <div class="form-group">
             <c:set var="searchPath" value="${renderContext.site.path}"/>
@@ -22,9 +22,9 @@
             <s:term match="all_words" id="searchTerm" searchIn="content,siteContent,tags,files"
                     class="form-control input-lg quicksearch search-query" placeholder="${placeholder}" />
             <s:pagePath value="${searchPath}" display="false" includeChildren="true" />
-            <s:site value="${renderContext.site.name}" includeReferencesFrom="systemsite"  display="false"/>
-            <s:language value="${renderContext.mainResource.locale}" display="false"/>
-            <s:nodeType value="jmix:forgeElement" selectionOptions="jmix:forgeElement,jnt:forgeModule,jnt:forgePackage" display="false"/>
+            <s:site value="${renderContext.site.name}" includeReferencesFrom="systemsite"  display="false" />
+            <s:language value="${renderContext.mainResource.locale}" display="false" />
+            <s:nodeType value="jnt:forgeModule" selectionOptions="jmix:forgeElement,jnt:forgeModule,jnt:forgePackage" display="false" />
         </div>
     </s:form>
 </c:if>

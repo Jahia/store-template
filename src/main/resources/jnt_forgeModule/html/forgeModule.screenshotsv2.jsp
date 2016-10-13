@@ -43,7 +43,6 @@
     </template:addResources>
 </c:if>
 <div id="fileList${renderContext.mainResource.node.identifier}">
-        <h2><fmt:message key="jnt_forgeEntry.label.screenshots"/></h2>
         <template:addCacheDependency path="${currentNode.path}/screenshots"/>
         <template:module node="${screenshots}" view="editv2"/>
 </div>

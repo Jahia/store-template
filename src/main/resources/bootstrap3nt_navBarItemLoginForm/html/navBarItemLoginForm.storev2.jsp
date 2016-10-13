@@ -123,64 +123,7 @@
                     ${fn:escapeXml(empty firstname and empty lastname ? userNode.name : firstname)}&nbsp;${fn:escapeXml(lastname)} <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-                <c:if test="${!renderContext.settings.distantPublicationServerMode and not jcr:isNodeType(renderContext.mainResource.node.resolveSite, 'jmix:remotelyPublished')}">
-                    <c:choose>
-                        <c:when test="${renderContext.mainResource.node.properties['j:originWS'].string ne 'live'}">
-                            <c:set var="liveUrl" value="${url.live}"/>
-                            <c:set var="editUrl" value="${url.edit}"/>
-                            <c:set var="previewUrl" value="${url.preview}"/>
-                            <c:set var="contributeUrl" value="${url.preview}"/>
-                        </c:when>
-                        <c:when test="${renderContext.mainResource.node.properties['j:originWS'].string eq 'live'}">
-                            <c:set var="liveUrl" value="${url.live}.html"/>
-                            <c:set var="editUrl" value="${url.baseEdit}${renderContext.site.home.path}.html"/>
-                            <c:set var="previewUrl" value="${url.basePreview}${renderContext.site.home.path}.html"/>
-                            <c:set var="contributeUrl" value="${url.baseContribute}${renderContext.site.home.path}.html"/>
-                        </c:when>
-                    </c:choose>
-                    <c:if test="${! renderContext.liveMode}">
-                        <li>
-                            <a href="<c:url value='${liveUrl}'/>">
-                                <i class="glyphicon glyphicon-globe"></i>
-                                <fmt:message key="bootstrap3nt_navBarItemLoginForm.menu.gotoLive"/>
-                            </a>
-                        </li>
-                    </c:if>
-                    <c:if test="${! renderContext.previewMode && jcr:hasPermission(renderContext.mainResource.node, 'editModeAccess')}">
-                        <li>
-                            <a href="<c:url value='${previewUrl}'/>">
-                                <i class="glyphicon glyphicon-eye-open"></i>
-                                <fmt:message key="bootstrap3nt_navBarItemLoginForm.menu.gotoPreview"/>
-                            </a>
-                        </li>
-                    </c:if>
-                    <c:if test="${! renderContext.editMode && jcr:hasPermission(renderContext.mainResource.node, 'editModeAccess')}">
-                        <li>
-                            <a href="<c:url value='${editUrl}'/>">
-                                <i class="glyphicon glyphicon-edit"></i>
-                                <fmt:message key="bootstrap3nt_navBarItemLoginForm.menu.gotoEdit"/>
-                            </a>
-                        </li>
-                    </c:if>
-                    <c:if test="${! renderContext.editMode && !jcr:hasPermission(renderContext.mainResource.node, 'editModeAccess') && jcr:hasPermission(renderContext.mainResource.node, 'contributeModeAccess')}">
-                        <li>
-                            <a href="<c:url value='${contributeUrl}'/>">
-                                <i class="glyphicon glyphicon-edit"></i>
-                                <fmt:message key="bootstrap3nt_navBarItemLoginForm.menu.gotoContribute"/>
-                            </a>
-                        </li>
-                    </c:if>
-                </c:if>
-
-                <li role="separator" class="divider"></li>
-                <li>
-                    <a href="<c:url value='${url.myProfile}'/>">
-                        <i class="glyphicon glyphicon-user"></i>
-                        <fmt:message key="bootstrap3nt_navBarItemLoginForm.menu.profile"/>
-                    </a>
-                </li>
                 <c:if test="${isForgeAdmin}">
-                    <li role="separator" class="divider"></li>
                     <li>
                         <c:url value='${renderContext.site.url}' var="settingsUrl"/>
                         <a href="${fn:replace(settingsUrl,'.html','.store-admin2.html')}">
@@ -188,15 +131,14 @@
                             <fmt:message key="jnt_forgeModule.forgeSetting"/>
                         </a>
                     </li>
-                    <li>
-                        <c:url value='${renderContext.site.url}' var="settingsUrl"/>
-                        <a href="${fn:replace(settingsUrl,'.html','.my-modules.html')}">
-                            <i class="glyphicon glyphicon-cog"></i>
-                            <fmt:message key="jnt_forgeModule.myModules"/>
-                        </a>
-                    </li>
                 </c:if>
-
+                <li>
+                    <c:url value='${renderContext.site.url}' var="settingsUrl"/>
+                    <a href="${fn:replace(settingsUrl,'.html','.my-modules.html')}">
+                        <i class="glyphicon glyphicon-cog"></i>
+                        <fmt:message key="jnt_forgeModule.myModules"/>
+                    </a>
+                </li>
                 <li role="separator" class="divider"></li>
                 <li>
                     <a href="<c:url value='${url.logout}'/>">

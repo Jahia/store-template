@@ -1,8 +1,11 @@
 <jnt = 'http://www.jahia.org/jahia/nt/1.0'>
 <jmix = 'http://www.jahia.org/jahia/mix/1.0'>
 
+[jmix:alink] mixin
+ - j:linkType (string, choicelist[linkTypeInitializer,resourceBundle]) = 'internal' autocreated mandatory
+
 [jnt:storeTitle] > jnt:content, jmix:siteComponent
-- title (string) mandatory internationalized
+- title (string, richtext) mandatory internationalized
 - butonlabel (string) mandatory internationalized
 
 [jnt:storeFilter] > jnt:content, bootstrap3mix:navBarItem
@@ -18,3 +21,5 @@
 [jnt:forgeSettings] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent
 
 [jnt:categorySettings] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent
+
+[jnt:storeLink] > jnt:content, mix:title, jmix:alink, bootstrap3mix:navBarItem, jmix:studioOnly

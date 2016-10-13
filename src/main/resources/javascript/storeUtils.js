@@ -34,7 +34,7 @@ function getSortedTags(modulesTags){
     var tags = [];
     $.each(modulesTags, function(moduleId,moduleTags){
         for(var index=0; index<moduleTags.length;index++){
-            $("#module-"+moduleId).addClass("tag-"+moduleTags[index]);
+            $("#module-"+moduleId).addClass("tag-"+moduleTags[index].split(" ").join("-"));
             if(!contains.call(tags,moduleTags[index])){
                 tags.push(moduleTags[index]);
             }

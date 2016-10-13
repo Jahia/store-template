@@ -116,8 +116,6 @@
     </template:addResources>
 </c:if>
 
-<h2><fmt:message key="jnt_forgeEntry.label.video"/></h2>
-
 <c:choose>
     <c:when test="${hasVideoNode}">
         <p>
@@ -143,26 +141,6 @@
                 <label class="control-label" for="identifier"><fmt:message key="jnt_forgeEntry.label.videoIdentifier"/></label>
                 <input placeholder="<fmt:message key="jnt_forgeEntry.label.videoIdentifier" />" type="text"
                        name="identifier" id="identifier" value="${videoIdentifier}" class="form-control"/>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label" for="width"><fmt:message key="jnt_forgeEntry.label.videoWidth"/></label>
-                <input placeholder="<fmt:message key="jnt_forgeEntry.label.videoWidth" />" type="text"
-                       name="width" id="width" value="${videoWidth}" class="form-control"/>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label" for="height"><fmt:message key="jnt_forgeEntry.label.videoHeight"/></label>
-                    <input placeholder="<fmt:message key="jnt_forgeEntry.label.videoHeight" />" type="text"
-                           name="height" id="height" value="${videoHeight}" class="form-control"/>
-            </div>
-
-            <div class="form-group">
-                <label class="checkbox">
-                    <input type="checkbox" name="allowfullscreen" id="allowfullscreen"
-                           ${empty videoAllowfullscreen || not empty videoAllowfullscreen && videoAllowfullscreen ? 'checked' : ''} class="checkbox"/>
-                    <fmt:message key="jnt_forgeEntry.label.videoAllowfullscreen"/>
-                </label>
             </div>
 
             <div class="form-group">

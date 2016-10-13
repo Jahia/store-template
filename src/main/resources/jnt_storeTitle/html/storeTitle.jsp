@@ -7,7 +7,6 @@
 <%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
 <%-- Les styles--%>
 <template:addResources type="css" resources="appStore.css"/>
-<template:addResources type="css" resources="main.css"/>
 <div class="jumbotron">
-    <a href="${renderContext.site.home.url}"><h1>Welcome to the <br>Jahia Public App Store</h1></a>
+    <a href="${renderContext.site.url}"><h1>${currentNode.properties['title'].string}</h1></a>
 </div>

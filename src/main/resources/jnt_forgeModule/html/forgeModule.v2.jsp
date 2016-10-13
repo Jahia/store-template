@@ -23,7 +23,6 @@
     <c:set var="icon" value="${iconItem}"/>
 </c:forEach>
 <c:set var="description" value="${currentNode.properties['description'].string}"/>
-
 <%@include file="../../commons/authorName.jspf"%>
 
 <c:url value="${currentNode.url}" context="/" var="moduleUrl"/>
@@ -84,5 +83,12 @@
                 </c:choose>
             </c:forEach>
         </div>
+    </div>
+    <div class="hide">
+        Description : ${currentNode.properties['description'].string}<br/>
+        How to install : ${currentNode.properties['howToInstall'].string}<br/>
+        <c:forEach items="${currentNode.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
+            ${currentTag.string}<br/>
+        </c:forEach>
     </div>
 </div>

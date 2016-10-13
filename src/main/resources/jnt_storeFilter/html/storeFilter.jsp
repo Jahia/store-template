@@ -8,18 +8,71 @@
 <%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
 <%-- Les styles--%>
 <template:addResources type="javascript" resources="storeUtils.js"/>
-<template:addResources type="javascript" resources="libraries/datahref.jquery.js"/>
+<template:addResources type="javascript" resources="libraries/datahref.jquery.js, libraries/jquery.mobil.custom.min.js"/>
 <template:addResources type="inlinejavascript">
     <script type="text/javascript">
+        var filterNames = {
+            "cert-filter":"<fmt:message key="jnt_storefilter.label.certification"/>",
+            "tag-filter":"<fmt:message key="jnt_storefilter.label.tags"/>",
+            "cat-filter":"<fmt:message key="jnt_storefilter.label.categories"/>"
+        };
+
+        var filters = {
+            "cert-filter":"",
+            "tag-filter":"",
+            "cat-filter":""
+        }
+        function resetFilters(){
+
+            $(".forge").isotope({filter:''});
+            $(".filter-reset").hide();
+            console.log("Menus Reset");
+            $(".forge-filter").each(function(index,object){
+                var id=object.id;
+                console.log(id);
+                console.log(filterNames[id]);
+                $("#"+id).html(filterNames[id]+' <span class="caret"></span>');
+            });
+            $("li.active").removeClass("active");
+
+        }
+        function filterClick(object){
+            var obj = $(object);
+            var clicked=obj.html();
+            var dropdown = obj.parent().parent().parent();
+            var dropToggle = dropdown.find(".dropdown-toggle");
+            var filterId=dropToggle.attr('id');
+            var title=filterNames[dropToggle.attr('id')];
+            dropToggle.html(title+' ( '+clicked+' )<span class="caret"></span>');
+            $(".filter-reset").show();
+        }
         $(document).ready(function () {
+            /*$(".store-filter").on(click(function(a,b,c){
+                console.log("click");
+            }));*/
+            /*$(".dropdown-menu li a").click(function(a,b,c){
+                console.log("Click !");
+                console.log(a.target);
+                console.log(a.target.parent().parent().parent());
+                //$(".btn:first-child").html($(this).text()+' <span class="caret"></span>');
+            });*/
+            //$(".tag_select").select2();
             //Get module tags and apply them on module html classes in order to be able to filter
             var tags = getSortedTags(modulesTags);
-
+            var columnsNbr = Math.ceil(tags.length/20);
             //Add tags selectors sorted
             var tagSelectorElement = $("ul#tag");
+            var previousTag="";
             $.each(tags, function(index,tagString){
-                tagSelectorElement.append("<li><a href='#' data-filter='.tag-"+tagString+"'>"+tagString+"</a></li>");
+                if(previousTag.length>0){
+                    if(tagString.charAt(0) != previousTag.charAt(0)){
+                        tagSelectorElement.append('<li role="separator" class="divider"></li>');
+                    }
+                }
+                previousTag = tagString;
+                tagSelectorElement.append("<li><a href='#' class='store-filter' data-filter='.tag-"+tagString.split(" ").join("-")+"' onclick='filterClick(this);'>"+tagString+"</a></li>");
             });
+            tagSelectorElement.attr("style","columns:"+columnsNbr+";webkit-columns:"+columnsNbr+";-moz-columns:"+columnsNbr+";");
 
             //Get module Categories and init the filter selectors
             var categories = getSortedCategories(modulesCategories);
@@ -27,7 +80,8 @@
             var categorySelectorElement = $("ul#category");
             $.each(categories, function(index,categoryString){
                 var categorySplit = categoryString.split("--categoryID--");
-                categorySelectorElement.append("<li><a href='#' data-filter='.category-"+categorySplit[1]+"'>"+categorySplit[0]+"</a></li>");
+                categorySelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='.category-"+categorySplit[1]+"' onclick='filterClick(this);'>"+categorySplit[0]+"</a></li>");
+
             });
         });
         $( function() {
@@ -54,6 +108,7 @@
                 // combine filters
                 var filterValue = concatValues( filters );
                 $grid.isotope({ filter: filterValue });
+
             });
             var $grid = $('.forge').isotope({
                 itemSelector: '.item',
@@ -97,30 +152,33 @@
         }
     </script>
 </template:addResources>
-<ul class="nav navbar-nav navbar-right">
+<ul class="nav navbar-nav navbar-right" data-input="#tag-search">
     <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><fmt:message key="jnt_storefilter.label.certification"/> <span class="caret"></span></a>
-        <ul id="certification" class="dropdown-menu filters" data-filter-group="certifications">
+        <a href="#" id="cert-filter" class="dropdown-toggle forge-filter" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><fmt:message key="jnt_storefilter.label.certification"/> <span class="caret"></span></a>
+        <ul id="certification" class="dropdown-menu filters cert-filter-list" data-filter-group="certifications">
             <li class="active default"><a href="#" data-filter=""><fmt:message key="jnt_storefilter.label.all"/> </a></li>
             <li role="separator" class="divider"></li>
-            <li><a href='#' data-filter='.certification-reviewed'>Reviewed</a></li>
-            <li><a href='#' data-filter='.certification-supported'>Supported</a></li>
-            <li><a href='#' data-filter='.certification-both'>Reviewed and supported</a></li>
-            <li><a href='#' data-filter='.certification-none'>Not reviewed and not supported</a></li>
+            <li><a href='#' data-filter='.certification-reviewed' onclick="filterClick(this);">Reviewed</a></li>
+            <li><a href='#' data-filter='.certification-supported' onclick="filterClick(this);">Supported</a></li>
+            <li><a href='#' data-filter='.certification-both' onclick="filterClick(this);">Reviewed and supported</a></li>
+            <li><a href='#' data-filter='.certification-none' onclick="filterClick(this);">Not reviewed and not supported</a></li>
+        </ul>
+    </li>
+    <li class="dropdown hidden-xs hidden-sm hidden-md">
+        <a href="#" id="tag-filter" class="dropdown-toggle forge-filter" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><fmt:message key="jnt_storefilter.label.tags"/> <span class="caret"></span></a>
+        <ul id="tag" class="dropdown-menu filters tag-filter-list" data-filter-group="tags" data-filter="true">
+            <li class="active default"><a href="#" data-filter="" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/> </a></li>
+            <li role="separator" class="divider"></li>
         </ul>
     </li>
     <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><fmt:message key="jnt_storefilter.label.tags"/> <span class="caret"></span></a>
-        <ul id="tag" class="dropdown-menu filters" data-filter-group="tags">
-            <li class="active default"><a href="#" data-filter=""><fmt:message key="jnt_storefilter.label.all"/> </a></li>
-            <li role="separator" class="divider"></li>
-        </ul>
-    </li>
-    <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><fmt:message key="jnt_storefilter.label.categories"/> <span class="caret"></span></a>
-        <ul id="category" class="dropdown-menu filters" data-filter-group="categories">
+        <a href="#" id="cat-filter" class="dropdown-toggle forge-filter" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><fmt:message key="jnt_storefilter.label.categories"/> <span class="caret"></span></a>
+        <ul id="category" class="dropdown-menu filters cat-filter-list" data-filter-group="categories">
             <li class="active default"><a href="#" data-filter="">ALL</a></li>
             <li role="separator" class="divider"></li>
         </ul>
+    </li>
+    <li>
+        <a href="#" class="filter-reset filter-reset-button" onclick="resetFilters('cat-filter')" style="display:none"><fmt:message key="jnt_forgeFilter"/> <span class="glyphicon glyphicon-remove-circle"></span></a>
     </li>
 </ul>
