@@ -142,7 +142,6 @@ a.register-link:hover {
 /*Module list*/
 .media {
     background-color: #FFFFFF;
-    height: 180px;
     -webkit-border-radius: 2px;
     border-radius: 2px;
     -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -160,11 +159,7 @@ a.register-link:hover {
     -webkit-border-radius: 2px;
     border-radius: 2px;
 }
-.media-body {
-    position: relative;
-    height: 170px;
-}
-.media-body.content {
+.content {
     padding: 25px 45px;
     line-height: 27px;
     font-size: 18px;
@@ -172,20 +167,20 @@ a.register-link:hover {
     color: #777;
 }
 
-.media-body.content h4 {
+.content h4 {
     color: #212121;
     font-size: 14px;
     font-weight: normal;
     text-transform: uppercase;
     padding-top: 25px;
 }
-.media-body .author {
+.author {
     margin-top: 8px;
     margin-bottom: 8px;
     color: #616161;
 }
 
-.media-body .rating {
+.rating {
     color: #737373;
     font-size: 22px;
 }
@@ -257,8 +252,12 @@ nav ul.pull-right{
     padding:20px;
 }
 
-#content.detail {
+#content .heading {
     margin-top:-100px;
+}
+
+#content .detail {
+    background-color: #fff;
 }
 
 .media-full-width{
@@ -267,7 +266,12 @@ nav ul.pull-right{
     margin: 0px!important;
     min-height: unset!important;
 }
-
+.topmargin {
+    margin-top:27px;
+}
+.bottommargin {
+    margin-bottom:27px;
+}
 .dwl {
     text-transform: uppercase;
     font-size: 14px;
@@ -291,9 +295,9 @@ nav ul.pull-right{
     width: 13%;
 }
 
-.detail .media-body{
-    display: inline-block;
-    width: 80%;
+.detail {
+    /*display: inline-block;
+    width: 80%;*/
     height:auto;
 }
 
@@ -321,18 +325,18 @@ nav ul.pull-right{
     padding-right: 14px;
 }
 
-.detail .media-body.content{
+.detail .content{
     width:100%;
     height:auto;
 }
 
-.detail .media-body.heading{
+.detail .heading{
     min-height: 230px;
     margin-top: 27px;
     padding:0 0 0 15px;
 }
 
-.detail .media-body.heading .rating{
+.detail .heading .rating{
     margin-bottom: 5px;
 }
 
@@ -943,7 +947,6 @@ h6.title{
 .pictureCarousel{
     width: auto;
     height: 225px;
-    max-height: 225px;
     text-align:center;
 }
 
@@ -1256,6 +1259,9 @@ h6.title{
     }
     .review-coments-cont .ac-review {
         padding:0;
+        width: auto;
+    }
+    .meta-info {
         width: auto;
     }
 }
