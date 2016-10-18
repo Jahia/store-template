@@ -14,7 +14,7 @@
     <c:if test="${not empty position}">
         <c:set var="pullClass" value=" navbar-${position.string}" />
     </c:if>
-    <s:form method="post" class="navbar-form navbar-left hidden-xs ${pullClass}" action="${searchUrl}" role="search" id="search" >
+    <s:form method="post" class="navbar-form navbar-left ${pullClass}" action="${searchUrl}" role="search" id="search" >
         <i class="fa fa-search"></i>
         <div class="form-group">
             <c:set var="searchPath" value="${renderContext.site.path}"/>

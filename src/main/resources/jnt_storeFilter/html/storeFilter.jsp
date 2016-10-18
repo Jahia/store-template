@@ -158,7 +158,7 @@
 <fmt:message key="jnt_forgeEntry.status.prereleased" var="prereleasedLabel"/>
 <fmt:message key="jnt_forgeEntry.status.supported" var="supportedLabel"/>
 <ul class="nav navbar-nav navbar-right" data-input="#tag-search">
-    <li class="dropdown">
+    <li class="dropdown hidden-xs">
         <a href="#" id="cert-filter" class="dropdown-toggle forge-filter" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><fmt:message key="jnt_storefilter.label.certification"/> <span class="caret"></span></a>
         <ul id="certification" class="dropdown-menu filters cert-filter-list" data-filter-group="certifications">
             <li class="active default"><a href="#" data-filter="" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/> </a></li>

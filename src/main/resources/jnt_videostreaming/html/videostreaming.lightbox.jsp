@@ -20,25 +20,25 @@
 <template:addResources type="css" resources="libraries/lity.min.css"/>
 <c:if test="${currentNode.properties.provider.string eq 'youtube'}">
 <div id="videostreaming_${currentNode.identifier}" class="videostreaming">
-    <a href="//www.youtube.com/watch?v=${currentNode.properties.identifier.string}" data-lity>
-        <img src="http://img.youtube.com/vi/${currentNode.properties.identifier.string}/0.jpg"style="display:block;"/>
-        <img class="video_overlay" src="<c:url value='${url.currentModule}/img/video_overlay_480.png'/>"/>
+    <a href="//www.youtube.com/watch?v=${currentNode.properties.identifier.string}" data-lity class="video">
+        <span></span>
+        <img src="http://img.youtube.com/vi/${currentNode.properties.identifier.string}/0.jpg" />
     </a>
 </div>
 </c:if>
 <c:if test="${currentNode.properties.provider.string eq 'vimeo'}">
     <div id="videostreaming_${currentNode.identifier}" class="videostreaming">
-        <a href="//player.vimeo.com/video/${currentNode.properties.identifier.string}" data-lity>
-            <img src="<c:url value='${url.currentModule}/img/video_background.png'/>"/>
-            <img class="video_overlay" src="<c:url value='${url.currentModule}/img/video_overlay_480.png'/>"/>
+        <a href="//player.vimeo.com/video/${currentNode.properties.identifier.string}" data-lity class="video">
+            <span></span>
+            <img src="<c:url value='${url.currentModule}/img/video_background.png'/>" />
         </a>
     </div>
 </c:if>
 <c:if test="${currentNode.properties.provider.string eq 'dailymotion'}">
     <div id="videostreaming_${currentNode.identifier}" class="videostreaming">
-        <a href="//dailymotion.com/embed/video/${currentNode.properties.identifier.string}" data-lity>
-            <img src="<c:url value='${url.currentModule}/img/video_background.png'/>"/>
-            <img class="video_overlay" src="<c:url value='${url.currentModule}/img/video_overlay_480.png'/>"/>
+        <a href="//dailymotion.com/embed/video/${currentNode.properties.identifier.string}" data-lity class="video">
+            <span></span>
+            <img src="<c:url value='${url.currentModule}/img/video_background.png'/>" />
         </a>
     </div>
 </c:if>

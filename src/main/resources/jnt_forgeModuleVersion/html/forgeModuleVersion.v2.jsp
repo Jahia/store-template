@@ -48,7 +48,6 @@
     </template:addResources>
 
 </c:if>
-    <div class="row">
         <div class="clearfix moduleVersionHeader">
 
             <div class="pull-left">
@@ -83,8 +82,6 @@
 
             </div>
         </div>
-    </div>
-    <div class="row">
         <c:if test="${isDeveloper && not viewAsUser}">
             <p class="editable-toggle">
                 <a id="toggle-changeLog-${currentNode.identifier}" href="#"><i class="glyphicon glyphicon-pencil"></i>&nbsp;<fmt:message
@@ -100,8 +97,7 @@
         <c:if test="${isDeveloper && not viewAsUser}">
             </div>
         </c:if>
-    </div>
-<footer class="row versionFooter">
+<footer class="versionFooter">
     <div class="inline">
         <span>
             <strong><fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion"/></strong>

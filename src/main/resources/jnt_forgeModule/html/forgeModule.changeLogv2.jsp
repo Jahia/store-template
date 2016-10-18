@@ -85,23 +85,18 @@
 
 <div class="container versionUploadContainer">
     <c:if test="${isDeveloper && not viewAsUser}">
-        <div class="row">
-            <h3><fmt:message key="jnt_forgeModule.uploadNewVersion"/></h3>
-        </div>
-        <div class="row">
-                <c:url value='${url.base}${currentNode.path}' var="postURL"/>
-                <div id="jarUploadFormRow" class="row col-xs-12">
-                    <template:tokenizedForm>
-                    <form class="jarFile_upload" id="jar_file_upload_form_${currentNode.identifier}"
-                          action="${updateIcon}" method="POST" enctype="multipart/form-data" onsubmit="return sendFileForModule()">
-                        <input id="jar_file_upload_${currentNode.identifier}" type="file" class="file" data-preview-file-type="text" name="file"/>
-                        <input  type="hidden" name="redirectURL" value="${renderContext.mainResource.node.path}.changelog"/>
-                    </form>
-                    </template:tokenizedForm>
-                </div>
-        </div>
+        <h3><fmt:message key="jnt_forgeModule.uploadNewVersion"/></h3>
+            <c:url value='${url.base}${currentNode.path}' var="postURL"/>
+            <div id="jarUploadFormRow" class="row col-xs-12">
+                <template:tokenizedForm>
+                <form class="jarFile_upload" id="jar_file_upload_form_${currentNode.identifier}"
+                      action="${updateIcon}" method="POST" enctype="multipart/form-data" onsubmit="return sendFileForModule()">
+                    <input id="jar_file_upload_${currentNode.identifier}" type="file" class="file" data-preview-file-type="text" name="file"/>
+                    <input  type="hidden" name="redirectURL" value="${renderContext.mainResource.node.path}.changelog"/>
+                </form>
+                </template:tokenizedForm>
+            </div>
     </c:if>
-    <div class="row">
 
         <article id="moduleChangeLog">
             <c:if test="${functions:length(nextVersions) > 0 && isDeveloper && not viewAsUser}">
@@ -184,5 +179,4 @@
             </c:if>
             <template:addCacheDependency flushOnPathMatchingRegexp="${currentNode.path}/.*"/>
         </article>
-    </div>
 </div>

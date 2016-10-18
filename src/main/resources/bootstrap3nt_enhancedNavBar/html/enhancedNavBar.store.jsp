@@ -49,7 +49,7 @@
                         <template:module node="${child}"/>
                     </c:if>
                 </ul>
-                <ul class="nav nav-pills pull-right">
+                <ul class="nav nav-pills pull-right hidden-xs hidden-sm	">
                     <c:if test="${child.properties['position'].string eq 'right'}">
                         <template:module node="${child}"/>
                     </c:if>

@@ -25,7 +25,12 @@ header.home {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    height: 500px;
+    height:auto;
+}
+@media only screen and (min-width : 768px) {
+    header.home {
+        height: 500px;
+    }
 }
 
 .changeLogWrapper{
@@ -496,11 +501,43 @@ header.detail{
 /*Video*/
 .forgeModuleVideo{
     max-height: 609px;
+    padding-top: 200px;
 }
 
-.video_overlay{
-    top: -315px;
+.videostreaming img {
+    width:100%;
+    height:auto;
+}
+
+a.video {
+    float: left;
     position: relative;
+}
+a.video span {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: url("../img/play-btn.png") no-repeat;
+    background-position: 50% 50%;
+    background-size: 300%;
+}
+@media screen and (max-width: 480px) {
+    a.video span {
+        background-size: 400%;
+    }
+    .forgeModuleVideo{
+        padding-top: 0;
+    }
+    .navbar-default .navbar-collapse, .navbar-default .navbar-form {
+        border-width: 0;
+        padding: 5px 10px 0 10px;
+    }
+    .search-query {
+        border-color: #ddd;
+    }
+    .navbar-default .navbar-nav>li>a.dropdown-toggle {
+        padding-top:0;
+    }
 }
 
 /*Icon*/
@@ -650,8 +687,8 @@ header.detail{
 /*FAQ Styles*/
 .faqDialog, .howToInstallDialog{
     overflow-y: scroll;
-    height: 80%;
-    width: 60%;
+    /*height: 80%;
+    width: 60%;*/
 }
 
 #faq_editor, #howToInstall_editor{
@@ -749,7 +786,7 @@ header.detail{
 }
 
 .changeLogDialog{
-    width: 80%;
+    /*width: 80%;*/
     height: auto;
     overflow: auto;
 }
@@ -906,12 +943,6 @@ h6.title{
     margin-top: 60px;
 }
 
-.forgeModuleVideo{
-    margin-top:90px;
-}
-.videoDiv{
-    margin-left: 35.333333%;
-}
 .modal-header {
     background-color: #00a0e3;
     color: #fff;
