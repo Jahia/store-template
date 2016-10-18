@@ -477,8 +477,9 @@
 
                 }, "json");
             }
-
-            updateCompletionStatus();
+            <c:if test="${isDeveloper && not viewAsUser}">
+                updateCompletionStatus();
+            </c:if>
 
             // INPUTS
             // Input label
