@@ -67,18 +67,13 @@ a.register-link:hover {
 }
 
 .jumbotron {
-    background-color: transparent;
-    color:#ffffff;
+    background-color: transparent !important;
+    color:#ffffff !important;
 }
 
 .jumbotron h1 {
-    font-weight: 400;
-    text-shadow: 2px 2px 2px rgba(74, 74, 74, 0.8);
-}
-
-.jumbotron h1 p{
-    font-weight: 400;
-    text-shadow: 2px 2px 2px rgba(74, 74, 74, 0.8);
+    font-weight: 400 !important;
+    text-shadow: 2px 2px 2px rgba(74, 74, 74, 0.8) !important;
 }
 
 .jumbotron a, .jumbotron a:hover{
@@ -153,7 +148,7 @@ a.register-link:hover {
 
 .media .media-left img {
     max-width:180px;
-    margin-top: 10px;
+    margin-top: 27px;
 }
 
 .media-left {
@@ -161,7 +156,6 @@ a.register-link:hover {
     border-radius: 2px;
 }
 .media-body {
-    padding-top: 14px;
     position: relative;
     height: 170px;
 }
@@ -188,9 +182,7 @@ a.register-link:hover {
 
 .media-body .rating {
     color: #737373;
-    font-size: 45px;
-    position: relative;
-    bottom: 25px;
+    font-size: 22px;
 }
 .rating-container .empty-stars{
     color:white !important;
@@ -212,9 +204,10 @@ a.register-link:hover {
 h3.media-heading {
     color: #212121;
     font-size: 30px;
-    margin: 20px 36px 12px 0;
     font-weight: 300;
 }
+
+
 
 .affix {
     top: 0;
@@ -248,8 +241,7 @@ nav ul.pull-right{
 }
 
 #descriptionDiv{
-    margin-bottom:20px;
-    padding: 25px 45px;
+    margin:0 15px;
 }
 
 .modal .original_text{
@@ -263,20 +255,21 @@ nav ul.pull-right{
 #content.detail {
     margin-top:-100px;
 }
+
+.media-full-width{
+    width: 100% !important;
+    padding: 10px !important;
+    margin: 0px!important;
+    min-height: unset!important;
+}
+
 .dwl {
-    position: absolute;
-    right:40px;
-    top:40px;
     text-transform: uppercase;
     font-size: 14px;
     font-weight: 700;
-    letter-spacing:1px;
+    letter-spacing: 1px;
     border-radius: 3px;
     border-width: 0;
-}
-.developperEmail{
-    position: relative;
-    top: -40px;
 }
 
 .forge{
@@ -301,11 +294,11 @@ nav ul.pull-right{
 
 .detail a.back-link {
     color: #fff;
-    height: 64px;
+    height: 74px;
     width: 311px;
     position: absolute;
-    padding: 0 23px;
-    top: -10px;
+    padding: 4px 23px;
+    top: -21px;
     left: -10px;
     border-radius: 0;
 }
@@ -329,17 +322,13 @@ nav ul.pull-right{
 }
 
 .detail .media-body.heading{
-    height: 230px;
+    min-height: 230px;
+    margin-top: 27px;
+    padding:0 0 0 15px;
 }
 
 .detail .media-body.heading .rating{
-    margin-top:20px;
-    bottom: 20px;
-}
-
-.detail .labelisation{
-    position: relative;
-    top: -10px;
+    margin-bottom: 5px;
 }
 
 .detailButton{
@@ -367,7 +356,7 @@ nav ul.pull-right{
 }
 
 header.detail{
-    z-index: 9;
+    z-index: 24;
     background-image: none;
     background-color: #00A0E3;
     font-size: 24px;
@@ -390,15 +379,26 @@ header.detail{
 }
 
 .carousel-indicators{
-    z-index:8;
+    z-index:22;
+}
+
+.carousel-inner{
+    z-index:21;
+}
+
+.carousel-link{
+    height:225px;
 }
 
 .carousel-control{
+    background: none!important;
+    border: none!important;
     color: black;
     font-weight: bold;
     padding-top: 5.5%;
-    font-size: 51px;
+    font-size: 120px;
     font-weight:bold;
+    z-index: 26;
 }
 
 
@@ -495,8 +495,7 @@ header.detail{
 
 /*Video*/
 .forgeModuleVideo{
-    margin-left: 29%;
-    max-height: 330px;
+    max-height: 609px;
 }
 
 .video_overlay{
@@ -634,6 +633,7 @@ header.detail{
 }
 
 .review-modal input, .review-modal-form input, .review-modal-form textarea {
+    outline:0;
     font-size: 18px;
     padding: 10px 10px 10px 5px;
     -webkit-appearance: none;
@@ -644,10 +644,6 @@ header.detail{
     border: none;
     border-radius: 0;
     border-bottom: 1px solid #cdcdcd;
-}
-
-.review-modal-form {
-    margin-top: 64px;
 }
 
 
@@ -662,6 +658,9 @@ header.detail{
     height:80%;
 }
 
+#review-modal{
+    height:90%!important;
+}
 #faqModal .modal-content, #howToInstallModal .modal-content{
     height: 100%;
 }
@@ -881,6 +880,13 @@ header.detail{
     margin-bottom: 2px;
 }
 
+h6.title{
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
 .meta-info .content {
     line-height: 24px;
     font-size: 18px;
@@ -903,7 +909,9 @@ header.detail{
 .forgeModuleVideo{
     margin-top:90px;
 }
-
+.videoDiv{
+    margin-left: 35.333333%;
+}
 .modal-header {
     background-color: #00a0e3;
     color: #fff;
@@ -1205,4 +1213,8 @@ header.detail{
 .link_text:hover{
     text-decoration: none;
     cursor: pointer;
+}
+
+.tags-div{
+    margin-top:10px;
 }

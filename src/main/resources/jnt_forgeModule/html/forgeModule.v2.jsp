@@ -51,7 +51,24 @@
         </c:if>
     </c:if>
 </c:if>
-
+<fmt:message key="jnt_forgeEntry.status.community" var="communityLabel"/>
+<fmt:message key="jnt_forgeEntry.status.labs" var="labsLabel"/>
+<fmt:message key="jnt_forgeEntry.status.prereleased" var="prereleasedLabel"/>
+<fmt:message key="jnt_forgeEntry.status.supported" var="supportedLabel"/>
+<c:set var="moduleStatus" value="${not empty currentNode.properties['status'].string?currentNode.properties['status'].string:'community'}"/>
+<c:set var="moduleStatusLabel" value="${communityLabel}"/>
+<c:set var="labelClass" value="label-warning"/>
+<c:if test="${moduleStatus eq 'labs'}">
+    <c:set var="moduleStatusLabel" value="${labsLabel}"/>
+</c:if>
+<c:if test="${moduleStatus eq 'prereleased'}">
+    <c:set var="moduleStatusLabel" value="${prereleasedLabel}"/>
+</c:if>
+<c:if test="${moduleStatus eq 'supported' or currentNode.properties['supportedByJahia'].boolean}">
+    <c:set var="moduleStatusLabel" value="${supportedLabel}"/>
+    <c:set var="moduleStatus" value="supported"/>
+    <c:set var="labelClass" value="label-success"/>
+</c:if>
 <div class="media" data-href="${moduleUrl}" style="cursor: pointer;" onclick='window.location.replace("${moduleUrl}");'>
     <div class="media-left">
         <c:url var="iconUrl" value="${url.currentModule}/img/icon.png"/>
@@ -59,18 +76,13 @@
             <img class="moduleIcon" src="${not empty icon.url ? icon.url : iconUrl}"
                  alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"/>
         </a>
-        <div>
-            <c:if test="${currentNode.properties['reviewedByJahia'].boolean}">
-                <span data-toggle="tooltip" title="<fmt:message key="jnt_forgeEntry.label.admin.reviewedByJahia"/>" class="label label-success badge-reviewedByJahia"><i class="glyphicon glyphicon-ok" style="color:white;"></i></span>
-            </c:if>
-            <c:if test="${currentNode.properties['supportedByJahia'].boolean}">
-                <span data-toggle="tooltip" title="<fmt:message key="jnt_forgeEntry.label.admin.supportedByJahia"/>" class="label label-warning badge-supportedByJahia"><i class="glyphicon glyphicon-wrench" style="color:white;"></i></span>
-            </c:if>
-        </div>
     </div>
     <div class="media-body">
         <h4 class="media-heading">${title}</h4>
         <div class="author">${authorName}</div>
+        <div>
+            <span data-toggle="tooltip" title="${moduleStatusLabel}" class="label ${labelClass} badge-jahiaStatus"><c:if test="${moduleStatus eq 'supported' or currentNodde.properties['supportedByJahia'].boolean}"><i class="glyphicon glyphicon-ok" style="color:white;"></i>&nbsp;</c:if> ${moduleStatusLabel}</span>
+        </div>
         <div class="rating">
             <c:forEach var="i" begin="${worstRating}" end="${bestRating}">
                 <c:choose>
@@ -85,8 +97,8 @@
         </div>
     </div>
     <div class="hide">
-        Description : ${currentNode.properties['description'].string}<br/>
-        How to install : ${currentNode.properties['howToInstall'].string}<br/>
+        ${currentNode.properties['description'].string}<br/>
+        ${currentNode.properties['howToInstall'].string}<br/>
         <c:forEach items="${currentNode.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
             ${currentTag.string}<br/>
         </c:forEach>

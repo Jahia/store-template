@@ -37,6 +37,7 @@
 
         }
         function filterClick(object){
+            console.log("filterclick");
             var obj = $(object);
             var clicked=obj.html();
             var dropdown = obj.parent().parent().parent();
@@ -59,7 +60,7 @@
             //$(".tag_select").select2();
             //Get module tags and apply them on module html classes in order to be able to filter
             var tags = getSortedTags(modulesTags);
-            var columnsNbr = Math.ceil(tags.length/20);
+            var columnsNbr = Math.ceil(tags.length/25);
             //Add tags selectors sorted
             var tagSelectorElement = $("ul#tag");
             var previousTag="";
@@ -152,16 +153,20 @@
         }
     </script>
 </template:addResources>
+<fmt:message key="jnt_forgeEntry.status.community" var="communityLabel"/>
+<fmt:message key="jnt_forgeEntry.status.labs" var="labsLabel"/>
+<fmt:message key="jnt_forgeEntry.status.prereleased" var="prereleasedLabel"/>
+<fmt:message key="jnt_forgeEntry.status.supported" var="supportedLabel"/>
 <ul class="nav navbar-nav navbar-right" data-input="#tag-search">
     <li class="dropdown">
         <a href="#" id="cert-filter" class="dropdown-toggle forge-filter" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><fmt:message key="jnt_storefilter.label.certification"/> <span class="caret"></span></a>
         <ul id="certification" class="dropdown-menu filters cert-filter-list" data-filter-group="certifications">
-            <li class="active default"><a href="#" data-filter=""><fmt:message key="jnt_storefilter.label.all"/> </a></li>
+            <li class="active default"><a href="#" data-filter="" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/> </a></li>
             <li role="separator" class="divider"></li>
-            <li><a href='#' data-filter='.certification-reviewed' onclick="filterClick(this);">Reviewed</a></li>
-            <li><a href='#' data-filter='.certification-supported' onclick="filterClick(this);">Supported</a></li>
-            <li><a href='#' data-filter='.certification-both' onclick="filterClick(this);">Reviewed and supported</a></li>
-            <li><a href='#' data-filter='.certification-none' onclick="filterClick(this);">Not reviewed and not supported</a></li>
+            <li><a href='#' data-filter='.certification-community' onclick="filterClick(this);">${communityLabel}</a></li>
+            <li><a href='#' data-filter='.certification-labs' onclick="filterClick(this);">${labsLabel}</a></li>
+            <li><a href='#' data-filter='.certification-prereleased' onclick="filterClick(this);">${prereleasedLabel}</a></li>
+            <li><a href='#' data-filter='.certification-supported' onclick="filterClick(this);">${supportedLabel}</a></li>
         </ul>
     </li>
     <li class="dropdown hidden-xs hidden-sm hidden-md">
@@ -174,7 +179,7 @@
     <li class="dropdown">
         <a href="#" id="cat-filter" class="dropdown-toggle forge-filter" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><fmt:message key="jnt_storefilter.label.categories"/> <span class="caret"></span></a>
         <ul id="category" class="dropdown-menu filters cat-filter-list" data-filter-group="categories">
-            <li class="active default"><a href="#" data-filter="">ALL</a></li>
+            <li class="active default"><a href="#" data-filter="" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/></a></li>
             <li role="separator" class="divider"></li>
         </ul>
     </li>

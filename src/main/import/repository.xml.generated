@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <content xmlns:j="http://www.jahia.org/jahia/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0">
     <modules jcr:primaryType="jnt:modules">
-        <store-template j:dependencies="bootstrap3-components bootstrap3-core contact default event facets jquery privateappstore search teasers"
+        <store-template j:dependencies="bootstrap3-components bootstrap3-core contact default event facets font-awesome jquery privateappstore search teasers"
                       j:installedModules="store-template"
                       j:modulePriority="0"
                       j:moduleType="module"
@@ -52,46 +52,87 @@
                                      jcr:primaryType="bootstrap3nt:navBarItemLoginForm"
                                      position="right"
                                      view="menu"/>
+                                            <register j:linkType="external"
+                                        jcr:mixinTypes="jmix:externalLink"
+                                        jcr:primaryType="jnt:storeLink"
+                                        position="right">
+                                                <j:translation_fr j:linkTitle="Register"
+                                                   j:url="https://www.jahia.com/fr/home/registration.html"
+                                                   jcr:language="fr"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Register"/>
+                                                <j:translation_de j:linkTitle="Register"
+                                                   j:url="https://www.jahia.com/fr/home/registration.html"
+                                                   jcr:language="de"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Register"/>
+                                                <j:translation_pt j:linkTitle="Register"
+                                                   j:url="https://www.jahia.com/fr/home/registration.html"
+                                                   jcr:language="pt"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Register"/>
+                                                <j:translation_en j:linkTitle="Register"
+                                                   j:url="https://www.jahia.com/fr/home/registration.html"
+                                                   jcr:language="en"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Register"/>
+                                                <j:translation_it j:linkTitle="Register"
+                                                   j:url="https://www.jahia.com/fr/home/registration.html"
+                                                   jcr:language="it"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Register"/>
+                                                <j:translation_es j:linkTitle="Register"
+                                                   j:url="https://www.jahia.com/fr/home/registration.html"
+                                                   jcr:language="es"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Register"/>
+                                            </register>
                                             <back-to-jahia j:linkType="external"
                                              jcr:mixinTypes="jmix:externalLink"
                                              jcr:primaryType="jnt:storeLink"
                                              position="left">
-                                                <j:translation_fr j:linkTitle="Back to Jahia"
+                                                <j:translation_fr j:linkTitle="Back to Jahia.com"
                                                    j:url="http://www.jahia.com"
                                                    jcr:language="fr"
                                                    jcr:mixinTypes="mix:title"
                                                    jcr:primaryType="jnt:translation"
-                                                   jcr:title="Back to Jahia"/>
-                                                <j:translation_de j:linkTitle="Back to Jahia"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_de j:linkTitle="Back to Jahia.com"
                                                    j:url="http://www.jahia.com"
                                                    jcr:language="de"
                                                    jcr:mixinTypes="mix:title"
                                                    jcr:primaryType="jnt:translation"
-                                                   jcr:title="Back to Jahia"/>
-                                                <j:translation_pt j:linkTitle="Back to Jahia"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_pt j:linkTitle="Back to Jahia.com"
                                                    j:url="http://www.jahia.com"
                                                    jcr:language="pt"
                                                    jcr:mixinTypes="mix:title"
                                                    jcr:primaryType="jnt:translation"
-                                                   jcr:title="Back to Jahia"/>
-                                                <j:translation_en j:linkTitle="Back to Jahia"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_en j:linkTitle="Back to Jahia.com"
                                                    j:url="http://www.jahia.com"
                                                    jcr:language="en"
                                                    jcr:mixinTypes="mix:title"
                                                    jcr:primaryType="jnt:translation"
-                                                   jcr:title="Back to Jahia"/>
-                                                <j:translation_it j:linkTitle="Back to Jahia"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_it j:linkTitle="Back to Jahia.com"
                                                    j:url="http://www.jahia.com"
                                                    jcr:language="it"
                                                    jcr:mixinTypes="mix:title"
                                                    jcr:primaryType="jnt:translation"
-                                                   jcr:title="Back to Jahia"/>
-                                                <j:translation_es j:linkTitle="Back to Jahia"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_es j:linkTitle="Back to Jahia.com"
                                                    j:url="http://www.jahia.com"
                                                    jcr:language="es"
                                                    jcr:mixinTypes="mix:title"
                                                    jcr:primaryType="jnt:translation"
-                                                   jcr:title="Back to Jahia"/>
+                                                   jcr:title="Back to Jahia.com"/>
                                             </back-to-jahia>
                                         </header-menu>
                                         <header-container fluid="false" jcr:primaryType="bootstrap3nt:container">
@@ -100,27 +141,27 @@
                                                     <j:translation_fr butonlabel="TAKE A TOUR!"
                                                       jcr:language="fr"
                                                       jcr:primaryType="jnt:translation"
-                                                      title="&lt;p&gt;Welcome to the&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Jahia Public App Store&lt;/p&gt;&#xA;"/>
+                                                      title="Welcome to the&lt;br/&gt;&#xA;Jahia Public App Store"/>
                                                     <j:translation_de butonlabel="TAKE A TOUR!"
                                                       jcr:language="de"
                                                       jcr:primaryType="jnt:translation"
-                                                      title="&lt;p&gt;Welcome to the&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Jahia Public App Store&lt;/p&gt;&#xA;"/>
+                                                      title="Welcome to the&lt;br/&gt;&#xA;Jahia Public App Store"/>
                                                     <j:translation_pt butonlabel="TAKE A TOUR!"
                                                       jcr:language="pt"
                                                       jcr:primaryType="jnt:translation"
-                                                      title="&lt;p&gt;Welcome to the&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Jahia Public App Store&lt;/p&gt;&#xA;"/>
+                                                      title="Welcome to the&lt;br/&gt;&#xA;Jahia Public App Store"/>
                                                     <j:translation_en butonlabel="TAKE A TOUR!"
                                                       jcr:language="en"
                                                       jcr:primaryType="jnt:translation"
-                                                      title="&lt;p&gt;Welcome to the&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Jahia Public App Store&lt;/p&gt;&#xA;"/>
+                                                      title="Welcome to the&lt;br/&gt;&#xA;Jahia Public App Store"/>
                                                     <j:translation_it butonlabel="TAKE A TOUR!"
                                                       jcr:language="it"
                                                       jcr:primaryType="jnt:translation"
-                                                      title="&lt;p&gt;Welcome to the&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Jahia Public App Store&lt;/p&gt;&#xA;"/>
+                                                      title="Welcome to the&lt;br/&gt;&#xA;Jahia Public App Store"/>
                                                     <j:translation_es butonlabel="TAKE A TOUR!"
                                                       jcr:language="es"
                                                       jcr:primaryType="jnt:translation"
-                                                      title="&lt;p&gt;Welcome to the&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Jahia Public App Store&lt;/p&gt;&#xA;"/>
+                                                      title="Welcome to the&lt;br/&gt;&#xA;Jahia Public App Store"/>
                                                 </storetitle>
                                             </header-container>
                                         </header-container>
@@ -147,9 +188,6 @@
                                 j:skin="skins.custom"
                                 jcr:mixinTypes="jmix:customSkin jmix:skinnable"
                                 jcr:primaryType="bootstrap3nt:container"/>
-                                <content-list j:view="header"
-                                   jcr:mixinTypes="jmix:renderable"
-                                   jcr:primaryType="jnt:contentList"/>
                             </pageContent>
                             <store-search-results j:hiddenTemplate="false" jcr:primaryType="jnt:pageTemplate">
                                 <j:translation_fr jcr:language="fr"
@@ -236,6 +274,47 @@
                                      jcr:primaryType="bootstrap3nt:navBarItemLoginForm"
                                      position="right"
                                      view="menu"/>
+                                            <register j:linkType="external"
+                                        jcr:mixinTypes="jmix:externalLink"
+                                        jcr:primaryType="jnt:storeLink"
+                                        position="right">
+                                                <j:translation_fr j:linkTitle="Register"
+                                                   j:url="https://www.jahia.com/fr/home/registration.html"
+                                                   jcr:language="fr"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Register"/>
+                                                <j:translation_de j:linkTitle="Register"
+                                                   j:url="https://www.jahia.com/fr/home/registration.html"
+                                                   jcr:language="de"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Register"/>
+                                                <j:translation_pt j:linkTitle="Register"
+                                                   j:url="https://www.jahia.com/fr/home/registration.html"
+                                                   jcr:language="pt"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Register"/>
+                                                <j:translation_en j:linkTitle="Register"
+                                                   j:url="https://www.jahia.com/fr/home/registration.html"
+                                                   jcr:language="en"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Register"/>
+                                                <j:translation_it j:linkTitle="Register"
+                                                   j:url="https://www.jahia.com/fr/home/registration.html"
+                                                   jcr:language="it"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Register"/>
+                                                <j:translation_es j:linkTitle="Register"
+                                                   j:url="https://www.jahia.com/fr/home/registration.html"
+                                                   jcr:language="es"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Register"/>
+                                            </register>
                                         </header-menu>
                                     </moduleHeader>
                                 </moduleHeader>

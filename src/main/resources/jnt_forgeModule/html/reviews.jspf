@@ -1,10 +1,11 @@
-<div id="review-modal" class="modal fade review-modal" role="dialog">
+<div id="review-modal" class="modal fade review-modal" role="dialog" tabindex="-1">
     <div class="modal-dialog reviewDialog">
         <div class="modal-content">
             <template:tokenizedForm>
                 <form id="reviewForm" action="${currentNodeUrl}.addReview.do" method="post">
                     <input type="hidden" name="returnUrl" value="${currentNode.path}.store-module-v2"/>
                     <div class="modal-header">
+                        <button type="button" class="close pull-right" data-dismiss="modal">&times;</button>
                         <input name="j:lastVote" id="input-id" type="text" class="rating" data-min="0" data-max="5" data-step="1" >
                     </div>
                     <div class="modal-body review-modal-form" id="review">
@@ -79,65 +80,65 @@
 <c:if test="${renderContext.editMode}">
     <fmt:message key="jnt_reviewsList.label.reviewsList"/>
 </c:if>
-    <jcr:node var="reviewsNode" path="${currentNode.path}/reviews"/>
-    <c:choose>
-        <c:when test="${not empty reviewsNode}">
-            <template:addCacheDependency node="${reviewsNode}"/>
+<jcr:node var="reviewsNode" path="${currentNode.path}/reviews"/>
+<c:choose>
+    <c:when test="${not empty reviewsNode}">
+        <template:addCacheDependency node="${reviewsNode}"/>
 
-            <c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
-            <c:if test="${isDeveloper}">
-                <c:set var="viewAsUser" value="${not empty param['viewAs'] && param['viewAs'] eq 'user'}" />
-            </c:if>
-            <c:set var="isForgeAdmin" value="${jcr:hasPermission(renderContext.site, 'jahiaForgeModerateModule')}"/>
+        <c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
+        <c:if test="${isDeveloper}">
+            <c:set var="viewAsUser" value="${not empty param['viewAs'] && param['viewAs'] eq 'user'}" />
+        </c:if>
+        <c:set var="isForgeAdmin" value="${jcr:hasPermission(renderContext.site, 'jahiaForgeModerateModule')}"/>
 
-            <c:if test="${isForgeAdmin}">
+        <c:if test="${isForgeAdmin}">
+
+            <jcr:sql
+                    var="reviews"
+                    sql="SELECT * FROM [jnt:review] WHERE isdescendantnode(['${reviewsNode.path}']) AND reported = true AND (unjustifiedReport IS null OR unjustifiedReport = false) ORDER BY [jcr:created] DESC" />
+
+            <jcr:sql
+                    var="replies"
+                    sql="SELECT * FROM [jnt:review] AS review INNER JOIN [jnt:post] AS reply ON ischildnode(reply,review) WHERE isdescendantnode(review,['${reviewsNode.path}']) AND (review.reported IS null OR review.reported = false) AND reply.reported = true AND (reply.unjustifiedReport IS null OR reply.unjustifiedReport = false) ORDER BY review.[jcr:created] DESC" />
+
+            <c:set var="reportedOverallNbr" value="${functions:length(reviews.nodes) + functions:length(replies.nodes)}"/>
+            <c:set var="isReportedOverall" value="${reportedOverallNbr gt 0}"/>
+        </c:if>
+
+        <c:choose>
+            <c:when test="${isForgeAdmin && isReportedOverall}">
+
+                <div class="reviewsAlert alert">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <c:choose>
+                        <c:when test="${reportedOverallNbr eq 1}">
+                            <fmt:message key="jnt_review.label.admin.alert.reportedReview"/>
+                        </c:when>
+                        <c:otherwise>
+                            <fmt:message key="jnt_review.label.admin.alert.reportedReviews">
+                                <fmt:param value="${reportedOverallNbr}"/>
+                            </fmt:message>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+
+            </c:when>
+            <c:otherwise>
 
                 <jcr:sql
                         var="reviews"
-                        sql="SELECT * FROM [jnt:review] WHERE isdescendantnode(['${reviewsNode.path}']) AND reported = true AND (unjustifiedReport IS null OR unjustifiedReport = false) ORDER BY [jcr:created] DESC" />
+                        sql="SELECT * FROM [jnt:review] WHERE isdescendantnode(['${reviewsNode.path}']) AND content IS NOT null ORDER BY [jcr:created] DESC" />
 
-                <jcr:sql
-                        var="replies"
-                        sql="SELECT * FROM [jnt:review] AS review INNER JOIN [jnt:post] AS reply ON ischildnode(reply,review) WHERE isdescendantnode(review,['${reviewsNode.path}']) AND (review.reported IS null OR review.reported = false) AND reply.reported = true AND (reply.unjustifiedReport IS null OR reply.unjustifiedReport = false) ORDER BY review.[jcr:created] DESC" />
-
-                <c:set var="reportedOverallNbr" value="${functions:length(reviews.nodes) + functions:length(replies.nodes)}"/>
-                <c:set var="isReportedOverall" value="${reportedOverallNbr gt 0}"/>
-            </c:if>
-
-            <c:choose>
-                <c:when test="${isForgeAdmin && isReportedOverall}">
-
-                    <div class="reviewsAlert alert">
+                <c:if test="${isForgeAdmin && functions:length(reviews.nodes) > 0}">
+                    <div class="reviewsAlert alert alert-success">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <c:choose>
-                            <c:when test="${reportedOverallNbr eq 1}">
-                                <fmt:message key="jnt_review.label.admin.alert.reportedReview"/>
-                            </c:when>
-                            <c:otherwise>
-                                <fmt:message key="jnt_review.label.admin.alert.reportedReviews">
-                                    <fmt:param value="${reportedOverallNbr}"/>
-                                </fmt:message>
-                            </c:otherwise>
-                        </c:choose>
+                        <fmt:message key="jnt_review.label.admin.alert.reportedReviewsEmpty"/>
                     </div>
+                </c:if>
 
-                </c:when>
-                <c:otherwise>
-
-                    <jcr:sql
-                            var="reviews"
-                            sql="SELECT * FROM [jnt:review] WHERE isdescendantnode(['${reviewsNode.path}']) AND content IS NOT null ORDER BY [jcr:created] DESC" />
-
-                    <c:if test="${isForgeAdmin && functions:length(reviews.nodes) > 0}">
-                        <div class="reviewsAlert alert alert-success">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <fmt:message key="jnt_review.label.admin.alert.reportedReviewsEmpty"/>
-                        </div>
-                    </c:if>
-
-                </c:otherwise>
-            </c:choose>
-            <div class="review-coments-cont">
+            </c:otherwise>
+        </c:choose>
+        <div class="review-coments-cont">
             <c:forEach items="${reviews.nodes}" var="review" varStatus="revStatus">
 
                 <c:set var="createdBy" value="${review.properties['jcr:createdBy'].string}"/>
@@ -174,99 +175,99 @@
                 </c:choose>
                 <c:set var="content" value="${review.properties['content'].string}" />
                 <c:if test="${fn:length(fn:trim(content)) gt 0}">
-                            <div class="ac-review">
-                                &nbsp;
-                                <c:choose>
-                                    <c:when test="${createdBy ne 'guest'}">
-                                        <c:if test="${not empty revPicture}">
-                                            <img
-                                                    src="${revPicture.node.thumbnailUrls['avatar_60']}"
-                                                    <c:choose>
-                                                        <c:when test="${not empty firstName || not empty lastName}">
-                                                            alt="${fn:escapeXml(firstName)}<c:if test="${not empty lastName}">&nbsp;</c:if>${fn:escapeXml(lastName)}"
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            alt="${createdBy}"
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                    itemprop="image"/>
-                                        </c:if>
-                                        <c:if test="${empty revPicture}"><img alt="" src="<c:url value='/modules/default/images/userbig.png'/>"/></c:if>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <img alt="" src="<c:url value='/modules/default/images/userbig.png'/>"/>
-                                    </c:otherwise>
-                                </c:choose>
-
-
-                                <div class="ac-com-right">
-                                    <div class="com-name">Posted by
-                                        <c:choose>
-                                            <c:when test="${createdBy != 'guest'}">
-                                                ${review.creationUser}
-                                            </c:when>
-                                            <c:otherwise>
-                                                ${pseudo}
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </div>
-        <div><time itemprop="datePublished" datetime="<fmt:formatDate value="${created}" pattern="yyyy-MM-dd" />">
-                    <fmt:formatDate value="${created}" dateStyle="long" />
-                </time></div>
-                                    <div class="com-stars">
-                                        <c:set var="worstRating" value="1"/>
-                                        <c:set var="bestRating" value="5"/>
-                                        <c:forEach var="i" begin="${worstRating}" end="${bestRating}">
+                    <div class="ac-review">
+                        &nbsp;
+                        <c:choose>
+                            <c:when test="${createdBy ne 'guest'}">
+                                <c:if test="${not empty revPicture}">
+                                    <img
+                                            src="${revPicture.node.thumbnailUrls['avatar_60']}"
                                             <c:choose>
-                                                <c:when test="${rating ge i}">
-                                                    &#9733;
+                                                <c:when test="${not empty firstName || not empty lastName}">
+                                                    alt="${fn:escapeXml(firstName)}<c:if test="${not empty lastName}">&nbsp;</c:if>${fn:escapeXml(lastName)}"
                                                 </c:when>
                                                 <c:otherwise>
-                                                    &#9734;
+                                                    alt="${createdBy}"
                                                 </c:otherwise>
                                             </c:choose>
-                                        </c:forEach>
-                                    </div>
-                                    <div class="com-title">${fn:escapeXml(title)}</div>
-                                    <div class="ac-comtxt">${fn:escapeXml(content)}</div>
-                                </div>
+                                            itemprop="image"/>
+                                </c:if>
+                                <c:if test="${empty revPicture}"><img alt="" src="<c:url value='/modules/default/images/userbig.png'/>"/></c:if>
+                            </c:when>
+                            <c:otherwise>
+                                <img alt="" src="<c:url value='/modules/default/images/userbig.png'/>"/>
+                            </c:otherwise>
+                        </c:choose>
+
+
+                        <div class="ac-com-right">
+                            <div class="com-name">Posted by
+                                <c:choose>
+                                    <c:when test="${createdBy != 'guest'}">
+                                        ${review.creationUser}
+                                    </c:when>
+                                    <c:otherwise>
+                                        ${pseudo}
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
+                            <div><time itemprop="datePublished" datetime="<fmt:formatDate value="${created}" pattern="yyyy-MM-dd" />">
+                                <fmt:formatDate value="${created}" dateStyle="long" />
+                            </time></div>
+                            <div class="com-stars">
+                                <c:set var="worstRating" value="1"/>
+                                <c:set var="bestRating" value="5"/>
+                                <c:forEach var="i" begin="${worstRating}" end="${bestRating}">
+                                    <c:choose>
+                                        <c:when test="${rating ge i}">
+                                            &#9733;
+                                        </c:when>
+                                        <c:otherwise>
+                                            &#9734;
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:forEach>
+                            </div>
+                            <div class="com-title">${fn:escapeXml(title)}</div>
+                            <div class="ac-comtxt">${fn:escapeXml(content)}</div>
+                        </div>
+                    </div>
                 </c:if>
             </c:forEach>
+        </div>
+        <c:if test="${isDeveloper && not viewAsUser && functions:length(reviews.nodes) eq 0}">
+            <div class="reviewsAlert alert alert-info">
+                <fmt:message key="jnt_review.label.alert.noReviews"/>
             </div>
-            <c:if test="${isDeveloper && not viewAsUser && functions:length(reviews.nodes) eq 0}">
-                <div class="reviewsAlert alert alert-info">
-                    <fmt:message key="jnt_review.label.alert.noReviews"/>
-                </div>
-            </c:if>
+        </c:if>
 
-            <c:if test="${isForgeAdmin && isReportedOverall}">
+        <c:if test="${isForgeAdmin && isReportedOverall}">
 
-                <c:forEach items="${replies.rows}" var="row" varStatus="status">
+            <c:forEach items="${replies.rows}" var="row" varStatus="status">
 
-                    <c:set var="review" value="${row.nodes['review']}"/>
+                <c:set var="review" value="${row.nodes['review']}"/>
 
-                    <c:if test="${review.identifier ne lastReviewID}">
+                <c:if test="${review.identifier ne lastReviewID}">
 
-                        <c:set var="lastReviewID" value="${review.identifier}"/>
-                        <c:set var="content" value="${review.properties['content'].string}" />
+                    <c:set var="lastReviewID" value="${review.identifier}"/>
+                    <c:set var="content" value="${review.properties['content'].string}" />
 
-                        <c:if test="${fn:length(fn:trim(content)) gt 0}">
+                    <c:if test="${fn:length(fn:trim(content)) gt 0}">
 
-                            <c:if test="${empty reviewsListHeader}">
-                                <h2><fmt:message key="jnt_reviewsList.label.reviewsList"/></h2>
-                                <c:set var="reviewsListHeader" value="true"/>
-                            </c:if>
-
-                            <div class="review-coments-cont">
-                                <template:module node="${review}" view="storev2"/>
-                            </div>
+                        <c:if test="${empty reviewsListHeader}">
+                            <h2><fmt:message key="jnt_reviewsList.label.reviewsList"/></h2>
+                            <c:set var="reviewsListHeader" value="true"/>
                         </c:if>
+
+                        <div class="review-coments-cont">
+                            <template:module node="${review}" view="storev2"/>
+                        </div>
                     </c:if>
-                </c:forEach>
-            </c:if>
-        </c:when>
-        <c:otherwise>
-            <template:addCacheDependency node="${currentNode}"/>
-        </c:otherwise>
-    </c:choose>
+                </c:if>
+            </c:forEach>
+        </c:if>
+    </c:when>
+    <c:otherwise>
+        <template:addCacheDependency node="${currentNode}"/>
+    </c:otherwise>
+</c:choose>

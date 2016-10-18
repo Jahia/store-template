@@ -37,7 +37,7 @@
         <script type="text/javascript">
             modulesTags['${module.identifier}']=[];
             <c:if test="${category != null}">
-                modulesCategories['${category.properties['jcr:title'].string}']="${category.identifier}";
+            modulesCategories['${category.properties['jcr:title'].string}']="${category.identifier}";
             </c:if>
         </script>
         <!-- save current module tags in javascript object for the filters !-->

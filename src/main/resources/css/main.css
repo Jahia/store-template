@@ -96,12 +96,6 @@ header h3 {
     color: #616161;
 }
 
-.media-body .rating {
-    color: #737373;
-    font-size: 22px;
-    position: absolute;
-    bottom: 10px;
-}
 .label {
     border-radius:50px;
     text-transform: uppercase;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <content xmlns:j="http://www.jahia.org/jahia/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0">
     <modules jcr:primaryType="jnt:modules">
-        <store-template j:dependencies="bootstrap3-components bootstrap3-core contact default event facets jquery privateappstore search teasers"
+        <store-template j:dependencies="font-awesome bootstrap3-components bootstrap3-core contact default event facets jquery privateappstore search teasers"
                       j:installedModules="store-template"
                       j:modulePriority="0"
                       j:moduleType="module"
@@ -231,11 +231,13 @@
                                     </results>
                                 </container>
                             </store-search-results>
-                            <store-home j:hiddenTemplate="false" jcr:primaryType="jnt:pageTemplate">
+                            <store-home j:hiddenTemplate="false"
+                                        jcr:mixinTypes="jmix:accessControlled"
+                                        jcr:primaryType="jnt:pageTemplate">
                                 <j:translation_fr jcr:language="fr"
                                        jcr:mixinTypes="mix:title"
                                        jcr:primaryType="jnt:translation"
-                                       jcr:title="Home"/>
+                                       jcr:title="Home v2"/>
                                 <container jcr:primaryType="jnt:contentList">
                                     <forgeModulesList columnsNumber="3"
                                           j:view="storev2"

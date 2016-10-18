@@ -17,6 +17,8 @@
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <template:addResources type="css" resources="appStore.css"/>
+<template:addResources type="javascript" resources="libraries/lity.min.js"/>
+<template:addResources type="css" resources="libraries/lity.min.css"/>
 <template:addResources type="inlinejavascript">
     <script type="text/javascript">
 
@@ -38,7 +40,7 @@
         <div class="carousel-inner">
             <c:forEach var="moduleScreenshot" items="${pictures}" varStatus="status">
                 <div class="${status.first ? 'active ' : ''}item">
-                    <template:module node="${moduleScreenshot}" view="${moduleMap.subNodesView}" editable="${moduleMap.editable}"/>
+                    <a class="col-md-offset-4 col-sm-offset-3 col-md-6" href="${moduleScreenshot.url}" alt="${moduleScreenshot.displayableName}" data-lity><img src="${moduleScreenshot.url}" alt="${moduleScreenshot.displayableName}"/></a>
                 </div>
             </c:forEach>
         </div>

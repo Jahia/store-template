@@ -4,22 +4,14 @@
 [jmix:alink] mixin
  - j:linkType (string, choicelist[linkTypeInitializer,resourceBundle]) = 'internal' autocreated mandatory
 
-[jnt:storeTitle] > jnt:content, jmix:siteComponent
+[jnt:storeTitle] > jnt:content, jmix:siteComponent, jmix:alink
 - title (string, richtext) mandatory internationalized
 - butonlabel (string) mandatory internationalized
 
 [jnt:storeFilter] > jnt:content, bootstrap3mix:navBarItem
 
-[jmix:forgeSettings] mixin
-   extends = jnt:virtualsite
- - forgeSettingsUrl (string)
- - forgeSettingsId (string)
- - forgeSettingsUser (string)
- - forgeSettingsPassword (string) hidden
- - rootCategory (weakreference)
-
-[jnt:forgeSettings] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent
-
-[jnt:categorySettings] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent
-
 [jnt:storeLink] > jnt:content, mix:title, jmix:alink, bootstrap3mix:navBarItem, jmix:studioOnly
+
+[jmix:forgeElement] mixin
+ - forcedRating (string) hidden
+ - status (string, choicelist[resourceBundle]) = 'community' autocreated < 'community', 'labs', 'prereleased', 'supported'
