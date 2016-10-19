@@ -20,7 +20,7 @@ footer p {
 
 /*Home Page*/
 header.home {
-    background: url(../img/cover_optimized.jpg) no-repeat center center;
+    background: url(../img/cover_optimized2.jpg) no-repeat center 30%;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -160,7 +160,7 @@ a.register-link:hover {
     border-radius: 2px;
 }
 .content {
-    padding: 25px 45px;
+    /*padding: 25px 45px;*/
     line-height: 27px;
     font-size: 18px;
     font-weight: 400;
@@ -1262,6 +1262,6 @@ h6.title{
         width: auto;
     }
     .meta-info {
-        width: auto;
+        width: 100%;
     }
 }

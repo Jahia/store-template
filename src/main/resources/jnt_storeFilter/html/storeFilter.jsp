@@ -163,9 +163,12 @@
         <ul id="certification" class="dropdown-menu filters cert-filter-list" data-filter-group="certifications">
             <li class="active default"><a href="#" data-filter="" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/> </a></li>
             <li role="separator" class="divider"></li>
+            <li><a href='#' data-filter='.certification-none' onclick="filterClick(this);">${communityLabel}</a></li>
+            <%--
             <li><a href='#' data-filter='.certification-community' onclick="filterClick(this);">${communityLabel}</a></li>
             <li><a href='#' data-filter='.certification-labs' onclick="filterClick(this);">${labsLabel}</a></li>
             <li><a href='#' data-filter='.certification-prereleased' onclick="filterClick(this);">${prereleasedLabel}</a></li>
+            --%>
             <li><a href='#' data-filter='.certification-supported' onclick="filterClick(this);">${supportedLabel}</a></li>
         </ul>
     </li>

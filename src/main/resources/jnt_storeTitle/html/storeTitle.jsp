@@ -15,7 +15,7 @@
     <c:when test="${linkType == 'internal'}">
         <c:set var="linkNode" value="${currentNode.properties['j:linknode'].node}"/>
         <c:set var="linkTitle" value="${linkNode.displayableName}"/>
-        <c:url var="linkUrl" value="${url.base}${linkNode.path}.html"/>
+        <c:url var="linkUrl" value="${linkNode.url}"/>
     </c:when>
     <c:when test="${linkType == 'external'}">
         <c:set var="linkTitle" value="${currentNode.properties['j:linkTitle'].string}"/>
@@ -34,6 +34,9 @@
         </c:if>
     </c:otherwise>
 </c:choose>
+<c:if test="${empty linkUrl}">
+    <c:url var="linkUrl" value="${renderContext.site.home.url}"/>
+</c:if>
 <div class="jumbotron">
     <a href="${linkUrl}"><h1>${currentNode.properties['title'].string}</h1></a>
 </div>
