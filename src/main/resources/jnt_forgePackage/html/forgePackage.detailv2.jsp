@@ -19,7 +19,7 @@
 <%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
-<%@include file="headerv2.jspf" %>
+<%@include file="../../commons/headerv2.jspf" %>
 <template:addResources type="css" resources="libraries/star-rating.min.css, jquery-ui.smoothness.css"/>
 <template:addResources type="css" resources="libraries/bootstrap3-wysihtml5.min.css,
                                              libraries/bootstrap-editable.css,
@@ -47,11 +47,32 @@
 <template:addCacheDependency flushOnPathMatchingRegexp="${currentNode.path}/.*"/>
 <jcr:sql
         var="query"
-        sql="SELECT * FROM [jnt:forgeModuleVersion] AS moduleVersion
-            WHERE isdescendantnode(moduleVersion,['${currentNode.path}'])"
+        sql="SELECT * FROM [jnt:forgePackageVersion] AS packageVersion
+            WHERE isdescendantnode(packageVersion,['${currentNode.path}'])"
+/>
+<jcr:sql
+        var="filesQuery"
+        sql="SELECT * FROM [jnt:forgePackageVersion] AS packageVersion
+            WHERE isdescendantnode(packageVersion,['${currentNode.path}'])"
 />
 <c:set var="sortedModules" value="${forge:sortByVersion(query.nodes)}"/>
-<c:set target="${moduleMap}" property="latestVersion" value="${forge:latestVersion(sortedModules)}"/>
+<c:set target="${moduleMap}" property="latestVersion" value="${forge:latestVersion(sortedModules)}" />
+<c:set target="${moduleMap}" property="previousVersions" value="${forge:previousVersions(sortedModules)}" />
+<c:set target="${moduleMap}" property="nextVersions" value="${forge:nextVersions(sortedModules)}" />
+<c:choose>
+    <c:when test="${empty moduleMap.latestVersion}">
+        <c:set var="versionNode" value="${sortedModules[0]}"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="versionNode" value="${moduleMap.latestVersion}"/>
+    </c:otherwise>
+</c:choose>
+<jcr:sql
+        var="modulesQuery"
+        sql="SELECT * FROM [jnt:forgePackageModule] AS packageVersion
+        WHERE isdescendantnode(packageVersion,['${versionNode.path}'])
+        ORDER BY [moduleName]" />
+<c:set target="${moduleMap}" property="submodules" value="${modulesQuery.nodes}" />
 <template:include view="hidden.sql">
     <template:param name="getLatestVersion" value="true"/>
 </template:include>
@@ -146,8 +167,6 @@
 
 <c:set var="description" value="${currentNode.properties['description'].string}"/>
 <c:url var="iconUrl" value="${url.currentModule}/img/icon.png"/>
-
-<%@include file="../../commons/authorName.jspf" %>
 
 <jcr:nodeProperty node="${currentNode}" name="j:tagList" var="assignedTags"/>
 <c:set var="reviewedByJahia" value="${currentNode.properties['reviewedByJahia'].boolean}"/>
@@ -552,19 +571,21 @@
             <div class="col-md-2 col-sm-12 hidden-xs">
                 <c:choose>
                     <c:when test="${not empty moduleMap.latestVersion}">
-                        <jcr:nodeProperty node="${moduleMap.latestVersion}" name="versionNumber"
-                                          var="versionNumber"/>
-                        <a class="pull-right btn btn-success dwl topmargin"
-                           href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>"
-                           <c:if test="${not isDeveloper}">onclick="countDownload('<c:url
-                                   value="${url.base}${currentNode.path}"/>')"
-                        </c:if>>
-                            <i class="fa fa-download"></i>
-                            <fmt:message key="jnt_forgeEntry.label.downloadCurrentVersion">
-                                <fmt:param value="${versionNumber.string}"/>
-                            </fmt:message>
+                        <jcr:nodeProperty node="${moduleMap.latestVersion}" name="versionNumber" var="versionNumber"/>
+                        <c:set var="versionFiles" value="${jcr:getChildrenOfType(moduleMap.latestVersion, 'jnt:file')}"/>
+                        <c:forEach items="${versionFiles}" var="file" varStatus="status">
+                            <a class="pull-right btn btn-success dwl topmargin"
+                               href="<c:url value="${url.context}${url.files}${file.path}" context="/"/>"
+                               <c:if test="${not isDeveloper}">onclick="countDownload('<c:url
+                                       value="${url.base}${currentNode.path}"/>')"
+                            </c:if>>
+                                <i class="fa fa-download"></i>
+                                <fmt:message key="jnt_forgeEntry.label.downloadCurrentVersion">
+                                    <fmt:param value="${versionNumber.string}"/>
+                                </fmt:message>
 
-                        </a>
+                            </a>
+                        </c:forEach>
                     </c:when>
 
                     <c:otherwise>
@@ -1028,7 +1049,7 @@
                         </div>
                     </c:if>
                     <h4><fmt:message key="jnt_review.title"/></h4>
-                    <%@ include file="reviews.jspf" %>
+                    <%@ include file="../../commons/reviews.jspf" %>
                 </div>
             </div>
         </div>

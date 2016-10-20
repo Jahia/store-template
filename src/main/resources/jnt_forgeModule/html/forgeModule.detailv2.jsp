@@ -19,7 +19,7 @@
 <%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
-<%@include file="headerv2.jspf" %>
+<%@include file="../../commons/headerv2.jspf" %>
 <template:addResources type="css" resources="libraries/star-rating.min.css, jquery-ui.smoothness.css"/>
 <template:addResources type="css" resources="libraries/bootstrap3-wysihtml5.min.css,
                                              libraries/bootstrap-editable.css,
@@ -147,8 +147,6 @@
 <c:set var="description" value="${currentNode.properties['description'].string}"/>
 <c:url var="iconUrl" value="${url.currentModule}/img/icon.png"/>
 
-<%@include file="../../commons/authorName.jspf" %>
-
 <jcr:nodeProperty node="${currentNode}" name="j:tagList" var="assignedTags"/>
 <c:set var="reviewedByJahia" value="${currentNode.properties['reviewedByJahia'].boolean}"/>
 <c:set var="supportedByJahia" value="${currentNode.properties['supportedByJahia'].boolean}"/>
@@ -177,7 +175,6 @@
         categories.push({value: '${moduleCategory.identifier}', text: '${moduleCategory.displayableName}'});
         </c:forEach>
         </c:if>
-
         /*Call publication action*/
         function publishModule(attribute) {
             var btn = $('#publishModule-${id}');
@@ -199,7 +196,6 @@
                 }
             }, "json");
         }
-
         function deleteModule() {
             var btn = $(this);
             if (!btn.hasClass('disabled')) {
@@ -209,7 +205,6 @@
                 }, "json");
             }
         }
-
         function addTag() {
             var term = $(".tagInput").val();
             var data = {
@@ -225,12 +220,10 @@
                 }
             };
             var myJSONText = JSON.stringify(data);
-
             jahiaAPIStandardCall(context, "live", currentLocale, "nodes", nodeId, "PUT", myJSONText, function (a, b) {
             }, function (a, b) {
             });
         }
-
         $(document).ready(function () {
             //Tag Management
             //Display tags with different colors
@@ -245,7 +238,6 @@
             $('#editPictures, #editVideos').on('hidden.bs.modal', function () {
                 window.location.reload();
             });
-
             //Make the tags Editable with a popover
             $('#tags-${id}').editable({
                 inputclass: 'input-large',
@@ -272,11 +264,9 @@
                             };
                         }
                     },
-
                     // Take default tags from the input value
                     initSelection: function (element, callback) {
                         var data = [];
-
                         function splitVal(string, separator) {
                             var val, i, l;
                             if (string === null || string.length < 1) return [];
@@ -284,14 +274,12 @@
                             for (i = 0, l = val.length; i < l; i = i + 1) val[i] = $.trim(val[i]);
                             return val;
                         }
-
                         $(splitVal(element.val(), ",")).each(function () {
                             data.push({
                                 id: this,
                                 text: this
                             });
                         });
-
                         callback(data);
                     },
                     formatSelection: function (item) {
@@ -332,7 +320,6 @@
                 <jsp:param name="postURL" value='${postURL}'/>
                 </jsp:include>
             });
-
             $('#status-${id}').editable({
                 source: [{value: 'community', text: '${communityLabel}'},
                     {value: 'labs', text: '${labsLabel}'},
@@ -351,19 +338,16 @@
                     }"/>
                 </jsp:include>
             });
-
             <c:if test="${empty authorOrganisation}">
             $('#authorName-information-${id}').on('shown', function (e, editable) {
                 $(this).next('.editable-container').find('.editable-input select option[value="organisation"]').attr("disabled", "true");
             });
             </c:if>
-
             <c:if test="${empty authorFullName || authorFullName eq authorUsername}">
             $('#authorName-information-${id}').on('shown', function (e, editable) {
                 $(this).next('.editable-container').find('.editable-input select option[value="fullName"]').attr("disabled", "true");
             });
             </c:if>
-
             $('#authorName-information-${id}').editable({
                 source: [{value: 'username', text: '${authorUsername}'},
                     {
@@ -380,7 +364,6 @@
                 <jsp:param name="customSuccess" value="document.location = '${currentNode.url}';"/>
                 </jsp:include>
             });
-
             //Video Remove Function
             <c:if test="${hasVideoNode}">
             $('#remove-video-${id}').click(function () {
@@ -388,40 +371,29 @@
                 }, "json");
             });
             </c:if>
-
-
             //Initializing ck editors
             $('.ckarea').each(function (index, object) {
                 var textarea = $(object);
                 CKEDITOR.replace(textarea.attr('id'));
             });
-
             $('#moduleForgeAdminPanel').find('.forgeAdminBtn').click(function () {
-
                 var btn = $(this);
                 var dataName = btn.attr('data-name');
                 var dataValue = !(btn.attr('data-value') === 'true');
                 var data = {};
-
                 data[dataName] = dataValue;
                 data['jcrMethodToCall'] = 'put';
                 $.post('<c:url value='${url.base}${currentNode.path}'/>', data, function (result) {
                     btn.toggleClass('btn-success btn-danger');
                     btn.attr('data-value', result[dataName]);
                 }, "json")
-
             });
-
             function updateCompletionStatus() {
-
                 $.get('<c:url value='${url.base}${currentNode.path}.calculateCompletion.do'/>', function (data) {
-
                     var completion = data['completion'];
                     var canBePublished = data['canBePublished'];
-
                     var bar = $('#completion-${id}').css('width', completion + "%");
                     bar.children('.ratingCount').html(completion + "%");
-
                     if (completion < 60) {
                         bar.removeClass('progress-bar-success');
                         bar.removeClass('progress-bar-warning');
@@ -437,15 +409,12 @@
                         bar.removeClass('progress-bar-warning');
                         bar.addClass('progress-bar-success');
                     }
-
                     if (canBePublished)
                         $('#publishModule-${id}').removeClass('disabled');
                     else
                         $('#publishModule-${id}').addClass('disabled').removeClass("btn-danger");
-
                     var todoList = $('#todoList-${id}');
                     var todoListWrapper = $('#todoListWrapper-${id}');
-
                     if (completion == 100) {
                         todoListWrapper.slideUp();
                         todoList.empty().addClass('completed');
@@ -459,32 +428,25 @@
                             }
                             items.push('<li' + (val['mandatory'] ? ' class="todoField text-error"' : 'class="todoField"' ) + '>' + val['name'] + '</li>');
                         });
-
                         if (!hasMandatoryLeft) {
                             $('span#mandatoryTodoList').hide();
                         }
                         else {
                             $('span#mandatoryTodoList').show();
                         }
-
                         todoList.empty().append(items.join(''));
-
                         if (todoList.hasClass('completed')) {
                             todoListWrapper.slideDown();
                             todoList.removeClass('completed');
                         }
                     }
-
                 }, "json");
             }
-
             <c:if test="${isDeveloper && not viewAsUser}">
             updateCompletionStatus();
             </c:if>
-
             // INPUTS
             // Input label
-
             $('input, textarea').blur(function () {
                 var $this = $(this);
                 if ($this.val())
@@ -492,7 +454,6 @@
                 else
                     $this.removeClass('used');
             });
-
         });
     </script>
 </template:addResources>
@@ -587,6 +548,7 @@
                 </div>
             </div>
             <div class="col-md-2 col-sm-12 hidden-xs">
+                ${moduleMap.latestVersion.properties.url.string}
                 <c:choose>
                     <c:when test="${not empty moduleMap.latestVersion}">
                         <jcr:nodeProperty node="${moduleMap.latestVersion}" name="versionNumber"
@@ -1065,7 +1027,7 @@
                         </div>
                     </c:if>
                     <h4><fmt:message key="jnt_review.title"/></h4>
-                    <%@ include file="reviews.jspf" %>
+                    <%@ include file="../../commons/reviews.jspf" %>
                 </div>
             </div>
         </div>

@@ -18,6 +18,8 @@
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 
 <template:addResources type="javascript" resources="jquery.js, html5shiv.js, forge.js"/>
+<template:addResources type="css" resources="forge.css"/>
+
 <c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
 <c:if test="${isDeveloper}">
     <c:set var="viewAsUser" value="${not empty param['viewAs'] && param['viewAs'] eq 'user'}" />
@@ -32,7 +34,7 @@
     <c:set var="icon" value="${iconItem}"/>
 </c:forEach>
 
-<%@include file="../../commons/authorName.jspf"%>
+<%@include file="authorName.jspf"%>
 
 <c:set var="nbOfVotes"
        value="${not empty currentNode.properties['j:nbOfVotes'] ? currentNode.properties['j:nbOfVotes'].long : null}"/>

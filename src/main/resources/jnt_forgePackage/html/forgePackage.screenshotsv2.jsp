@@ -16,37 +16,33 @@
 <%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
+<jcr:node var="iconFolder" path="${currentNode.path}/icon" />
 
-<template:addResources type="javascript" resources="jquery.js, html5shiv.js, forge.js"/>
-<template:addResources type="css" resources="forge.css"/>
-
-<c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
-<c:if test="${isDeveloper}">
-    <c:set var="viewAsUser" value="${not empty param['viewAs'] && param['viewAs'] eq 'user'}" />
-</c:if>
-<c:set var="isForgeAdmin" value="${jcr:hasPermission(renderContext.site, 'jahiaForgeModerateModule')}"/>
-
-<c:set var="id" value="${currentNode.identifier}"/>
-<c:set var="title" value="${currentNode.properties['jcr:title'].string}"/>
-
-<jcr:node var="iconFolder" path="${renderContext.mainResource.node.path}/icon" />
 <c:forEach var="iconItem" items="${iconFolder.nodes}">
     <c:set var="icon" value="${iconItem}"/>
 </c:forEach>
+<c:url var="iconUrl" value="${url.currentModule}/img/icon.png"/>
 
-<%@include file="../../commons/authorName.jspf"%>
+<template:addResources type="javascript" resources="html5shiv.js"/>
 
-<c:set var="nbOfVotes"
-       value="${not empty currentNode.properties['j:nbOfVotes'] ? currentNode.properties['j:nbOfVotes'].long : null}"/>
-
-<template:include view="hidden.sql">
-    <template:param name="getLatestVersion" value="true"/>
-</template:include>
-<template:addCacheDependency flushOnPathMatchingRegexp="${currentNode.path}/.*"/>
-
-<c:if test="${isDeveloper && not viewAsUser}">
-
-    <c:url var="postURL" value="${url.base}${currentNode.path}"/>
-    <fmt:message var="labelEmptyOrganisation" key="jnt_forgeEntry.label.developer.emptyOrganisation"/>
-    <fmt:message var="labelEmptyFullName" key="jnt_forgeEntry.label.developer.emptyFullName"/>
+<c:set var="id" value="${currentNode.identifier}"/>
+<c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
+<c:if test="${isDeveloper}">
+    <c:set var="viewAsUser" value="${not empty param['viewAs'] && param['viewAs'] eq 'user'}"/>
 </c:if>
+<jcr:node var="screenshots" path="${currentNode.path}/screenshots"/>
+<c:set var="isEmptyTab" value="false"/>
+
+<c:if test="${(not isDeveloper || viewAsUser) && empty jcr:getChildrenOfType(screenshots, 'jnt:file')}">
+    <template:addResources type="inlinejavascript">
+        <script type="text/javascript">
+            $(document).ready(function() {
+
+            });
+        </script>
+    </template:addResources>
+</c:if>
+<div id="fileList${renderContext.mainResource.node.identifier}">
+        <template:addCacheDependency path="${currentNode.path}/screenshots"/>
+        <template:module node="${screenshots}" view="editv2"/>
+</div>
