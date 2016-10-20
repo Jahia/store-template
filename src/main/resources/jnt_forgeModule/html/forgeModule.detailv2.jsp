@@ -548,7 +548,6 @@
                 </div>
             </div>
             <div class="col-md-2 col-sm-12 hidden-xs">
-                ${moduleMap.latestVersion.properties.url.string}
                 <c:choose>
                     <c:when test="${not empty moduleMap.latestVersion}">
                         <jcr:nodeProperty node="${moduleMap.latestVersion}" name="versionNumber"

@@ -57,7 +57,7 @@
     <groupId>org.jahia.modules</groupId>
     <artifactId>store-template</artifactId>
     <name>Jahia Store Template</name>
-    <version>1.6-SNAPSHOT</version>
+    <version>1.7-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>This is the custom profile module (Jahia Store Template) for running on a Digital Experience Manager server.</description>
 
