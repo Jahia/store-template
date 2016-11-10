@@ -1265,3 +1265,24 @@ h6.title{
         width: 100%;
     }
 }
+
+/*Settings*/
+.tabbable.jnt_bootstrapTabularList{
+    background: white;
+    position: relative;
+    top: -100px;
+    padding: 0px 20px 20px 20px;
+    margin-left: 12%;
+    margin-right: 12%;
+    min-height: 700px;
+}
+
+.box.box-rounded{
+    background: white;
+    margin-left: 12%;
+    margin-right: 12%;
+    position: relative;
+    top: -100px;
+    min-height: 700px;
+    padding: 20px 20px 20px 20px;
+}
