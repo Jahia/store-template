@@ -47,7 +47,7 @@
 <c:set target="${moduleMap}" property="latestVersion" value="${forge:latestVersion(sortedModules)}" />
 <c:set target="${moduleMap}" property="previousVersions" value="${forge:previousVersions(sortedModules)}" />
 <c:set target="${moduleMap}" property="nextVersions" value="${forge:nextVersions(sortedModules)}" />
-<c:url value='${url.base}${renderContext.mainResource.node.path}.updateModuleIcon.do' var="updateIcon"/>
+<c:url value='${url.base}${renderContext.site.path}/contents/modules-repository.createEntryFromJar.do' var="updateModule"/>
 <template:include view="hidden.sql">
     <template:param name="getLatestVersion" value="true"/>
     <template:param name="getPreviousVersions" value="true"/>
@@ -86,11 +86,10 @@
 <div class="container versionUploadContainer">
     <c:if test="${isDeveloper && not viewAsUser}">
         <h3><fmt:message key="jnt_forgeModule.uploadNewVersion"/></h3>
-            <c:url value='${url.base}${currentNode.path}' var="postURL"/>
             <div id="jarUploadFormRow" class="row col-xs-12">
                 <template:tokenizedForm>
                 <form class="jarFile_upload" id="jar_file_upload_form_${currentNode.identifier}"
-                      action="${updateIcon}" method="POST" enctype="multipart/form-data" onsubmit="return sendFileForModule()">
+                      action="${jarUploadPostUrl}" method="POST" enctype="multipart/form-data" onsubmit="return sendFileForModule()">
                     <input id="jar_file_upload_${currentNode.identifier}" type="file" class="file" data-preview-file-type="text" name="file"/>
                     <input  type="hidden" name="redirectURL" value="${renderContext.mainResource.node.path}.changelog"/>
                 </form>

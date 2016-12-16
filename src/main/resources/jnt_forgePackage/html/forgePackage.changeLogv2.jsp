@@ -90,7 +90,7 @@
             <div id="jarUploadFormRow" class="row col-xs-12">
                 <template:tokenizedForm>
                 <form class="jarFile_upload" id="jar_file_upload_form_${currentNode.identifier}"
-                      action="${updateIcon}" method="POST" enctype="multipart/form-data" onsubmit="return sendFileForModule()">
+                      action="${jarUploadPostUrl}" method="POST" enctype="multipart/form-data" onsubmit="return sendFileForModule()">
                     <input id="jar_file_upload_${currentNode.identifier}" type="file" class="file" data-preview-file-type="text" name="file"/>
                     <input  type="hidden" name="redirectURL" value="${renderContext.mainResource.node.path}.changelog"/>
                 </form>
