@@ -5,10 +5,11 @@
 <%-- Les styles--%>
 <c:set var="isHomePage" value="${renderContext.mainResource.node.identifier eq renderContext.site.home.identifier}"/>
 <c:set var="isSearchResultPage" value="${(renderContext.mainResource.node.primaryNodeType.name eq 'jnt:page') and (renderContext.mainResource.node.name eq 'search-results')}"/>
+<c:set var="isAdminPage" value="${renderContext.mainResource.resolvedTemplate eq 'store-admin'}"/>
 <c:if test="${isHomePage or isSearchResultPage}">
     <template:addResources type="javascript" resources="libraries/isotope.min.js"/>
 </c:if>
-<template:addResources type="css" resources="appstore.css"/>
+<template:addResources type="css" resources="appStore.css"/>
 <template:addResources type="javascript" resources="libraries/storeUtils.js"/>
 <header
         <c:choose>
@@ -16,7 +17,7 @@
                 class="home"
             </c:when>
             <c:otherwise>
-                class="detail fixed" data-spy="affix" data-offset-top="0"
+                class="detail fixed <c:if test="${isAdminPage}">admin-header</c:if>" data-spy="affix" data-offset-top="0"
             </c:otherwise>
         </c:choose>
 >

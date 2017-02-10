@@ -114,10 +114,10 @@
                     <c:when test="${not empty picture}">
                         <template:addCacheDependency flushOnPathMatchingRegexp="${userNode.path}/files/profile/.*"/>
                         <c:url value="${picture.node.thumbnailUrls['avatar_120']}" context="/" var="pictureUrl"/>
-                        <img class="userAvatar" src="${pictureUrl}" alt="${fn:escapeXml(firstname)} ${fn:escapeXml(lastname)}" height="16"/>
+                        <img class="userAvatar" src="${pictureUrl}" alt="${fn:escapeXml(firstname)} ${fn:escapeXml(lastname)}" width="16"/>
                     </c:when>
                     <c:otherwise>
-                        <img class="userAvatar" src="<c:url value='${url.currentModule}/img/user-black.png'/>" alt="${fn:escapeXml(firstname)} ${fn:escapeXml(lastname)}" height="16"/>
+                        <img class="userAvatar" src="<c:url value='${url.currentModule}/img/user-black.png'/>" alt="${fn:escapeXml(firstname)} ${fn:escapeXml(lastname)}" width="16"/>
                     </c:otherwise>
                 </c:choose>
                     ${fn:escapeXml(empty firstname and empty lastname ? userNode.name : firstname)}&nbsp;${fn:escapeXml(lastname)} <span class="caret"></span>
@@ -126,7 +126,7 @@
                 <c:if test="${isForgeAdmin}">
                     <li>
                         <c:url value='${renderContext.site.url}' var="settingsUrl"/>
-                        <a href="${fn:replace(settingsUrl,'.html','.store-admin2.html')}">
+                        <a href="${fn:replace(settingsUrl,'.html','.store-admin.html')}">
                             <i class="glyphicon glyphicon-cog"></i>
                             <fmt:message key="jnt_forgeModule.forgeSetting"/>
                         </a>

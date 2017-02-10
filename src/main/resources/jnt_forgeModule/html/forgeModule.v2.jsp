@@ -16,6 +16,7 @@
 <%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
+<c:set var="isAdminPage" value="${renderContext.mainResource.resolvedTemplate eq 'my-modules'}"/>
 <c:set var="id" value="${currentNode.identifier}"/>
 <c:set var="title" value="${currentNode.properties['jcr:title'].string}"/>
 <jcr:node var="iconFolder" path="${currentNode.path}/icon" />
@@ -69,38 +70,40 @@
     <c:set var="moduleStatus" value="supported"/>
     <c:set var="labelClass" value="label-success"/>
 </c:if>
-<div class="media" data-href="${moduleUrl}" style="cursor: pointer;" onclick='window.location.replace("${moduleUrl}");'>
-    <div class="media-left">
-        <c:url var="iconUrl" value="${url.currentModule}/img/icon.png"/>
-        <a href="${moduleUrl}">
-            <img class="moduleIcon" src="${not empty icon.url ? icon.url : iconUrl}"
-                 alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"/>
-        </a>
-    </div>
-    <div class="media-body">
-        <h4 class="media-heading">${title}</h4>
-        <div class="author">${authorName}</div>
-        <div>
-            <span data-toggle="tooltip" title="${moduleStatusLabel}" class="label ${labelClass} badge-jahiaStatus"><c:if test="${moduleStatus eq 'supported' or currentNodde.properties['supportedByJahia'].boolean}"><i class="glyphicon glyphicon-ok" style="color:white;"></i>&nbsp;</c:if> ${moduleStatusLabel}</span>
+<c:if test="${currentNode.properties['published'].boolean or isAdminPage}">
+    <div class="media" data-href="${moduleUrl}" style="cursor: pointer; <c:if test="${isAdminPage}">height:180px;  border: 1px solid grey;</c:if>" onclick='window.location.replace("${moduleUrl}");'>
+        <div class="media-left">
+            <c:url var="iconUrl" value="${url.currentModule}/img/icon.png"/>
+            <a href="${moduleUrl}">
+                <img class="moduleIcon" src="${not empty icon.url ? icon.url : iconUrl}"
+                     alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"/>
+            </a>
         </div>
-        <div class="rating">
-            <c:forEach var="i" begin="${worstRating}" end="${bestRating}">
-                <c:choose>
-                    <c:when test="${entireRating ge i}">
-                        &#9733;
-                    </c:when>
-                    <c:otherwise>
-                        &#9734;
-                    </c:otherwise>
-                </c:choose>
+        <div class="media-body">
+            <h4 class="media-heading">${title}</h4>
+            <div class="author">${authorName}</div>
+            <div>
+                <span data-toggle="tooltip" title="${moduleStatusLabel}" class="label ${labelClass} badge-jahiaStatus"><c:if test="${moduleStatus eq 'supported' or currentNodde.properties['supportedByJahia'].boolean}"><i class="glyphicon glyphicon-ok" style="color:white;"></i>&nbsp;</c:if> ${moduleStatusLabel}</span>
+            </div>
+            <div class="rating">
+                <c:forEach var="i" begin="${worstRating}" end="${bestRating}">
+                    <c:choose>
+                        <c:when test="${entireRating ge i}">
+                            &#9733;
+                        </c:when>
+                        <c:otherwise>
+                            &#9734;
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+            </div>
+        </div>
+        <div class="hide">
+                ${currentNode.properties['description'].string}<br/>
+                ${currentNode.properties['howToInstall'].string}<br/>
+            <c:forEach items="${currentNode.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
+                ${currentTag.string}<br/>
             </c:forEach>
         </div>
     </div>
-    <div class="hide">
-        ${currentNode.properties['description'].string}<br/>
-        ${currentNode.properties['howToInstall'].string}<br/>
-        <c:forEach items="${currentNode.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
-            ${currentTag.string}<br/>
-        </c:forEach>
-    </div>
-</div>
+</c:if>

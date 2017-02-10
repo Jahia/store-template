@@ -16,6 +16,10 @@
 <%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
+<c:set var="isAdminPage" value="${renderContext.mainResource.resolvedTemplate eq 'my-modules'}"/>
+<c:if test="${isAdminPage}">
+    <template:addResources type="css" resources="appStore.css"/>
+</c:if>
 <c:set var="id" value="${currentNode.identifier}"/>
 <c:set var="title" value="${currentNode.properties['jcr:title'].string}"/>
 <jcr:node var="iconFolder" path="${currentNode.path}/icon" />
@@ -52,8 +56,9 @@
         </c:if>
     </c:if>
 </c:if>
-
-<div class="media" data-href="${moduleUrl}" style="cursor: pointer;" onclick='window.location.replace("${moduleUrl}");'>
+<c:set var="isAdminPage" value="${renderContext.mainResource.resolvedTemplate eq 'my-modules'}"/>
+<c:if test="${currentNode.properties['published'].boolean or isAdminPage}">
+<div class="media" data-href="${moduleUrl}" style="cursor: pointer; <c:if test="${isAdminPage}">height:180px; border: 1px solid grey;</c:if>" onclick='window.location.replace("${moduleUrl}");'>
     <div class="media-left">
         <c:url var="iconUrl" value="${url.currentModule}/img/icon.png"/>
         <a href="${moduleUrl}">
@@ -86,3 +91,4 @@
         </div>
     </div>
 </div>
+</c:if>

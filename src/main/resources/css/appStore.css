@@ -7,6 +7,8 @@ html {
 body {
     background-color: #EEEEEE;
     font-family: 'Lato', sans-serif;
+    margin-left:0!important;
+    margin-right:0!important;
 }
 
 footer {
@@ -18,6 +20,13 @@ footer p {
     padding:10px;
 }
 
+.wrapper{
+    width:auto!important;
+    margin:0!important;
+    padding:0!important;
+    background-color:transparent!important;
+}
+
 /*Home Page*/
 header.home {
     background: url(../img/cover_optimized2.jpg) no-repeat center 30%;
@@ -27,6 +36,7 @@ header.home {
     background-size: cover;
     height:auto;
 }
+
 @media only screen and (min-width : 768px) {
     header.home {
         height: 500px;
@@ -310,6 +320,10 @@ nav ul.pull-right{
     top: -21px;
     left: -10px;
     border-radius: 0;
+}
+
+.admin-header a.back-link{
+    top: -6px;
 }
 
 .detail a.back-link:hover{

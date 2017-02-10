@@ -24,7 +24,9 @@
             <s:pagePath value="${searchPath}" display="false" includeChildren="true" />
             <s:site value="${renderContext.site.name}" includeReferencesFrom="systemsite"  display="false" />
             <s:language value="${renderContext.mainResource.locale}" display="false" />
-            <s:nodeType value="jnt:forgeModule" selectionOptions="jmix:forgeElement,jnt:forgeModule,jnt:forgePackage" display="false" />
+            <s:nodeType value="jmix:forgeElement" selectionOptions="jmix:forgeElement,jnt:forgeModule,jnt:forgePackage" display="false" />
+            <s:nodeProperty nodeType="jnt:forgeModule" name="published" value="true" display="false"/>
+            <s:nodeProperty nodeType="jnt:forgePackage" name="published" value="true" display="false"/>
         </div>
     </s:form>
 </c:if>

@@ -4,6 +4,9 @@
 <%@ taglib prefix="utility" uri="http://www.jahia.org/tags/utilityLib" %>
 <%@ taglib prefix="template" uri="http://www.jahia.org/tags/templateLib" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="functions" uri="http://www.jahia.org/tags/functions" %>
+<%@ taglib prefix="user" uri="http://www.jahia.org/tags/user" %>
+<%@ taglib prefix="query" uri="http://www.jahia.org/tags/queryLib" %>
 <%--@elvariable id="currentNode" type="org.jahia.services.content.JCRNodeWrapper"--%>
 <%--@elvariable id="out" type="java.io.PrintWriter"--%>
 <%--@elvariable id="script" type="org.jahia.services.render.scripting.Script"--%>
@@ -11,14 +14,17 @@
 <%--@elvariable id="workspace" type="java.lang.String"--%>
 <%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
 <%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
+<%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
-<c:set var="resourceReadOnly" value="${currentResource.moduleParams.readOnly}"/>
-<template:include view="hidden.header"/>
-<div class="row forge" style="position: relative; height: 1000px;">
-    <c:forEach items="${moduleMap.currentList}" var="subchild" begin="${moduleMap.begin}" end="${moduleMap.end}">
-        <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12 item moduleCard <c:if test="${category != null}">category-${category.identifier}</c:if> ${certification}">
-            <template:module node="${subchild}" view="v2" editable="${moduleMap.editable && !resourceReadOnly}"/>
-        </div>
-    </c:forEach>
-</div>
-<template:include view="hidden.footer"/>
+
+<c:set var="statement"
+       value="SELECT * FROM [jnt:content]
+                WHERE ISDESCENDANTNODE('${renderContext.site.path}/contents/modules-repository')
+                    AND [jcr:createdBy]='${currentUser.username}'
+                    AND ([jcr:primaryType] = 'jnt:forgeModule' OR [jcr:primaryType] = 'jnt:forgePackage')
+                ORDER BY [jcr:title] ASC"/>
+
+<query:definition var="listQuery" statement="${statement}"/>
+<c:set target="${moduleMap}" property="listQuery" value="${listQuery}" />
+<c:set target="${moduleMap}" property="subNodesView" value="v2" />
+<template:addCacheDependency flushOnPathMatchingRegexp="${renderContext.site.path}/contents/modules-repository/.*"/>

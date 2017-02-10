@@ -126,7 +126,7 @@
                 <c:if test="${isForgeAdmin}">
                     <li>
                         <c:url value='${renderContext.site.url}' var="settingsUrl"/>
-                        <a href="${fn:replace(settingsUrl,'.html','.store-admin2.html')}">
+                        <a href="${fn:replace(settingsUrl,'.html','.store-admin.html')}">
                             <i class="glyphicon glyphicon-cog"></i>
                             <fmt:message key="jnt_forgeModule.forgeSetting"/>
                         </a>
