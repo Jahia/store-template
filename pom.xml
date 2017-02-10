@@ -92,6 +92,7 @@
                     <instructions>
                         <Jahia-Depends>font-awesome, jquery, bootstrap3-core,bootstrap3-components,contact,default,event,facets,search,teasers, privateappstore</Jahia-Depends>
                         <Import-Package>${jahia.plugin.projectPackageImport},org.jahia.services.search,*</Import-Package>
+                        <Import-Package>${jahia.plugin.projectPackageImport},org.jahia.services.search,javax.net.ssl,*</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
