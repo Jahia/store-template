@@ -6,11 +6,7 @@
 <%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
 <c:set var="isHomePage" value="${renderContext.mainResource.node.identifier eq renderContext.site.home.identifier}"/>
 <c:set var="isSearchResultPage" value="${(renderContext.mainResource.node.primaryNodeType.name eq 'jnt:page') and (renderContext.mainResource.node.name eq 'search-results')}"/>
-
 <c:set value="${renderContext.site.properties['j:title'].string}" var="title"/>
-<jcr:nodeProperty node="${currentNode}" name="j:styleName" var="styleName"/>
-<jcr:nodeProperty node="${currentNode}" name="option" var="option"/>
-<jcr:nodeProperty node="${currentNode}" name="inverse" var="inverse"/>
 <c:choose>
     <c:when test="${renderContext.editModeConfigName eq 'studiomode'}">
         <ul>
@@ -22,40 +18,42 @@
         </ul>
     </c:when>
     <c:otherwise>
-        <c:set var="navbarClasses" value=" "/>
-        <c:if test="${not empty option and not empty option.string}">
-            <c:set var="navbarClasses" value="${navbarClasses} ${option.string}"/>
-        </c:if>
-        <c:if test="${not empty inverse and inverse.boolean}">
-            <c:set var="navbarClasses" value="${navbarClasses} navbar-inverse"/>
-        </c:if>
-        <c:if test="${not empty styleName}">
-            <c:set var="navbarClasses" value="${navbarClasses} ${styleName.string}"/>
-        </c:if>
-        <c:forEach items="${jcr:getChildrenOfType(currentNode, 'bootstrap3mix:navBarItem')}" var="child"
-                   varStatus="status">
-            <nav class="${navbarClasses}" <c:if test="${!(isHomePage or isSearchResultPage)}">class="affix"</c:if>>
-                <ul class="nav nav-pills pull-left">
-
-                    <c:if test="${!(isHomePage or isSearchResultPage)}">
-                        <li>
-                            <a class="back-link" href="${renderContext.site.home.url}">
-                                <img src="<c:url value='${url.currentModule}/img/ic_arrow_back_white_36px.svg'/>">
-                                <span class="page-title">${renderContext.site.displayableName}</span>
-                            </a>
-                        </li>
-                    </c:if>
-                    <c:if test="${child.properties['position'].string eq 'left'}">
-                        <template:module node="${child}"/>
-                    </c:if>
-                </ul>
-                <ul class="nav nav-pills pull-right hidden-xs hidden-sm	">
-                    <c:if test="${child.properties['position'].string eq 'right'}">
-                        <template:module node="${child}"/>
-                    </c:if>
-                </ul>
-            </nav>
-        </c:forEach>
+        <nav class="navbar navbar-default">
+        <div class="container${currentNode.properties.fluid.boolean ? '-fluid' : ''} ${' '} hidden-print">
+                <div class="navbar-header navbar-default navbar-bootsnipp animate">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#appstore-main-navbar-collapse_${currentNode.identifier}">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="role">
+                        <a class="navbar-brand" href="${renderContext.site.home.url}">
+                            <img src="<c:url value='${url.currentModule}/img/appstore_logo85a4b.png' />" alt="" />
+                        </a>
+                    </div>
+                </div>
+                <div class="collapse navbar-collapse" id="appstore-main-navbar-collapse_${currentNode.identifier}">
+                        <ul class="nav nav-pills pull-right">
+                            <%--@TODO see how we can integrate the below link as apart of the nav bar (it is seen when we go to preview a module)--%>
+                            <%--<c:if test="${!(isHomePage or isSearchResultPage)}">--%>
+                                <%--<ul class="nav nav-pills pull-left">--%>
+                                    <%--<li>--%>
+                                        <%--<a class="back-link" href="${renderContext.site.home.url}">--%>
+                                            <%--<img src="<c:url value='${url.currentModule}/img/ic_arrow_back_white_36px.svg'/>">--%>
+                                            <%--<span class="page-title">${renderContext.site.displayableName}</span>--%>
+                                        <%--</a>--%>
+                                    <%--</li>--%>
+                                <%--</ul>--%>
+                                    <%--</c:if>--%>
+                            <c:forEach items="${jcr:getChildrenOfType(currentNode, 'bootstrap3mix:navBarItem')}" var="child"
+                                       varStatus="status">
+                                <template:module node="${child}"/>
+                            </c:forEach>
+                        </ul>
+                </div>
+        </div>
+        </nav>
         <h3 class="text-muted"><c:if test="${not empty title}">${title}</c:if></h3>
     </c:otherwise>
 </c:choose>

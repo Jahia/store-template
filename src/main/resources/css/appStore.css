@@ -29,20 +29,8 @@ footer p {
 
 /*Home Page*/
 header.home {
-    background: url(../img/cover_optimized2.jpg) no-repeat center 30%;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
     height:auto;
 }
-
-@media only screen and (min-width : 768px) {
-    header.home {
-        height: 500px;
-    }
-}
-
 .changeLogWrapper{
     background:white;
 }
@@ -50,8 +38,9 @@ header.home {
     border-bottom : solid 1px black;
 }
 header nav {
-    margin:10px
+    margin:0;
 }
+
 header h3 {
     display: none;
 }
@@ -75,10 +64,6 @@ a.register-link:hover {
     background-color: transparent !important;
     color:#fff !important;
     text-shadow: 1px 1px 0 rgba(39, 110, 204, .3) !important;
-}
-
-.navLink:hover{
-    color:black!important;
 }
 
 .jumbotron {
@@ -111,11 +96,6 @@ a.register-link:hover {
     box-shadow:inset 0 0 0 rgba(0,0,0,.075);
     font-size:22px
 }
-.navbar-default .navbar-nav>li>a.dropdown-toggle {
-    font-size: 22px;
-    color: #a1a1a1;
-    padding-top: 24px;
-}
 
 .filter-reset-button{
     position: relative;
@@ -143,10 +123,6 @@ a.register-link:hover {
 
 #permissionsButton{
     margin-right:20px;
-}
-
-.navbar-default {
-    background-color: #ffffff;
 }
 
 /*Module list*/
@@ -392,7 +368,7 @@ header.detail{
 }
 
 .top-color-sep {
-    background-color: #00A0E3;
+    /*background-color: #00A0E3;*/
     width: 100%;
     height: 192px;
 }
@@ -471,22 +447,6 @@ header.detail{
     text-shadow: none;
     box-shadow: none !important;
 }
-
-
-.navbar-nav>li>a.detailLoginBtn{
-    float: right;
-    margin: 3px 14px 0px 0px;
-    padding: 0 18px;
-    background: #FFFFFF !important;
-    height: 36px;
-    line-height: 36px;
-    color: #00A0E3;
-    text-shadow: none;
-    box-shadow: none !important;
-    text-transform: uppercase;
-    font-weight: bold;
-}
-
 
 /*Information and editable texts*/
 
@@ -1249,36 +1209,6 @@ h6.title{
 .tags-div{
     margin-top:10px;
 }
-@media screen and (max-width: 480px) {
-    a.video span {
-        background-size: 400%;
-    }
-    .forgeModuleVideo{
-        padding-top: 0;
-    }
-    .navbar-default .navbar-collapse, .navbar-default .navbar-form {
-        border-width: 0;
-        padding: 5px 10px 0 10px;
-    }
-    .search-query {
-        border-color: #ddd;
-    }
-    .navbar-default .navbar-nav>li>a.dropdown-toggle {
-        padding-top:0;
-    }
-}
-@media screen and (max-width: 992px) {
-    .more-info-container, .review-coments-cont {
-        padding:0;
-    }
-    .review-coments-cont .ac-review {
-        padding:0;
-        width: auto;
-    }
-    .meta-info {
-        width: 100%;
-    }
-}
 
 /*Settings*/
 .tabbable.jnt_bootstrapTabularList{
@@ -1299,4 +1229,154 @@ h6.title{
     top: -100px;
     min-height: 700px;
     padding: 20px 20px 20px 20px;
+}
+
+
+/*****************************************
+ ******* BOOTSTRAP NAV BAR STYLING *******
+ *****************************************/
+
+.navbar-fixed-top {
+    background-color: #fff;
+    height: 90px;
+    padding: 20px 0;
+    -webkit-box-shadow: 0 0 0 2px rgba(220, 220, 220, 0.2);
+    -moz-box-shadow: 0 0 0 2px rgba(220, 220, 220, 0.2);
+    box-shadow: 0 0 0 2px rgba(220, 220, 220, 0.2);
+    font-family: 'Lato', sans-serif;
+}
+
+.navbar-fixed-top .logo {
+    display: block;
+    margin-top: -18px;
+}
+
+.navbar-toggle .icon-bar {
+    background-color: #2d3c57;
+}
+
+.navbar-search {
+    margin: 0;
+    margin-top: 1px;
+}
+
+.navbar-search input {
+    background: #fff;
+    border: none;
+    box-shadow: none;
+    text-shadow: none;
+    height: 48px;
+    outline: none;
+}
+
+.navbar-search .form-control:focus {
+    border: none;
+    box-shadow: none;
+    text-shadow: none;
+    outline: 0;
+}
+
+.navbar-search .input-group-addon {
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 8px;
+    color: rgba(0, 0, 0, 0.36);
+    text-align: center;
+    background-color: transparent;
+    border: none;
+    padding-right: 4px;
+}
+
+.navbar-brand{
+    margin: 0!important;
+    padding: 15px;
+    width: auto;
+    height: auto;
+    display: inline-block!important;
+}
+
+.navbar-default{
+    background-color: #ffffff;
+    box-shadow: none;
+    border: none;
+    margin-bottom: 0;
+}
+
+.navbar-bootsnipp {
+    width: auto;
+    z-index: 100;
+}
+.navbar-bootsnipp .bootsnipp-search {
+    display: none;
+    background: transparent!important;
+}
+
+.navbar-bootsnipp .bootsnipp-search .form-control {
+    background: #fafafa none repeat scroll 0 0 !important;
+    border: 1px solid #00a0e3 !important;
+    border-radius: 0;
+    box-shadow: 0.5px 0.866px 3px 0 rgba(0, 0, 0, 0.08) inset;
+    float: right;
+    font-size: 16px;
+    font-style: italic;
+    height: 40px;
+    padding: 7px 45px;
+    width: 36%;
+}
+
+.navbar-bootsnipp .bootsnipp-search .form-control:focus {
+    border-color: transparent;
+    outline: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.navbar-bootsnipp .bootsnipp-search .input-group-btn > .btn {
+    padding: 14px 16px;
+    border-radius: 0px;
+    height:147%;
+}
+
+.navbar-bootsnipp .bootsnipp-search .input-group-btn > .btn-default {
+    background-color: rgb(245, 245, 245);
+}
+
+.navbar {
+    border-radius: 0;
+}
+
+/*****************************************
+ ******* MEDIA REACTIVE STYLING *******
+ *****************************************/
+
+@media screen and (max-width: 480px) {
+    a.video span {
+        background-size: 400%;
+    }
+    .forgeModuleVideo{
+        padding-top: 0;
+    }
+    .search-query {
+        border-color: #ddd;
+    }
+}
+@media screen and (max-width: 992px) {
+    .more-info-container, .review-coments-cont {
+        padding:0;
+    }
+    .review-coments-cont .ac-review {
+        padding:0;
+        width: auto;
+    }
+    .meta-info {
+        width: 100%;
+    }
+}
+@media only screen and (max-width: 750px) {
+    .navbar-search {
+        margin-top: -10px;
+        width: 70%;
+        float: left;
+    }
 }
