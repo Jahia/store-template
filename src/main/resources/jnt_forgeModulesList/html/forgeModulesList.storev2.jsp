@@ -4,6 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="jcr" uri="http://www.jahia.org/tags/jcr" %>
 <%@ taglib prefix="template" uri="http://www.jahia.org/tags/templateLib" %>
+<%@ taglib prefix="forge" uri="http://www.jahia.org/modules/forge/tags" %>
 <%--@elvariable id="currentNode" type="org.jahia.services.content.JCRNodeWrapper"--%>
 <%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
 <%-- Les styles--%>
@@ -18,7 +19,8 @@
         var modulesCategories = {};
     </script>
 </template:addResources>
-<div class="row forge" style="position: relative; height: 1000px;">
+
+<div class="row forge" style="position: relative; height: 1000px; margin-top: 100px;">
     <c:forEach items="${moduleMap.currentList}" var="module" varStatus="status" begin="${moduleMap.begin}" end="${moduleMap.end}">
         <c:if test="${module.properties['published'].boolean}">
             <c:set value=" certification-none " var="certification"/>

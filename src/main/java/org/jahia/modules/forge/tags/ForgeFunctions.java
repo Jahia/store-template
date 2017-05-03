@@ -113,5 +113,11 @@ public class ForgeFunctions {
         return nextModules;
     }
 
-
+    public static String stripHTMLAndTruncate(String str, int length) {
+        String htmlFree = str.replaceAll("<.*?>", "");
+        if (htmlFree.length() <= length) {
+            return htmlFree;
+        }
+        return htmlFree.substring(0, length) + "...";
+    }
 }

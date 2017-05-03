@@ -18,43 +18,6 @@
         </ul>
     </c:when>
     <c:otherwise>
-        <%--<nav class="navbar navbar-default">--%>
-        <%--<div class="container${currentNode.properties.fluid.boolean ? '-fluid' : ''} ${' '} hidden-print">--%>
-                <%--<div class="navbar-header navbar-default navbar-bootsnipp animate">--%>
-                    <%--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#appstore-main-navbar-collapse_${currentNode.identifier}">--%>
-                        <%--<span class="sr-only">Toggle navigation</span>--%>
-                        <%--<span class="icon-bar"></span>--%>
-                        <%--<span class="icon-bar"></span>--%>
-                        <%--<span class="icon-bar"></span>--%>
-                    <%--</button>--%>
-                    <%--<div class="role">--%>
-                        <%--<a class="navbar-brand" href="${renderContext.site.home.url}">--%>
-                            <%--<img src="<c:url value='${url.currentModule}/img/appstore_logo85a4b.png' />" alt="" />--%>
-                        <%--</a>--%>
-                    <%--</div>--%>
-                <%--</div>--%>
-                <%--<div class="collapse navbar-collapse" id="appstore-main-navbar-collapse_${currentNode.identifier}">--%>
-                        <%--<ul class="nav nav-pills pull-right">--%>
-                            <%--&lt;%&ndash;@TODO see how we can integrate the below link as apart of the nav bar (it is seen when we go to preview a module)&ndash;%&gt;--%>
-                            <%--<c:if test="${!(isHomePage or isSearchResultPage)}">--%>
-                                <%--<ul class="nav nav-pills pull-left">--%>
-                                    <%--<li>--%>
-                                        <%--<a class="back-link" href="${renderContext.site.home.url}">--%>
-                                            <%--<img src="<c:url value='${url.currentModule}/img/ic_arrow_back_white_36px.svg'/>">--%>
-                                            <%--<span class="page-title">${renderContext.site.displayableName}</span>--%>
-                                        <%--</a>--%>
-                                    <%--</li>--%>
-                                <%--</ul>--%>
-                                    <%--</c:if>--%>
-                            <%--<c:forEach items="${jcr:getChildrenOfType(currentNode, 'bootstrap3mix:navBarItem')}" var="child"--%>
-                                       <%--varStatus="status">--%>
-                                <%--<template:module node="${child}"/>--%>
-                            <%--</c:forEach>--%>
-                        <%--</ul>--%>
-                <%--</div>--%>
-        <%--</div>--%>
-        <%--</nav>--%>
-
         <nav class="navbar navbar-fixed-top hidden-print headroom headroom--not-bottom headroom--pinned headroom--top">
             <div class="container hidden-print">
 

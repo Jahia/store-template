@@ -34,5 +34,11 @@
         <function-class>org.jahia.modules.forge.tags.ForgeFunctions</function-class>
         <function-signature>java.util.List nextVersions(java.util.List)</function-signature>
     </function>
+    <function>
+        <description>Strips html tags and truncates</description>
+        <name>stripHTMLAndTruncate</name>
+        <function-class>org.jahia.modules.forge.tags.ForgeFunctions</function-class>
+        <function-signature>java.lang.String stripHTMLAndTruncate(java.lang.String,int)</function-signature>
+    </function>
 
 </taglib>
