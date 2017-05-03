@@ -22,6 +22,9 @@
     <!-- Import Google font (Lato) -->
     <link href='//fonts.googleapis.com/css?family=Lato:400,700,300' rel='stylesheet' type='text/css'>
 
+    <%--Material icons--%>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <%-- Fav and touch icons --%>
     <link rel="shortcut icon" href="<c:url value='${url.currentModule}/icon/favicon.ico'/>" type="image/x-icon">
     <link rel="icon" href="<c:url value='${url.currentModule}/icon/favicon.ico'/>" type="image/ico">

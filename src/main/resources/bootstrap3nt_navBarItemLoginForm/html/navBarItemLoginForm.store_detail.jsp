@@ -23,10 +23,15 @@
 <c:if test="${! renderContext.editMode}">
     <c:if test="${! renderContext.loggedIn}">
         <c:set var="siteNode" value="${currentNode.resolveSite}"/>
+        <%--<button class="btn navbar-btn${pullClass}" type="button" data-toggle="modal" data-target="#loginForm_${currentNode.identifier}">--%>
+            <%--<i class="glyphicon glyphicon-user glyphicon-white"></i>&nbsp;<fmt:message key="bootstrap3nt_navBarItemLoginForm.menu.button.title"/>--%>
+        <%--</button>--%>
 
-        <button class="btn btn-primary navbar-btn${pullClass}" type="button" data-toggle="modal" data-target="#loginForm_${currentNode.identifier}">
-            <i class="glyphicon glyphicon-user glyphicon-white"></i>&nbsp;<fmt:message key="bootstrap3nt_navBarItemLoginForm.menu.button.title"/>
-        </button>
+        <li>
+            <a href="#" data-toggle="modal" data-target="#loginForm_${currentNode.identifier}">
+                <i class="glyphicon glyphicon-user glyphicon-white"></i>&nbsp;<fmt:message key="bootstrap3nt_navBarItemLoginForm.menu.button.title"/>
+            </a>
+        </li>
 
         <div id="loginForm_${currentNode.identifier}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="loginFormModalLabel_${currentNode.identifier}">
             <div class="modal-dialog" role="document">

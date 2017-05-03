@@ -33,18 +33,21 @@
         </c:if>
     </c:otherwise>
 </c:choose>
-<c:choose>
-    <c:when test="${currentNode.properties['position'].string eq 'left'}">
-        <c:set var="cssClass" value="navLink btn btn-primary loginButton"/>
-        <c:set var="resgisterLink" value="false"/>
-    </c:when>
-    <c:otherwise>
-        <c:set var="cssClass" value="register-link"/>
-        <c:set var="registerLink" value="true"/>
-    </c:otherwise>
-</c:choose>
-<c:if test="${not renderContext.loggedIn or not registerLink }">
-    <li>
-        <a class="${cssClass}" href="${linkUrl}">${linkTitle}</a>
-    </li>
-</c:if>
+<%--<c:choose>--%>
+    <%--<c:when test="${currentNode.properties['position'].string eq 'left'}">--%>
+        <%--<c:set var="cssClass" value="navLink btn btn-primary loginButton"/>--%>
+        <%--<c:set var="resgisterLink" value="false"/>--%>
+    <%--</c:when>--%>
+    <%--<c:otherwise>--%>
+        <%--<c:set var="cssClass" value="register-link"/>--%>
+        <%--<c:set var="registerLink" value="true"/>--%>
+    <%--</c:otherwise>--%>
+<%--</c:choose>--%>
+<%--<c:if test="${not renderContext.loggedIn or not registerLink }">--%>
+    <%--<li>--%>
+        <%--<a href="${linkUrl}">${linkTitle}</a>--%>
+    <%--</li>--%>
+<%--</c:if>--%>
+<li>
+    <a href="${linkUrl}">${linkTitle}</a>
+</li>

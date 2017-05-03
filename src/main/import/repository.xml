@@ -48,9 +48,9 @@
                                                 jcr:primaryType="jnt:translation"
                                                 jcr:title="header-menu"/>
                                             <about-us j:linkType="external"
-                                             jcr:mixinTypes="jmix:externalLink"
-                                             jcr:primaryType="jnt:storeLink"
-                                             position="right">
+                                        jcr:mixinTypes="jmix:externalLink"
+                                        jcr:primaryType="jnt:storeLink"
+                                        position="right">
                                                 <j:translation_fr j:linkTitle="Back to Jahia.com"
                                                    j:url="http://www.jahia.com"
                                                    jcr:language="fr"
@@ -89,9 +89,9 @@
                                                    jcr:title="Back to Jahia.com"/>
                                             </about-us>
                                             <academy j:linkType="external"
-                                               jcr:mixinTypes="jmix:externalLink"
-                                               jcr:primaryType="jnt:storeLink"
-                                        position="right">
+                                       jcr:mixinTypes="jmix:externalLink"
+                                       jcr:primaryType="jnt:storeLink"
+                                       position="right">
                                                 <j:translation_fr j:linkTitle="Back to Jahia.com"
                                                    j:url="http://www.jahia.com"
                                                    jcr:language="fr"
@@ -130,9 +130,9 @@
                                                    jcr:title="Back to Jahia.com"/>
                                             </academy>
                                             <back-to-jahia j:linkType="external"
-                                               jcr:mixinTypes="jmix:externalLink"
-                                               jcr:primaryType="jnt:storeLink"
-                                       position="right">
+                                             jcr:mixinTypes="jmix:externalLink"
+                                             jcr:primaryType="jnt:storeLink"
+                                             position="right">
                                                 <j:translation_fr j:linkTitle="Back to Jahia.com"
                                                    j:url="http://www.jahia.com"
                                                    jcr:language="fr"
@@ -170,37 +170,11 @@
                                                    jcr:primaryType="jnt:translation"
                                                    jcr:title="Back to Jahia.com"/>
                                             </back-to-jahia>
-                                            <login j:linkType="external"
-                                     jcr:mixinTypes="jmix:externalLink"
-                                     jcr:primaryType="jnt:storeLink"
-                                     position="right">
-                                                <j:translation_fr jcr:language="fr"
-                                                   jcr:mixinTypes="mix:title"
-                                                   jcr:primaryType="jnt:translation"
-                                                   jcr:title="Register"/>
-                                                <j:translation_de jcr:language="de"
-                                                   jcr:mixinTypes="mix:title"
-                                                   jcr:primaryType="jnt:translation"
-                                                   jcr:title="Register"/>
-                                                <j:translation_pt jcr:language="pt"
-                                                   jcr:mixinTypes="mix:title"
-                                                   jcr:primaryType="jnt:translation"
-                                                   jcr:title="Register"/>
-                                                <j:translation_en j:linkTitle="Login"
-                                                   j:url="#"
-                                                   jcr:language="en"
-                                                   jcr:mixinTypes="mix:title"
-                                                   jcr:primaryType="jnt:translation"
-                                                   jcr:title="Login"/>
-                                                <j:translation_it jcr:language="it"
-                                                   jcr:mixinTypes="mix:title"
-                                                   jcr:primaryType="jnt:translation"
-                                                   jcr:title="Register"/>
-                                                <j:translation_es jcr:language="es"
-                                                   jcr:mixinTypes="mix:title"
-                                                   jcr:primaryType="jnt:translation"
-                                                   jcr:title="Register"/>
-                                            </login>
+                                            <login j:view="store_detail"
+                                     jcr:mixinTypes="jmix:renderable"
+                                     jcr:primaryType="bootstrap3nt:navBarItemLoginForm"
+                                     position="right"
+                                     view="menu"/>
                                         </header-menu>
                                     </homeHeader>
                                 </homeHeader>

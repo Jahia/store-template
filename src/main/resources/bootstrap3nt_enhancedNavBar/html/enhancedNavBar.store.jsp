@@ -18,24 +18,24 @@
         </ul>
     </c:when>
     <c:otherwise>
-        <nav class="navbar navbar-default">
-        <div class="container${currentNode.properties.fluid.boolean ? '-fluid' : ''} ${' '} hidden-print">
-                <div class="navbar-header navbar-default navbar-bootsnipp animate">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#appstore-main-navbar-collapse_${currentNode.identifier}">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <div class="role">
-                        <a class="navbar-brand" href="${renderContext.site.home.url}">
-                            <img src="<c:url value='${url.currentModule}/img/appstore_logo85a4b.png' />" alt="" />
-                        </a>
-                    </div>
-                </div>
-                <div class="collapse navbar-collapse" id="appstore-main-navbar-collapse_${currentNode.identifier}">
-                        <ul class="nav nav-pills pull-right">
-                            <%--@TODO see how we can integrate the below link as apart of the nav bar (it is seen when we go to preview a module)--%>
+        <%--<nav class="navbar navbar-default">--%>
+        <%--<div class="container${currentNode.properties.fluid.boolean ? '-fluid' : ''} ${' '} hidden-print">--%>
+                <%--<div class="navbar-header navbar-default navbar-bootsnipp animate">--%>
+                    <%--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#appstore-main-navbar-collapse_${currentNode.identifier}">--%>
+                        <%--<span class="sr-only">Toggle navigation</span>--%>
+                        <%--<span class="icon-bar"></span>--%>
+                        <%--<span class="icon-bar"></span>--%>
+                        <%--<span class="icon-bar"></span>--%>
+                    <%--</button>--%>
+                    <%--<div class="role">--%>
+                        <%--<a class="navbar-brand" href="${renderContext.site.home.url}">--%>
+                            <%--<img src="<c:url value='${url.currentModule}/img/appstore_logo85a4b.png' />" alt="" />--%>
+                        <%--</a>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <%--<div class="collapse navbar-collapse" id="appstore-main-navbar-collapse_${currentNode.identifier}">--%>
+                        <%--<ul class="nav nav-pills pull-right">--%>
+                            <%--&lt;%&ndash;@TODO see how we can integrate the below link as apart of the nav bar (it is seen when we go to preview a module)&ndash;%&gt;--%>
                             <%--<c:if test="${!(isHomePage or isSearchResultPage)}">--%>
                                 <%--<ul class="nav nav-pills pull-left">--%>
                                     <%--<li>--%>
@@ -46,14 +46,97 @@
                                     <%--</li>--%>
                                 <%--</ul>--%>
                                     <%--</c:if>--%>
-                            <c:forEach items="${jcr:getChildrenOfType(currentNode, 'bootstrap3mix:navBarItem')}" var="child"
-                                       varStatus="status">
-                                <template:module node="${child}"/>
-                            </c:forEach>
-                        </ul>
+                            <%--<c:forEach items="${jcr:getChildrenOfType(currentNode, 'bootstrap3mix:navBarItem')}" var="child"--%>
+                                       <%--varStatus="status">--%>
+                                <%--<template:module node="${child}"/>--%>
+                            <%--</c:forEach>--%>
+                        <%--</ul>--%>
+                <%--</div>--%>
+        <%--</div>--%>
+        <%--</nav>--%>
+
+        <nav class="navbar navbar-fixed-top hidden-print headroom headroom--not-bottom headroom--pinned headroom--top">
+            <div class="container hidden-print">
+
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#appstore-navbar-collapse-${currentNode.identifier}" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                        <%--${renderContext.site.home.url}--%>
+                    <a class="navbar-brand" href="${renderContext.site.path}/home.html">
+                        <img class="logo" src="<c:url value='${url.currentModule}/img/appstore_logo85a4b.png' />" alt="Logo">
+                    </a>
                 </div>
-        </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="appstore-navbar-collapse-${currentNode.identifier}">
+                    <ul class="nav navbar-nav navbar-right">
+                        <c:forEach items="${jcr:getChildrenOfType(currentNode, 'bootstrap3mix:navBarItem')}" var="child"
+                                   varStatus="status">
+                            <template:module node="${child}"/>
+                        </c:forEach>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Remove is search bar is not needed (eg: module details). -->
+            <search class="search-bar">
+                <div class="container hidden-print">
+                    <form class="navbar-form navbar-search navbar-left" >
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1"><i class="material-icons">search</i></span>
+                                <input type="text" class="form-control" placeholder="Search">
+                            </div>
+                        </div>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                        <button type="button" class="btn btn-default btn-tagsmodal" data-toggle="modal" data-target="#myModal">Tags</button>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categories <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </search>
         </nav>
+
+
+        <!-- Modal -->
+        <div class="modal fade tag-modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <input type="text" class="form-control" id="usr" placeholder="Filter tags">
+                    </div>
+                    <div class="modal-body">
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 1</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 2</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 3</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 4</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 5</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 6</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 7</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 8</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 9</label></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-aply-filter">Apply filter</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <h3 class="text-muted"><c:if test="${not empty title}">${title}</c:if></h3>
     </c:otherwise>
 </c:choose>
