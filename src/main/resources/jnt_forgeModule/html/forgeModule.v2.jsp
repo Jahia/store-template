@@ -50,7 +50,7 @@
 </c:if>
 
 <c:if test="${currentNode.properties['published'].boolean or isAdminPage}">
-    <div style="width: 1280px;margin: 0 auto;margin-top: 8px;">
+    <%--<div style="width: 1000px;margin: 0 auto;margin-top: 8px;">--%>
         <!-- Module Card -->
         <a href="${moduleUrl}">
             <div class="jps-moduleCard">
@@ -64,9 +64,8 @@
                         </span>
                     </author>
                 </div>
-                <p class="card-desc">Description</p>
-                <%--<p class="card-desc">${forge:stripHTMLAndTruncate(description, 90)} ...</p>--%>
+                <p class="card-desc">${functions:abbreviate(functions:removeHtmlTags(description), 90,100,'...')}</p>
             </div>
         </a>
-    </div>
+    <%--</div>--%>
 </c:if>
