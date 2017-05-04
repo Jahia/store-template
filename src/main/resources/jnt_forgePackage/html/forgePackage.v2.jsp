@@ -58,37 +58,20 @@
 </c:if>
 <c:set var="isAdminPage" value="${renderContext.mainResource.resolvedTemplate eq 'my-modules'}"/>
 <c:if test="${currentNode.properties['published'].boolean or isAdminPage}">
-<div class="media" data-href="${moduleUrl}" style="cursor: pointer; <c:if test="${isAdminPage}">height:180px; border: 1px solid grey;</c:if>" onclick='window.location.replace("${moduleUrl}");'>
-    <div class="media-left">
-        <c:url var="iconUrl" value="${url.currentModule}/img/icon.png"/>
-        <a href="${moduleUrl}">
-            <img class="moduleIcon" src="${not empty icon.url ? icon.url : iconUrl}"
-                 alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"/>
-        </a>
-        <div>
-            <c:if test="${currentNode.properties['reviewedByJahia'].boolean}">
-                <span data-toggle="tooltip" title="<fmt:message key="jnt_forgeEntry.label.admin.reviewedByJahia"/>" class="label label-success badge-reviewedByJahia"><i class="glyphicon glyphicon-ok" style="color:white;"></i></span>
-            </c:if>
-            <c:if test="${currentNode.properties['supportedByJahia'].boolean}">
-                <span data-toggle="tooltip" title="<fmt:message key="jnt_forgeEntry.label.admin.supportedByJahia"/>" class="label label-warning badge-supportedByJahia"><i class="glyphicon glyphicon-wrench" style="color:white;"></i></span>
-            </c:if>
+    <!-- Module Card -->
+    <a href="${moduleUrl}">
+        <div class="jps-moduleCard">
+            <c:url var="iconUrl" value="${url.currentModule}/img/icon.png"/>
+            <img class="moduleLogo noselect" src="${not empty icon.url ? icon.url : iconUrl}" alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"/>
+            <div class="card-topMain">
+                <h1 class="truncate">${title}</h1>
+                <author>${authorName}
+                    <span class="module-supported">
+                        <i class="material-icons noselect">check_circle</i>
+                    </span>
+                </author>
+            </div>
+            <p class="card-desc">${functions:abbreviate(functions:removeHtmlTags(description), 80,95,'...')}</p>
         </div>
-    </div>
-    <div class="media-body">
-        <h4 class="media-heading">${title}</h4>
-        <div class="author">${authorName}</div>
-        <div class="rating">
-            <c:forEach var="i" begin="${worstRating}" end="${bestRating}">
-                <c:choose>
-                    <c:when test="${entireRating ge i}">
-                        &#9733;
-                    </c:when>
-                    <c:otherwise>
-                        &#9734;
-                    </c:otherwise>
-                </c:choose>
-            </c:forEach>
-        </div>
-    </div>
-</div>
+    </a>
 </c:if>

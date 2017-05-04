@@ -50,22 +50,20 @@
 </c:if>
 
 <c:if test="${currentNode.properties['published'].boolean or isAdminPage}">
-    <%--<div style="width: 1000px;margin: 0 auto;margin-top: 8px;">--%>
-        <!-- Module Card -->
-        <a href="${moduleUrl}">
-            <div class="jps-moduleCard">
-                <c:url var="iconUrl" value="${url.currentModule}/img/icon.png"/>
-                <img class="moduleLogo noselect" src="${not empty icon.url ? icon.url : iconUrl}" alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"/>
-                <div class="card-topMain">
-                    <h1 class="truncate">${title}</h1>
-                    <author>${authorName}
-                        <span class="module-supported">
-                            <i class="material-icons noselect">check_circle</i>
-                        </span>
-                    </author>
-                </div>
-                <p class="card-desc">${functions:abbreviate(functions:removeHtmlTags(description), 90,100,'...')}</p>
+    <!-- Module Card -->
+    <a href="${moduleUrl}">
+        <div class="jps-moduleCard">
+            <c:url var="iconUrl" value="${url.currentModule}/img/icon.png"/>
+            <img class="moduleLogo noselect" src="${not empty icon.url ? icon.url : iconUrl}" alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"/>
+            <div class="card-topMain">
+                <h1 class="truncate">${title}</h1>
+                <author>${authorName}
+                    <span class="module-supported">
+                        <i class="material-icons noselect">check_circle</i>
+                    </span>
+                </author>
             </div>
-        </a>
-    <%--</div>--%>
+            <p class="card-desc">${functions:abbreviate(functions:removeHtmlTags(description), 80,95,'...')}</p>
+        </div>
+    </a>
 </c:if>

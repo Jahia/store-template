@@ -55,7 +55,7 @@
     <template:addResources type="css" resources="bootstrap.icon-large.min.css"/>
 
 </head>
-<body <c:if test="${renderContext.mainResource.resolvedTemplate eq 'changelog2'}"> class="changeLogWrapper"</c:if>>
+<body style="background-color: #fff;" <c:if test="${renderContext.mainResource.resolvedTemplate eq 'changelog2'}"> class="changeLogWrapper"</c:if>>
 <template:area path="pageContent"/>
 <template:area path="footer"/>
 <c:if test="${renderContext.editMode}">

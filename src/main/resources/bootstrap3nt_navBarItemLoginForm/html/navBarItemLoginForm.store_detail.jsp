@@ -29,7 +29,7 @@
 
         <li>
             <a href="#" data-toggle="modal" data-target="#loginForm_${currentNode.identifier}">
-                <i class="glyphicon glyphicon-user glyphicon-white"></i>&nbsp;<fmt:message key="bootstrap3nt_navBarItemLoginForm.menu.button.title"/>
+                <fmt:message key="bootstrap3nt_navBarItemLoginForm.menu.button.title"/>
             </a>
         </li>
 
@@ -110,21 +110,21 @@
 <c:if test="${renderContext.loggedIn}">
     <ul class="nav navbar-nav${pullClass}">
         <jcr:node var="userNode" path="${currentUser.localPath}" />
-        <jcr:nodeProperty var="picture" node="${userNode}" name="j:picture"/>
+        <%--<jcr:nodeProperty var="picture" node="${userNode}" name="j:picture"/>--%>
         <c:set var="firstname" value="${userNode.properties['j:firstName'].string}"/>
         <c:set var="lastname" value="${userNode.properties['j:lastName'].string}"/>
         <li class="dropdown">
             <a class="dropdown-toggle detailLoginBtn btn" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                <c:choose>
-                    <c:when test="${not empty picture}">
-                        <template:addCacheDependency flushOnPathMatchingRegexp="${userNode.path}/files/profile/.*"/>
-                        <c:url value="${picture.node.thumbnailUrls['avatar_120']}" context="/" var="pictureUrl"/>
-                        <img class="userAvatar" src="${pictureUrl}" alt="${fn:escapeXml(firstname)} ${fn:escapeXml(lastname)}" width="16"/>
-                    </c:when>
-                    <c:otherwise>
-                        <img class="userAvatar" src="<c:url value='${url.currentModule}/img/user-black.png'/>" alt="${fn:escapeXml(firstname)} ${fn:escapeXml(lastname)}" width="16"/>
-                    </c:otherwise>
-                </c:choose>
+                <%--<c:choose>--%>
+                    <%--<c:when test="${not empty picture}">--%>
+                        <%--<template:addCacheDependency flushOnPathMatchingRegexp="${userNode.path}/files/profile/.*"/>--%>
+                        <%--<c:url value="${picture.node.thumbnailUrls['avatar_120']}" context="/" var="pictureUrl"/>--%>
+                        <%--<img class="userAvatar" src="${pictureUrl}" alt="${fn:escapeXml(firstname)} ${fn:escapeXml(lastname)}" width="16"/>--%>
+                    <%--</c:when>--%>
+                    <%--<c:otherwise>--%>
+                        <%--<img class="userAvatar" src="<c:url value='${url.currentModule}/img/user-black.png'/>" alt="${fn:escapeXml(firstname)} ${fn:escapeXml(lastname)}" width="16"/>--%>
+                    <%--</c:otherwise>--%>
+                <%--</c:choose>--%>
                     ${fn:escapeXml(empty firstname and empty lastname ? userNode.name : firstname)}&nbsp;${fn:escapeXml(lastname)} <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">

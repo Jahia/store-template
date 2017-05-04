@@ -5,7 +5,7 @@ html {
     -moz-osx-font-smoothing: grayscale;
 }
 body {
-    background-color: #EEEEEE;
+    background-color: #fff;
     font-family: 'Lato', sans-serif;
     margin-left:0!important;
     margin-right:0!important;
@@ -1470,11 +1470,11 @@ input.fs1 {
 .jps-moduleCard {
     background: white;
     float: left;
-    /*margin: 8px;*/
+    margin: 8px;
     border-radius: 2px;
     /* Set card size */
-    /*width: calc((100% / 3) - 52px);*/
-    /*max-width: 480px;*/
+    width: 100%;
+    max-width: 480px;
     padding: 16px;
     border: 1px solid #E0E0E0;
     color: rgba(0, 0, 0, 0.87);

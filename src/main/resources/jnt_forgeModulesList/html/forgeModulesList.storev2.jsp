@@ -53,7 +53,7 @@
 
 <h4 style="margin-top: 80px; color: #03a9f4;">JAHIA PACKAGES</h4>
 
-<div class="row forge" style="position: relative; height: 1000px;">
+<div class="row">
     <c:forEach items="${packages.nodes}" var="module" varStatus="status" begin="0" end="2">
         <c:if test="${module.properties['published'].boolean}">
             <%--<c:forEach items="${module.properties['j:defaultCategory']}" var="cat" varStatus="vs">--%>
@@ -73,8 +73,7 @@
                 <%--</script>--%>
             <%--</c:forEach>--%>
 
-            <div id="module-${module.identifier}"
-                 class="col-lg-4 col-md-6 col-xs-12 item moduleCard <c:if test="${category != null}">category-${category.identifier}</c:if> ${certification}">
+            <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12">
                 <template:module node="${module}" view="v2"/>
             </div>
         </c:if>
@@ -103,7 +102,6 @@
                 <%--</script>--%>
             <%--</c:forEach>--%>
 
-            <%--<div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12 <c:if test="${category != null}">category-${category.identifier}</c:if> ${certification}">--%>
             <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12">
                 <template:module node="${module}" view="v2"/>
             </div>
@@ -133,8 +131,7 @@
                 <%--</script>--%>
             <%--</c:forEach>--%>
 
-            <div id="module-${module.identifier}"
-                 class="col-lg-4 col-md-6 col-xs-12 <c:if test="${category != null}">category-${category.identifier}</c:if> ${certification}">
+            <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12">
                 <template:module node="${module}" view="v2"/>
             </div>
         </c:if>
