@@ -358,7 +358,7 @@ header.detail{
     z-index: 24;
     background-image: none;
     background-color: #00A0E3;
-    font-size: 24px;
+    font-size: 14px;
     line-height: 64px;
     font-weight: 400;
     color: #FFFFFF;
@@ -1538,4 +1538,108 @@ input.fs1 {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/*Module Page*/
+
+.moduleImage {
+    width: 80px;
+    float: right;
+    margin-top: 20px;
+}
+
+.module-section-title h2 {
+    font-family: "Lato", sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #03a9f4;
+    background: white;
+    display: inline-block;
+    padding: 2px 6px;
+    margin-left: -5px;
+}
+
+.module-section-title span {
+    border-bottom: 2px dotted #c1dbf3;
+    width: 100%;
+    display: block;
+    margin-top: -17px;
+    margin-bottom: 20px;
+}
+
+.btn.module-download-btn {
+    border: none;
+    background: #03a9f4;
+    margin: 0 8px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #fff;
+    border-radius: 2px;
+    font-family: "Roboto", sans-serif;
+    letter-spacing: 1px;
+}
+
+.btn.module-download-btn:hover {
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,.24);
+}
+
+.btn.module-download-btn:active,
+.btn.module-download-btn:focus {
+    background: #039BE5;
+    color: #fff;
+    outline: none;
+}
+
+.more-info-container {
+    padding: 24px;
+}
+
+.meta-info {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 8px 16px 8px 0;
+    text-align: left;
+    vertical-align: top;
+    width: calc(20% - 4px);
+    font-family: 'Lato',sans-serif;
+}
+
+.meta-info.large {
+    width: calc(40% - 4px);;
+}
+
+.meta-info .title {
+    color: #333;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.meta-info .content {
+    line-height: 24px;
+    font-size: 16px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.52);
+}
+
+.meta-info .modal-link-text {
+    border-bottom: dashed 1px #03A9F4;
+    text-decoration: none;
+    color: #03A9F4;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    word-spacing: 1px;
+    line-height: 24px;
+}
+
+.meta-info.large .link {
+    text-decoration: none;
+    color: #03A9F4;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    word-spacing: 1px;
+    line-height: 24px;
 }

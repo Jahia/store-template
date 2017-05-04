@@ -160,7 +160,7 @@
 <c:set var="tags" value="${currentNode.properties['j:tagList']}"/>
 
 <c:set var="moduleCategories" value="${renderContext.site.properties['rootCategory'].node}"/>
-
+fddfdgfffgfgffd
 <template:addResources type="inlinejavascript">
     <script type="text/javascript">
         var tagClasses = ["label-info", "label-success", "label-warning", "label-danger"];
@@ -169,7 +169,7 @@
         var currentLocale = "${currentResource.locale}";
         var nodeId = '${currentNode.identifier}';
         var editor = [];
-        var categories = [];
+        var categories = [];f
         <c:if test="${! empty moduleCategories && jcr:hasChildrenOfType(moduleCategories, 'jnt:category')}">
         <c:forEach items="${jcr:getNodes(moduleCategories, 'jnt:category')}" var="moduleCategory">
         categories.push({value: '${moduleCategory.identifier}', text: '${moduleCategory.displayableName}'});

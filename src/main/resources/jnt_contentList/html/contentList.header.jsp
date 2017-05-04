@@ -25,9 +25,9 @@
         <template:module node="${subchild}" editable="false"/>
     </c:forEach>
 </header>
-<c:if test="${!(isHomePage or isSearchResultPage)}">
-    <div class="top-color-sep"></div>
-</c:if>
+<%--<c:if test="${!(isHomePage or isSearchResultPage)}">--%>
+    <%--<div class="top-color-sep"></div>--%>
+<%--</c:if>--%>
 <c:if test="${moduleMap.editable and renderContext.editMode}">
     <template:module path="*"/>
 </c:if>
