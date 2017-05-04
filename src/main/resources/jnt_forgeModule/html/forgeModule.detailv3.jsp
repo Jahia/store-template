@@ -127,10 +127,22 @@
                                 <c:if test="${not empty versionNumber.string}">
                                     ${versionNumber.string}<br/>
                                 </c:if>
-                                <%--TODO--%>
                                 <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal" href="#">
                                     <fmt:message key="jnt_forgemodule.clickToBrowse"/>
                                 </a>
+                            </div>
+                            <div id="changeLogModal" class="modal fade" role="dialog" tabindex="-1">
+                                <div class="modal-dialog changeLogDialog">
+                                    <div class="modal-header">
+                                        <button type="button" class="close pull-right"
+                                                data-dismiss="modal">&times;</button>
+                                        <h2><fmt:message key="jnt_forgeEntry.versions"/></h2>
+                                    </div>
+                                    <div class="modal-content">
+                                        <iframe src="${fn:replace(currentNode.url,".html",".changelog2.html")}"></iframe>
+                                        <%--<template:include view="changeLogv2"/>--%>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
