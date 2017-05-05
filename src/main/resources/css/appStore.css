@@ -1601,7 +1601,7 @@ input.fs1 {
     padding: 8px 16px 8px 0;
     text-align: left;
     vertical-align: top;
-    width: calc(20% - 4px);
+    width: 100%;
     font-family: 'Lato',sans-serif;
 }
 
@@ -1655,4 +1655,19 @@ input.fs1 {
     padding: 2px 8px;
     margin: 8px;
     box-sizing: border-box;
+}
+
+/*ROW SYSTEM FOR DETAILS*/
+.noMargin {
+    margin-left: 0;
+    margin-right: 0;
+}
+.fifth {
+    width: 20%;
+    float: left;
+}
+@media (max-width: 768px) {
+    .fifth {
+        width: 100%;
+    }
 }

@@ -24,8 +24,8 @@
 
 <jcr:sql
         var="query"
-        sql="SELECT * FROM [jnt:forgeModuleVersion] AS moduleVersion
-            WHERE isdescendantnode(moduleVersion,['${currentNode.path}'])"
+        sql="SELECT * FROM [jnt:forgePackageVersion] AS packageVersion
+            WHERE isdescendantnode(packageVersion,['${currentNode.path}'])"
 />
 <c:set var="sortedModules" value="${forge:sortByVersion(query.nodes)}"/>
 <c:set target="${moduleMap}" property="latestVersion" value="${forge:latestVersion(sortedModules)}"/>
@@ -87,113 +87,120 @@
                 <div class="col-md-12 module-section-title">
                     <h2>Module Details</h2>
                     <span></span>
-                    <div class="more-info-container.disabled">
-                        <div class="meta-info">
-                            <div class="title">
-                                <fmt:message key="jnt_forgeEntry.label.moduleId"/>
-                            </div>
-                            <div class="content">
-                                ${currentNode.name}
-                            </div>
-                        </div>
-
-                        <div class="meta-info">
-                            <div class="title">
-                                <fmt:message key="jnt_forgeEntry.label.groupId"/>
-                            </div>
-                            <div class="content">
-                                ${currentNode.properties['groupId'].string}
+                    <div class="row noMargin">
+                        <div class="fifth">
+                            <div class="meta-info">
+                                <div class="title">
+                                    <fmt:message key="jnt_forgeEntry.label.moduleId"/>
+                                </div>
+                                <div class="content">
+                                    ${currentNode.name}
+                                </div>
                             </div>
                         </div>
-
-                        <div class="meta-info">
-                            <div class="title">
-                                <fmt:message key="jnt_forgeEntry.label.updated" var="updatedLabel"/>
-                                ${fn:replace(updatedLabel,':','')}
-                            </div>
-                            <div class="content">
-                                <%--${latestVersion.properties['jcr:lastModified'].date.time}--%>
-                                <time itemprop="datePublished">
-                                    <fmt:formatDate value="${moduleMap.latestVersion.properties['jcr:lastModified'].date.time}"
-                                                    pattern="yyyy-MM-dd"/>
-                                </time>
+                        <div class="fifth">
+                            <div class="meta-info">
+                                <div class="title">
+                                    <fmt:message key="jnt_forgeEntry.label.authorName" var="authorLabel"/>
+                                    ${fn:replace(authorLabel,':','')}
+                                </div>
+                                <div class="content">
+                                    ${authorName}
+                                </div>
                             </div>
                         </div>
-
-                        <div class="meta-info">
-                            <div class="title">
-                                <fmt:message key="jnt_forgeEntry.label.version" var="versionLabel"/>
-                                ${fn:replace(versionLabel,':','')}
+                        <div class="fifth">
+                            <div class="meta-info">
+                                <div class="title">
+                                    <fmt:message key="jnt_forgeEntry.label.updated" var="updatedLabel"/>
+                                    ${fn:replace(updatedLabel,':','')}
+                                </div>
+                                <div class="content">
+                                    <%--${latestVersion.properties['jcr:lastModified'].date.time}--%>
+                                    <time itemprop="datePublished">
+                                        <fmt:formatDate value="${moduleMap.latestVersion.properties['jcr:lastModified'].date.time}"
+                                                        pattern="yyyy-MM-dd"/>
+                                    </time>
+                                </div>
                             </div>
-                            <div class="content">
-                                <c:if test="${not empty versionNumber.string}">
-                                    ${versionNumber.string}<br/>
-                                </c:if>
-                                <%--TODO--%>
-                                <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal" href="#">
-                                    <fmt:message key="jnt_forgemodule.clickToBrowse"/>
-                                </a>
-                            </div>
-                            <div id="changeLogModal" class="modal fade" role="dialog" tabindex="-1">
-                                <div class="modal-dialog changeLogDialog">
-                                    <div class="modal-header">
-                                        <button type="button" class="close pull-right"
-                                                data-dismiss="modal">&times;</button>
-                                        <h2><fmt:message key="jnt_forgeEntry.versions"/></h2>
-                                    </div>
-                                    <div class="modal-content">
-                                        <iframe src="${fn:replace(currentNode.url,".html",".changelog2.html")}"></iframe>
-                                        <%--<template:include view="changeLogv2"/>--%>
+                        </div>
+                        <div class="fifth">
+                            <div class="meta-info">
+                                <div class="title">
+                                    <fmt:message key="jnt_forgeEntry.label.version" var="versionLabel"/>
+                                    ${fn:replace(versionLabel,':','')}
+                                </div>
+                                <div class="content">
+                                    <c:if test="${not empty versionNumber.string}">
+                                        ${versionNumber.string}<br/>
+                                    </c:if>
+                                    <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal" href="#">
+                                        <fmt:message key="jnt_forgemodule.clickToBrowse"/>
+                                    </a>
+                                </div>
+                                <div id="changeLogModal" class="modal fade" role="dialog" tabindex="-1">
+                                    <div class="modal-dialog changeLogDialog">
+                                        <div class="modal-header">
+                                            <button type="button" class="close pull-right"
+                                                    data-dismiss="modal">&times;</button>
+                                            <h2><fmt:message key="jnt_forgeEntry.versions"/></h2>
+                                        </div>
+                                        <div class="modal-content">
+                                            <iframe src="${fn:replace(currentNode.url,".html",".changelog2.html")}"></iframe>
+                                            <%--<template:include view="changeLogv2"/>--%>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="meta-info">
-                            <div class="title">
-                                <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion" var="JahiaVersionLabel"/>
-                                ${fn:replace(JahiaVersionLabel,':','')}
-                            </div>
-                            <div class="content">
-                                ${fn:replace(moduleMap.latestVersion.properties['requiredVersion'].node.displayableName,'version-','')}<br/>
-                            </div>
-                        </div>
-
-                        <div class="meta-info">
-                            <div class="title">
-                                <fmt:message key="jnt_forgeEntry.label.authorName" var="authorLabel"/>
-                                ${fn:replace(authorLabel,':','')}
-                            </div>
-                            <div class="content">
-                                ${authorName}
+                        <div class="fifth">
+                            <div class="meta-info">
+                                <div class="title">
+                                    <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion" var="JahiaVersionLabel"/>
+                                    ${fn:replace(JahiaVersionLabel,':','')}
+                                </div>
+                                <div class="content">
+                                    ${fn:replace(moduleMap.latestVersion.properties['requiredVersion'].node.displayableName,'version-','')}<br/>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="meta-info">
-                            <div class="title">
-                                <fmt:message key="jnt_forgeEntry.label.category"/>
-                            </div>
-                            <div class="content">
-                                ${category.node.displayableName}
+                    </div>
+                    <div class="row noMargin">
+                        <div class="fifth">
+                            <div class="meta-info">
+                                <div class="title">
+                                    <fmt:message key="jnt_forgeEntry.label.category"/>
+                                </div>
+                                <div class="content">
+                                    ${category.node.displayableName}
+                                </div>
                             </div>
                         </div>
-
-                        <div class="meta-info large">
-                            <c:if test="${not empty authorURL}">
-                                <a class="link" target="_blank" href="${authorURL}">
-                                    <fmt:message key="jnt_forgeEntry.label.authorURL"/>
-                                </a>
-                            </c:if>
-                            <div class="developperEmail">
-                                <c:if test="${not empty authorEmail}">
-                                    <a class="link_text"
-                                       href="mailto:${authorEmail}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message
-                                            key="jnt_forgeEntry.label.authorEmail"/></a>
+                        <div class="fifth">
+                            <div class="meta-info large">
+                                <c:if test="${not empty authorURL}">
+                                    <a class="link" target="_blank" href="${authorURL}">
+                                        <fmt:message key="jnt_forgeEntry.label.authorURL"/>
+                                    </a>
                                 </c:if>
+                                <div class="developperEmail">
+                                    <c:if test="${not empty authorEmail}">
+                                        <a class="link_text"
+                                           href="mailto:${authorEmail}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message
+                                                key="jnt_forgeEntry.label.authorEmail"/></a>
+                                    </c:if>
+                                </div>
                             </div>
                         </div>
+                        <div class="fifth">
 
+                        </div>
+                        <div class="fifth">
 
+                        </div>
+                        <div class="fifth">
+
+                        </div>
                     </div>
                 </div>
             </div>
