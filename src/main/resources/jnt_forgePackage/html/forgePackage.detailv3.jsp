@@ -61,7 +61,7 @@
             <h2>${title}</h2>
             <%--TAGS AND DOWNLOAD--%>
             <div class="row">
-                <div class="col-sm-10">
+                <div class="col-sm-10" style="margin-bottom: 20px;">
                     <c:forEach items="${assignedTags}" var="tag" varStatus="status">
                         <tag class="module-tag">${fn:escapeXml(tag.string)}</tag>
                     </c:forEach>
