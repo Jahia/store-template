@@ -49,19 +49,7 @@
             </div>
             <search class="search-bar">
                 <div class="container hidden-print">
-                    <form class="navbar-form navbar-search navbar-left" >
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon" id="basic-addon1"><i class="material-icons">search</i></span>
-                                    <%--<input type="text" class="form-control" placeholder="Search">--%>
-                                <c:forEach items="${jcr:getChildrenOfType(currentNode, 'bootstrap3nt:navBarItemSimpleSearchForm')}" var="child"
-                                           varStatus="searchStatus">
-                                    <template:module node="${child}"/>
-                                </c:forEach>
-                            </div>
-                        </div>
-                    </form>
-                    <c:forEach items="${jcr:getChildrenOfType(currentNode, 'jnt:storeFilter')}" var="child"
+                    <c:forEach items="${jcr:getChildrenOfType(currentNode, 'bootstrap3nt:navBarItemSimpleSearchForm,jnt:storeFilter')}" var="child"
                                varStatus="searchStatus">
                         <template:module node="${child}"/>
                     </c:forEach>
