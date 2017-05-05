@@ -10,11 +10,8 @@
 <%-- Les styles--%>
 <template:addCacheDependency flushOnPathMatchingRegexp="${renderContext.site.path}/contents/modules-repository/.*"/>
 <template:addResources type="javascript" resources="storeUtils.js"/>
-<%--<template:include view="hidden.header"/>--%>
-<c:set var="publishedCondition" value=""/>
-<c:if test="${!jcr:hasPermission(renderContext.site, 'jahiaForgeModerateModule')}">
-    <c:set var="publishedCondition" value=" AND [published]=true"/>
-</c:if>
+<template:include view="hidden.header"/>
+
 <c:set var="columnsNumber" value="${currentNode.properties['columnsNumber'].long}"/>
 <c:set var="count" value="1"/>
 <template:addResources type="inlinejavascript">
@@ -28,7 +25,7 @@
 <%--Get pakcages--%>
 <c:set var="statementPackages"
        value="SELECT * FROM [jnt:content]
-                WHERE ISDESCENDANTNODE('${renderContext.site.path}') ${publishedCondition}
+                WHERE ISDESCENDANTNODE('${renderContext.site.path}') AND [published]=true
                 AND ([jcr:primaryType] = 'jnt:forgePackage')
                 ORDER BY [jcr:created] DESC"/>
 <jcr:sql var="packages" sql="${statementPackages}"/>
@@ -36,7 +33,7 @@
 <%--Latest modules--%>
 <c:set var="latestModules"
        value="SELECT * FROM [jnt:content]
-                WHERE ISDESCENDANTNODE('${renderContext.site.path}') ${publishedCondition}
+                WHERE ISDESCENDANTNODE('${renderContext.site.path}') AND [published]=true
                 AND ([jcr:primaryType] = 'jnt:forgeModule')
                 ORDER BY [jcr:created] DESC"/>
 <jcr:sql var="latest" sql="${latestModules}" limit="3"/>
@@ -44,7 +41,7 @@
 <%--All modules--%>
 <c:set var="allModules"
        value="SELECT * FROM [jnt:content]
-                WHERE ISDESCENDANTNODE('${renderContext.site.path}') ${publishedCondition}
+                WHERE ISDESCENDANTNODE('${renderContext.site.path}') AND [published]=true
                 AND ([jcr:primaryType] = 'jnt:forgeModule')
                 ORDER BY [jcr:title] ASC"/>
 <jcr:sql var="allmodules" sql="${allModules}"/>
