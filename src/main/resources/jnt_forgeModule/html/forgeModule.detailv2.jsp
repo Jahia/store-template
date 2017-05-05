@@ -160,7 +160,7 @@
 <c:set var="tags" value="${currentNode.properties['j:tagList']}"/>
 
 <c:set var="moduleCategories" value="${renderContext.site.properties['rootCategory'].node}"/>
-fddfdgfffgfgffd
+
 <template:addResources type="inlinejavascript">
     <script type="text/javascript">
         var tagClasses = ["label-info", "label-success", "label-warning", "label-danger"];

@@ -11,7 +11,13 @@
 <template:addCacheDependency flushOnPathMatchingRegexp="${renderContext.site.path}/contents/modules-repository/.*"/>
 <template:addResources type="javascript" resources="storeUtils.js"/>
 <template:include view="hidden.header"/>
-
+<template:addResources type="inlinejavascript">
+    <script type="text/javascript">
+        //See storeFilter.v3 for usage
+        var modulesTags = {};
+        var modulesCategories = {};
+    </script>
+</template:addResources>
 <%--Get pakcages--%>
 <c:set var="statementPackages"
        value="SELECT * FROM [jnt:content]
@@ -75,3 +81,39 @@
         </c:forEach>
     </div>
 </c:if>
+
+<%--GET CATEGORIES AND TAGS FROM ALL MODULES--%>
+<script type="text/javascript">
+    //Tags and Categories for All packages
+    <c:forEach items="${packages.nodes}" var="module" varStatus="status">
+        <c:if test="${module.properties['published'].boolean}">
+            <c:forEach items="${module.properties['j:defaultCategory']}" var="cat" varStatus="vs">
+                <c:set var="categoryIdentifier" value="${cat.string}"/>
+                <jcr:node var="category" uuid="${categoryIdentifier}"/>
+            </c:forEach>
+            modulesTags['${module.identifier}'] = [];
+            <c:if test="${category != null}">
+                modulesCategories['${category.properties['jcr:title'].string}'] = "${category.identifier}";
+            </c:if>
+            <c:forEach items="${module.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
+                modulesTags['${module.identifier}'].push('${currentTag.string}');
+            </c:forEach>
+        </c:if>
+    </c:forEach>
+    //Tags and Categories for All modules
+    <c:forEach items="${allmodules.nodes}" var="module" varStatus="status">
+        <c:if test="${module.properties['published'].boolean}">
+            <c:forEach items="${module.properties['j:defaultCategory']}" var="cat" varStatus="vs">
+                <c:set var="categoryIdentifier" value="${cat.string}"/>
+                <jcr:node var="category" uuid="${categoryIdentifier}"/>
+            </c:forEach>
+            modulesTags['${module.identifier}'] = [];
+            <c:if test="${category != null}">
+                modulesCategories['${category.properties['jcr:title'].string}'] = "${category.identifier}";
+            </c:if>
+            <c:forEach items="${module.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
+                modulesTags['${module.identifier}'].push('${currentTag.string}');
+            </c:forEach>
+        </c:if>
+    </c:forEach>
+</script>

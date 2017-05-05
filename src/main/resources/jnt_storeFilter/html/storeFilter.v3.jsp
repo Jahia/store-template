@@ -21,7 +21,7 @@
             "cert-filter":"",
             "tag-filter":"",
             "cat-filter":""
-        }
+        };
         function resetFilters(){
 
             $(".forge").isotope({filter:''});
@@ -44,8 +44,8 @@
             var dropToggle = dropdown.find(".dropdown-toggle");
             var filterId=dropToggle.attr('id');
             var title=filterNames[dropToggle.attr('id')];
-            dropToggle.html(title+' ( '+clicked+' )<span class="caret"></span>');
-            $(".filter-reset").show();
+            //dropToggle.html(title+' ( '+clicked+' )<span class="caret"></span>');
+            //$(".filter-reset").show();
         }
         $(document).ready(function () {
             /*$(".store-filter").on(click(function(a,b,c){
@@ -78,7 +78,7 @@
             //Get module Categories and init the filter selectors
             var categories = getSortedCategories(modulesCategories);
             //Add categories selectors sorted
-            var categorySelectorElement = $("ul#category");
+            var categorySelectorElement = $("ul#categoryList");
             $.each(categories, function(index,categoryString){
                 var categorySplit = categoryString.split("--categoryID--");
                 categorySelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='.category-"+categorySplit[1]+"' onclick='filterClick(this);'>"+categorySplit[0]+"</a></li>");
@@ -160,11 +160,12 @@
 <ul class="nav navbar-nav navbar-right">
     <button type="button" class="btn btn-default btn-tagsmodal" data-toggle="modal" data-target="#myModal">Tags</button>
     <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categories <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <fmt:message key="jnt_storefilter.label.categories"/> <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu filters cat-filter-list" id="categoryList">
+            <li class="active default"><a href="#" data-filter="" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/></a></li>
+            <li role="separator" class="divider"></li>
         </ul>
     </li>
 </ul>
