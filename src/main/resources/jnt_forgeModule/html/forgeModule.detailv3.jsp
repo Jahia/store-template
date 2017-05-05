@@ -32,6 +32,8 @@
 <c:set var="title" value="${currentNode.properties['jcr:title'].string}"/>
 <c:set var="description" value="${currentNode.properties['description'].string}"/>
 <c:set var="howToInstall" value="${currentNode.properties['howToInstall'].string}"/>
+<c:set var="authorURL" value="${currentNode.properties['authorURL'].string}"/>
+<c:set var="authorEmail" value="${currentNode.properties['authorEmail'].string}"/>
 
 <jcr:nodeProperty node="${moduleMap.latestVersion}" name="versionNumber" var="versionNumber"/>
 <jcr:nodeProperty node="${currentNode}" name="j:tagList" var="assignedTags"/>
@@ -176,11 +178,17 @@
                         </div>
 
                         <div class="meta-info large">
-                            <a class="link" target="_blank" href="http://www.jahia.com">Visit developer's website</a>
+                            <c:if test="${not empty authorURL}">
+                                <a class="link" target="_blank" href="${authorURL}">
+                                    <fmt:message key="jnt_forgeEntry.label.authorURL"/>
+                                </a>
+                            </c:if>
                             <div class="developperEmail">
-                                <a class="link"
-                                   href="mailto:?Subject=DX%20Base%20Demo%20Templates%20-%20Version:%202.0.0">Email
-                                    developer</a>
+                                <c:if test="${not empty authorEmail}">
+                                    <a class="link_text"
+                                       href="mailto:${authorEmail}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message
+                                            key="jnt_forgeEntry.label.authorEmail"/></a>
+                                </c:if>
                             </div>
                         </div>
 
