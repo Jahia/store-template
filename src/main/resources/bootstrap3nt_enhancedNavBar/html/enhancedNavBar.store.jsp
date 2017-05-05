@@ -40,40 +40,34 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="appstore-navbar-collapse-${currentNode.identifier}">
                     <ul class="nav navbar-nav navbar-right">
-                        <c:forEach items="${jcr:getChildrenOfType(currentNode, 'bootstrap3mix:navBarItem')}" var="child"
+                        <c:forEach items="${jcr:getChildrenOfType(currentNode, 'jnt:storeLink,bootstrap3nt:navBarItemLoginForm')}" var="child"
                                    varStatus="status">
                             <template:module node="${child}"/>
                         </c:forEach>
                     </ul>
                 </div>
             </div>
-
-            <!-- Remove is search bar is not needed (eg: module details). -->
             <search class="search-bar">
                 <div class="container hidden-print">
                     <form class="navbar-form navbar-search navbar-left" >
                         <div class="form-group">
                             <div class="input-group">
                                 <span class="input-group-addon" id="basic-addon1"><i class="material-icons">search</i></span>
-                                <input type="text" class="form-control" placeholder="Search">
+                                    <%--<input type="text" class="form-control" placeholder="Search">--%>
+                                <c:forEach items="${jcr:getChildrenOfType(currentNode, 'bootstrap3nt:navBarItemSimpleSearchForm')}" var="child"
+                                           varStatus="searchStatus">
+                                    <template:module node="${child}"/>
+                                </c:forEach>
                             </div>
                         </div>
                     </form>
-                    <ul class="nav navbar-nav navbar-right">
-                        <button type="button" class="btn btn-default btn-tagsmodal" data-toggle="modal" data-target="#myModal">Tags</button>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categories <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">1</a></li>
-                                <li><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <c:forEach items="${jcr:getChildrenOfType(currentNode, 'jnt:storeFilter')}" var="child"
+                               varStatus="searchStatus">
+                        <template:module node="${child}"/>
+                    </c:forEach>
                 </div>
             </search>
         </nav>
-
 
         <!-- Modal -->
         <div class="modal fade tag-modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -101,5 +95,6 @@
             </div>
         </div>
         <h3 class="text-muted"><c:if test="${not empty title}">${title}</c:if></h3>
+        <div class="clearfix>"></div>
     </c:otherwise>
 </c:choose>

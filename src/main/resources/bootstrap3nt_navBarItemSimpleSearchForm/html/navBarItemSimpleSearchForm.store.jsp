@@ -5,6 +5,9 @@
 <%@ taglib prefix="jcr" uri="http://www.jahia.org/tags/jcr" %>
 <%@ taglib prefix="s" uri="http://www.jahia.org/tags/search" %>
 <%@ taglib prefix="template" uri="http://www.jahia.org/tags/templateLib" %>
+<%--@elvariable id="currentNode" type="org.jahia.services.content.JCRNodeWrapper"--%>
+<%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
+
 <template:addResources type="css" resources="main.css"/>
 <template:addCacheDependency uuid="${currentNode.properties.result.string}"/>
 <c:if test="${not empty currentNode.properties.result.node}">

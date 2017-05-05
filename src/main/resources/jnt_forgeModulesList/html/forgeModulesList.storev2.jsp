@@ -48,7 +48,7 @@
 
 <c:set var="latestModulesIds" value="" />
 
-<h4 style="margin-top: 80px; color: #03a9f4;">JAHIA PACKAGES</h4>
+<h4 style="color: #03a9f4;">JAHIA PACKAGES</h4>
 
 <div class="row">
     <c:forEach items="${packages.nodes}" var="module" varStatus="status" begin="0" end="2">

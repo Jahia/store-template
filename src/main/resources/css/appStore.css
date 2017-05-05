@@ -29,7 +29,7 @@ footer p {
 
 /*Home Page*/
 header.home {
-    height:auto;
+    height:150px;
 }
 .changeLogWrapper{
     background:white;

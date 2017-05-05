@@ -175,25 +175,18 @@
                                      jcr:primaryType="bootstrap3nt:navBarItemLoginForm"
                                      position="right"
                                      view="menu"/>
+                                            <search-form j:view="store"
+                                           jcr:mixinTypes="jmix:renderable"
+                                           jcr:primaryType="bootstrap3nt:navBarItemSimpleSearchForm"
+                                           position="left"
+                                           result="/modules/store-template/search-results"/>
+                                            <storefilter j:view="v3"
+                                           jcr:mixinTypes="jmix:renderable"
+                                           jcr:primaryType="jnt:storeFilter"
+                                           position="right"/>
                                         </header-menu>
                                     </homeHeader>
                                 </homeHeader>
-                                <search-bar fluid="false"
-                                 inverse="false"
-                                 j:view="storeSearch"
-                                 jcr:mixinTypes="jmix:renderable"
-                                 jcr:primaryType="bootstrap3nt:enhancedNavBar">
-                                    <j:translation_fr jcr:language="fr"
-                                          jcr:mixinTypes="mix:title"
-                                          jcr:primaryType="jnt:translation"
-                                          jcr:title="Search bar"/>
-                                    <search-form j:view="store"
-                                     jcr:mixinTypes="jmix:renderable"
-                                     jcr:primaryType="bootstrap3nt:navBarItemSimpleSearchForm"
-                                     position="left"
-                                     result="/modules/store-template/search-results"/>
-                                    <storefilter jcr:primaryType="jnt:storeFilter" position="right"/>
-                                </search-bar>
                                 <container fluid="false"
                                 j:id="content"
                                 j:skin="skins.custom"
