@@ -1226,7 +1226,7 @@ h6.title{
     margin-left: 12%;
     margin-right: 12%;
     position: relative;
-    top: -100px;
+    top: 0;
     min-height: 700px;
     padding: 20px 20px 20px 20px;
 }
