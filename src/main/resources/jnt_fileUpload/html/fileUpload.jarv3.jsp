@@ -16,7 +16,18 @@
 <%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
 <%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
-
+<template:addResources type="javascript" resources="libraries/fileinput/fileinput.js"/>
+<template:addResources type="css" resources="libraries/fileinput.css"/>
+<script>
+    $(document).ready(function () {
+        $("#file").fileinput({
+            uploadUrl: "<c:url value='${url.base}${renderContext.site.path}/contents/modules-repository.createEntryFromJar.do'/>", // server upload action
+            uploadAsync: true,
+            maxFileCount: 5,
+            allowedFileExtensions:['jar']
+        });
+    });
+</script>
 <c:if test="${jcr:hasPermission(renderContext.mainResource.node, 'jahiaForgeUploadModule')}">
     <div class="well well-sm">
         <c:choose>
@@ -38,17 +49,11 @@
                     <c:set var="targetNode" value="${currentNode.properties.target.node}"/>
                 </c:if>
                 <template:tokenizedForm allowsMultipleSubmits="true">
-                    <form class="form-horizontal"
-                          action="<c:url value='${url.base}${renderContext.site.path}/contents/modules-repository.createEntryFromJar.do'/>"
-                          method="POST" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="file" class="col-sm-2 control-label"><fmt:message
-                                    key="forge.uploadJar.label"/></label>
-                            <div class="col-sm-10">
-                                <input type="file" name="file" multiple id="file" class="form-control">
-                            </div>
-
-                        </div>
+                    <form action="<c:url value='${url.base}${renderContext.site.path}/contents/modules-repository.createEntryFromJar.do'/>"
+                            method="POST" enctype="multipart/form-data">
+                        <label for="file" class="control-label"><fmt:message
+                                key="forge.uploadJar.label"/></label>
+                        <input type="file" name="file" id="file" multiple class="file-loading">
 
                     </form>
                 </template:tokenizedForm>

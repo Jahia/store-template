@@ -20,7 +20,7 @@
     <title>${fn:escapeXml(renderContext.mainResource.node.displayableName)}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Import Google font (Lato) -->
-    <link href='//fonts.googleapis.com/css?family=Lato:400,700,300' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,700,300' rel='stylesheet' type='text/css'>
 
     <%--Material icons--%>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -44,7 +44,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <%-- Google fonts--%>
-    <link href='//fonts.googleapis.com/css?family=Scada' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Scada' rel='stylesheet' type='text/css'>
 
     <template:addResources type="javascript" resources="jquery.min.js"/>
     <template:addResources type="javascript" resources="jquery-ui.min.js"/>
