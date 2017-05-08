@@ -22,6 +22,10 @@
             "tag-filter":"",
             "cat-filter":""
         };
+
+        var filterManager = new FiltersManager();
+        var categoryFilterClicked = false;
+
         function resetFilters(){
 
             $(".forge").isotope({filter:''});
@@ -36,17 +40,43 @@
             $("li.active").removeClass("active");
 
         }
-        function filterClick(object){
-            console.log("filterclick");
-            var obj = $(object);
-            var clicked=obj.html();
-            var dropdown = obj.parent().parent().parent();
+        function filterClick(el){
+            //remove or add filter
+            //Set flag so that we don't close the dropdown when selecting/deselecting a filter.
+            categoryFilterClicked = true;
+            var $el = $(el);
+            var $li = $el.parent('li');
+            var categoryValue = $el.attr('data-filter');
+            console.log(categoryValue);
+            if (categoryValue == 'all') {
+                if ($li.hasClass('active')) {
+                    $li.removeClass('active');
+                } else {
+                    $li.addClass('active');
+                    filterManager.resetFilter(filterManager.CATEGORIES);
+                }
+            } else if (filterManager.containsValue(filterManager.CATEGORIES, categoryValue)) {
+                filterManager.removeValue(filterManager.CATEGORIES, categoryValue);
+                $li.removeClass('active');
+                //if no categories remain, then select ALL
+                if (filterManager.isEmpty(filterManager.CATEGORIES)) {
+                    $li.siblings('.default').addClass('active');
+                }
+            } else {
+                filterManager.addValue(filterManager.CATEGORIES, categoryValue);
+                $li.addClass('active');
+                //Remove default 'all' filter if it is selected.
+                $li.siblings('.default').removeClass('active');
+            }
+            var clicked=$el.html();
+            var dropdown = $el.parent().parent().parent();
             var dropToggle = dropdown.find(".dropdown-toggle");
             var filterId=dropToggle.attr('id');
             var title=filterNames[dropToggle.attr('id')];
             //dropToggle.html(title+' ( '+clicked+' )<span class="caret"></span>');
             //$(".filter-reset").show();
         }
+
         $(document).ready(function () {
             /*$(".store-filter").on(click(function(a,b,c){
                 console.log("click");
@@ -84,6 +114,16 @@
                 categorySelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='.category-"+categorySplit[1]+"' onclick='filterClick(this);'>"+categorySplit[0]+"</a></li>");
 
             });
+
+            $('.dropdown.categories').on('hide.bs.dropdown', function ($event) {
+                //Dont close the dropdown if its a filter that has been selected/deselected
+                if (categoryFilterClicked) {
+                    $event.preventDefault();
+                }
+                //reset the flag.
+                categoryFilterClicked = false;
+            });
+
         });
         $( function() {
             var qsRegex;
@@ -99,8 +139,8 @@
                 $('#search .quicksearch').val("");
                 var $this = $(this);
                 var $li =  $this.parent('li');
-                $li.siblings().removeClass('active');
-                $li.addClass('active');
+               // $li.siblings().removeClass('active');
+                //$li.addClass('active');
                 // get group key
                 var $buttonGroup = $this.parents('.dropdown-menu');
                 var filterGroup = $buttonGroup.attr('data-filter-group');
@@ -159,12 +199,12 @@
 <fmt:message key="jnt_forgeEntry.status.supported" var="supportedLabel"/>
 <ul class="nav navbar-nav navbar-right">
     <button type="button" class="btn btn-default btn-tagsmodal" data-toggle="modal" data-target="#myModal">Tags</button>
-    <li class="dropdown">
+    <li class="dropdown categories">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
             <fmt:message key="jnt_storefilter.label.categories"/> <span class="caret"></span>
         </a>
         <ul class="dropdown-menu filters cat-filter-list" id="categoryList">
-            <li class="active default"><a href="#" data-filter="" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/></a></li>
+            <li class="active default"><a href="#" data-filter="all" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/></a></li>
             <li role="separator" class="divider"></li>
         </ul>
     </li>

@@ -50,6 +50,8 @@
     <template:addResources type="javascript" resources="jquery-ui.min.js"/>
     <template:addResources type="javascript" resources="libraries/bootstrap.min.js"/>
     <template:addResources type="javascript" resources="libraries/isotope.min.js"/>
+    <template:addResources type="javascript" resources="libraries/underscore-min.js"/>
+    <template:addResources type="javascript" resources="libraries/filtersmanager.js"/>
     <template:addResources type="css" resources="bootstrap.min.css"/>
     <template:addResources type="css" resources="appstore.css"/>
     <template:addResources type="css" resources="bootstrap.icon-large.min.css"/>
