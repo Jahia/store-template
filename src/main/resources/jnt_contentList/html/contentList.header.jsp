@@ -3,7 +3,7 @@
 <%--@elvariable id="currentNode" type="org.jahia.services.content.JCRNodeWrapper"--%>
 <%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
 <%-- Les styles--%>
-<c:set var="isHomePage" value="${renderContext.mainResource.node.identifier eq renderContext.site.home.identifier or renderContext.mainResource.resolvedTemplate eq 'my-modules'}"/>
+<c:set var="isHomePage" value="${renderContext.mainResource.node.identifier eq renderContext.site.home.identifier or renderContext.mainResource.resolvedTemplate eq 'my-modules' or renderContext.mainResource.resolvedTemplate eq 'store-admin'}"/>
 <c:set var="isSearchResultPage" value="${(renderContext.mainResource.node.primaryNodeType.name eq 'jnt:page') and (renderContext.mainResource.node.name eq 'search-results')}"/>
 <c:set var="isAdminPage" value="${renderContext.mainResource.resolvedTemplate eq 'store-admin'}"/>
 <c:if test="${isHomePage or isSearchResultPage}">

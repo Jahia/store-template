@@ -516,16 +516,9 @@
                                     jcr:primaryType="jnt:translation"
                                     jcr:title="Private App Store Administration"/>
                             <pageContent jcr:primaryType="jnt:contentList">
-                                <moduleHeader j:classname="admin-header"
-                                   j:id="adminheader"
-                                   j:skin="skins.custom"
-                                   jcr:mixinTypes="jmix:customSkin jmix:skinnable"
-                                   jcr:primaryType="jnt:area">
-                                    <moduleHeader j:classname="admin-header"
-                                      j:id="headeradmin"
-                                      j:skin="skins.custom"
-                                      j:view="header"
-                                      jcr:mixinTypes="jmix:customSkin jmix:renderable jmix:skinnable"
+                                <moduleHeader jcr:primaryType="jnt:area">
+                                    <moduleHeader j:view="header"
+                                      jcr:mixinTypes="jmix:renderable"
                                       jcr:primaryType="jnt:contentList">
                                         <header-menu fluid="false"
                                         inverse="false"
@@ -557,21 +550,24 @@
                                                 jcr:mixinTypes="mix:title"
                                                 jcr:primaryType="jnt:translation"
                                                 jcr:title="www"/>
-                                            <bootstrap-tabular-list fadeIn="true"
-                                                      jcr:primaryType="jnt:bootstrapTabularList"
-                                                      tabsPosition="top">
-                                                <store-settings jcr:primaryType="jnt:contentList">
+                                            <tab fadeEffect="true"
+                                   jcr:primaryType="bootstrap3nt:tabs"
+                                   navJustified="true"
+                                   navStacked="false"
+                                   navigation="tab"
+                                   tabsPosition="top">
+                                                <settings jcr:primaryType="jnt:contentList">
                                                     <j:translation_en jcr:language="en"
                                                       jcr:mixinTypes="mix:title"
                                                       jcr:primaryType="jnt:translation"
-                                                      jcr:title="Private App Store Settings"/>
+                                                      jcr:title="Settings"/>
                                                     <forgesettings jcr:primaryType="jnt:forgeSettings"/>
-                                                </store-settings>
-                                                <store-roles jcr:primaryType="jnt:contentList">
+                                                </settings>
+                                                <roles jcr:primaryType="jnt:contentList">
                                                     <j:translation_en jcr:language="en"
                                                       jcr:mixinTypes="mix:title"
                                                       jcr:primaryType="jnt:translation"
-                                                      jcr:title="Private App Store roles"/>
+                                                      jcr:title="Roles"/>
                                                     <manage-roles jcr:primaryType="jnt:manageRoles"
                                                   roles="reader store-administrator store-developer">
                                                         <j:translation_en jcr:language="en"
@@ -579,7 +575,7 @@
                                                          jcr:primaryType="jnt:translation"
                                                          jcr:title="Private App Store roles"/>
                                                     </manage-roles>
-                                                </store-roles>
+                                                </roles>
                                                 <categories jcr:primaryType="jnt:contentList">
                                                     <j:translation_en jcr:language="en"
                                                       jcr:mixinTypes="mix:title"
@@ -587,7 +583,7 @@
                                                       jcr:title="Categories"/>
                                                     <categorysettings jcr:primaryType="jnt:categorySettings"/>
                                                 </categories>
-                                            </bootstrap-tabular-list>
+                                            </tab>
                                         </workspace-default>
                                     </bootstrap-container>
                                 </bootstrap-container>
@@ -635,7 +631,7 @@
                                    jcr:primaryType="jnt:contentList">
                                     <file-upload-form j:id="myModulesUploadForm"
                                           j:skin="skins.custom"
-                                          j:view="jar"
+                                          j:view="jarv3"
                                           jcr:mixinTypes="jmix:customSkin jmix:renderable jmix:skinnable"
                                           jcr:primaryType="jnt:fileUpload"/>
                                     <j:translation_en jcr:language="en"
@@ -682,84 +678,6 @@
                                     jcr:primaryType="jnt:translation"
                                     jcr:title="Redirect page"/>
                         </redirect-page>
-                        <store-admin j:applyOn="jnt:virtualsite"
-                            j:defaultTemplate="false"
-                            j:hiddenTemplate="true"
-                            j:requiredPermissionNames="jahiaForgeModerateModule"
-                            j:titleKey="forgeSettings.label"
-                            jcr:mixinTypes="jmix:rbTitle"
-                            jcr:primaryType="jnt:contentTemplate">
-                            <j:translation_en jcr:language="en"
-                                    jcr:mixinTypes="mix:title"
-                                    jcr:primaryType="jnt:translation"
-                                    jcr:title="Private App Store Administration"/>
-                            <pagecontent jcr:primaryType="jnt:contentList">
-                                <moduleHeader jcr:primaryType="jnt:area">
-                                    <moduleHeader j:view="header"
-                                      jcr:mixinTypes="jmix:renderable"
-                                      jcr:primaryType="jnt:contentList">
-                                        <header-menu fluid="false"
-                                        inverse="false"
-                                        j:classname="header clearfix"
-                                        j:skin="skins.custom"
-                                        j:view="store"
-                                        jcr:mixinTypes="jmix:customSkin jmix:renderable jmix:skinnable"
-                                        jcr:primaryType="bootstrap3nt:enhancedNavBar">
-                                            <j:translation_fr jcr:language="fr"
-                                                jcr:mixinTypes="mix:title"
-                                                jcr:primaryType="jnt:translation"
-                                                jcr:title="header-menu"/>
-                                            <login j:view="store_detail"
-                                     jcr:mixinTypes="jmix:renderable"
-                                     jcr:primaryType="bootstrap3nt:navBarItemLoginForm"
-                                     position="right"
-                                     view="menu"/>
-                                        </header-menu>
-                                    </moduleHeader>
-                                </moduleHeader>
-                                <bootstrap-container fluid="true" jcr:primaryType="jnt:bootstrapContainer">
-                                    <bootstrap-container jcr:primaryType="jnt:contentList">
-                                        <workspace-default jcr:primaryType="jnt:workspaceSwitch" workspace="default">
-                                            <j:translation_en jcr:language="en"
-                                                jcr:mixinTypes="mix:title"
-                                                jcr:primaryType="jnt:translation"
-                                                jcr:title="www"/>
-                                            <bootstrap-tabular-list fadeIn="true"
-                                                      jcr:primaryType="jnt:bootstrapTabularList"
-                                                      tabsPosition="top">
-                                                <store-settings jcr:primaryType="jnt:contentList">
-                                                    <j:translation_en jcr:language="en"
-                                                      jcr:mixinTypes="mix:title"
-                                                      jcr:primaryType="jnt:translation"
-                                                      jcr:title="Private App Store Settings"/>
-                                                    <forgesettings jcr:primaryType="jnt:forgeSettings"/>
-                                                </store-settings>
-                                                <store-roles jcr:primaryType="jnt:contentList">
-                                                    <j:translation_en jcr:language="en"
-                                                      jcr:mixinTypes="mix:title"
-                                                      jcr:primaryType="jnt:translation"
-                                                      jcr:title="Private App Store roles"/>
-                                                    <manage-roles jcr:primaryType="jnt:manageRoles"
-                                                  roles="reader store-administrator store-developer">
-                                                        <j:translation_en jcr:language="en"
-                                                         jcr:mixinTypes="mix:title"
-                                                         jcr:primaryType="jnt:translation"
-                                                         jcr:title="Private App Store roles"/>
-                                                    </manage-roles>
-                                                </store-roles>
-                                                <categories jcr:primaryType="jnt:contentList">
-                                                    <j:translation_en jcr:language="en"
-                                                      jcr:mixinTypes="mix:title"
-                                                      jcr:primaryType="jnt:translation"
-                                                      jcr:title="Categories"/>
-                                                    <categorysettings jcr:primaryType="jnt:categorySettings"/>
-                                                </categories>
-                                            </bootstrap-tabular-list>
-                                        </workspace-default>
-                                    </bootstrap-container>
-                                </bootstrap-container>
-                            </pagecontent>
-                        </store-admin>
                     </redirect>
                     <changelog2 j:applyOn="jnt:forgeModule jnt:forgePackage"
                         j:defaultTemplate="false"
