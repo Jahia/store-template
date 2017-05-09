@@ -77,10 +77,15 @@
         }
 
         function updateCategoriesCount() {
-            var categoryFilteredElementsCount = filterManager.getFilterTypeElementCount(filterManager.CATEGORIES, ["all"]);
+            var categoryFilteredElementsCount = filterManager.getFilterTypeElementCount(filterManager.CATEGORIES);
             _.each(categories, function(filterId){
                 var filterBadge = $('a[data-filter*="' + filterId + '"] > span');
-                filterBadge.html((filterId in categoryFilteredElementsCount) ? categoryFilteredElementsCount[filterId] : 0);
+                if (categoryFilteredElementsCount[filterId] > 0 ) {
+                    filterBadge.html(categoryFilteredElementsCount[filterId]);
+                    filterBadge.show();
+                } else {
+                    filterBadge.hide();
+                }
             });
         }
 

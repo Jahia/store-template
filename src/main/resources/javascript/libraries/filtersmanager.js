@@ -59,14 +59,10 @@ function FiltersManager() {
         filtersContainer[filterType] = [];
     };
 
-    this.getFilterTypeElementCount = function (filterType, additionalFilters) {
+    this.getFilterTypeElementCount = function (filterType) {
         var elements = $isotope.isotope('getFilteredItemElements');
         var filterTypeElementCount = {};
         var availableFilters = filtersContainer[filterType].join(" ");
-        if (additionalFilters != null) {
-            //Used to include any other filters that may otherwise be omitted
-            availableFilters += " " + additionalFilters.join(" ");
-        }
         _.each(elements, function(element){
             var elementCategories = $(element).attr('data-filter-categories').split(' ');
             _.each(elementCategories, function(filterId){
