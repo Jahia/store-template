@@ -72,13 +72,23 @@
 <c:if test="${not empty allmodules.nodes}">
     <div class="row">
         <h4 style="color: #03a9f4;">ALL MODULES</h4>
-        <c:forEach items="${allmodules.nodes}" var="module" varStatus="status">
-            <c:if test="${module.properties['published'].boolean and !fn:contains(latestModulesIds, module.identifier)}">
-                <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12">
-                    <template:module node="${module}" view="v2"/>
-                </div>
-            </c:if>
-        </c:forEach>
+        <div class="category-grid">
+            <c:forEach items="${allmodules.nodes}" var="module" varStatus="status">
+                <c:if test="${module.properties['published'].boolean and !fn:contains(latestModulesIds, module.identifier)}">
+                    <!--Set module categories for filtering purposes-->
+                    <c:set var="categories" value=""/>
+                    <c:forEach items="${module.properties['j:defaultCategory']}" var="category" varStatus="status" >
+                        <c:set var='categories' value='${categories}${not status.first ? " " : ""}${category.node.identifier}' />
+                    </c:forEach>
+                    <div class="grid-sizer col-lg-4 col-md-6 col-xs-12"></div>
+                    <div class="col-lg-4 col-md-6 col-xs-12" data-filter-categories="${categories} all">
+                        <div id="module-${module.identifier}">
+                            <template:module node="${module}" view="v2"/>
+                        </div>
+                    </div>
+                </c:if>
+            </c:forEach>
+        </div>
     </div>
 </c:if>
 

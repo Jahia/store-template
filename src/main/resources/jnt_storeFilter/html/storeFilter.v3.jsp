@@ -22,9 +22,10 @@
             "tag-filter":"",
             "cat-filter":""
         };
-
+        var categories = null;
         var filterManager = new FiltersManager();
         var categoryFilterClicked = false;
+        var DEFAULT_CATEGORY_FILTER = 'all';
 
         function resetFilters(){
 
@@ -47,13 +48,14 @@
             var $el = $(el);
             var $li = $el.parent('li');
             var categoryValue = $el.attr('data-filter');
-            console.log(categoryValue);
             if (categoryValue == 'all') {
-                if ($li.hasClass('active')) {
+                if ($li.hasClass('active') && filterManager.getFilterContainerSize(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER) > 1) {
                     $li.removeClass('active');
-                } else {
+                } else if (!$li.hasClass('active')){
+                    $li.siblings('li').removeClass('active');
                     $li.addClass('active');
                     filterManager.resetFilter(filterManager.CATEGORIES);
+                    filterManager.addValue(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER);
                 }
             } else if (filterManager.containsValue(filterManager.CATEGORIES, categoryValue)) {
                 filterManager.removeValue(filterManager.CATEGORIES, categoryValue);
@@ -61,33 +63,28 @@
                 //if no categories remain, then select ALL
                 if (filterManager.isEmpty(filterManager.CATEGORIES)) {
                     $li.siblings('.default').addClass('active');
+                    filterManager.addValue(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER);
                 }
             } else {
                 filterManager.addValue(filterManager.CATEGORIES, categoryValue);
                 $li.addClass('active');
                 //Remove default 'all' filter if it is selected.
                 $li.siblings('.default').removeClass('active');
+                filterManager.removeValue(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER)
             }
-            var clicked=$el.html();
-            var dropdown = $el.parent().parent().parent();
-            var dropToggle = dropdown.find(".dropdown-toggle");
-            var filterId=dropToggle.attr('id');
-            var title=filterNames[dropToggle.attr('id')];
-            //dropToggle.html(title+' ( '+clicked+' )<span class="caret"></span>');
-            //$(".filter-reset").show();
+            filterManager.filterItems([filterManager.CATEGORIES]);
+            updateCategoriesCount();
+        }
+
+        function updateCategoriesCount() {
+            var categoryFilteredElementsCount = filterManager.getFilterTypeElementCount(filterManager.CATEGORIES, ["all"]);
+            _.each(categories, function(filterId){
+                var filterBadge = $('a[data-filter*="' + filterId + '"] > span');
+                filterBadge.html((filterId in categoryFilteredElementsCount) ? categoryFilteredElementsCount[filterId] : 0);
+            });
         }
 
         $(document).ready(function () {
-            /*$(".store-filter").on(click(function(a,b,c){
-                console.log("click");
-            }));*/
-            /*$(".dropdown-menu li a").click(function(a,b,c){
-                console.log("Click !");
-                console.log(a.target);
-                console.log(a.target.parent().parent().parent());
-                //$(".btn:first-child").html($(this).text()+' <span class="caret"></span>');
-            });*/
-            //$(".tag_select").select2();
             //Get module tags and apply them on module html classes in order to be able to filter
             var tags = getSortedTags(modulesTags);
             var columnsNbr = Math.ceil(tags.length/25);
@@ -106,15 +103,16 @@
             tagSelectorElement.attr("style","columns:"+columnsNbr+";webkit-columns:"+columnsNbr+";-moz-columns:"+columnsNbr+";");
 
             //Get module Categories and init the filter selectors
-            var categories = getSortedCategories(modulesCategories);
+            categories = getSortedCategories(modulesCategories);
+
             //Add categories selectors sorted
             var categorySelectorElement = $("ul#categoryList");
             $.each(categories, function(index,categoryString){
                 var categorySplit = categoryString.split("--categoryID--");
-                categorySelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='.category-"+categorySplit[1]+"' onclick='filterClick(this);'>"+categorySplit[0]+"</a></li>");
-
+                categories[index] = categorySplit[1];
+                categorySelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='" + categorySplit[1] + "' onclick='filterClick(this);'>"+categorySplit[0]+"<span class='badge pull-right'>0</span></a></li>");
             });
-
+            categories.push('all');
             $('.dropdown.categories').on('hide.bs.dropdown', function ($event) {
                 //Dont close the dropdown if its a filter that has been selected/deselected
                 if (categoryFilterClicked) {
@@ -124,6 +122,17 @@
                 categoryFilterClicked = false;
             });
 
+            var $isotope = $('.category-grid').isotope({
+                itemSelector: '[data-filter-categories]',
+                percentPosition: true,
+                masonry: {
+                    columnWidth: '.grid-sizer'
+                }
+            });
+            filterManager.initializeIsotope($isotope);
+            filterManager.addValue(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER);
+            filterManager.filterItems([filterManager.CATEGORIES]);
+            updateCategoriesCount();
         });
         $( function() {
             var qsRegex;
@@ -138,9 +147,6 @@
             $('.filters').on( 'click', 'a', function() {
                 $('#search .quicksearch').val("");
                 var $this = $(this);
-                var $li =  $this.parent('li');
-               // $li.siblings().removeClass('active');
-                //$li.addClass('active');
                 // get group key
                 var $buttonGroup = $this.parents('.dropdown-menu');
                 var filterGroup = $buttonGroup.attr('data-filter-group');
@@ -149,7 +155,6 @@
                 // combine filters
                 var filterValue = concatValues( filters );
                 $grid.isotope({ filter: filterValue });
-
             });
             var $grid = $('.forge').isotope({
                 itemSelector: '.item',
@@ -204,7 +209,7 @@
             <fmt:message key="jnt_storefilter.label.categories"/> <span class="caret"></span>
         </a>
         <ul class="dropdown-menu filters cat-filter-list" id="categoryList">
-            <li class="active default"><a href="#" data-filter="all" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/></a></li>
+            <li class="active default"><a href="#" data-filter="all" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/><span class='badge pull-right'>0</span></a></li></a></li>
             <li role="separator" class="divider"></li>
         </ul>
     </li>

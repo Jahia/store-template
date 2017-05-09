@@ -1671,3 +1671,8 @@ input.fs1 {
         width: 100%;
     }
 }
+@media (min-width: 768px) {
+    .navbar-right .dropdown-menu {
+        min-width:400px;
+    }
+}
