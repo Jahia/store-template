@@ -115,7 +115,7 @@
             $.each(categories, function(index,categoryString){
                 var categorySplit = categoryString.split("--categoryID--");
                 categories[index] = categorySplit[1];
-                categorySelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='" + categorySplit[1] + "' onclick='filterClick(this);'>"+categorySplit[0]+"<span class='badge pull-right'>0</span></a></li>");
+                categorySelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='" + categorySplit[1] + "' onclick='filterClick(this);'>"+categorySplit[0]+"&nbsp;<span class='badge' style='vertical-align: text-top;'>0</span></a></li>");
             });
             categories.push('all');
             $('.dropdown.categories').on('hide.bs.dropdown', function ($event) {
@@ -214,7 +214,7 @@
             <fmt:message key="jnt_storefilter.label.categories"/> <span class="caret"></span>
         </a>
         <ul class="dropdown-menu filters cat-filter-list" id="categoryList">
-            <li class="active default"><a href="#" data-filter="all" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/><span class='badge pull-right'>0</span></a></li></a></li>
+            <li class="active default"><a href="#" data-filter="all" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/>&nbsp;<span class='badge' style='vertical-align: text-top;'>0</span></a></li></a></li>
             <li role="separator" class="divider"></li>
         </ul>
     </li>
