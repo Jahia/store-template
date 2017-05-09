@@ -69,10 +69,8 @@ function FiltersManager() {
         }
         _.each(elements, function(element){
             var elementCategories = $(element).attr('data-filter-categories').split(' ');
-            elementCategories.push(" blah blah");
             _.each(elementCategories, function(filterId){
                 if (availableFilters.indexOf(filterId) == -1) {
-                    console.log('skipping: ' + filterId);
                     //skip the filter if it isn't after of this filter set
                     return;
                 }
