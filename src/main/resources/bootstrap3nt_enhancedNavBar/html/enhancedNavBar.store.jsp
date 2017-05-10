@@ -65,15 +65,16 @@
                         <input type="text" class="form-control" id="usr" placeholder="Filter tags">
                     </div>
                     <div class="modal-body">
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 1</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 2</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 3</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 4</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 5</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 6</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 7</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 8</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="value" class="fs1">Tag 9</label></div>
+                        <!--@TODO remove when implemented -- Added some static values to test tag filtering -- -->
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="form" class="fs1">form</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="factory" class="fs1">factory</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="aws" class="fs1">aws</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="jcr" class="fs1">jcr</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="system" class="fs1">system</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="blog" class="fs1">blog</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="bootstrap" class="fs1">bootstrap</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="connector" class="fs1">connector</label></div>
+                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="images" class="fs1">images</label></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

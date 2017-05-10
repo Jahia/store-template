@@ -77,11 +77,16 @@
                 <c:if test="${module.properties['published'].boolean and !fn:contains(latestModulesIds, module.identifier)}">
                     <!--Set module categories for filtering purposes-->
                     <c:set var="categories" value=""/>
-                    <c:forEach items="${module.properties['j:defaultCategory']}" var="category" varStatus="status" >
-                        <c:set var='categories' value='${categories}${not status.first ? " " : ""}${category.node.identifier}' />
+                    <c:forEach items="${module.properties['j:defaultCategory']}" var="category" varStatus="categoryStatus" >
+                        <c:set var='categories' value='${categories}${not categoryStatus.first ? " " : ""}${category.node.identifier}' />
+                    </c:forEach>
+                    <!--Set module tags for filtering purposes-->
+                    <c:set var="moduleTags" value=""/>
+                    <c:forEach items="${module.properties['j:tagList']}" var="moduleTag" varStatus="tagStatus">
+                        <c:set var='moduleTags' value='${moduleTags}${not tagStatus.first ? " " : ""}${moduleTag.string}' />
                     </c:forEach>
                     <div class="grid-sizer col-lg-4 col-md-6 col-xs-12"></div>
-                    <div class="col-lg-4 col-md-6 col-xs-12" data-filter-categories="${categories} all">
+                    <div class="col-lg-4 col-md-6 col-xs-12" data-filter-categories="${categories} all" data-filter-tags="${moduleTags}">
                         <div id="module-${module.identifier}">
                             <template:module node="${module}" view="v2"/>
                         </div>

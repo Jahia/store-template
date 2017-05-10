@@ -27,6 +27,45 @@
         var categoryFilterClicked = false;
         var DEFAULT_CATEGORY_FILTER = 'all';
 
+        function setupFilters() {
+            //Setup Isotope
+            var $isotope = $('.category-grid').isotope({
+                itemSelector: '[data-filter-categories]',
+                percentPosition: true,
+                masonry: {
+                    columnWidth: '.grid-sizer'
+                }
+            });
+            filterManager.initializeIsotope($isotope);
+            //Add default value to filter manager
+            filterManager.addValue(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER);
+            filterManager.filterItems([filterManager.CATEGORIES, filterManager.TAGS]);
+
+            //Setup Quick Search Filter
+            //Currently disabled.
+//            var $quicksearch = $('.quicksearch').keyup( debounce( function() {
+//                var regexVal = $quicksearch.val().split(/\s+/).join('.*');
+//                filterManager.resetFilter(filterManager.QUICKSEARCH);
+//                filterManager.addValue(filterManager.QUICKSEARCH, regexVal);
+//                filterManager.filterItems();
+//                updateCategoriesCount();
+//            }, 200 ) );
+
+            //Debounce so filtering doesn't happen every millisecond
+            function debounce( fn, threshold ) {
+                var timeout;
+                return function debounced() {
+                    if ( timeout ) {
+                        clearTimeout( timeout );
+                    }
+                    function delayed() {
+                        fn();
+                        timeout = null;
+                    }
+                    timeout = setTimeout( delayed, threshold || 100 );
+                }
+            }
+        }
         function resetFilters(){
 
             $(".forge").isotope({filter:''});
@@ -41,7 +80,8 @@
             $("li.active").removeClass("active");
 
         }
-        function filterClick(el){
+
+        function categoryFilterClick(el){
             //remove or add filter
             //Set flag so that we don't close the dropdown when selecting/deselecting a filter.
             categoryFilterClicked = true;
@@ -72,7 +112,21 @@
                 $li.siblings('.default').removeClass('active');
                 filterManager.removeValue(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER)
             }
-            filterManager.filterItems([filterManager.CATEGORIES]);
+            filterManager.filterItems([filterManager.CATEGORIES, filterManager.TAGS]);
+            updateCategoriesCount();
+        }
+
+        function tagFilterClick(el) {
+            var $checkboxes = $('#myModal').find('input[type="checkbox"]');
+            filterManager.resetFilter(filterManager.TAGS);
+            $checkboxes.each(function(index, checkbox) {
+                var $checkbox = $(checkbox);
+                if ($checkbox.prop('checked')) {
+                    console.log($checkbox.val());
+                    filterManager.addValue(filterManager.TAGS, $checkbox.val());
+                }
+            });
+            filterManager.filterItems([filterManager.CATEGORIES, filterManager.TAGS]);
             updateCategoriesCount();
         }
 
@@ -103,7 +157,7 @@
                     }
                 }
                 previousTag = tagString;
-                tagSelectorElement.append("<li><a href='#' class='store-filter' data-filter='.tag-"+tagString.split(" ").join("-")+"' onclick='filterClick(this);'>"+tagString+"</a></li>");
+                tagSelectorElement.append("<li><a href='#' class='store-filter' data-filter='.tag-"+tagString.split(" ").join("-")+"' onclick='tagFilterClick(this);'>"+tagString+"</a></li>");
             });
             tagSelectorElement.attr("style","columns:"+columnsNbr+";webkit-columns:"+columnsNbr+";-moz-columns:"+columnsNbr+";");
 
@@ -115,7 +169,7 @@
             $.each(categories, function(index,categoryString){
                 var categorySplit = categoryString.split("--categoryID--");
                 categories[index] = categorySplit[1];
-                categorySelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='" + categorySplit[1] + "' onclick='filterClick(this);'>"+categorySplit[0]+"&nbsp;<span class='badge' style='vertical-align: text-top;'>0</span></a></li>");
+                categorySelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='" + categorySplit[1] + "' onclick='categoryFilterClick(this);'>"+categorySplit[0]+"&nbsp;<span class='badge' style='vertical-align: text-top;'>0</span></a></li>");
             });
             categories.push('all');
             $('.dropdown.categories').on('hide.bs.dropdown', function ($event) {
@@ -126,17 +180,9 @@
                 //reset the flag.
                 categoryFilterClicked = false;
             });
-
-            var $isotope = $('.category-grid').isotope({
-                itemSelector: '[data-filter-categories]',
-                percentPosition: true,
-                masonry: {
-                    columnWidth: '.grid-sizer'
-                }
-            });
-            filterManager.initializeIsotope($isotope);
-            filterManager.addValue(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER);
-            filterManager.filterItems([filterManager.CATEGORIES]);
+            //Add event handler for modal apply filter button
+            $('.btn-aply-filter').on('click', tagFilterClick);
+            setupFilters();
             updateCategoriesCount();
         });
         $( function() {
@@ -187,20 +233,6 @@
             }
             return value;
         }
-        // debounce so filtering doesn't happen every millisecond
-        function debounce( fn, threshold ) {
-            var timeout;
-            return function debounced() {
-                if ( timeout ) {
-                    clearTimeout( timeout );
-                }
-                function delayed() {
-                    fn();
-                    timeout = null;
-                }
-                timeout = setTimeout( delayed, threshold || 100 );
-            }
-        }
     </script>
 </template:addResources>
 <fmt:message key="jnt_forgeEntry.status.community" var="communityLabel"/>
@@ -214,7 +246,7 @@
             <fmt:message key="jnt_storefilter.label.categories"/> <span class="caret"></span>
         </a>
         <ul class="dropdown-menu filters cat-filter-list" id="categoryList">
-            <li class="active default"><a href="#" data-filter="all" onclick="filterClick(this);"><fmt:message key="jnt_storefilter.label.all"/>&nbsp;<span class='badge' style='vertical-align: text-top;'>0</span></a></li></a></li>
+            <li class="active default"><a href="#" data-filter="all" onclick="categoryFilterClick(this);"><fmt:message key="jnt_storefilter.label.all"/>&nbsp;<span class='badge' style='vertical-align: text-top;'>0</span></a></li></a></li>
             <li role="separator" class="divider"></li>
         </ul>
     </li>

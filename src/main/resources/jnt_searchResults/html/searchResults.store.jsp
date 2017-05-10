@@ -121,10 +121,16 @@
                     <s:resultIterator begin="${moduleMap.begin}" end="${moduleMap.end}" varStatus="status" hits="${moduleMap['resultsHits']}">
                         <c:set var="module" value="${hit.rawHit}"></c:set>
                         <c:set var="categories" value=""/>
+                        <!--Set module categories for filtering purposes-->
                         <c:forEach items="${module.properties['j:defaultCategory']}" var="cat" varStatus="vs">
                             <c:set var="categoryIdentifier" value="${cat.string}"/>
                             <jcr:node var="category" uuid="${categoryIdentifier}"/>
                             <c:set var='categories' value='${categories}${not vs.first ? " " : ""}${cat.node.identifier}' />
+                        </c:forEach>
+                        <!--Set module tags for filtering purposes-->
+                        <c:set var="moduleTags" value=""/>
+                        <c:forEach items="${module.properties['j:tagList']}" var="moduleTag" varStatus="tagStatus">
+                            <c:set var='moduleTags' value='${moduleTags}${not tagStatus.first ? " " : ""}${moduleTag.string}' />
                         </c:forEach>
                         <script type="text/javascript">
                             modulesTags['${module.identifier}']=[];
@@ -139,7 +145,7 @@
                             </script>
                         </c:forEach>
                         <div class="grid-sizer col-lg-4 col-md-6 col-xs-12"></div>
-                        <div class="col-lg-4 col-md-6 col-xs-12 moduleCard" data-filter-categories="${categories} all">
+                        <div class="col-lg-4 col-md-6 col-xs-12 moduleCard" data-filter-categories="${categories} all" data-filter-tags="${moduleTags}">
                             <div id="module-${module.identifier}">
                                 <template:module node="${module}" view="v2"/>
                             </div>
