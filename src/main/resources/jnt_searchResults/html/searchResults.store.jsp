@@ -117,28 +117,35 @@
                 <c:set target="${moduleMap}" property="end" value="${requestScope[endName]}"/>
             </c:if>
             <div class="row forge" style="position: relative; height: 1000px;">
-                <s:resultIterator begin="${moduleMap.begin}" end="${moduleMap.end}" varStatus="status" hits="${moduleMap['resultsHits']}">
-                    <c:set var="module" value="${hit.rawHit}"></c:set>
-                    <c:forEach items="${module.properties['j:defaultCategory']}" var="cat" varStatus="vs">
-                        <c:set var="categoryIdentifier" value="${cat.string}"/>
-                        <jcr:node var="category" uuid="${categoryIdentifier}"/>
-                    </c:forEach>
-                    <script type="text/javascript">
-                        modulesTags['${module.identifier}']=[];
-                        <c:if test="${category != null}">
-                        modulesCategories['${category.properties['jcr:title'].string}']="${category.identifier}";
-                        </c:if>
-                    </script>
-                    <!-- save current module tags in javascript object for the filters !-->
-                    <c:forEach items="${module.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
+                <div class="category-grid">
+                    <s:resultIterator begin="${moduleMap.begin}" end="${moduleMap.end}" varStatus="status" hits="${moduleMap['resultsHits']}">
+                        <c:set var="module" value="${hit.rawHit}"></c:set>
+                        <c:set var="categories" value=""/>
+                        <c:forEach items="${module.properties['j:defaultCategory']}" var="cat" varStatus="vs">
+                            <c:set var="categoryIdentifier" value="${cat.string}"/>
+                            <jcr:node var="category" uuid="${categoryIdentifier}"/>
+                            <c:set var='categories' value='${categories}${not vs.first ? " " : ""}${cat.node.identifier}' />
+                        </c:forEach>
                         <script type="text/javascript">
-                            modulesTags['${module.identifier}'].push('${currentTag.string}');
+                            modulesTags['${module.identifier}']=[];
+                            <c:if test="${category != null}">
+                            modulesCategories['${category.properties['jcr:title'].string}']="${category.identifier}";
+                            </c:if>
                         </script>
-                    </c:forEach>
-                    <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12 item moduleCard <c:if test="${category != null}">category-${category.identifier}</c:if>">
-                        <template:module node="${module}" view="v2"/>
-                    </div>
-                </s:resultIterator>
+                        <!-- save current module tags in javascript object for the filters !-->
+                        <c:forEach items="${module.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
+                            <script type="text/javascript">
+                                modulesTags['${module.identifier}'].push('${currentTag.string}');
+                            </script>
+                        </c:forEach>
+                        <div class="grid-sizer col-lg-4 col-md-6 col-xs-12"></div>
+                        <div class="col-lg-4 col-md-6 col-xs-12 moduleCard" data-filter-categories="${categories} all">
+                            <div id="module-${module.identifier}">
+                                <template:module node="${module}" view="v2"/>
+                            </div>
+                        </div>
+                    </s:resultIterator>
+                </div>
             </div>
         </c:if>
         <c:if test="${moduleMap['listTotalSize'] == 0}">

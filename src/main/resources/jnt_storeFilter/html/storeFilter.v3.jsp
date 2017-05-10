@@ -140,41 +140,41 @@
             updateCategoriesCount();
         });
         $( function() {
-            var qsRegex;
-
-            var $quicksearch = $('.quicksearch').keyup( debounce( function() {
-                var regexVal = $quicksearch.val().split(/\s+/).join('.*');
-                qsRegex = new RegExp(regexVal, 'gi');
-                $grid.isotope();
-            }, 200 ) );
-
-            // store filter for each group
-            $('.filters').on( 'click', 'a', function() {
-                $('#search .quicksearch').val("");
-                var $this = $(this);
-                // get group key
-                var $buttonGroup = $this.parents('.dropdown-menu');
-                var filterGroup = $buttonGroup.attr('data-filter-group');
-                // set filter for group
-                filters[ filterGroup ] = $this.attr('data-filter');
-                // combine filters
-                var filterValue = concatValues( filters );
-                $grid.isotope({ filter: filterValue });
-            });
-            var $grid = $('.forge').isotope({
-                itemSelector: '.item',
-                layoutMode: 'fitRows',
-                filter: function() {
-
-                    if (qsRegex) {
-                        return $(this).text().match(qsRegex);
-                    } else {
-                        $('.filters li').removeClass('active');
-                        $('.filters li.all').addClass('active');
-                        return true;
-                    }
-                }
-            });
+//            var qsRegex;
+//
+//            var $quicksearch = $('.quicksearch').keyup( debounce( function() {
+//                var regexVal = $quicksearch.val().split(/\s+/).join('.*');
+//                qsRegex = new RegExp(regexVal, 'gi');
+//                $grid.isotope();
+//            }, 200 ) );
+//
+//            // store filter for each group
+//            $('.filters').on( 'click', 'a', function() {
+//                $('#search .quicksearch').val("");
+//                var $this = $(this);
+//                // get group key
+//                var $buttonGroup = $this.parents('.dropdown-menu');
+//                var filterGroup = $buttonGroup.attr('data-filter-group');
+//                // set filter for group
+//                filters[ filterGroup ] = $this.attr('data-filter');
+//                // combine filters
+//                var filterValue = concatValues( filters );
+//                $grid.isotope({ filter: filterValue });
+//            });
+//            var $grid = $('.forge').isotope({
+//                itemSelector: '.item',
+//                layoutMode: 'fitRows',
+//                filter: function() {
+//
+//                    if (qsRegex) {
+//                        return $(this).text().match(qsRegex);
+//                    } else {
+//                        $('.filters li').removeClass('active');
+//                        $('.filters li.all').addClass('active');
+//                        return true;
+//                    }
+//                }
+//            });
 
             var filters = {};
         });
