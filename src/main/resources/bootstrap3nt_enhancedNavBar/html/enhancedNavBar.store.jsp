@@ -62,7 +62,7 @@
             <div class="modal-dialog" role="document" style="width:90%">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <input type="text" class="form-control" id="usr" placeholder="Filter tags">
+                        <input type="text" class="form-control" id="usr" placeholder="FILTER TAGS">
                     </div>
                     <div class="modal-body" style="max-height:500px;">
                         <ul id="tag-display"></ul>

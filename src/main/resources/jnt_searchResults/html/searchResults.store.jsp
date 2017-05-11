@@ -18,11 +18,13 @@
 <template:addResources type="css" resources="searchresults.css"/>
 <c:set var="columnsNumber" value="3"/>
 <c:set var="count" value="1"/>
+
 <template:addResources type="inlinejavascript">
     <script type="text/javascript">
         var tagClasses = ["label-info", "label-success", "label-warning", "label-danger"];
         var modulesTags = {};
         var modulesCategories = {};
+        var tagCountMap = {};
     </script>
 </template:addResources>
 
@@ -142,6 +144,7 @@
                         <c:forEach items="${module.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
                             <script type="text/javascript">
                                 modulesTags['${module.identifier}'].push('${currentTag.string}');
+                                tagCountMap['${currentTag.string}'] = tagCountMap['${currentTag.string}'] ? tagCountMap['${currentTag.string}'] + 1 : 1;
                             </script>
                         </c:forEach>
                         <div class="grid-sizer col-lg-4 col-md-6 col-xs-12"></div>

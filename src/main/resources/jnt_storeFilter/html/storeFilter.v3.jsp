@@ -221,12 +221,12 @@
 
         function buildTagModal() {
             //Get module tags and apply them on module html classes in order to be able to filter
-            var tags = getSortedTags(modulesTags);;
+            var tags = getSortedTags(modulesTags);
             var topTenTags = getTopKTags(tagCountMap, 10);
             tags = tags.filter(function(tag) {
                 return topTenTags.indexOf(tag) === -1;
             });
-            var columnsNbr = Math.ceil(tags.length/25);
+            var columnsNbr = Math.max(Math.ceil(tags.length/25), 2);
             //Add tags selectors sorted
             var tagSelectorElement = $("ul#tag-display");
             tagSelectorElement.append('<li><fmt:message key="jnt_sortFilter.topTen.label"/></l>');
