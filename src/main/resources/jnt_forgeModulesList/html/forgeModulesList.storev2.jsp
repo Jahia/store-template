@@ -16,6 +16,7 @@
         //See storeFilter.v3 for usage
         var modulesTags = {};
         var modulesCategories = {};
+        var tagCountMap = {};
     </script>
 </template:addResources>
 <%--Get pakcages--%>
@@ -112,6 +113,7 @@
             </c:if>
             <c:forEach items="${module.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
                 modulesTags['${module.identifier}'].push('${currentTag.string}');
+                tagCountMap['${currentTag.string}'] = tagCountMap['${currentTag.string}'] ? tagCountMap['${currentTag.string}'] + 1 : 1;
             </c:forEach>
         </c:if>
     </c:forEach>
@@ -128,6 +130,7 @@
             </c:if>
             <c:forEach items="${module.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
                 modulesTags['${module.identifier}'].push('${currentTag.string}');
+                tagCountMap['${currentTag.string}'] = tagCountMap['${currentTag.string}'] ? tagCountMap['${currentTag.string}'] + 1 : 1;
             </c:forEach>
         </c:if>
     </c:forEach>

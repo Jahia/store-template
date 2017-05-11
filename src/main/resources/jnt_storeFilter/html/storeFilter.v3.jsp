@@ -146,9 +146,12 @@
         $(document).ready(function () {
             //Get module tags and apply them on module html classes in order to be able to filter
             var tags = getSortedTags(modulesTags);
+            console.log("TAGS", modulesTags);
+            console.log(tagCountMap);
+            console.log(getTopKTags(tagCountMap, 10));
             var columnsNbr = Math.ceil(tags.length/25);
             //Add tags selectors sorted
-            var tagSelectorElement = $("ul#tag");
+            var tagSelectorElement = $("ul#tag-display");
             var previousTag="";
             $.each(tags, function(index,tagString){
                 if(previousTag.length>0){
@@ -157,7 +160,8 @@
                     }
                 }
                 previousTag = tagString;
-                tagSelectorElement.append("<li><a href='#' class='store-filter' data-filter='.tag-"+tagString.split(" ").join("-")+"' onclick='tagFilterClick(this);'>"+tagString+"</a></li>");
+//                tagSelectorElement.append("<li><a href='#' class='store-filter' data-filter='.tag-"+tagString.split(" ").join("-")+"' onclick='tagFilterClick(this);'>"+tagString+"</a></li>");
+                tagSelectorElement.append('<li><div class="tag-selector"><label><input type="checkbox" name="checkbox" value="' + tagString + '" class="fs1">' + tagString + '</label></div></li>');
             });
             tagSelectorElement.attr("style","columns:"+columnsNbr+";webkit-columns:"+columnsNbr+";-moz-columns:"+columnsNbr+";");
 

@@ -1449,6 +1449,17 @@ input.fs1 {
     }
 }
 
+#tag-display {
+    list-style: none;
+}
+
+#tag-display .divider {
+    height: 1px;
+    margin: 9px 0;
+    overflow: hidden;
+    background-color: #e5e5e5;
+}
+
 /*****************************************
  ******* MODULE CSS *******
  *****************************************/

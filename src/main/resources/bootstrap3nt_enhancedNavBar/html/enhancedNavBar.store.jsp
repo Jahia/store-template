@@ -59,22 +59,13 @@
 
         <!-- Modal -->
         <div class="modal fade tag-modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog" role="document" style="width:90%">
                 <div class="modal-content">
                     <div class="modal-header">
                         <input type="text" class="form-control" id="usr" placeholder="Filter tags">
                     </div>
-                    <div class="modal-body">
-                        <!--@TODO remove when implemented -- Added some static values to test tag filtering -- -->
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="form" class="fs1">form</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="factory" class="fs1">factory</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="aws" class="fs1">aws</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="jcr" class="fs1">jcr</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="system" class="fs1">system</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="blog" class="fs1">blog</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="bootstrap" class="fs1">bootstrap</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="connector" class="fs1">connector</label></div>
-                        <div class="tag-selector"><label><input type="checkbox" name="checkbox" value="images" class="fs1">images</label></div>
+                    <div class="modal-body" style="max-height:500px;">
+                        <ul id="tag-display"></ul>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

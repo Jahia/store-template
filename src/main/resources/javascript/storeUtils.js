@@ -46,6 +46,40 @@ function getSortedTags(modulesTags){
 }
 
 /**
+ * Get top K tags
+ *
+ * @param tagCountMap
+ * @param k
+ * @returns {Array}
+ */
+function getTopKTags(tagCountMap, k) {
+    var arr = [];
+    for (var i = 0; i < Object.keys(tagCountMap).length; i++) {
+        arr[i] = [];
+    }
+
+    for (var tag in tagCountMap)
+        if (tagCountMap.hasOwnProperty(tag)) {
+            var count = tagCountMap[tag];
+            arr[count].push(tag);
+        }
+
+    var topTen = [];
+    for (var i = arr.length - 1; i >= 0; i-- ) {
+        if (arr[i].length > 0 && topTen.length < k) {
+            var availableRoom = k - topTen.length;
+            if (arr[i].length > availableRoom) {
+                topTen = topTen.concat(arr[i].splice(0, availableRoom));
+            }
+            else {
+                topTen = topTen.concat(arr[i]);
+            }
+        }
+    }
+    return topTen;
+}
+
+/**
  * This function get the categories table sorted for the categories filter initialization
  * @param modulesCategories
  * @returns {Array} : String array containing each category under the following format <categoryTitle>--categoryID--<categoryId>
