@@ -57,7 +57,6 @@
     <groupId>org.jahia.modules</groupId>
     <artifactId>store-template</artifactId>
     <name>Jahia Store Template</name>
-    <version>1.9.1</version>
     <version>1.9.2-SNPASHOT</version>
     <packaging>bundle</packaging>
     <description>This is the custom profile module (Jahia Store Template) for running on a Digital Experience Manager server.</description>
@@ -91,7 +90,6 @@
                 <configuration>
                     <instructions>
                         <Jahia-Depends>font-awesome, jquery, bootstrap3-core,bootstrap3-components,contact,default,event,facets,search,teasers, privateappstore</Jahia-Depends>
-                        <Import-Package>${jahia.plugin.projectPackageImport},org.jahia.services.search,*</Import-Package>
                         <Import-Package>${jahia.plugin.projectPackageImport},org.jahia.services.search,javax.net.ssl,*</Import-Package>
                     </instructions>
                 </configuration>
