@@ -35,18 +35,8 @@
 <fmt:message key="jnt_forgeEntry.status.prereleased" var="prereleasedLabel"/>
 <fmt:message key="jnt_forgeEntry.status.supported" var="supportedLabel"/>
 <c:set var="moduleStatus" value="${not empty currentNode.properties['status'].string?currentNode.properties['status'].string:'community'}"/>
-<c:set var="moduleStatusLabel" value="${communityLabel}"/>
-<c:set var="labelClass" value="label-warning"/>
-<c:if test="${moduleStatus eq 'labs'}">
-    <c:set var="moduleStatusLabel" value="${labsLabel}"/>
-</c:if>
-<c:if test="${moduleStatus eq 'prereleased'}">
-    <c:set var="moduleStatusLabel" value="${prereleasedLabel}"/>
-</c:if>
 <c:if test="${moduleStatus eq 'supported' or currentNode.properties['supportedByJahia'].boolean}">
-    <c:set var="moduleStatusLabel" value="${supportedLabel}"/>
     <c:set var="moduleStatus" value="supported"/>
-    <c:set var="labelClass" value="label-success"/>
 </c:if>
 
 <c:if test="${currentNode.properties['published'].boolean or isAdminPage}">
@@ -58,9 +48,13 @@
             <div class="card-topMain">
                 <h1 class="truncate">${title}</h1>
                 <author>${authorName}
-                    <span class="module-supported">
-                        <i class="material-icons noselect">check_circle</i>
-                    </span>
+                    <c:choose>
+                        <c:when test="${moduleStatus eq 'supported'}">
+                            <span class="module-supported">
+                                <i class="material-icons noselect">check_circle</i>
+                            </span>
+                        </c:when>
+                    </c:choose>
                 </author>
             </div>
             <p class="card-desc">${functions:abbreviate(functions:removeHtmlTags(description), 80,95,'...')}</p>

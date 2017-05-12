@@ -49,6 +49,11 @@
     <c:set var="icon" value="${iconItem}"/>
 </c:forEach>
 
+<c:set var="moduleStatus" value="${not empty currentNode.properties['status'].string?currentNode.properties['status'].string:'community'}"/>
+<c:if test="${moduleStatus eq 'supported' or currentNode.properties['supportedByJahia'].boolean}">
+    <c:set var="moduleStatus" value="supported"/>
+</c:if>
+
 <div class="container" style="margin-top: 50px;">
     <div class="row">
         <div class="col-md-2">
@@ -203,7 +208,14 @@
                             </div>
                         </div>
                         <div class="fifth">
-
+                            <div class="meta-info">
+                                <div class="title">
+                                    Module Status
+                                </div>
+                                <div class="content">
+                                    ${fn:toUpperCase(moduleStatus)}
+                                </div>
+                            </div>
                         </div>
                         <div class="fifth">
 
