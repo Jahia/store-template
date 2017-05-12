@@ -22,7 +22,7 @@
 
 <template:addCacheDependency node="${moduleMap.latestVersion}"/>
 <%@include file="../../commons/authorName.jspf" %>
-
+<jsp:useBean id="uniqueDependants" class="java.util.LinkedHashMap"/>
 <jcr:sql
         var="query"
         sql="SELECT * FROM [jnt:forgeModuleVersion] AS moduleVersion
@@ -74,45 +74,13 @@
                  alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"
                  style="display:block;"/>
             <div class="clearfix"></div>
-        </div>
-        <div class="col-md-9">
-            <h2>${title}<c:choose>
-                <c:when test="${moduleStatus eq 'supported'}">
-                            <span class="module-supported">
-                                <i class="material-icons noselect" title="${moduleStatus}">check_circle</i>
-                            </span>
-                </c:when>
-                </c:choose></h2>
-            <%--TAGS AND DOWNLOAD--%>
-            <div class="row">
-                <div class="col-sm-10" style="margin-bottom: 20px;">
-                    <c:forEach items="${assignedTags}" var="tag" varStatus="status">
-                        <tag class="module-tag">${fn:escapeXml(tag.string)}</tag>
-                    </c:forEach>
-                </div>
-                <div class="col-sm-2">
-                    <a class="btn btn-default module-download-btn"
-                       href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>">
-                        <%--<fmt:message key="jnt_forgeEntry.label.downloadCurrentVersion">--%>
-                        <%--<fmt:param value="${versionNumber.string}"/>--%>
-                        <%--</fmt:message>--%>
-                        Download
-                    </a>
-                </div>
-            </div>
-            <%--DESCRIPTION--%>
-            <div class="row" style="margin-top: 20px;">
-                <div class="col-md-12">
-                    ${description}
-                </div>
-            </div>
             <%--MODULE DETAILS--%>
             <div class="row">
                 <div class="col-md-12 module-section-title">
                     <h2>Module Details</h2>
                     <span></span>
                     <div class="row noMargin">
-                        <div class="fifth">
+                        <div class="col-md-12">
                             <div class="meta-info">
                                 <div class="title">
                                     <fmt:message key="jnt_forgeEntry.label.moduleId"/>
@@ -122,7 +90,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="fifth">
+                        <div class="col-md-12">
                             <div class="meta-info">
                                 <div class="title">
                                     <fmt:message key="jnt_forgeEntry.label.groupId"/>
@@ -132,7 +100,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="fifth">
+                        <div class="col-md-12">
                             <div class="meta-info">
                                 <div class="title">
                                     <fmt:message key="jnt_forgeEntry.label.updated" var="updatedLabel"/>
@@ -148,7 +116,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="fifth">
+                        <div class="col-md-12">
                             <div class="meta-info">
                                 <div class="title">
                                     <fmt:message key="jnt_forgeEntry.label.version" var="versionLabel"/>
@@ -178,7 +146,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="fifth">
+                        <div class="col-md-12">
                             <div class="meta-info">
                                 <div class="title">
                                     <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion"
@@ -191,8 +159,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row noMargin">
-                        <div class="fifth">
+                        <div class="col-md-12">
                             <div class="meta-info">
                                 <div class="title">
                                     <fmt:message key="jnt_forgeEntry.label.authorName" var="authorLabel"/>
@@ -203,7 +170,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="fifth">
+                        <div class="col-md-12">
                             <div class="meta-info">
                                 <div class="title">
                                     <fmt:message key="jnt_forgeEntry.label.category"/>
@@ -213,7 +180,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="fifth">
+                        <div class="col-md-12">
                             <div class="meta-info large">
                                 <c:if test="${not empty authorURL}">
                                     <a class="link" target="_blank" href="${authorURL}">
@@ -229,56 +196,146 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="fifth">
-                            <div class="meta-info">
-                                <div class="title">
-                                    Module Status
-                                </div>
-                                <div class="content">
-                                    ${fn:toUpperCase(moduleStatus)}
-                                </div>
-                            </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <h2>${title}
+                <c:choose>
+                    <c:when test="${moduleStatus eq 'supported'}">
+                            <span class="module-supported">
+                                <i class="material-icons noselect" title="${moduleStatus}">check_circle</i>
+                            </span>
+                    </c:when>
+                </c:choose></h2>
+            <%--TAGS AND DOWNLOAD--%>
+            <div class="row">
+                <div class="col-sm-10" style="margin-bottom: 20px;">
+                    <c:forEach items="${assignedTags}" var="tag" varStatus="status">
+                        <tag class="module-tag">${fn:escapeXml(tag.string)}</tag>
+                    </c:forEach>
+                </div>
+                <div class="col-sm-2">
+                    <a class="btn btn-default module-download-btn"
+                       href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>">
+                        Download (${versionNumber.string})
+                    </a>
+                </div>
+            </div>
+            <%--DESCRIPTION--%>
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-12">
+                    ${description}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 module-section-title">
+                    <h2>Dependencies &amp; Dependants</h2>
+                        <span></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="meta-info">
+                        <div class="title">
+                            Dependencies
                         </div>
-                        <div class="fifth">
-                            <div class="meta-info">
-                                <div class="title">
-                                    Dependencies
-                                </div>
-                                <div class="content">
-                                    <c:choose>
-                                        <c:when test="${not empty moduleMap.latestVersion.properties.references and moduleMap.latestVersion.properties.references[0] != 'none'}">
-                                            <c:set var="nonSystemRefFound" value="false"/>
-                                            <ul class="list-unstyled">
-                                            <c:forEach items="${moduleMap.latestVersion.properties.references}"
-                                                       var="ref">
-                                                <jcr:sql var="appStoreModule" sql="SELECT * FROM [jnt:content]
+                        <div class="content">
+                            <c:choose>
+                                <c:when test="${not empty moduleMap.latestVersion.properties.references and moduleMap.latestVersion.properties.references[0] != 'none'}">
+                                    <c:set var="nonSystemRefFound" value="false"/>
+                                    <ul class="list-group">
+                                        <c:forEach items="${moduleMap.latestVersion.properties.references}"
+                                                   var="ref">
+                                            <jcr:sql var="appStoreModule" sql="SELECT * FROM [jnt:content]
                 WHERE ISDESCENDANTNODE('${renderContext.site.path}') AND [published]=true
                 AND ([jcr:primaryType] = 'jnt:forgeModule') and localName() = '${ref}'
                 ORDER BY [jcr:title] ASC"/>
-                                                <c:if test="${functions:length(appStoreModule.nodes) gt 0}">
-                                                    <c:set var="nonSystemRefFound" value="true"/>
-                                                    <c:forEach items="${appStoreModule.nodes}" var="module"
-                                                               varStatus="status">
-                                                        <li><a href='<c:url value="${module.url}" context="/"/>'>${module.displayableName}</a></li>
-                                                    </c:forEach>
-                                                </c:if>
-                                            </c:forEach>
-                                            <c:if test="${nonSystemRefFound eq 'false'}">
-                                                <li>NONE</li>
+                                            <c:if test="${functions:length(appStoreModule.nodes) gt 0}">
+                                                <c:set var="nonSystemRefFound" value="true"/>
+                                                <c:forEach items="${appStoreModule.nodes}" var="module"
+                                                           varStatus="status">
+                                                    <jcr:sql
+                                                            var="query"
+                                                            sql="SELECT * FROM [jnt:forgeModuleVersion] AS moduleVersion
+            WHERE isdescendantnode(moduleVersion,['${module.path}'])"
+                                                    />
+                                                    <c:set var="sortedModules"
+                                                           value="${forge:sortByVersion(query.nodes)}"/>
+                                                    <c:set var="latestVersion"
+                                                           value="${forge:latestVersion(sortedModules)}"/>
+                                                    <li class="list-group-item"><a href='<c:url value="${module.url}" context="/"/>'
+                                                                   title="${module.displayableName}">${functions:abbreviate(module.displayableName,30,40,'...')}</a>
+                                                            <span class="pull-right">
+                                                                <a href="<c:url value="${latestVersion.properties.url.string}"/>"><i
+                                                                        class="material-icons">file_download</i></a>
+                                                            </span>
+                                                    </li>
+
+                                                </c:forEach>
                                             </c:if>
-                                            </ul>
-                                        </c:when>
-                                        <c:otherwise>
-                                            NONE
-                                        </c:otherwise>
-                                    </c:choose>
-                                </div>
-                            </div>
+                                        </c:forEach>
+                                        <c:if test="${nonSystemRefFound eq 'false'}">
+                                            <li class="list-group-item list-group-item-info"> NONE</li>
+                                        </c:if>
+                                    </ul>
+                                </c:when>
+                                <c:otherwise>
+                                    <ul class="list-group"><li class="list-group-item list-group-item-info">NONE</li></ul>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="meta-info">
+                        <div class="title">
+                            Dependants
+                        </div>
+                        <div class="content">
+                            <jcr:sql var="appStoreModule" sql="SELECT module.* FROM [jnt:forgeModule] as module inner join [jnt:forgeModuleVersion] as version on ischildnode(version,module)
+                WHERE ISDESCENDANTNODE(module,'${renderContext.site.path}') AND module.[published]=true and version.references = '${currentNode.name}'
+                ORDER BY module.[jcr:title] ASC"/>
+                            <c:choose>
+                                <c:when test="${functions:length(appStoreModule.nodes) gt 0}">
+                            <ul class="list-group">
+                                    <c:set var="nonSystemRefFound" value="true"/>
+                                        <c:forEach items="${appStoreModule.nodes}" var="module"
+                                                   varStatus="status">
+                                            <c:if test="${empty uniqueDependants[module.identifier]}">
+                                                <jcr:sql
+                                                        var="query"
+                                                        sql="SELECT * FROM [jnt:forgeModuleVersion] AS moduleVersion
+            WHERE isdescendantnode(moduleVersion,['${module.path}'])"
+                                                />
+                                                <c:set var="sortedModules"
+                                                       value="${forge:sortByVersion(query.nodes)}"/>
+                                                <c:set var="latestVersion"
+                                                       value="${forge:latestVersion(sortedModules)}"/>
+                                                    <li class="list-group-item">
+                                                        <a href='<c:url value="${module.url}" context="/"/>'
+                                                               title="${module.displayableName}">${functions:abbreviate(module.displayableName,30,40,'...')}</a>
+
+                                                        <span class="pull-right">
+                                                            <a href="<c:url value="${latestVersion.properties.url.string}"/>"><i
+                                                                    class="material-icons">file_download</i></a>
+                                                        </span>
+                                                    </li>
+                                            </c:if>
+                                            <c:set target="${uniqueDependants}" property="${module.identifier}"
+                                                   value="true"/>
+                                        </c:forEach>
+                            </ul>
+                                </c:when>
+                                <c:otherwise>
+                                    <ul class="list-group"><li class="list-group-item list-group-item-info">NONE</li></ul>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                 </div>
             </div>
-            <%--HOW TO INSTALL--%>
             <div class="row">
                 <div class="col-md-12 module-section-title">
                     <c:if test="${not empty howToInstall}">
