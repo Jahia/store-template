@@ -223,38 +223,6 @@
             return value;
         }
 
-        function buildTagModal() {
-            //Get module tags and apply them on module html classes in order to be able to filter
-            var tags = getSortedTags(modulesTags);
-            var topTags = getTopKTags(tagCountMap, 40);
-            tags = tags.filter(function(tag) {
-                return topTags.indexOf(tag) === -1;
-            });
-            var columnsNbr = Math.max(Math.ceil(tags.length/25), 2);
-            //Add tags selectors sorted
-            var tagSelectorElement = $("ul#tag-display");
-            tagSelectorElement.append('<li><fmt:message key="jnt_sortFilter.topTags.label"/></l>');
-            tagSelectorElement.append('<li role="separator" class="divider"></li>');
-
-            $.each(topTags, function(index,tagString){
-                tagSelectorElement.append('<li><div class="tag-selector"><label><input type="checkbox" name="checkbox" value="' + tagString + '" class="fs1">' + tagString + '</label></div></li>');
-            });
-
-            tagSelectorElement.append('<li role="separator" class="divider"></li>');
-
-            var previousTag="";
-            $.each(tags, function(index,tagString){
-                if(previousTag.length>0){
-                    if(tagString.charAt(0) != previousTag.charAt(0)){
-                        tagSelectorElement.append('<li role="separator" class="divider"></li>');
-                    }
-                }
-                previousTag = tagString;
-                tagSelectorElement.append('<li><div class="tag-selector"><label><input type="checkbox" name="checkbox" value="' + tagString + '" class="fs1">' + tagString + '</label></div></li>');
-            });
-            tagSelectorElement.attr("style","columns:"+columnsNbr+";webkit-columns:"+columnsNbr+";-moz-columns:"+columnsNbr+";");
-        }
-
         var tagSystem = {
             topTagsNumber : 40,
             topTags : [],
@@ -291,6 +259,10 @@
             showSuggestedTags : function(query) {
                 var self = this;
                 this.searchEngine.search(query, function(data) {
+                    if (query === "") {
+                        self.showTopTags();
+                        return;
+                    }
                     self.targetElement.empty();
                     var columnsNbr = Math.max(Math.ceil(data.length/25), 2);
                     for (var i in data) {
