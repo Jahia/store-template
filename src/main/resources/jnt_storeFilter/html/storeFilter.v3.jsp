@@ -9,6 +9,8 @@
 <%-- Les styles--%>
 <template:addResources type="javascript" resources="storeUtils.js"/>
 <template:addResources type="javascript" resources="libraries/datahref.jquery.js, libraries/jquery.mobil.custom.min.js"/>
+<template:addResources type="javascript" resources="libraries/bloodhound/bloodhound.min.js"/>
+<template:addResources type="javascript" resources="libraries/benalman/debounce.js"/>
 <template:addResources type="inlinejavascript">
     <script type="text/javascript">
         var filterNames = {
@@ -144,7 +146,9 @@
         }
 
         $(document).ready(function () {
-            buildTagModal();
+            //buildTagModal();
+            tagSystem.init();
+            tagSystem.showTopTags();
 
             //Get module Categories and init the filter selectors
             categories = getSortedCategories(modulesCategories);
@@ -222,17 +226,17 @@
         function buildTagModal() {
             //Get module tags and apply them on module html classes in order to be able to filter
             var tags = getSortedTags(modulesTags);
-            var topTenTags = getTopKTags(tagCountMap, 10);
+            var topTags = getTopKTags(tagCountMap, 40);
             tags = tags.filter(function(tag) {
-                return topTenTags.indexOf(tag) === -1;
+                return topTags.indexOf(tag) === -1;
             });
             var columnsNbr = Math.max(Math.ceil(tags.length/25), 2);
             //Add tags selectors sorted
             var tagSelectorElement = $("ul#tag-display");
-            tagSelectorElement.append('<li><fmt:message key="jnt_sortFilter.topTen.label"/></l>');
+            tagSelectorElement.append('<li><fmt:message key="jnt_sortFilter.topTags.label"/></l>');
             tagSelectorElement.append('<li role="separator" class="divider"></li>');
 
-            $.each(topTenTags, function(index,tagString){
+            $.each(topTags, function(index,tagString){
                 tagSelectorElement.append('<li><div class="tag-selector"><label><input type="checkbox" name="checkbox" value="' + tagString + '" class="fs1">' + tagString + '</label></div></li>');
             });
 
@@ -246,10 +250,56 @@
                     }
                 }
                 previousTag = tagString;
-//                tagSelectorElement.append("<li><a href='#' class='store-filter' data-filter='.tag-"+tagString.split(" ").join("-")+"' onclick='tagFilterClick(this);'>"+tagString+"</a></li>");
                 tagSelectorElement.append('<li><div class="tag-selector"><label><input type="checkbox" name="checkbox" value="' + tagString + '" class="fs1">' + tagString + '</label></div></li>');
             });
             tagSelectorElement.attr("style","columns:"+columnsNbr+";webkit-columns:"+columnsNbr+";-moz-columns:"+columnsNbr+";");
+        }
+
+        var tagSystem = {
+            topTagsNumber : 40,
+            topTags : [],
+            searchEngine : null,
+            targetElement: null,
+            init : function() {
+                this.targetElement = $("ul#tag-display");
+                this.topTags = getTopKTags(tagCountMap, this.topTagsNumber);
+                this.searchEngine = new Bloodhound({
+                    initialize : true,
+                    local: getSortedTags(modulesTags),
+                    queryTokenizer: Bloodhound.tokenizers.whitespace,
+                    datumTokenizer: Bloodhound.tokenizers.whitespace
+                });
+                var self = this;
+                $("#usr").on("input", $.debounce(500, function(e) {
+                    self.showSuggestedTags.call(self, e.currentTarget.value);
+                }))
+            },
+
+            showTopTags : function() {
+                var columnsNbr = Math.max(Math.ceil(this.topTags.length/25), 4);
+                this.targetElement.empty();
+                this.targetElement.append('<li><fmt:message key="jnt_sortFilter.topTags.label"/></l>');
+                this.targetElement.append('<li role="separator" class="divider"></li>');
+
+                for (var i in this.topTags) {
+                    var tagString = this.topTags[i];
+                    this.targetElement.append('<li><div class="tag-selector"><label><input type="checkbox" name="checkbox" value="' + tagString + '" class="fs1">' + tagString + '</label></div></li>');
+                }
+                this.targetElement.attr("style","columns:"+columnsNbr+";webkit-columns:"+columnsNbr+";-moz-columns:"+columnsNbr+";");
+            },
+
+            showSuggestedTags : function(query) {
+                var self = this;
+                this.searchEngine.search(query, function(data) {
+                    self.targetElement.empty();
+                    var columnsNbr = Math.max(Math.ceil(data.length/25), 2);
+                    for (var i in data) {
+                        var tagString = data[i];
+                        self.targetElement.append('<li><div class="tag-selector"><label><input type="checkbox" name="checkbox" value="' + tagString + '" class="fs1">' + tagString + '</label></div></li>');
+                    }
+                    self.targetElement.attr("style","columns:"+ columnsNbr +";webkit-columns:"+ columnsNbr +";-moz-columns:"+ columnsNbr +";");
+                });
+            }
         }
     </script>
 </template:addResources>
