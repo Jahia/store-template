@@ -51,7 +51,7 @@
                     <c:choose>
                         <c:when test="${moduleStatus eq 'supported'}">
                             <span class="module-supported">
-                                <i class="material-icons noselect">check_circle</i>
+                                <i class="material-icons noselect" title="${moduleStatus}">check_circle</i>
                             </span>
                         </c:when>
                     </c:choose>

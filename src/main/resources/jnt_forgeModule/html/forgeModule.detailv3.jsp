@@ -18,7 +18,7 @@
 <%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
-
+<template:addCacheDependency node="${moduleMap.latestVersion}"/>
 <%@include file="../../commons/authorName.jspf" %>
 
 <jcr:sql
@@ -63,7 +63,13 @@
             <div class="clearfix"></div>
         </div>
         <div class="col-md-9">
-            <h2>${title}</h2>
+            <h2>${title}<c:choose>
+                <c:when test="${moduleStatus eq 'supported'}">
+                            <span class="module-supported">
+                                <i class="material-icons noselect" title="${moduleStatus}">check_circle</i>
+                            </span>
+                </c:when>
+                </c:choose></h2>
             <%--TAGS AND DOWNLOAD--%>
             <div class="row">
                 <div class="col-sm-10" style="margin-bottom: 20px;">
