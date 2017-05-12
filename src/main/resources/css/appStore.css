@@ -1740,3 +1740,26 @@ img.zoom-img {
 .zoom-overlay-transitioning {
     cursor: default;
 }
+
+/*FOOTER*/
+.footer-2 {
+    background: #282928;
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.25);
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+    position: absolute;
+    /*bottom: 0;*/
+    min-height: 140px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.footer-2 .row {
+    padding: 40px 0;
+}
+
+.footer-2 a, .footer-2 p {
+    color: rgba(255,255,255,0.25);
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+}
