@@ -1,4 +1,3 @@
-<%@ page import="java.util.Calendar" %>
 <%@ taglib prefix="jcr" uri="http://www.jahia.org/tags/jcr" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -20,7 +19,7 @@
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 
-<%@include file="../../commons/authorName.jspf"%>
+<%@include file="../../commons/authorName.jspf" %>
 
 <jcr:sql
         var="query"
@@ -49,7 +48,8 @@
     <c:set var="icon" value="${iconItem}"/>
 </c:forEach>
 
-<c:set var="moduleStatus" value="${not empty currentNode.properties['status'].string?currentNode.properties['status'].string:'community'}"/>
+<c:set var="moduleStatus"
+       value="${not empty currentNode.properties['status'].string?currentNode.properties['status'].string:'community'}"/>
 <c:if test="${moduleStatus eq 'supported' or currentNode.properties['supportedByJahia'].boolean}">
     <c:set var="moduleStatus" value="supported"/>
 </c:if>
@@ -122,8 +122,9 @@
                                 <div class="content">
                                     <%--${latestVersion.properties['jcr:lastModified'].date.time}--%>
                                     <time itemprop="datePublished">
-                                        <fmt:formatDate value="${moduleMap.latestVersion.properties['jcr:lastModified'].date.time}"
-                                                        pattern="yyyy-MM-dd"/>
+                                        <fmt:formatDate
+                                                value="${moduleMap.latestVersion.properties['jcr:lastModified'].date.time}"
+                                                pattern="yyyy-MM-dd"/>
                                     </time>
                                 </div>
                             </div>
@@ -138,7 +139,8 @@
                                     <c:if test="${not empty versionNumber.string}">
                                         ${versionNumber.string}<br/>
                                     </c:if>
-                                    <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal" href="#">
+                                    <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal"
+                                       href="#">
                                         <fmt:message key="jnt_forgemodule.clickToBrowse"/>
                                     </a>
                                 </div>
@@ -160,7 +162,8 @@
                         <div class="fifth">
                             <div class="meta-info">
                                 <div class="title">
-                                    <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion" var="JahiaVersionLabel"/>
+                                    <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion"
+                                                 var="JahiaVersionLabel"/>
                                     ${fn:replace(JahiaVersionLabel,':','')}
                                 </div>
                                 <div class="content">
@@ -218,7 +221,40 @@
                             </div>
                         </div>
                         <div class="fifth">
-
+                            <div class="meta-info">
+                                <div class="title">
+                                    Dependencies
+                                </div>
+                                <div class="content">
+                                    <c:choose>
+                                        <c:when test="${not empty moduleMap.latestVersion.properties.references and moduleMap.latestVersion.properties.references[0] != 'none'}">
+                                            <c:set var="nonSystemRefFound" value="false"/>
+                                            <ul class="list-unstyled">
+                                            <c:forEach items="${moduleMap.latestVersion.properties.references}"
+                                                       var="ref">
+                                                <jcr:sql var="appStoreModule" sql="SELECT * FROM [jnt:content]
+                WHERE ISDESCENDANTNODE('${renderContext.site.path}') AND [published]=true
+                AND ([jcr:primaryType] = 'jnt:forgeModule') and localName() = '${ref}'
+                ORDER BY [jcr:title] ASC"/>
+                                                <c:if test="${functions:length(appStoreModule.nodes) gt 0}">
+                                                    <c:set var="nonSystemRefFound" value="true"/>
+                                                    <c:forEach items="${appStoreModule.nodes}" var="module"
+                                                               varStatus="status">
+                                                        <li><a href='<c:url value="${module.url}" context="/"/>'>${module.displayableName}</a></li>
+                                                    </c:forEach>
+                                                </c:if>
+                                            </c:forEach>
+                                            <c:if test="${nonSystemRefFound eq 'false'}">
+                                                <li>NONE</li>
+                                            </c:if>
+                                            </ul>
+                                        </c:when>
+                                        <c:otherwise>
+                                            NONE
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -55,7 +55,9 @@
             </div>
 
             <div class="pull-right">
-
+                <a class="btn btn-small detailButton" href="<c:url value='${url.base}${currentNode.path}.updateReferences.do'/>">
+                    Update References
+                </a>
                 <a class="btn btn-small detailButton" href="${currentNode.properties.url.string}"
                    onclick="countDownload('<c:url value="${url.base}${currentNode.path}"/>')">
                     <fmt:message key="jnt_forgeEntry.label.downloadVersion">
