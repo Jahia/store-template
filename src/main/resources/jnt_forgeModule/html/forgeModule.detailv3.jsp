@@ -18,6 +18,8 @@
 <%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
+<template:addResources type="javascript" resources="libraries/zoom/zoom.js"/>
+
 <template:addCacheDependency node="${moduleMap.latestVersion}"/>
 <%@include file="../../commons/authorName.jspf" %>
 
@@ -34,8 +36,19 @@
 <c:set var="authorURL" value="${currentNode.properties['authorURL'].string}"/>
 <c:set var="authorEmail" value="${currentNode.properties['authorEmail'].string}"/>
 
+<c:set var="hasVideoNode" value="${jcr:hasChildrenOfType(currentNode, 'jnt:videostreaming')}"/>
+<c:if test="${hasVideoNode}">
+    <jcr:node var="videoNode" path="${currentNode.path}/video"/>
+    <c:set var="videoProvider" value="${videoNode.properties['provider'].string}"/>
+    <c:set var="videoIdentifier" value="${videoNode.properties['identifier'].string}"/>
+    <c:set var="videoHeight" value="${videoNode.properties['height'].string}"/>
+    <c:set var="videoWidth" value="${videoNode.properties['width'].string}"/>
+    <c:set var="videoAllowfullscreen" value="${videoNode.properties['allowfullscreen'].string}"/>
+</c:if>
+
 <jcr:nodeProperty node="${moduleMap.latestVersion}" name="versionNumber" var="versionNumber"/>
 <jcr:nodeProperty node="${currentNode}" name="j:tagList" var="assignedTags"/>
+<jcr:node var="screenshots" path="${currentNode.path}/screenshots"/>
 
 <c:forEach items="${currentNode.properties['j:defaultCategory']}" var="cat" varStatus="vs">
     <c:set var="category" value="${cat}"/>
@@ -275,6 +288,28 @@
                     ${howToInstall}
                 </div>
             </div>
+            <%--IMAGES--%>
+            <c:if test="${not empty jcr:getChildrenOfType(screenshots,'jnt:file')}">
+                <div class="row">
+                    <div class="col-md-12 module-section-title">
+                        <h2>Images</h2>
+                        <span></span>
+                            <template:module node="${screenshots}" view="v3">
+                                <template:param name="id" value="${currentNode.identifier}"/>
+                            </template:module>
+                    </div>
+                </div>
+            </c:if>
+            <%--VIDEO--%>
+            <c:if test="${hasVideoNode}">
+                <div class="row">
+                    <div class="col-md-12 module-section-title">
+                        <h2>Video</h2>
+                        <span></span>
+                        <template:module path="${videoNode.path}" view="lightbox"/>
+                    </div>
+                </div>
+            </c:if>
         </div>
         <div class="col-md-1"></div>
     </div>

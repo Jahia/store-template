@@ -246,8 +246,8 @@
             showTopTags : function() {
                 var columnsNbr = Math.max(Math.ceil(this.topTags.length/25), 4);
                 this.targetElement.empty();
-                this.targetElement.append('<li><fmt:message key="jnt_sortFilter.topTags.label"/></l>');
-                this.targetElement.append('<li role="separator" class="divider"></li>');
+                <%--this.targetElement.parent().append('<li><fmt:message key="jnt_sortFilter.topTags.label"/></l>');--%>
+                <%--this.targetElement.append('<li role="separator" class="divider"></li>');--%>
 
                 for (var i in this.topTags) {
                     var tagString = this.topTags[i];
