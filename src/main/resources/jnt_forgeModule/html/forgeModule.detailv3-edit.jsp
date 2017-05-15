@@ -77,7 +77,7 @@
     <c:set var="moduleStatus" value="supported"/>
 </c:if>
 <c:forEach items="${jcr:getChildrenOfType(screenshots,'jmix:image')}" var="screenshot" varStatus="stat">
-    <c:set var="preload">${preload}'<img src="${screenshot.thumbnailUrls['thumbnail']}" class="file-preview-image">'<c:if
+    <c:set var="preload">${preload}'${screenshot.url}'<c:if
             test="${not stat.last}">,</c:if></c:set>
 </c:forEach>
 <script>
@@ -87,8 +87,10 @@
             uploadAsync     : true,
             maxFileCount    : 1,
             allowedFileTypes: ['image'],
+            preferIconicZoomPreview:true,
+            initialPreviewAsData:true,
             initialPreview  : [
-                '<img  src="${not empty icon.url ? icon.url : iconUrl}" class="file-preview-image">'
+                '${not empty icon.url ? icon.url : iconUrl}'
             ]
         });
 
@@ -97,6 +99,8 @@
             uploadAsync         : true,
             maxFileCount        : 10,
             allowedFileTypes    : ['image'],
+            preferIconicZoomPreview:true,
+            initialPreviewAsData:true,
             initialPreview      : [${preload}],
             initialPreviewConfig: [
                     <c:forEach items="${jcr:getChildrenOfType(screenshots,'jmix:image')}" var="screenshot" varStatus="stat">{
@@ -108,7 +112,9 @@
         //Initializing ck editors
         $('.ckarea').each(function (index, object) {
             var textarea = $(object);
-            CKEDITOR.replace(textarea.attr('id'));
+            CKEDITOR.replace(textarea.attr('id'),{
+                toolbar:'Basic'
+            });
         });
     });
 </script>
