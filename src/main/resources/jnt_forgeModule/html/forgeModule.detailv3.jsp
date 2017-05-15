@@ -22,6 +22,7 @@
 
 <template:addCacheDependency node="${moduleMap.latestVersion}"/>
 <c:set var="hasRepositoryAccess" value="${jcr:hasPermission(currentNode, 'repositoryExplorer')}"/>
+<c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
 <%@include file="../../commons/authorName.jspf" %>
 <jsp:useBean id="uniqueDependants" class="java.util.LinkedHashMap"/>
 <jcr:sql
@@ -233,8 +234,13 @@
                             <c:param name="selectedPaths" value="${currentNode.path}"/>
                             <c:param name="workspace" value="live"/>
                         </c:url>
-                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_blank">Edit Module</a></p>
+                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_blank">Open in repository explorer</a></p>
                     </c:if>
+                    <c:if test="${isDeveloper}">
+                        <c:url value="${url.base}${currentNode.path}.store-module-v2-edit.html" var="editModule"/>
+                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_self">Edit Module</a></p>
+                    </c:if>
+
                     ${description}
                 </div>
             </div>

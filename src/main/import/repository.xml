@@ -500,6 +500,206 @@
                         <footer jcr:primaryType="jnt:contentList">
                             <storefooter jcr:primaryType="jnt:storeFooter"/>
                         </footer>
+                        <store-module-v2-edit j:applyOn="jnt:forgeModule jnt:forgePackage"
+                                     j:defaultTemplate="false"
+                                     j:hiddenTemplate="false"
+                                     j:requireLoggedUser="true"
+                                     j:requiredPermissionNames="jcr:write_live"
+                                     jcr:mixinTypes="jmix:accessControlled"
+                                     jcr:primaryType="jnt:contentTemplate">
+                            <j:acl j:inherit="true" jcr:primaryType="jnt:acl"/>
+                            <j:translation_en jcr:language="en"
+                                    jcr:mixinTypes="mix:title"
+                                    jcr:primaryType="jnt:translation"
+                                    jcr:title="Private App Store Module v2 Edit"/>
+                            <pagecontent jcr:primaryType="jnt:contentList">
+                                <moduleHeader jcr:primaryType="jnt:area">
+                                    <moduleHeader j:view="header"
+                                      jcr:mixinTypes="jmix:renderable"
+                                      jcr:primaryType="jnt:contentList">
+                                        <header-menu fluid="false"
+                                        inverse="false"
+                                        j:classname="header clearfix"
+                                        j:skin="skins.custom"
+                                        j:view="module"
+                                        jcr:mixinTypes="jmix:customSkin jmix:renderable jmix:skinnable"
+                                        jcr:primaryType="bootstrap3nt:enhancedNavBar">
+                                            <j:translation_fr jcr:language="fr"
+                                                jcr:mixinTypes="mix:title"
+                                                jcr:primaryType="jnt:translation"
+                                                jcr:title="header-menu"/>
+                                            <login j:view="store_detail"
+                                     jcr:mixinTypes="jmix:renderable"
+                                     jcr:primaryType="bootstrap3nt:navBarItemLoginForm"
+                                     position="right"
+                                     view="menu"/>
+                                        </header-menu>
+                                    </moduleHeader>
+                                </moduleHeader>
+                                <main-resource-display j:mainResourceView="detailv2"
+                                            jcr:mixinTypes="jmix:accessControlled"
+                                            jcr:primaryType="jnt:mainResourceDisplay">
+                                    <j:acl j:inherit="true" jcr:primaryType="jnt:acl"/>
+                                </main-resource-display>
+                            </pagecontent>
+                            <j:translation_fr jcr:language="fr"
+                                    jcr:mixinTypes="mix:title"
+                                    jcr:primaryType="jnt:translation"
+                                    jcr:title="Private App Store V2"/>
+                            <pageContent jcr:primaryType="jnt:contentList">
+                                <homeHeader jcr:primaryType="jnt:area">
+                                    <homeHeader j:view="header"
+                                    jcr:mixinTypes="jmix:renderable"
+                                    jcr:primaryType="jnt:contentList">
+                                        <header-menu fluid="false"
+                                        inverse="false"
+                                        j:classname="header clearfix"
+                                        j:skin="skins.custom"
+                                        j:view="module"
+                                        jcr:mixinTypes="jmix:customSkin jmix:renderable jmix:skinnable"
+                                        jcr:primaryType="bootstrap3nt:enhancedNavBar">
+                                            <j:translation_fr jcr:language="fr"
+                                                jcr:mixinTypes="mix:title"
+                                                jcr:primaryType="jnt:translation"
+                                                jcr:title="header-menu"/>
+                                            <back-to-jahia j:linkType="external"
+                                             jcr:mixinTypes="jmix:externalLink"
+                                             jcr:primaryType="jnt:storeLink"
+                                             position="right">
+                                                <j:translation_fr j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="fr"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_de j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="de"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_pt j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="pt"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_en j:linkTitle="Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="en"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Jahia.com"/>
+                                                <j:translation_it j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="it"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_es j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="es"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                            </back-to-jahia>
+                                            <academy j:linkType="external"
+                                       jcr:mixinTypes="jmix:externalLink"
+                                       jcr:primaryType="jnt:storeLink"
+                                       position="right">
+                                                <j:translation_fr j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="fr"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_de j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="de"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_pt j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="pt"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_en j:linkTitle="Academy"
+                                                   j:url="https://academy.jahia.com/home.html"
+                                                   jcr:language="en"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Academy"/>
+                                                <j:translation_it j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="it"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_es j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="es"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                            </academy>
+                                            <about j:linkType="external"
+                                     jcr:mixinTypes="jmix:externalLink"
+                                     jcr:primaryType="jnt:storeLink"
+                                     position="right">
+                                                <j:translation_fr j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="fr"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_de j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="de"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_pt j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="pt"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_en j:linkTitle="About"
+                                                   j:url="https://www.jahia.com/about-us"
+                                                   jcr:language="en"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="About"/>
+                                                <j:translation_it j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="it"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                                <j:translation_es j:linkTitle="Back to Jahia.com"
+                                                   j:url="http://www.jahia.com"
+                                                   jcr:language="es"
+                                                   jcr:mixinTypes="mix:title"
+                                                   jcr:primaryType="jnt:translation"
+                                                   jcr:title="Back to Jahia.com"/>
+                                            </about>
+                                            <login j:view="store_detail"
+                                     jcr:mixinTypes="jmix:renderable"
+                                     jcr:primaryType="bootstrap3nt:navBarItemLoginForm"
+                                     position="right"
+                                     view="menu"/>
+                                        </header-menu>
+                                    </homeHeader>
+                                </homeHeader>
+                                <main-resource-display j:mainResourceView="detailv3-edit"
+                                            jcr:mixinTypes="jmix:accessControlled"
+                                            jcr:primaryType="jnt:mainResourceDisplay">
+                                    <j:acl j:inherit="true" jcr:primaryType="jnt:acl"/>
+                                </main-resource-display>
+                            </pageContent>
+                        </store-module-v2-edit>
                     </base>
                     <siteSettingsBase j:hiddenTemplate="false" jcr:primaryType="jnt:template">
                         <j:translation_en jcr:language="en"
@@ -638,7 +838,7 @@
                                    jcr:primaryType="jnt:contentList">
                                     <file-upload-form j:id="myModulesUploadForm"
                                           j:skin="skins.custom"
-                                          j:view="jarv3"
+                                          j:view="jarv3v3"
                                           jcr:mixinTypes="jmix:customSkin jmix:renderable jmix:skinnable"
                                           jcr:primaryType="jnt:fileUpload"/>
                                     <j:translation_en jcr:language="en"
