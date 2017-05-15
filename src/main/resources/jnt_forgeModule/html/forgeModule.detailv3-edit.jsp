@@ -81,14 +81,41 @@
             test="${not stat.last}">,</c:if></c:set>
 </c:forEach>
 <script>
-
+var tagsList=[];
+<c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
+tagsList.push('${fn:toLowerCase(tag.string)}');
+</c:forEach>
     function addTag() {
         var newTagVal = $('#newTag').val();
         if(newTagVal.trim() != "") {
-            $("#tagsList").append('<li class="list-group-item">' + newTagVal.toUpperCase() + '</li>');
-            $("#metaForm").append('<input type="hidden" name="j:tagList" value="' + newTagVal.toLowerCase() + '">');
+            $("#tagsList").append('<li class="list-group-item tag-item">' + newTagVal.toUpperCase() + '</li>');
+            $(".hidden-tag-item").append('<input type="hidden" name="j:tagList" value="' + newTagVal.toLowerCase() + '">');
+            tagsList.push(newTagVal.toLowerCase());
             $('#newTag').val('')
         }
+    }
+
+    function addEventOnTagItem(){
+        $(".tag-item").mouseover(function(){$(this).addClass('list-group-item-danger')});
+        $(".tag-item").mouseout(function(){$(this).removeClass('list-group-item-danger')});
+        $(".tag-item").click(function() {
+            var value = $(this).html().toLowerCase().trim();
+            for(var i=0; i < tagsList.length;i++) {
+                if(tagsList[i] == value){
+                    tagsList.splice(i,1);
+                    break;
+                }
+            }
+            var $tagsList = $("#tagsList");
+            $tagsList.empty();
+            var $metaForm = $(".hidden-tag-item");
+            $metaForm.empty();
+            for(var j=0; j < tagsList.length;j++) {
+                $tagsList.append('<li class="list-group-item tag-item">' + tagsList[j].toUpperCase() + '</li>');
+                $metaForm.append('<input type="hidden" name="j:tagList" value="' + tagsList[j] + '">');
+            }
+            addEventOnTagItem();
+        });
     }
 
     $(document).ready(function () {
@@ -126,6 +153,8 @@
                 toolbar: 'Basic'
             });
         });
+
+        addEventOnTagItem();
     });
 </script>
 
@@ -330,16 +359,18 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="hidden-tag-item">
                                 <c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
-                                    <input type="hidden" name="j:tagList" value="${fn:toLowerCase(tag.string)}">
+                                    <input type="hidden" name="j:tagList" value="${fn:toLowerCase(tag.string)}" >
                                 </c:forEach>
+                                </div>
                                 <div class="form-group">
                                     <label for="tags"
                                            class="control-label col-sm-2">Tags</label>
                                     <div class="col-sm-3">
                                         <ul class="list-group" id="tagsList">
                                             <c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
-                                                <li class="list-group-item"> ${fn:toUpperCase(tag.string)}</li>
+                                                <li class="list-group-item tag-item" style="cursor: pointer"> ${fn:toUpperCase(tag.string)}</li>
                                             </c:forEach>
                                         </ul>
                                     </div>
