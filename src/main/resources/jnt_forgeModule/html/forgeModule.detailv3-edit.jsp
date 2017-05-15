@@ -295,7 +295,7 @@ tagsList.push('${fn:toLowerCase(tag.string)}');
                         </div>
                         <div role="tabpanel" class="tab-pane" id="installfaq"><template:tokenizedForm
                                 allowsMultipleSubmits="true">
-                            <form class="form-horizontal"
+                            <form class="form-horizontal"  style="margin-top: 15px"
                                   action="<c:url value='${url.base}${currentNode.path}'/>"
                                   method="post">
                                 <input type="hidden" name="jcrMethodToCall" value="PUT"/>
@@ -326,7 +326,7 @@ tagsList.push('${fn:toLowerCase(tag.string)}');
                         </template:tokenizedForm></div>
                         <div role="tabpanel" class="tab-pane" id="medias">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12"  style="margin-top: 15px">
                                     <template:tokenizedForm allowsMultipleSubmits="true">
                                         <form action="<c:url value='${url.base}${currentNode.path}/screenshots/*'/>"
                                               method="POST" enctype="multipart/form-data">
@@ -339,7 +339,7 @@ tagsList.push('${fn:toLowerCase(tag.string)}');
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="metadata">
-                            <form class="form-horizontal" action="<c:url value='${url.base}${currentNode.path}'/>"
+                            <form class="form-horizontal" action="<c:url value='${url.base}${currentNode.path}'/>"  style="margin-top: 15px"
                                   method="post" id="metaForm">
                                 <input type="hidden" name="jcrMethodToCall" value="PUT"/>
                                 <input type="hidden" name="jcrRedirectTo"
