@@ -78,11 +78,10 @@
                     <div class="clearfix"></div>
                 </div>
                 <%--MODULE DETAILS--%>
-
-                <div class="col-md-12 module-section-title">
-                    <h2>Module Details</h2>
-                    <span></span>
+                <div class="col-md-12" style="margin-top: 20px">
+                    <a class="btn btn-default module-download-btn" data-toggle="collapse" data-target="#collapseExample">Module Details</a>
                 </div>
+                <div class="collapse" id="collapseExample">
                 <div class="col-md-12">
                     <div class="meta-info">
                         <div class="title">
@@ -198,6 +197,7 @@
                             </c:if>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
