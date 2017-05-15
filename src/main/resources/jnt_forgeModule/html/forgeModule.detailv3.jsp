@@ -70,132 +70,134 @@
 <div class="container" style="margin-top: 50px;">
     <div class="row">
         <div class="col-md-2">
-            <img class="moduleImage" src="${not empty icon.url ? icon.url : iconUrl}"
-                 alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"
-                 style="display:block;"/>
-            <div class="clearfix"></div>
-            <%--MODULE DETAILS--%>
             <div class="row">
+                <div class="col-md-12">
+                    <img class="moduleImage" src="${not empty icon.url ? icon.url : iconUrl}"
+                         alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"
+                         style="display:block;"/>
+                    <div class="clearfix"></div>
+                </div>
+                <%--MODULE DETAILS--%>
+
                 <div class="col-md-12 module-section-title">
                     <h2>Module Details</h2>
                     <span></span>
-                    <div class="row noMargin">
-                        <div class="col-md-12">
-                            <div class="meta-info">
-                                <div class="title">
-                                    <fmt:message key="jnt_forgeEntry.label.moduleId"/>
-                                </div>
-                                <div class="content">
-                                    ${currentNode.name}
-                                </div>
-                            </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="title">
+                            <fmt:message key="jnt_forgeEntry.label.moduleId"/>
                         </div>
-                        <div class="col-md-12">
-                            <div class="meta-info">
-                                <div class="title">
-                                    <fmt:message key="jnt_forgeEntry.label.groupId"/>
-                                </div>
-                                <div class="content">
-                                    ${currentNode.properties['groupId'].string}
-                                </div>
-                            </div>
+                        <div class="content">
+                            ${currentNode.name}
                         </div>
-                        <div class="col-md-12">
-                            <div class="meta-info">
-                                <div class="title">
-                                    <fmt:message key="jnt_forgeEntry.label.updated" var="updatedLabel"/>
-                                    ${fn:replace(updatedLabel,':','')}
-                                </div>
-                                <div class="content">
-                                    <%--${latestVersion.properties['jcr:lastModified'].date.time}--%>
-                                    <time itemprop="datePublished">
-                                        <fmt:formatDate
-                                                value="${moduleMap.latestVersion.properties['jcr:lastModified'].date.time}"
-                                                pattern="yyyy-MM-dd"/>
-                                    </time>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="title">
+                            <fmt:message key="jnt_forgeEntry.label.groupId"/>
                         </div>
-                        <div class="col-md-12">
-                            <div class="meta-info">
-                                <div class="title">
-                                    <fmt:message key="jnt_forgeEntry.label.version" var="versionLabel"/>
-                                    ${fn:replace(versionLabel,':','')}
-                                </div>
-                                <div class="content">
-                                    <c:if test="${not empty versionNumber.string}">
-                                        ${versionNumber.string}<br/>
-                                    </c:if>
-                                    <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal"
-                                       href="#">
-                                        <fmt:message key="jnt_forgemodule.clickToBrowse"/>
-                                    </a>
-                                </div>
-                                <div id="changeLogModal" class="modal fade" role="dialog" tabindex="-1">
-                                    <div class="modal-dialog changeLogDialog">
-                                        <div class="modal-header">
-                                            <button type="button" class="close pull-right"
-                                                    data-dismiss="modal">&times;</button>
-                                            <h2><fmt:message key="jnt_forgeEntry.versions"/></h2>
-                                        </div>
-                                        <div class="modal-content">
-                                            <iframe src="${fn:replace(currentNode.url,".html",".changelog2.html")}"></iframe>
-                                            <%--<template:include view="changeLogv2"/>--%>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="content">
+                            ${currentNode.properties['groupId'].string}
                         </div>
-                        <div class="col-md-12">
-                            <div class="meta-info">
-                                <div class="title">
-                                    <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion"
-                                                 var="JahiaVersionLabel"/>
-                                    ${fn:replace(JahiaVersionLabel,':','')}
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="title">
+                            <fmt:message key="jnt_forgeEntry.label.updated" var="updatedLabel"/>
+                            ${fn:replace(updatedLabel,':','')}
+                        </div>
+                        <div class="content">
+                            <%--${latestVersion.properties['jcr:lastModified'].date.time}--%>
+                            <time itemprop="datePublished">
+                                <fmt:formatDate
+                                        value="${moduleMap.latestVersion.properties['jcr:lastModified'].date.time}"
+                                        pattern="yyyy-MM-dd"/>
+                            </time>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="title">
+                            <fmt:message key="jnt_forgeEntry.label.version" var="versionLabel"/>
+                            ${fn:replace(versionLabel,':','')}
+                        </div>
+                        <div class="content">
+                            <c:if test="${not empty versionNumber.string}">
+                                ${versionNumber.string}<br/>
+                            </c:if>
+                            <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal"
+                               href="#">
+                                <fmt:message key="jnt_forgemodule.clickToBrowse"/>
+                            </a>
+                        </div>
+                        <div id="changeLogModal" class="modal fade" role="dialog" tabindex="-1">
+                            <div class="modal-dialog changeLogDialog">
+                                <div class="modal-header">
+                                    <button type="button" class="close pull-right"
+                                            data-dismiss="modal">&times;</button>
+                                    <h2><fmt:message key="jnt_forgeEntry.versions"/></h2>
                                 </div>
-                                <div class="content">
-                                    ${fn:replace(moduleMap.latestVersion.properties['requiredVersion'].node.displayableName,'version-','')}<br/>
+                                <div class="modal-content">
+                                    <iframe src="${fn:replace(currentNode.url,".html",".changelog2.html")}"></iframe>
+                                    <%--<template:include view="changeLogv2"/>--%>
                                 </div>
                             </div>
                         </div>
                     </div>
-                        <div class="col-md-12">
-                            <div class="meta-info">
-                                <div class="title">
-                                    <fmt:message key="jnt_forgeEntry.label.authorName" var="authorLabel"/>
-                                    ${fn:replace(authorLabel,':','')}
-                                </div>
-                                <div class="content">
-                                    ${authorName}
-                                </div>
-                            </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="title">
+                            <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion"
+                                         var="JahiaVersionLabel"/>
+                            ${fn:replace(JahiaVersionLabel,':','')}
                         </div>
-                        <div class="col-md-12">
-                            <div class="meta-info">
-                                <div class="title">
-                                    <fmt:message key="jnt_forgeEntry.label.category"/>
-                                </div>
-                                <div class="content">
-                                    ${category.node.displayableName}
-                                </div>
-                            </div>
+                        <div class="content">
+                            ${fn:replace(moduleMap.latestVersion.properties['requiredVersion'].node.displayableName,'version-','')}<br/>
                         </div>
-                        <div class="col-md-12">
-                            <div class="meta-info large">
-                                <c:if test="${not empty authorURL}">
-                                    <a class="link" target="_blank" href="${authorURL}">
-                                        <fmt:message key="jnt_forgeEntry.label.authorURL"/>
-                                    </a>
-                                </c:if>
-                                <div class="developperEmail">
-                                    <c:if test="${not empty authorEmail}">
-                                        <a class="link_text"
-                                           href="mailto:${authorEmail}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message
-                                                key="jnt_forgeEntry.label.authorEmail"/></a>
-                                    </c:if>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="title">
+                            <fmt:message key="jnt_forgeEntry.label.authorName" var="authorLabel"/>
+                            ${fn:replace(authorLabel,':','')}
                         </div>
+                        <div class="content">
+                            ${authorName}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="title">
+                            <fmt:message key="jnt_forgeEntry.label.category"/>
+                        </div>
+                        <div class="content">
+                            ${category.node.displayableName}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="meta-info large">
+                        <c:if test="${not empty authorURL}">
+                            <a class="link" target="_blank" href="${authorURL}">
+                                <fmt:message key="jnt_forgeEntry.label.authorURL"/>
+                            </a>
+                        </c:if>
+                        <div class="developperEmail">
+                            <c:if test="${not empty authorEmail}">
+                                <a class="link_text"
+                                   href="mailto:${authorEmail}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message
+                                        key="jnt_forgeEntry.label.authorEmail"/></a>
+                            </c:if>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -232,11 +234,11 @@
             <div class="row">
                 <div class="col-md-12 module-section-title">
                     <h2>Dependencies &amp; Dependants</h2>
-                        <span></span>
+                    <span></span>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6" style="max-height: 250px;overflow-y: auto">
                     <div class="meta-info">
                         <div class="title">
                             Dependencies
@@ -265,9 +267,10 @@
                                                            value="${forge:sortByVersion(query.nodes)}"/>
                                                     <c:set var="latestVersion"
                                                            value="${forge:latestVersion(sortedModules)}"/>
-                                                    <li class="list-group-item"><a href='<c:url value="${module.url}" context="/"/>'
-                                                                   title="${module.displayableName}">${functions:abbreviate(module.displayableName,30,40,'...')}</a>
-                                                            <span class="pull-right">
+                                                    <li class="list-group-item"><a
+                                                            href='<c:url value="${module.url}" context="/"/>'
+                                                            title="${module.displayableName}">${functions:abbreviate(module.displayableName,30,40,'...')}</a>
+                                                        <span class="pull-right">
                                                                 <a href="<c:url value="${latestVersion.properties.url.string}"/>"><i
                                                                         class="material-icons">file_download</i></a>
                                                             </span>
@@ -282,13 +285,15 @@
                                     </ul>
                                 </c:when>
                                 <c:otherwise>
-                                    <ul class="list-group"><li class="list-group-item list-group-item-info">NONE</li></ul>
+                                    <ul class="list-group">
+                                        <li class="list-group-item list-group-item-info">NONE</li>
+                                    </ul>
                                 </c:otherwise>
                             </c:choose>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6" style="max-height: 250px;overflow-y: auto">
                     <div class="meta-info">
                         <div class="title">
                             Dependants
@@ -299,8 +304,8 @@
                 ORDER BY module.[jcr:title] ASC"/>
                             <c:choose>
                                 <c:when test="${functions:length(appStoreModule.nodes) gt 0}">
-                            <ul class="list-group">
-                                    <c:set var="nonSystemRefFound" value="true"/>
+                                    <ul class="list-group">
+                                        <c:set var="nonSystemRefFound" value="true"/>
                                         <c:forEach items="${appStoreModule.nodes}" var="module"
                                                    varStatus="status">
                                             <c:if test="${empty uniqueDependants[module.identifier]}">
@@ -313,23 +318,25 @@
                                                        value="${forge:sortByVersion(query.nodes)}"/>
                                                 <c:set var="latestVersion"
                                                        value="${forge:latestVersion(sortedModules)}"/>
-                                                    <li class="list-group-item">
-                                                        <a href='<c:url value="${module.url}" context="/"/>'
-                                                               title="${module.displayableName}">${functions:abbreviate(module.displayableName,30,40,'...')}</a>
+                                                <li class="list-group-item">
+                                                    <a href='<c:url value="${module.url}" context="/"/>'
+                                                       title="${module.displayableName}">${functions:abbreviate(module.displayableName,30,40,'...')}</a>
 
-                                                        <span class="pull-right">
+                                                    <span class="pull-right">
                                                             <a href="<c:url value="${latestVersion.properties.url.string}"/>"><i
                                                                     class="material-icons">file_download</i></a>
                                                         </span>
-                                                    </li>
+                                                </li>
                                             </c:if>
                                             <c:set target="${uniqueDependants}" property="${module.identifier}"
                                                    value="true"/>
                                         </c:forEach>
-                            </ul>
+                                    </ul>
                                 </c:when>
                                 <c:otherwise>
-                                    <ul class="list-group"><li class="list-group-item list-group-item-info">NONE</li></ul>
+                                    <ul class="list-group">
+                                        <li class="list-group-item list-group-item-info">NONE</li>
+                                    </ul>
                                 </c:otherwise>
                             </c:choose>
                         </div>
@@ -351,9 +358,9 @@
                     <div class="col-md-12 module-section-title">
                         <h2>Images</h2>
                         <span></span>
-                            <template:module node="${screenshots}" view="v3">
-                                <template:param name="id" value="${currentNode.identifier}"/>
-                            </template:module>
+                        <template:module node="${screenshots}" view="v3">
+                            <template:param name="id" value="${currentNode.identifier}"/>
+                        </template:module>
                     </div>
                 </div>
             </c:if>
