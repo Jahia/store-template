@@ -21,6 +21,7 @@
 <template:addResources type="javascript" resources="libraries/zoom/zoom.js"/>
 
 <template:addCacheDependency node="${moduleMap.latestVersion}"/>
+<c:set var="hasRepositoryAccess" value="${jcr:hasPermission(currentNode, 'repositoryExplorer')}"/>
 <%@include file="../../commons/authorName.jspf" %>
 <jsp:useBean id="uniqueDependants" class="java.util.LinkedHashMap"/>
 <jcr:sql
@@ -227,6 +228,13 @@
             <%--DESCRIPTION--%>
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-12">
+                    <c:if test="${hasRepositoryAccess}">
+                        <c:url value="/engines/manager.jsp" var="editModule">
+                            <c:param name="selectedPaths" value="${currentNode.path}"/>
+                            <c:param name="workspace" value="live"/>
+                        </c:url>
+                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_blank">Edit Module</a></p>
+                    </c:if>
                     ${description}
                 </div>
             </div>
