@@ -81,30 +81,40 @@
             test="${not stat.last}">,</c:if></c:set>
 </c:forEach>
 <script>
+
+    function addTag() {
+        var newTagVal = $('#newTag').val();
+        if(newTagVal.trim() != "") {
+            $("#tagsList").append('<li class="list-group-item">' + newTagVal.toUpperCase() + '</li>');
+            $("#metaForm").append('<input type="hidden" name="j:tagList" value="' + newTagVal.toLowerCase() + '">');
+            $('#newTag').val('')
+        }
+    }
+
     $(document).ready(function () {
         $("#file").fileinput({
-            uploadUrl       : "<c:url value='${url.base}${currentNode.path}.updateModuleIcon.do'/>", // server upload action
-            uploadAsync     : true,
-            maxFileCount    : 1,
-            allowedFileTypes: ['image'],
-            preferIconicZoomPreview:true,
-            initialPreviewAsData:true,
-            initialPreview  : [
+            uploadUrl           : "<c:url value='${url.base}${currentNode.path}.updateModuleIcon.do'/>", // server upload action
+            uploadAsync         : true,
+            maxFileCount        : 1,
+            allowedFileTypes    : ['image'],
+            initialPreviewAsData: true,
+            initialPreview      : [
                 '${not empty icon.url ? icon.url : iconUrl}'
             ]
         });
 
         $("#screenshots").fileinput({
-            uploadUrl           : "<c:url value='${url.base}${currentNode.path}/screenshots/*'/>", // server upload action
-            uploadAsync         : true,
-            maxFileCount        : 10,
-            allowedFileTypes    : ['image'],
-            preferIconicZoomPreview:true,
-            initialPreviewAsData:true,
-            initialPreview      : [${preload}],
-            initialPreviewConfig: [
+            uploadUrl              : "<c:url value='${url.base}${currentNode.path}/screenshots/*'/>", // server upload action
+            uploadAsync            : true,
+            maxFileCount           : 10,
+            allowedFileTypes       : ['image'],
+            preferIconicZoomPreview: false,
+            initialPreviewAsData   : true,
+            initialPreview         : [${preload}],
+            initialPreviewConfig   : [
                     <c:forEach items="${jcr:getChildrenOfType(screenshots,'jmix:image')}" var="screenshot" varStatus="stat">{
-                    url: '<c:url value="${url.base}${screenshot.path}.deleteScreenshot.do"/>'}<c:if test="${not stat.last}">, </c:if>
+                    url: '<c:url value="${url.base}${screenshot.path}.deleteScreenshot.do"/>'
+                }<c:if test="${not stat.last}">, </c:if>
                 </c:forEach>
             ]
 
@@ -112,8 +122,8 @@
         //Initializing ck editors
         $('.ckarea').each(function (index, object) {
             var textarea = $(object);
-            CKEDITOR.replace(textarea.attr('id'),{
-                toolbar:'Basic'
+            CKEDITOR.replace(textarea.attr('id'), {
+                toolbar: 'Basic'
             });
         });
     });
@@ -169,11 +179,11 @@
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab"
                                                                   data-toggle="tab">Informations</a></li>
-                        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab"
-                                                   data-toggle="tab">Install</a></li>
-                        <li role="presentation"><a href="#messages" aria-controls="messages" role="tab"
+                        <li role="presentation"><a href="#installfaq" aria-controls="profile" role="tab"
+                                                   data-toggle="tab">Install/FAQ</a></li>
+                        <li role="presentation"><a href="#medias" aria-controls="messages" role="tab"
                                                    data-toggle="tab">Medias</a></li>
-                        <li role="presentation"><a href="#settings" aria-controls="settings" role="tab"
+                        <li role="presentation"><a href="#metadata" aria-controls="settings" role="tab"
                                                    data-toggle="tab">Metadata</a>
                         </li>
                     </ul>
@@ -230,7 +240,7 @@
                                                 <label for="authorNameDisplayedAs"
                                                        class="control-label col-sm-2">Author Email</label>
                                                 <div class="col-sm-10">
-                                                    <select type="text" class="form-control"
+                                                    <select class="form-control"
                                                             name="authorNameDisplayedAs" id="authorNameDisplayedAs">
                                                         <option value="username"
                                                                 <c:if test="${authorNameDisplayedAs eq 'username'}">selected</c:if>>
@@ -254,7 +264,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="profile"><template:tokenizedForm
+                        <div role="tabpanel" class="tab-pane" id="installfaq"><template:tokenizedForm
                                 allowsMultipleSubmits="true">
                             <form class="form-horizontal"
                                   action="<c:url value='${url.base}${currentNode.path}'/>"
@@ -285,7 +295,7 @@
                                 <button type="submit" class="btn btn-warning">Submit</button>
                             </form>
                         </template:tokenizedForm></div>
-                        <div role="tabpanel" class="tab-pane" id="messages">
+                        <div role="tabpanel" class="tab-pane" id="medias">
                             <div class="row">
                                 <div class="col-md-12">
                                     <template:tokenizedForm allowsMultipleSubmits="true">
@@ -299,7 +309,54 @@
                                 </div>
                             </div>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="settings">Metadata</div>
+                        <div role="tabpanel" class="tab-pane" id="metadata">
+                            <form class="form-horizontal" action="<c:url value='${url.base}${currentNode.path}'/>"
+                                  method="post" id="metaForm">
+                                <input type="hidden" name="jcrMethodToCall" value="PUT"/>
+                                <input type="hidden" name="jcrRedirectTo"
+                                       value="<c:url value='${url.base}${currentNode.path}.store-module-v2-edit'/>"/>
+                                <div class="form-group">
+                                    <label for="Category"
+                                           class="control-label col-sm-2">Category</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control"
+                                                name="j:defaultCategory" id="category">
+                                            <c:forEach
+                                                    items="${jcr:getChildrenOfType(renderContext.site.properties.rootCategory.node,'jnt:category')}"
+                                                    var="cat">
+                                                <option value="${cat.identifier}"
+                                                        <c:if test="${not empty category and category.string eq cat.identifier}">selected</c:if>>${cat.displayableName}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                </div>
+                                <c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
+                                    <input type="hidden" name="j:tagList" value="${fn:toLowerCase(tag.string)}">
+                                </c:forEach>
+                                <div class="form-group">
+                                    <label for="tags"
+                                           class="control-label col-sm-2">Tags</label>
+                                    <div class="col-sm-3">
+                                        <ul class="list-group" id="tagsList">
+                                            <c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
+                                                <li class="list-group-item"> ${fn:toUpperCase(tag.string)}</li>
+                                            </c:forEach>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3 col-sm-offset-2">
+                                        <div class="input-group">
+                                            <input type="text" id="newTag" class="form-control"/>
+                                            <div class="input-group-addon"><span><i
+                                                    class="material-icons" style="font-size: 18px;cursor: pointer" onclick="addTag();">add_circle_outline</i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-warning">Submit</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
