@@ -21,7 +21,7 @@
 <c:if test="${!empty pictures}">
     <section style="max-width: 920px;margin: 0 auto;">
         <c:forEach var="moduleScreenshot" items="${pictures}" varStatus="status">
-            <div class="screeshot-container">
+            <div class="screenshot-container">
                 <img src="${moduleScreenshot.url}" alt="${moduleScreenshot.displayableName}" data-action="zoom" />
             </div>
         </c:forEach>

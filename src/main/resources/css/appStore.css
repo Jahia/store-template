@@ -1689,13 +1689,13 @@ input.fs1 {
 }
 
 /*SCREEN SHOTS*/
-.screeshot-container {
+.screenshot-container {
     margin: 8px;
     max-width: calc(25% - 16px);
     float: left;
 }
 
-.screeshot-container img {
+.screenshot-container img {
     width: 100%;
 }
 
