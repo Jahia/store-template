@@ -964,7 +964,7 @@
                             </pagecontent>
                         </store-admin>
                     </redirect>
-                    <changelog2 j:applyOn="jnt:forgeModule jnt:forgePackage"
+                    <changelog3 j:applyOn="jnt:forgeModule jnt:forgePackage"
                         j:defaultTemplate="false"
                         j:hiddenTemplate="false"
                         j:view="store"
@@ -994,7 +994,7 @@
                                  jcr:primaryType="jnt:translation"
                                  jcr:title="changelog"/>
                         <pagecontent jcr:primaryType="jnt:contentList">
-                            <main-resource-display j:mainResourceView="changeLogv2"
+                            <main-resource-display j:mainResourceView="changeLogv3"
                                          jcr:primaryType="jnt:mainResourceDisplay"/>
                             <file-upload-form j:bindedComponent="/modules/store-template/templates/changelog2/pagecontent/main-resource-display"
                                     j:view="jar"
@@ -1005,14 +1005,14 @@
                             j:skin="skins.custom"
                             jcr:mixinTypes="jmix:customSkin jmix:skinnable"
                             jcr:primaryType="jnt:contentList">
-                            <main-resource-display j:mainResourceView="changeLogv2"
+                            <main-resource-display j:mainResourceView="changeLogv3"
                                          j:mockupStyle="changeLog"
                                          jcr:mixinTypes="jmix:accessControlled"
                                          jcr:primaryType="jnt:mainResourceDisplay">
                                 <j:acl j:inherit="true" jcr:primaryType="jnt:acl"/>
                             </main-resource-display>
                         </pageContent>
-                    </changelog2>
+                    </changelog3>
                     <permissions j:applyOn="jnt:forgeModule jnt:forgePackage"
                          j:defaultTemplate="false"
                          j:hiddenTemplate="false"
