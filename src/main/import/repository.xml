@@ -838,7 +838,7 @@
                                    jcr:primaryType="jnt:contentList">
                                     <file-upload-form j:id="myModulesUploadForm"
                                           j:skin="skins.custom"
-                                          j:view="jarv3v3"
+                                          j:view="jarv3"
                                           jcr:mixinTypes="jmix:customSkin jmix:renderable jmix:skinnable"
                                           jcr:primaryType="jnt:fileUpload"/>
                                     <j:translation_en jcr:language="en"
