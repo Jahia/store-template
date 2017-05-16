@@ -81,41 +81,71 @@
             test="${not stat.last}">,</c:if></c:set>
 </c:forEach>
 <script>
-var tagsList=[];
-<c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
-tagsList.push('${fn:toLowerCase(tag.string)}');
-</c:forEach>
+    var tagsList = [];
+    <c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
+    tagsList.push('${fn:toLowerCase(tag.string)}');
+    </c:forEach>
     function addTag() {
         var newTagVal = $('#newTag').val();
-        if(newTagVal.trim() != "") {
-            $("#tagsList").append('<li class="list-group-item tag-item">' + newTagVal.toUpperCase() + '</li>');
-            $(".hidden-tag-item").append('<input type="hidden" name="j:tagList" value="' + newTagVal.toLowerCase() + '">');
+        if (newTagVal.trim() != "") {
             tagsList.push(newTagVal.toLowerCase());
             $('#newTag').val('')
+            renderLists();
+            addEventOnTagItem();
         }
     }
 
-    function addEventOnTagItem(){
-        $(".tag-item").mouseover(function(){$(this).addClass('list-group-item-danger')});
-        $(".tag-item").mouseout(function(){$(this).removeClass('list-group-item-danger')});
-        $(".tag-item").click(function() {
-            var value = $(this).html().toLowerCase().trim();
-            for(var i=0; i < tagsList.length;i++) {
-                if(tagsList[i] == value){
-                    tagsList.splice(i,1);
-                    break;
+    function renderLists() {
+        var $metaForm = $(".hidden-tag-item");
+        $metaForm.empty();
+        for (var j = 0; j < tagsList.length; j++) {
+            $metaForm.append('<input type="hidden" name="j:tagList" value="' + tagsList[j] + '">');
+        }
+        var $tagsList;
+        for (var k = 0; k < tagsList.length; k++) {
+            if ((k % 5) == 0) {
+                $tagsList = $("#tagsList" + Math.round(k / 5));
+                if ($tagsList.length > 0) {
+                    $tagsList.empty();
+                } else {
+                    $tagsList = $("#tagsList0");
                 }
             }
-            var $tagsList = $("#tagsList");
-            $tagsList.empty();
-            var $metaForm = $(".hidden-tag-item");
-            $metaForm.empty();
-            for(var j=0; j < tagsList.length;j++) {
-                $tagsList.append('<li class="list-group-item tag-item">' + tagsList[j].toUpperCase() + '</li>');
-                $metaForm.append('<input type="hidden" name="j:tagList" value="' + tagsList[j] + '">');
-            }
-            addEventOnTagItem();
-        });
+            $tagsList.append('<li class="list-group-item tag-item">' + tagsList[k].toUpperCase() + '</li>');
+        }
+        if (tagsList.length <= 10 && $("#tagsList2").length > 0){
+            $("#tagsList2").empty()
+        }
+        if (tagsList.length <= 5 && $("#tagsList1").length > 0){
+            $("#tagsList1").empty()
+        }
+        if(tagsList.length == 0) {
+            $("#tagsList0").empty();
+        }
+    }
+    function addEventOnTagItem() {
+        if(tagsList.length > 1) {
+            $(".tag-item").css('cursor','pointer');
+            $(".tag-item").mouseover(function () {
+                $(this).addClass('list-group-item-danger')
+            });
+            $(".tag-item").mouseout(function () {
+                $(this).removeClass('list-group-item-danger')
+            });
+            $(".tag-item").click(function () {
+                var value = $(this).html().toLowerCase().trim();
+                    for (var i = 0; i < tagsList.length; i++) {
+                        if (tagsList[i] == value) {
+                            tagsList.splice(i, 1);
+                            break;
+                        }
+                    }
+                    renderLists();
+                    addEventOnTagItem();
+            });
+        } else {
+
+        }
     }
 
     $(document).ready(function () {
@@ -295,7 +325,7 @@ tagsList.push('${fn:toLowerCase(tag.string)}');
                         </div>
                         <div role="tabpanel" class="tab-pane" id="installfaq"><template:tokenizedForm
                                 allowsMultipleSubmits="true">
-                            <form class="form-horizontal"  style="margin-top: 15px"
+                            <form class="form-horizontal" style="margin-top: 15px"
                                   action="<c:url value='${url.base}${currentNode.path}'/>"
                                   method="post">
                                 <input type="hidden" name="jcrMethodToCall" value="PUT"/>
@@ -326,7 +356,7 @@ tagsList.push('${fn:toLowerCase(tag.string)}');
                         </template:tokenizedForm></div>
                         <div role="tabpanel" class="tab-pane" id="medias">
                             <div class="row">
-                                <div class="col-md-12"  style="margin-top: 15px">
+                                <div class="col-md-12" style="margin-top: 15px">
                                     <template:tokenizedForm allowsMultipleSubmits="true">
                                         <form action="<c:url value='${url.base}${currentNode.path}/screenshots/*'/>"
                                               method="POST" enctype="multipart/form-data">
@@ -339,7 +369,8 @@ tagsList.push('${fn:toLowerCase(tag.string)}');
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="metadata">
-                            <form class="form-horizontal" action="<c:url value='${url.base}${currentNode.path}'/>"  style="margin-top: 15px"
+                            <form class="form-horizontal" action="<c:url value='${url.base}${currentNode.path}'/>"
+                                  style="margin-top: 15px"
                                   method="post" id="metaForm">
                                 <input type="hidden" name="jcrMethodToCall" value="PUT"/>
                                 <input type="hidden" name="jcrRedirectTo"
@@ -360,27 +391,34 @@ tagsList.push('${fn:toLowerCase(tag.string)}');
                                     </div>
                                 </div>
                                 <div class="hidden-tag-item">
-                                <c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
-                                    <input type="hidden" name="j:tagList" value="${fn:toLowerCase(tag.string)}" >
-                                </c:forEach>
+                                    <c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
+                                        <input type="hidden" name="j:tagList" value="${fn:toLowerCase(tag.string)}">
+                                    </c:forEach>
                                 </div>
                                 <div class="form-group">
                                     <label for="tags"
                                            class="control-label col-sm-2">Tags</label>
-                                    <div class="col-sm-3">
-                                        <ul class="list-group" id="tagsList">
-                                            <c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
-                                                <li class="list-group-item tag-item" style="cursor: pointer"> ${fn:toUpperCase(tag.string)}</li>
-                                            </c:forEach>
-                                        </ul>
-                                    </div>
+                                    <c:forEach items="${currentNode.properties['j:tagList']}" var="tag"
+                                               varStatus="tagStatus">
+                                        <c:if test="${(tagStatus.index mod 5) == 0}">
+                                            <div class="col-sm-3">
+                                            <ul class="list-group" <c:if
+                                                test="${(tagStatus.index mod 5) == 0}">id="tagsList${functions:round(tagStatus.index/5)}"</c:if>>
+                                        </c:if>
+                                        <li class="list-group-item tag-item"> ${fn:toUpperCase(tag.string)}</li>
+                                        <c:if test="${(tagStatus.index mod 5) == 4 or tagStatus.last}">
+                                            </ul>
+                                            </div>
+                                        </c:if>
+                                    </c:forEach>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-3 col-sm-offset-2">
                                         <div class="input-group">
                                             <input type="text" id="newTag" class="form-control"/>
                                             <div class="input-group-addon"><span><i
-                                                    class="material-icons" style="font-size: 18px;cursor: pointer" onclick="addTag();">add_circle_outline</i></span>
+                                                    class="material-icons text-success"
+                                                    style="font-size: 18px;cursor: pointer" onclick="addTag();">add_circle_outline</i></span>
                                             </div>
                                         </div>
                                     </div>
