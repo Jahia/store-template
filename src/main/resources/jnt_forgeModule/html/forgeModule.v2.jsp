@@ -38,7 +38,7 @@
 <c:if test="${moduleStatus eq 'supported' or currentNode.properties['supportedByJahia'].boolean}">
     <c:set var="moduleStatus" value="supported"/>
 </c:if>
-
+<c:set var="published" value="${currentNode.properties['published'].boolean}"/>
 <c:if test="${currentNode.properties['published'].boolean or isAdminPage}">
     <!-- Module Card -->
     <a href="${moduleUrl}">
@@ -46,7 +46,7 @@
             <c:url var="iconUrl" value="${url.currentModule}/img/icon.png"/>
             <img class="moduleLogo noselect" src="${not empty icon.url ? icon.url : iconUrl}" alt="<fmt:message key="jnt_forgeEntry.label.moduleIcon"><fmt:param value="${title}"/></fmt:message>"/>
             <div class="card-topMain">
-                <h1 class="truncate">${title}</h1>
+                <h1 class="truncate <c:choose><c:when test="${published}">text-success</c:when><c:otherwise>text-danger</c:otherwise></c:choose>">${title}</h1>
                 <author>${authorName}
                     <c:choose>
                         <c:when test="${moduleStatus eq 'supported'}">

@@ -39,6 +39,7 @@
 <c:set var="howToInstall" value="${currentNode.properties['howToInstall'].string}"/>
 <c:set var="authorURL" value="${currentNode.properties['authorURL'].string}"/>
 <c:set var="authorEmail" value="${currentNode.properties['authorEmail'].string}"/>
+<c:set var="published" value="${currentNode.properties['published'].boolean}"/>
 
 <c:set var="hasVideoNode" value="${jcr:hasChildrenOfType(currentNode, 'jnt:videostreaming')}"/>
 <c:if test="${hasVideoNode}">
@@ -148,6 +149,82 @@
         }
     }
 
+    function updateCompletionStatus() {
+        $.get('<c:url value='${url.base}${currentNode.path}.calculateCompletion.do'/>', function (data) {
+            var completion = data['completion'];
+            var canBePublished = data['canBePublished'];
+            var bar = $('#completion').css('width', completion + "%");
+            bar.children('.ratingCount').html(completion + "%");
+            if (completion < 60) {
+                bar.removeClass('progress-bar-success');
+                bar.removeClass('progress-bar-warning');
+                bar.addClass('progress-bar-danger');
+            }
+            else if (!canBePublished) {
+                bar.removeClass('progress-bar-success');
+                bar.removeClass('progress-bar-danger');
+                bar.addClass('progress-bar-warning');
+            }
+            else {
+                bar.removeClass('progress-bar-danger');
+                bar.removeClass('progress-bar-warning');
+                bar.addClass('progress-bar-success');
+            }
+            if (canBePublished)
+                $('#publishModule').removeClass('disabled');
+            else
+                $('#publishModule').addClass('disabled').removeClass("btn-danger");
+            var todoList = $('#todoList');
+            var todoListWrapper = $('#todoListWrapper');
+            if (completion == 100) {
+                todoListWrapper.slideUp();
+                todoList.empty().addClass('completed');
+            }
+            else {
+                var items = [];
+                var hasMandatoryLeft = false;
+                $.each(data['todoList'], function (key, val) {
+                    if (!hasMandatoryLeft && val['mandatory']) {
+                        hasMandatoryLeft = true;
+                    }
+                    items.push('<li' + (val['mandatory'] ? ' class="list-group-item list-group-item-danger"' : ' class="list-group-item list-group-item-info"' ) + '>' + val['name'] + '</li>');
+                });
+                if (!hasMandatoryLeft) {
+                    $('span#mandatoryTodoList').hide();
+                }
+                else {
+                    $('span#mandatoryTodoList').show();
+                }
+                todoList.empty().append(items.join(''));
+                if (todoList.hasClass('completed')) {
+                    todoListWrapper.slideDown();
+                    todoList.removeClass('completed');
+                }
+            }
+        }, "json");
+    }
+
+    function publishModule(attribute) {
+        var btn = $('#publishModule');
+        var data = {};
+        data['publish'] = attribute;
+        $.post('<c:url value='${url.base}${currentNode.path}.publishModule.do'/>', data, function (result) {
+            var published = result['published'];
+            if (result['published'] != null) {
+                //btn.toggleClass('btn-success btn-danger');
+                btn.attr("data-value", result['published']);
+                if (published) {
+                    //btn.text('<fmt:message key="jnt_forgeEntry.label.developer.unpublish"/>');
+                    window.location.reload();
+                }
+                else {
+                    // btn.text('<fmt:message key="jnt_forgeEntry.label.developer.publish"/>');
+                    window.location.reload();
+                }
+            }
+        }, "json");
+    }
+
     $(document).ready(function () {
         $("#file").fileinput({
             uploadUrl           : "<c:url value='${url.base}${currentNode.path}.updateModuleIcon.do'/>", // server upload action
@@ -185,12 +262,18 @@
         });
 
         addEventOnTagItem();
+        updateCompletionStatus();
+        $("#publishModule").click(function(){
+            publishModule($(this).data('publish'));
+        })
     });
 </script>
 
 <div class="container" style="margin-top: 50px;">
     <div class="row">
         <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-12">
             <template:tokenizedForm allowsMultipleSubmits="true">
                 <form action="<c:url value='${url.base}${currentNode.path}.updateModuleIcon.do'/>"
                       method="POST" enctype="multipart/form-data">
@@ -200,6 +283,17 @@
 
                 </form>
             </template:tokenizedForm>
+                </div>
+            <div id="todoListWrapper" class="col-md-12">
+                <h6 class="title">
+                    <fmt:message key="jnt_forgeEntry.label.developer.todoList"/>&nbsp;
+                    <span id="mandatoryTodoList"><fmt:message
+                            key="jnt_forgeEntry.label.developer.todoListMandatory"/></span>
+                </h6>
+                <ul id="todoList" class="list-group">
+                </ul>
+            </div>
+            </div>
         </div>
         <div class="col-md-9">
             <div class="row">
@@ -212,27 +306,31 @@
                             </span>
                             </c:when>
                         </c:choose></h2>
-                    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal">
-                        Preview
-                    </button>
-                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                        <div class="modal-dialog modal-lg" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                            aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <iframe src="<c:url value="${url.base}${currentNode.path}.html"/>" width="800px"
-                                            height="900px"></iframe>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
             <div class="row">
+                <div class="col-md-4">
+                    <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary" id="viewModule">
+                        View
+                    </button>
+                    <button type="button" id="publishModule" class="btn btn-primary" data-publish="${!published}">
+                        <c:choose>
+                            <c:when test="${published}"><fmt:message
+                                    key="jnt_forgeEntry.label.developer.unpublish"/></c:when>
+                            <c:otherwise><fmt:message
+                                    key="jnt_forgeEntry.label.developer.publish"/></c:otherwise>
+                        </c:choose>
+                    </button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div id="completion" class="progress-bar" role="progressbar"><span
+                            class="ratingCount"></span></div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 10px">
                 <div class="col-md-12">
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" role="tablist">
@@ -297,7 +395,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="authorNameDisplayedAs"
-                                                       class="control-label col-sm-2">Author Email</label>
+                                                       class="control-label col-sm-2">Display Author with</label>
                                                 <div class="col-sm-10">
                                                     <select class="form-control"
                                                             name="authorNameDisplayedAs" id="authorNameDisplayedAs">
@@ -396,8 +494,7 @@
                                     </c:forEach>
                                 </div>
                                 <div class="form-group">
-                                    <label for="tags"
-                                           class="control-label col-sm-2">Tags</label>
+                                    <label class="control-label col-sm-2">Tags</label>
                                     <c:forEach items="${currentNode.properties['j:tagList']}" var="tag"
                                                varStatus="tagStatus">
                                         <c:if test="${(tagStatus.index mod 5) == 0}">

@@ -58,57 +58,20 @@
 
 <div class="row">
     <c:forEach items="${packages.nodes}" var="module" varStatus="status" begin="0" end="2">
-        <c:if test="${module.properties['published'].boolean}">
-            <%--<c:forEach items="${module.properties['j:defaultCategory']}" var="cat" varStatus="vs">--%>
-            <%--<c:set var="categoryIdentifier" value="${cat.string}"/>--%>
-            <%--<jcr:node var="category" uuid="${categoryIdentifier}"/>--%>
-            <%--</c:forEach>--%>
-            <%--<script type="text/javascript">--%>
-            <%--modulesTags['${module.identifier}'] = [];--%>
-            <%--<c:if test="${category != null}">--%>
-            <%--modulesCategories['${category.properties['jcr:title'].string}'] = "${category.identifier}";--%>
-            <%--</c:if>--%>
-            <%--</script>--%>
-            <%--<!-- save current module tags in javascript object for the filters !-->--%>
-            <%--<c:forEach items="${module.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">--%>
-            <%--<script type="text/javascript">--%>
-            <%--modulesTags['${module.identifier}'].push('${currentTag.string}');--%>
-            <%--</script>--%>
-            <%--</c:forEach>--%>
 
             <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12">
                 <template:module node="${module}" view="v2"/>
             </div>
-        </c:if>
     </c:forEach>
 </div>
 
 <h4 style="color: #03a9f4;">LATEST</h4>
 <div class="row">
     <c:forEach items="${latest.nodes}" var="module" varStatus="status">
-        <c:if test="${module.properties['published'].boolean}">
             <c:set var="latestModulesIds" value="${latestModulesIds},${module.identifier}"/>
-            <%--<c:forEach items="${module.properties['j:defaultCategory']}" var="cat" varStatus="vs">--%>
-            <%--<c:set var="categoryIdentifier" value="${cat.string}"/>--%>
-            <%--<jcr:node var="category" uuid="${categoryIdentifier}"/>--%>
-            <%--</c:forEach>--%>
-            <%--<script type="text/javascript">--%>
-            <%--modulesTags['${module.identifier}'] = [];--%>
-            <%--<c:if test="${category != null}">--%>
-            <%--modulesCategories['${category.properties['jcr:title'].string}'] = "${category.identifier}";--%>
-            <%--</c:if>--%>
-            <%--</script>--%>
-            <%--<!-- save current module tags in javascript object for the filters !-->--%>
-            <%--<c:forEach items="${module.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">--%>
-            <%--<script type="text/javascript">--%>
-            <%--modulesTags['${module.identifier}'].push('${currentTag.string}');--%>
-            <%--</script>--%>
-            <%--</c:forEach>--%>
-
             <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12">
                 <template:module node="${module}" view="v2"/>
             </div>
-        </c:if>
     </c:forEach>
 </div>
 
@@ -118,24 +81,7 @@
 
     <div class="row">
         <c:forEach items="${allmodules.nodes}" var="module" varStatus="status">
-            <c:if test="${module.properties['published'].boolean and !fn:contains(latestModulesIds, module.identifier)}">
-                <%--<c:forEach items="${module.properties['j:defaultCategory']}" var="cat" varStatus="vs">--%>
-                <%--<c:set var="categoryIdentifier" value="${cat.string}"/>--%>
-                <%--<jcr:node var="category" uuid="${categoryIdentifier}"/>--%>
-                <%--</c:forEach>--%>
-                <%--<script type="text/javascript">--%>
-                <%--modulesTags['${module.identifier}'] = [];--%>
-                <%--<c:if test="${category != null}">--%>
-                <%--modulesCategories['${category.properties['jcr:title'].string}'] = "${category.identifier}";--%>
-                <%--</c:if>--%>
-                <%--</script>--%>
-                <%--<!-- save current module tags in javascript object for the filters !-->--%>
-                <%--<c:forEach items="${module.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">--%>
-                <%--<script type="text/javascript">--%>
-                <%--modulesTags['${module.identifier}'].push('${currentTag.string}');--%>
-                <%--</script>--%>
-                <%--</c:forEach>--%>
-
+            <c:if test="${!fn:contains(latestModulesIds, module.identifier)}">
                 <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12">
                     <template:module node="${module}" view="v2"/>
                 </div>
