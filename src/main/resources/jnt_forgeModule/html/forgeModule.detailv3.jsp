@@ -69,6 +69,14 @@
     <c:set var="moduleStatus" value="supported"/>
 </c:if>
 
+<template:include view="hidden.sql">
+    <template:param name="getLatestVersion" value="true"/>
+    <template:param name="getPreviousVersions" value="true"/>
+</template:include>
+<c:set value="${moduleMap.latestVersion}" var="latestVersion"/>
+<c:set value="${moduleMap.previousVersions}" var="previousVersions"/>
+<c:set value="${moduleMap.nextVersions}" var="nextVersions"/>
+
 <div class="container" style="margin-top: 50px;">
     <div class="row">
         <div class="col-md-2">
@@ -196,13 +204,16 @@
                                href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>">
                                 Download (${versionNumber.string})
                             </a>
+                            <c:if test="${not empty previousVersions}">
                             <div class="meta-info align-right">
                                 <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal"
                                    href="#">
                                     <fmt:message key="jnt_forgemodule.clickToBrowse"/>
                                 </a>
                             </div>
+                            </c:if>
                         </div>
+                        <c:if test="${not empty previousVersions}">
                         <!-- ** Start CHANGE LOG MODAL -->
                         <div id="changeLogModal" class="modal fade" role="dialog" tabindex="-1">
                             <div class="modal-dialog changeLogDialog">
@@ -217,6 +228,7 @@
                             </div>
                         </div>
                         <!-- ** End CHANGE LOG MODAL -->
+                        </c:if>
                     </div>
                 </div>
             </div>

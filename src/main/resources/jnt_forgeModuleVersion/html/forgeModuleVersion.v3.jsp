@@ -27,37 +27,24 @@
     <template:addResources type="inlinejavascript">
         <script type="text/javascript">
             function updateReferences(url) {
-                $.get(url,{},function(results){
+                $.get(url, {}, function (results) {
                     window.parent.location.reload(true);
-                },"json");
+                }, "json");
+            }
+
+            function toggleChangeLog(id) {
+                $("#changeLogView-"+id).toggle();
+                $("#changeLogEdition-"+id).toggle();
             }
 
             var moduleVersion;
             $(document).ready(function () {
                 moduleVersion = new ModuleVersion();
                 <c:url var="postURL" value="${url.base}${currentNode.path}"/>
-                $('#changeLog-${currentNode.identifier}').editable({
-                    <jsp:include page="../../commons/bootstrap-editable-options-wysihtml5.jsp">
-                    <jsp:param name="postURL" value='${postURL}'/>
-                    <jsp:param name="fullEditor" value='false'/>
-                    </jsp:include>
-                });
-
-                $('#toggle-changeLog-${currentNode.identifier}').click(function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    $('#changeLog-${currentNode.identifier}').editable('toggle');
-                });
-
-                $('#toggle-changeLog-${currentNode.identifier}').click(function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    $('#changeLog-${currentNode.identifier}').editable('toggle');
-                });
             });
 
             function ModuleVersion() {
-                this.downloadModule = function(url) {
+                this.downloadModule = function (url) {
                     window.location.href = url;
                 };
             }
@@ -70,39 +57,50 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs-4">
-            <h3 class="inline">${versionNumber.string}</h3><div class="inline left-10 ${publishedVal}-tag"><fmt:message key="jnt_forgeEntry.label.module.${publishedVal}"/></div>
+            <h3 class="inline">${versionNumber.string}</h3>
+            <div class="inline left-10 ${publishedVal}-tag"><fmt:message
+                    key="jnt_forgeEntry.label.module.${publishedVal}"/></div>
         </div>
         <div class="col-xs-8">
             <div class="top-15 float-right">
                 <c:if test="${isDeveloper && not viewAsUser}">
-                    <button class="squareVersionButton btn btn-sm btn-default updateReferencesButton" onclick="updateReferences('<c:url value="${url.base}${currentNode.path}.updateReferences.do"/>')"
-                            data-toggle="tooltip" data-placement="top" title="<fmt:message key="jnt_forgeEntry.label.updateReferences"/>">
-                        <span><i class="material-icons updateReferences">link</i></span>
+                    <button class="btn btn-xs btn-default circleVersionButton downloadModuleVersionButton"
+                            onclick="updateReferences('<c:url
+                                    value="${url.base}${currentNode.path}.updateReferences.do"/>')">
+                        <span><i class="material-icons downloadVersion">link</i></span>
                     </button>
                 </c:if>
-                <button class="squareVersionButton btn btn-xs btn-default downloadModuleVersionButton" href="${currentNode.properties.url.string}"
+                <button class="squareVersionButton btn btn-xs btn-default downloadModuleVersionButton"
+                        href="${currentNode.properties.url.string}"
                         onclick="moduleVersion.downloadModule('${currentNode.properties.url.string}')"
-                        data-toggle="tooltip" data-placement="top" title="<fmt:message key="jnt_forgeEntry.label.simpleDownload"/>">
+                        data-toggle="tooltip" data-placement="top"
+                        title="<fmt:message key="jnt_forgeEntry.label.simpleDownload"/>">
                     <span><i class="material-icons downloadVersion">file_download</i></span>
                 </button>
                 <c:if test="${isDeveloper && not viewAsUser}">
                     <c:url value="${url.base}${currentNode.path}" var="currentNodePath"/>
                     <c:if test="${published.boolean}">
-                        <button id="publishVersion-${id}" class="publishVersion circleVersionButton btn btn-xs btn-default unpublishButton"
+                        <button id="publishVersion-${id}"
+                                class="publishVersion circleVersionButton btn btn-xs btn-default unpublishButton"
                                 data-value="false" data-target="${currentNodePath}" data-toggle="tooltip"
-                                data-placement="top" title="<fmt:message key="jnt_forgeEntry.label.developer.unpublish"/>">
+                                data-placement="top"
+                                title="<fmt:message key="jnt_forgeEntry.label.developer.unpublish"/>">
                             <span><i class="rotate-90 top-5 material-icons text-danger">play_circle_outline</i></span>
                         </button>
                     </c:if>
                     <c:if test="${not published.boolean}">
-                        <button id="unpublishVersion-${id}" class="publishVersion circleVersionButton btn btn-xs btn-default publishButton"
+                        <button id="unpublishVersion-${id}"
+                                class="publishVersion circleVersionButton btn btn-xs btn-default publishButton"
                                 data-value="true" data-target="${currentNodePath}" data-toggle="tooltip"
-                                data-placement="top" title="<fmt:message key="jnt_forgeEntry.label.developer.publish"/>">
-                            <span><i class="rotate-270 top-5  material-icons text-success">play_circle_outline</i></span>
+                                data-placement="top"
+                                title="<fmt:message key="jnt_forgeEntry.label.developer.publish"/>">
+                            <span><i
+                                    class="rotate-270 top-5  material-icons text-success">play_circle_outline</i></span>
                         </button>
                     </c:if>
-                    <button href="#" class="editChangeLog squareVersionButton btn btn-xs btn-default" data-toggle="tooltip" data-placement="top"
-                       title="<fmt:message key="jnt_forgeEntry.label.editChangeLog"/>">
+                    <button class="editChangeLog squareVersionButton btn btn-xs btn-default" data-toggle="tooltip"
+                            data-placement="top" onclick="toggleChangeLog('${id}')"
+                            title="<fmt:message key="jnt_forgeEntry.label.editChangeLog"/>">
                         <i class="material-icons edit-changelog-icon">edit</i>
                     </button>
                 </c:if>
@@ -113,8 +111,30 @@
     <div class="row">
         <div class="col-xs-12">
             <c:choose>
-                <c:when test="${isDeveloper && not viewAsUser}">
-                    ${changeLog.string}
+                <c:when test="${isDeveloper}">
+                    <div id="changeLogView-${id}" class="changeLogView">
+                            ${changeLog.string}
+                    </div>
+                    <div id="changeLogEdition-${id}" class="changeLogEdition" style="display: none">
+                        <form class="form-horizontal" style="margin-top: 15px"
+                              action="<c:url value='${url.base}${currentNode.path}'/>"
+                              method="post">
+                            <input type="hidden" name="jcrMethodToCall" value="PUT"/>
+                            <input type="hidden" name="jcrRedirectTo"
+                                   value="<c:url value='${url.base}${currentNode.parent.path}.store-module-v2-edit'/>"/>
+                            <div class="form-group">
+                                <label for="changeLog"
+                                       class="control-label col-sm-2">Edit changelog for version ${versionNumber.string}</label>
+                                <div class="col-sm-10">
+                                            <textarea class="ckarea form-control" name="changeLog"
+                                                      id="changeLog-${id}" rows="5" cols="60">
+                                                <c:out value="${changeLog.string}"/>
+                                            </textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-warning">Save changelog for version ${versionNumber.string}</button>
+                        </form>
+                    </div>
                 </c:when>
                 <c:otherwise>
                     ${changeLog.string}
@@ -131,7 +151,8 @@
                         ${requiredVersion.node.displayableName}
                     </span> <strong>&nbsp;-&nbsp;</strong>
                     <span><strong><fmt:message key="jnt_forgeEntry.label.updated"/></strong></span>
-                    <span><fmt:formatDate value="${currentNode.properties['jcr:lastModified'].date.time}" pattern="yyyy-MM-dd" /></span>
+                    <span><fmt:formatDate value="${currentNode.properties['jcr:lastModified'].date.time}"
+                                          pattern="yyyy-MM-dd"/></span>
                 </div>
             </footer>
         </div>

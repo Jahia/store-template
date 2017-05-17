@@ -114,19 +114,19 @@
             }
             $tagsList.append('<li class="list-group-item tag-item">' + tagsList[k].toUpperCase() + '</li>');
         }
-        if (tagsList.length <= 10 && $("#tagsList2").length > 0){
+        if (tagsList.length <= 10 && $("#tagsList2").length > 0) {
             $("#tagsList2").empty()
         }
-        if (tagsList.length <= 5 && $("#tagsList1").length > 0){
+        if (tagsList.length <= 5 && $("#tagsList1").length > 0) {
             $("#tagsList1").empty()
         }
-        if(tagsList.length == 0) {
+        if (tagsList.length == 0) {
             $("#tagsList0").empty();
         }
     }
     function addEventOnTagItem() {
-        if(tagsList.length > 1) {
-            $(".tag-item").css('cursor','pointer');
+        if (tagsList.length > 1) {
+            $(".tag-item").css('cursor', 'pointer');
             $(".tag-item").mouseover(function () {
                 $(this).addClass('list-group-item-danger')
             });
@@ -135,14 +135,14 @@
             });
             $(".tag-item").click(function () {
                 var value = $(this).html().toLowerCase().trim();
-                    for (var i = 0; i < tagsList.length; i++) {
-                        if (tagsList[i] == value) {
-                            tagsList.splice(i, 1);
-                            break;
-                        }
+                for (var i = 0; i < tagsList.length; i++) {
+                    if (tagsList[i] == value) {
+                        tagsList.splice(i, 1);
+                        break;
                     }
-                    renderLists();
-                    addEventOnTagItem();
+                }
+                renderLists();
+                addEventOnTagItem();
             });
         } else {
 
@@ -151,9 +151,9 @@
 
     function updateCompletionStatus() {
         $.get('<c:url value='${url.base}${currentNode.path}.calculateCompletion.do'/>', function (data) {
-            var completion = data['completion'];
+            var completion     = data['completion'];
             var canBePublished = data['canBePublished'];
-            var bar = $('#completion').css('width', completion + "%");
+            var bar            = $('#completion').css('width', completion + "%");
             bar.children('.ratingCount').html(completion + "%");
             if (completion < 60) {
                 bar.removeClass('progress-bar-success');
@@ -174,14 +174,14 @@
                 $('#publishModule').removeClass('disabled');
             else
                 $('#publishModule').addClass('disabled').removeClass("btn-danger");
-            var todoList = $('#todoList');
+            var todoList        = $('#todoList');
             var todoListWrapper = $('#todoListWrapper');
             if (completion == 100) {
                 todoListWrapper.slideUp();
                 todoList.empty().addClass('completed');
             }
             else {
-                var items = [];
+                var items            = [];
                 var hasMandatoryLeft = false;
                 $.each(data['todoList'], function (key, val) {
                     if (!hasMandatoryLeft && val['mandatory']) {
@@ -205,8 +205,8 @@
     }
 
     function publishModule(attribute) {
-        var btn = $('#publishModule');
-        var data = {};
+        var btn         = $('#publishModule');
+        var data        = {};
         data['publish'] = attribute;
         $.post('<c:url value='${url.base}${currentNode.path}.publishModule.do'/>', data, function (result) {
             var published = result['published'];
@@ -263,9 +263,9 @@
 
         addEventOnTagItem();
         updateCompletionStatus();
-        $("#publishModule").click(function(){
+        $("#publishModule").click(function () {
             publishModule($(this).data('publish'));
-        })
+        });
     });
 </script>
 
@@ -274,25 +274,25 @@
         <div class="col-md-3">
             <div class="row">
                 <div class="col-md-12">
-            <template:tokenizedForm allowsMultipleSubmits="true">
-                <form action="<c:url value='${url.base}${currentNode.path}.updateModuleIcon.do'/>"
-                      method="POST" enctype="multipart/form-data">
-                    <label for="file" class="control-label"><fmt:message
-                            key="forge.editModule.uploadIcon.label"/></label>
-                    <input type="file" name="file" id="file" class="file-loading">
+                    <template:tokenizedForm allowsMultipleSubmits="true">
+                        <form action="<c:url value='${url.base}${currentNode.path}.updateModuleIcon.do'/>"
+                              method="POST" enctype="multipart/form-data">
+                            <label for="file" class="control-label"><fmt:message
+                                    key="forge.editModule.uploadIcon.label"/></label>
+                            <input type="file" name="file" id="file" class="file-loading">
 
-                </form>
-            </template:tokenizedForm>
+                        </form>
+                    </template:tokenizedForm>
                 </div>
-            <div id="todoListWrapper" class="col-md-12">
-                <h6 class="title">
-                    <fmt:message key="jnt_forgeEntry.label.developer.todoList"/>&nbsp;
-                    <span id="mandatoryTodoList"><fmt:message
-                            key="jnt_forgeEntry.label.developer.todoListMandatory"/></span>
-                </h6>
-                <ul id="todoList" class="list-group">
-                </ul>
-            </div>
+                <div id="todoListWrapper" class="col-md-12">
+                    <h6 class="title">
+                        <fmt:message key="jnt_forgeEntry.label.developer.todoList"/>&nbsp;
+                        <span id="mandatoryTodoList"><fmt:message
+                                key="jnt_forgeEntry.label.developer.todoListMandatory"/></span>
+                    </h6>
+                    <ul id="todoList" class="list-group">
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="col-md-9">
@@ -312,17 +312,17 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-primary" id="viewModule">
-                        View
-                    </button>
-                    <button type="button" id="publishModule" class="btn btn-primary" data-publish="${!published}">
-                        <c:choose>
-                            <c:when test="${published}"><fmt:message
-                                    key="jnt_forgeEntry.label.developer.unpublish"/></c:when>
-                            <c:otherwise><fmt:message
-                                    key="jnt_forgeEntry.label.developer.publish"/></c:otherwise>
-                        </c:choose>
-                    </button>
+                        <a href="<c:url value="${url.base}${currentNode.path}.html"/>" class="btn btn-primary" target="_blank">
+                            View
+                        </a>
+                        <button type="button" id="publishModule" class="btn btn-primary" data-publish="${!published}">
+                            <c:choose>
+                                <c:when test="${published}"><fmt:message
+                                        key="jnt_forgeEntry.label.developer.unpublish"/></c:when>
+                                <c:otherwise><fmt:message
+                                        key="jnt_forgeEntry.label.developer.publish"/></c:otherwise>
+                            </c:choose>
+                        </button>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -334,14 +334,16 @@
                 <div class="col-md-12">
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab"
+                        <li role="presentation" class="active"><a href="#home" aria-controls="informations" role="tab"
                                                                   data-toggle="tab">Informations</a></li>
-                        <li role="presentation"><a href="#installfaq" aria-controls="profile" role="tab"
+                        <li role="presentation"><a href="#installfaq" aria-controls="install" role="tab"
                                                    data-toggle="tab">Install/FAQ</a></li>
-                        <li role="presentation"><a href="#medias" aria-controls="messages" role="tab"
+                        <li role="presentation"><a href="#medias" aria-controls="medias" role="tab"
                                                    data-toggle="tab">Medias</a></li>
-                        <li role="presentation"><a href="#metadata" aria-controls="settings" role="tab"
+                        <li role="presentation"><a href="#metadata" aria-controls="metadata" role="tab"
                                                    data-toggle="tab">Metadata</a>
+                        <li role="presentation"><a href="#versions" aria-controls="versions" role="tab"
+                                                   data-toggle="tab">Versions</a>
                         </li>
                     </ul>
 
@@ -495,19 +497,35 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-sm-2">Tags</label>
-                                    <c:forEach items="${currentNode.properties['j:tagList']}" var="tag"
-                                               varStatus="tagStatus">
-                                        <c:if test="${(tagStatus.index mod 5) == 0}">
+                                    <c:choose>
+                                        <c:when test="${functions:length(currentNode.properties['j:tagList']) gt 0}">
+                                            <c:forEach items="${currentNode.properties['j:tagList']}" var="tag"
+                                                       varStatus="tagStatus">
+                                                <c:if test="${(tagStatus.index mod 5) == 0}">
+                                                    <div class="col-sm-3">
+                                                    <ul class="list-group" <c:if
+                                                        test="${(tagStatus.index mod 5) == 0}">id="tagsList${functions:round(tagStatus.index/5)}"</c:if>>
+                                                </c:if>
+                                                <li class="list-group-item tag-item"> ${fn:toUpperCase(tag.string)}</li>
+                                                <c:if test="${(tagStatus.index mod 5) == 4 or tagStatus.last}">
+                                                    </ul>
+                                                    </div>
+                                                </c:if>
+                                            </c:forEach>
+                                        </c:when>
+                                        <c:otherwise>
                                             <div class="col-sm-3">
-                                            <ul class="list-group" <c:if
-                                                test="${(tagStatus.index mod 5) == 0}">id="tagsList${functions:round(tagStatus.index/5)}"</c:if>>
-                                        </c:if>
-                                        <li class="list-group-item tag-item"> ${fn:toUpperCase(tag.string)}</li>
-                                        <c:if test="${(tagStatus.index mod 5) == 4 or tagStatus.last}">
-                                            </ul>
+                                                <ul class="list-group" id="tagsList0"></ul>
                                             </div>
-                                        </c:if>
-                                    </c:forEach>
+                                            <div class="col-sm-3">
+                                                <ul class="list-group" id="tagsList1"></ul>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <ul class="list-group" id="tagsList2"></ul>
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
+
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-3 col-sm-offset-2">
@@ -522,6 +540,14 @@
                                 </div>
                                 <button type="submit" class="btn btn-warning">Submit</button>
                             </form>
+                        </div>
+                        <div role="tabpanel" class="tab-pane active" id="versions">
+                            <div class="row">
+                                <div class="col-md-12" style="margin-top: 15px">
+                                    <template:module node="${currentNode}" view="changeLogv3-edit"/>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
