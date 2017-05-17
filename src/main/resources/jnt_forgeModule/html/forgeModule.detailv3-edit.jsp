@@ -476,6 +476,32 @@
                                 <input type="hidden" name="jcrRedirectTo"
                                        value="<c:url value='${url.base}${currentNode.path}.store-module-v2-edit'/>"/>
                                 <div class="form-group">
+                                    <label for="status"
+                                           class="control-label col-sm-2">Module Status</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control"
+                                                name="status" id="status">
+                                            <option value="community"
+                                                    <c:if test="${authorNameDisplayedAs eq 'community'}">selected</c:if>>
+                                                <fmt:message key="jnt_forgeEntry.status.community"/>
+                                            </option>
+                                            <option value="labs"
+                                                    <c:if test="${authorNameDisplayedAs eq 'labs'}">selected</c:if>>
+                                                <fmt:message key="jnt_forgeEntry.status.labs"/>
+                                            </option>
+                                            <option value="prereleased"
+                                                    <c:if test="${authorNameDisplayedAs eq 'prereleased'}">selected</c:if>>
+                                                <fmt:message key="jnt_forgeEntry.status.prereleased"/>
+                                            </option>
+                                            <option value="supported"
+                                                    <c:if test="${authorNameDisplayedAs eq 'supported'}">selected</c:if>>
+                                                <fmt:message key="jnt_forgeEntry.status.supported"/>
+                                            </option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label for="Category"
                                            class="control-label col-sm-2">Category</label>
                                     <div class="col-sm-10">
@@ -538,7 +564,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-warning">Submit</button>
+                                <button type="submit" class="btn btn-warning">Save Metadata</button>
                             </form>
                         </div>
                         <div role="tabpanel" class="tab-pane active" id="versions">
