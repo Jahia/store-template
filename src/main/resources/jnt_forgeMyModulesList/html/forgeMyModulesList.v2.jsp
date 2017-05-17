@@ -60,7 +60,9 @@
     <c:forEach items="${packages.nodes}" var="module" varStatus="status" begin="0" end="2">
 
             <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12">
-                <template:module node="${module}" view="v2"/>
+                <template:module node="${module}" view="v2">
+                    <template:param value="true" name="showColorTitle"/>
+                </template:module>
             </div>
     </c:forEach>
 </div>
@@ -70,20 +72,24 @@
     <c:forEach items="${latest.nodes}" var="module" varStatus="status">
             <c:set var="latestModulesIds" value="${latestModulesIds},${module.identifier}"/>
             <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12">
-                <template:module node="${module}" view="v2"/>
+                <template:module node="${module}" view="v2">
+                    <template:param value="true" name="showColorTitle"/>
+                </template:module>
             </div>
     </c:forEach>
 </div>
 
 <c:if test="${functions:length(allmodules.nodes) gt 3}">
 
-    <h4 style="color: #03a9f4;">ALL MODULES</h4>
+    <h4 style="color: #03a9f4;">ALL MODULES TE</h4>
 
     <div class="row">
         <c:forEach items="${allmodules.nodes}" var="module" varStatus="status">
             <c:if test="${!fn:contains(latestModulesIds, module.identifier)}">
                 <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12">
-                    <template:module node="${module}" view="v2"/>
+                    <template:module node="${module}" view="v2">
+                        <template:param value="true" name="showColorTitle"/>
+                    </template:module>
                 </div>
             </c:if>
         </c:forEach>
