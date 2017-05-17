@@ -17,6 +17,21 @@
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 
+<template:addResources type="inlinejavascript">
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var footer = $('.footer-2');
+            $(document).on('updateFooterPosition', function() {
+               //Hide footer so it does not interfere with calculation.
+               footer.hide();
+               var coords = footer.offset();
+               coords.top = $(document).height();
+               footer.offset(coords);
+               footer.show();
+           });
+        });
+    </script>
+</template:addResources>
 
 <div class="footer-2">
     <div class="container">

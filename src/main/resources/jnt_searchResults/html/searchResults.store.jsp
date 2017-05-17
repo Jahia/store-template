@@ -28,6 +28,12 @@
     </script>
 </template:addResources>
 
+<script>
+    $(document).ready(function(){
+        $(document).trigger('updateFooterPosition');
+    })
+</script>
+
 <c:if test="${renderContext.editMode}">
     <fieldset>
     <legend>${fn:escapeXml(jcr:label(currentNode.primaryNodeType,currentResource.locale))}</legend>
