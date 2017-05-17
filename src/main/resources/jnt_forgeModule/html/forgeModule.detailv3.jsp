@@ -123,35 +123,6 @@
                 <div class="col-md-12">
                     <div class="meta-info">
                         <div class="title">
-                            <fmt:message key="jnt_forgeEntry.label.version" var="versionLabel"/>
-                            ${fn:replace(versionLabel,':','')}
-                        </div>
-                        <div class="content">
-                            <c:if test="${not empty versionNumber.string}">
-                                ${versionNumber.string}<br/>
-                            </c:if>
-                            <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal"
-                               href="#">
-                                <fmt:message key="jnt_forgemodule.clickToBrowse"/>
-                            </a>
-                        </div>
-                        <div id="changeLogModal" class="modal fade" role="dialog" tabindex="-1">
-                            <div class="modal-dialog changeLogDialog">
-                                <div class="modal-header">
-                                    <button type="button" class="close pull-right"
-                                            data-dismiss="modal">&times;</button>
-                                    <h2><fmt:message key="jnt_forgeEntry.versions"/></h2>
-                                </div>
-                                <div class="modal-content">
-                                    <iframe src="${fn:replace(currentNode.url,".html",".changelog3.html")}"></iframe>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="meta-info">
-                        <div class="title">
                             <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion"
                                          var="JahiaVersionLabel"/>
                             ${fn:replace(JahiaVersionLabel,':','')}
@@ -213,16 +184,40 @@
                 </c:choose></h2>
             <%--TAGS AND DOWNLOAD--%>
             <div class="row">
-                <div class="col-sm-10" style="margin-bottom: 20px;">
+                <div class="col-sm-9" style="margin-bottom: 20px;">
                     <c:forEach items="${assignedTags}" var="tag" varStatus="status">
                         <tag class="module-tag">${fn:escapeXml(tag.string)}</tag>
                     </c:forEach>
                 </div>
-                <div class="col-sm-2">
-                    <a class="btn btn-default module-download-btn"
-                       href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>">
-                        Download (${versionNumber.string})
-                    </a>
+                <div class="col-sm-3">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <a class="btn btn-default module-download-btn pull-right"
+                               href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>">
+                                Download (${versionNumber.string})
+                            </a>
+                            <div class="meta-info align-right">
+                                <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal"
+                                   href="#">
+                                    <fmt:message key="jnt_forgemodule.clickToBrowse"/>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- ** Start CHANGE LOG MODAL -->
+                        <div id="changeLogModal" class="modal fade" role="dialog" tabindex="-1">
+                            <div class="modal-dialog changeLogDialog">
+                                <div class="modal-header">
+                                    <button type="button" class="close pull-right"
+                                            data-dismiss="modal">&times;</button>
+                                    <h2><fmt:message key="jnt_forgeEntry.versions"/></h2>
+                                </div>
+                                <div class="modal-content">
+                                    <iframe src="${fn:replace(currentNode.url,".html",".changelog3.html")}"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ** End CHANGE LOG MODAL -->
+                    </div>
                 </div>
             </div>
             <%--DESCRIPTION--%>

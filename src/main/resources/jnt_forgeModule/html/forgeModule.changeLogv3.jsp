@@ -75,107 +75,114 @@
                     data['published'] = $(this).attr("data-value");
                     data['jcrMethodToCall'] = 'put';
                     $.post($(this).attr("data-target"), data, function () {
-                        window.location = '${fn:replace(currentNode.url,'.html','.changelog2.html')}';
+                        window.location = '${fn:replace(currentNode.url,'.html','.changelog3.html')}';
                     }, "json");
                 });
             });
         </script>
     </template:addResources>
 </c:if>
-
-<div class="container versionUploadContainer">
+<div class="container">
     <c:if test="${isDeveloper && not viewAsUser}">
-        <h3><fmt:message key="jnt_forgeModule.uploadNewVersion"/></h3>
-        <div id="jarUploadFormRow" class="row col-xs-12">
-            <template:tokenizedForm>
-                <form class="jarFile_upload" id="jar_file_upload_form_${currentNode.identifier}"
-                      action="${jarUploadPostUrl}" method="POST" enctype="multipart/form-data" onsubmit="return sendFileForModule()">
-                    <input id="jar_file_upload_${currentNode.identifier}" type="file" class="file" data-preview-file-type="text" name="file"/>
-                    <input  type="hidden" name="redirectURL" value="${renderContext.mainResource.node.path}.changelog"/>
-                </form>
-            </template:tokenizedForm>
+        <div class="row">
+            <div class="col-sm-12 versionUploadContainer">
+                <h3><fmt:message key="jnt_forgeModule.uploadNewVersion"/></h3>
+                <div id="jarUploadFormRow">
+                    <template:tokenizedForm>
+                        <form class="jarFile_upload" id="jar_file_upload_form_${currentNode.identifier}"
+                              action="${jarUploadPostUrl}" method="POST" enctype="multipart/form-data" onsubmit="return sendFileForModule()">
+                            <input id="jar_file_upload_${currentNode.identifier}" type="file" class="file" data-preview-file-type="text" name="file"/>
+                            <input  type="hidden" name="redirectURL" value="${renderContext.mainResource.node.path}.changelog"/>
+                        </form>
+                    </template:tokenizedForm>
+                </div>
+            </div>
         </div>
     </c:if>
-
-    <article id="moduleChangeLog">
-        <c:if test="${functions:length(nextVersions) > 0 && isDeveloper && not viewAsUser}">
-            <section class="newVersions">
-                <c:forEach items="${nextVersions}" var="nextVersion" varStatus="status">
-                    <c:if test="${status.first}">
-                        <h2><fmt:message key="jnt_forgeEntry.label.newVersions"/></h2>
-                        <c:set var="newVersionAvailable" value="true" />
-                    </c:if>
-                    <article class="previousVersion">
-                        <template:module node="${nextVersion}" view="v2">
-                            <template:param name="isLatestVersion" value="false"/>
-                            <template:param name="isDeveloper" value="${isDeveloper}"/>
-                            <template:param name="viewAsUser" value="${viewAsUser}"/>
-                        </template:module>
-                    </article>
-                </c:forEach>
-
-            </section>
-        </c:if>
-
-        <c:choose>
-
-            <c:when test="${not empty latestVersion}">
-                <section class="whatsNew">
-                    <h2><fmt:message key="jnt_forgeEntry.label.version"/></h2>
-                    <template:module node="${latestVersion}" view="v2">
-                        <template:param name="isDeveloper" value="${isDeveloper}"/>
-                        <template:param name="viewAsUser" value="${viewAsUser}"/>
-                    </template:module>
-                </section>
-
-            </c:when>
-            <c:otherwise>
-                <c:if test="${isDeveloper && not viewAsUser}">
-                    <div class="alert alert-info">
-                        <fmt:message key="jnt_forgeModule.label.developer.emptyChangeLog"/>
-                    </div>
-                </c:if>
-
-            </c:otherwise>
-
-        </c:choose>
-
-        <c:if test="${functions:length(previousVersions) > 0}">
-
-            <section class="previousVersions">
-
-                <c:if test="${isDeveloper && not viewAsUser}">
-                    <c:forEach items="${previousVersions}" var="previousVersion" varStatus="status">
+    <div class="row" id="moduleChangeLog">
+        <div class="col-sm-12">
+            <c:if test="${functions:length(nextVersions) > 0 && isDeveloper && not viewAsUser}">
+                <div class="newVersions">
+                    <c:forEach items="${nextVersions}" var="nextVersion" varStatus="status">
                         <c:if test="${status.first}">
-                            <h2><fmt:message key="jnt_forgeEntry.label.previousVersions"/></h2>
+                            <h2><fmt:message key="jnt_forgeEntry.label.newVersions"/></h2>
+                            <c:set var="newVersionAvailable" value="true" />
                         </c:if>
                         <article class="previousVersion">
-                            <template:module node="${previousVersion}" view="v2">
+                            <template:module node="${nextVersion}" view="v3">
+                                <template:param name="isLatestVersion" value="false"/>
                                 <template:param name="isDeveloper" value="${isDeveloper}"/>
                                 <template:param name="viewAsUser" value="${viewAsUser}"/>
                             </template:module>
                         </article>
                     </c:forEach>
-                </c:if>
-                <c:if test="${not isDeveloper or viewAsUser}">
-                    <c:forEach items="${previousVersions}" var="previousVersion" varStatus="status">
-                        <c:if test="${previousVersion.properties['published'].boolean}">
+                </div>
+            </c:if>
+        </div>
+        <div class="col-sm-12">
+            <c:if test="${empty latestVersion && isDeveloper && not viewAsUser}">
+                <div class="alert alert-info">
+                    <fmt:message key="jnt_forgeModule.label.developer.emptyChangeLog"/>
+                </div>
+            </c:if>
+        </div>
+        <div class="col-sm-12">
+            <c:if test="${functions:length(previousVersions) > 0}">
+                <div class="row previousVersions top-20">
+                    <c:if test="${isDeveloper && not viewAsUser}">
+                        <c:forEach items="${previousVersions}" var="previousVersion" varStatus="status">
+                            <div class="col-sm-12">
                             <c:if test="${status.first}">
-                                <h2><fmt:message key="jnt_forgeEntry.label.previousVersions"/></h2>
+                                <h2><fmt:message key="jnt_forgeEntry.label.olderVersions"/></h2>
                             </c:if>
-                            <article class="previousVersion">
-                                <template:module node="${previousVersion}" view="v2">
+                            <div class="previousVersion">
+                                <template:module node="${previousVersion}" view="v3">
                                     <template:param name="isDeveloper" value="${isDeveloper}"/>
                                     <template:param name="viewAsUser" value="${viewAsUser}"/>
                                 </template:module>
-                            </article>
-                        </c:if>
-                    </c:forEach>
-                </c:if>
-
-            </section>
-
-        </c:if>
-        <template:addCacheDependency flushOnPathMatchingRegexp="${currentNode.path}/.*"/>
-    </article>
+                            </div>
+                            </div>
+                        </c:forEach>
+                    </c:if>
+                    <c:if test="${not isDeveloper or viewAsUser}">
+                        <c:choose>
+                            <c:when test="${not empty previousVersions}">
+                                <c:forEach items="${previousVersions}" var="previousVersion" varStatus="status">
+                                    <div class="col-sm-12">
+                                        <c:if test="${previousVersion.properties['published'].boolean}">
+                                            <c:set var="publishedPreviewVersionAvailable" value="true"/>
+                                            <c:if test="${status.first}">
+                                                <h2><fmt:message key="jnt_forgeEntry.label.previousVersions"/></h2>
+                                            </c:if>
+                                            <div class="previousVersion">
+                                                <template:module node="${previousVersion}" view="v3">
+                                                    <template:param name="isDeveloper" value="${isDeveloper}"/>
+                                                    <template:param name="viewAsUser" value="${viewAsUser}"/>
+                                                </template:module>
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                </c:forEach>
+                                <c:if test="${empty publishedPreviewVersionAvailable}">
+                                    <div class="padding-x-10">
+                                        <div class="alert alert-info">
+                                            <fmt:message key="jnt_forgeModule.label.user.emptyPublishedChangeLog"/>
+                                        </div>
+                                    </div>
+                                </c:if>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="padding-x-10">
+                                    <div class="alert alert-info">
+                                        <fmt:message key="jnt_forgeModule.label.user.emptyChangeLog"/>
+                                    </div>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:if>
+                </div>
+            </c:if>
+            <template:addCacheDependency flushOnPathMatchingRegexp="${currentNode.path}/.*"/>
+        </div>
+    </div>
 </div>
