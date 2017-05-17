@@ -75,8 +75,9 @@
         <div class="col-xs-8">
             <div class="top-15 float-right">
                 <c:if test="${isDeveloper && not viewAsUser}">
-                    <button class="btn btn-sm btn-default detailButton"onclick="updateReferences('<c:url value="${url.base}${currentNode.path}.updateReferences.do"/>')">
-                        Update References
+                    <button class="squareVersionButton btn btn-sm btn-default updateReferencesButton" onclick="updateReferences('<c:url value="${url.base}${currentNode.path}.updateReferences.do"/>')"
+                            data-toggle="tooltip" data-placement="top" title="<fmt:message key="jnt_forgeEntry.label.updateReferences"/>">
+                        <span><i class="material-icons updateReferences">link</i></span>
                     </button>
                 </c:if>
                 <button class="squareVersionButton btn btn-xs btn-default downloadModuleVersionButton" href="${currentNode.properties.url.string}"

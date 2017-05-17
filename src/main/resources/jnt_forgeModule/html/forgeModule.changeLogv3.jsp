@@ -171,13 +171,6 @@
                                     </div>
                                 </c:if>
                             </c:when>
-                            <c:otherwise>
-                                <div class="padding-x-10">
-                                    <div class="alert alert-info">
-                                        <fmt:message key="jnt_forgeModule.label.user.emptyChangeLog"/>
-                                    </div>
-                                </div>
-                            </c:otherwise>
                         </c:choose>
                     </c:if>
                 </div>

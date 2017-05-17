@@ -1810,9 +1810,14 @@ img.zoom-img {
     background-color: rgba(150, 222, 255, 0.38);
 }
 
+.updateReferencesButton:hover {
+    background-color: rgba(150, 222, 255, 0.38);
+}
+
 .downloadVersion {
     color:#00A0E3;
     margin-top:5px;
+    margin-left:1px;
 }
 
 .published-tag {
@@ -1879,4 +1884,10 @@ img.zoom-img {
 .edit-changelog-icon {
     font-size:18px;
     margin-top:3px;
+}
+
+.updateReferences {
+    color: #03A9F4;
+    margin-top: 1px;
+    margin-left: -4px;
 }
