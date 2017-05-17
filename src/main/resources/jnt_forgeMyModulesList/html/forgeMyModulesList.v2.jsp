@@ -81,7 +81,7 @@
 
 <c:if test="${functions:length(allmodules.nodes) gt 3}">
 
-    <h4 style="color: #03a9f4;">ALL MODULES TE</h4>
+    <h4 style="color: #03a9f4;">ALL MODULES</h4>
 
     <div class="row">
         <c:forEach items="${allmodules.nodes}" var="module" varStatus="status">
