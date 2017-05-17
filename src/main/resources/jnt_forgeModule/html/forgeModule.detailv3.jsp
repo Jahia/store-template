@@ -224,7 +224,7 @@
                                     <h2><fmt:message key="jnt_forgeEntry.versions"/></h2>
                                 </div>
                                 <div class="modal-content">
-                                    <iframe src="${fn:replace(currentNode.url,".html",".changelog3.html")}"></iframe>
+                                    <template:module node="${currentNode}" view="changeLogv3"/>
                                 </div>
                             </div>
                         </div>

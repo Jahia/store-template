@@ -82,7 +82,6 @@
         </script>
     </template:addResources>
 </c:if>
-<div class="container">
     <c:if test="${isDeveloper && not viewAsUser}">
         <div class="row">
             <div class="col-sm-12 versionUploadContainer">
@@ -178,4 +177,3 @@
             <template:addCacheDependency flushOnPathMatchingRegexp="${currentNode.path}/.*"/>
         </div>
     </div>
-</div>

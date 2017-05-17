@@ -22,7 +22,7 @@
 <jcr:nodeProperty node="${currentNode}" name="requiredVersion" var="requiredVersion"/>
 <jcr:nodeProperty node="${currentNode}" name="published" var="published"/>
 
-<c:if test="${isDeveloper && not viewAsUser}">
+<c:if test="${isDeveloper}">
 
     <template:addResources type="inlinejavascript">
         <script type="text/javascript">
@@ -35,18 +35,6 @@
             function toggleChangeLog(id) {
                 $("#changeLogView-"+id).toggle();
                 $("#changeLogEdition-"+id).toggle();
-            }
-
-            var moduleVersion;
-            $(document).ready(function () {
-                moduleVersion = new ModuleVersion();
-                <c:url var="postURL" value="${url.base}${currentNode.path}"/>
-            });
-
-            function ModuleVersion() {
-                this.downloadModule = function (url) {
-                    window.location.href = url;
-                };
             }
         </script>
     </template:addResources>
@@ -63,21 +51,20 @@
         </div>
         <div class="col-xs-8">
             <div class="top-15 float-right">
-                <c:if test="${isDeveloper && not viewAsUser}">
+                <c:if test="${isDeveloper}">
                     <button class="btn btn-xs btn-default circleVersionButton downloadModuleVersionButton"
                             onclick="updateReferences('<c:url
                                     value="${url.base}${currentNode.path}.updateReferences.do"/>')">
                         <span><i class="material-icons downloadVersion">link</i></span>
                     </button>
                 </c:if>
-                <button class="squareVersionButton btn btn-xs btn-default downloadModuleVersionButton"
-                        href="${currentNode.properties.url.string}"
-                        onclick="moduleVersion.downloadModule('${currentNode.properties.url.string}')"
+                <a class="squareVersionButton btn btn-xs btn-default downloadModuleVersionButton"
+                        href="${currentNode.properties.url.string}" download="${fn:substringAfter(currentNode.properties.url.string, '/')}"
                         data-toggle="tooltip" data-placement="top"
                         title="<fmt:message key="jnt_forgeEntry.label.simpleDownload"/>">
                     <span><i class="material-icons downloadVersion">file_download</i></span>
-                </button>
-                <c:if test="${isDeveloper && not viewAsUser}">
+                </a>
+                <c:if test="${isDeveloper}">
                     <c:url value="${url.base}${currentNode.path}" var="currentNodePath"/>
                     <c:if test="${published.boolean}">
                         <button id="publishVersion-${id}"
