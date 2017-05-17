@@ -1891,3 +1891,38 @@ img.zoom-img {
     margin-top: 1px;
     margin-left: -4px;
 }
+
+.module-details-title {
+    color: #333;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.module-details-content {
+    line-height: 27px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #777;
+}
+
+.module-details {
+    margin-left:10px;
+}
+
+.module-details-link {
+    font-size: 12px;
+    border-bottom: dashed 1px #03A9F4;
+    text-decoration: none;
+    color: #03A9F4;
+    cursor: pointer;
+    font-weight: 500;
+    word-spacing: 1px;
+    line-height: 24px;
+    white-space: nowrap;
+}
+
+.module-details-link:hover, .module-details-link:active, .module-details-link:focus {
+    color: #03A9F4;
+    text-decoration: none;
+}

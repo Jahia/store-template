@@ -91,34 +91,34 @@
                 <div class="col-md-12" style="margin-top: 20px">
                     <a class="btn btn-default module-download-btn" data-toggle="collapse" data-target="#collapseExample">Module Details</a>
                 </div>
-                <div class="collapse" id="collapseExample">
+                <div class="collapse module-details" id="collapseExample">
                 <div class="col-md-12">
                     <div class="meta-info">
-                        <div class="title">
+                        <div class="module-details-title">
                             <fmt:message key="jnt_forgeEntry.label.moduleId"/>
                         </div>
-                        <div class="content">
+                        <div class="module-details-content">
                             ${currentNode.name}
                         </div>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="meta-info">
-                        <div class="title">
+                        <div class="module-details-title">
                             <fmt:message key="jnt_forgeEntry.label.groupId"/>
                         </div>
-                        <div class="content">
+                        <div class="module-details-content">
                             ${currentNode.properties['groupId'].string}
                         </div>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="meta-info">
-                        <div class="title">
+                        <div class="module-details-title">
                             <fmt:message key="jnt_forgeEntry.label.updated" var="updatedLabel"/>
                             ${fn:replace(updatedLabel,':','')}
                         </div>
-                        <div class="content">
+                        <div class="module-details-content">
                             <%--${latestVersion.properties['jcr:lastModified'].date.time}--%>
                             <time itemprop="datePublished">
                                 <fmt:formatDate
@@ -130,12 +130,12 @@
                 </div>
                 <div class="col-md-12">
                     <div class="meta-info">
-                        <div class="title">
+                        <div class="module-details-title">
                             <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion"
                                          var="JahiaVersionLabel"/>
                             ${fn:replace(JahiaVersionLabel,':','')}
                         </div>
-                        <div class="content">
+                        <div class="module-details-content">
                             ${fn:replace(moduleMap.latestVersion.properties['requiredVersion'].node.displayableName,'version-','')}<br/>
                         </div>
                     </div>
@@ -143,35 +143,36 @@
 
                 <div class="col-md-12">
                     <div class="meta-info">
-                        <div class="title">
+                        <div class="module-details-title">
                             <fmt:message key="jnt_forgeEntry.label.authorName" var="authorLabel"/>
                             ${fn:replace(authorLabel,':','')}
                         </div>
-                        <div class="content">
+                        <div class="module-details-content">
                             ${authorName}
                         </div>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="meta-info">
-                        <div class="title">
+                        <div class="module-details-title">
                             <fmt:message key="jnt_forgeEntry.label.category"/>
                         </div>
-                        <div class="content">
+                        <div class="module-details-content">
                             ${category.node.displayableName}
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-12">
                     <div class="meta-info large">
                         <c:if test="${not empty authorURL}">
-                            <a class="link" target="_blank" href="${authorURL}">
+                            <a class="module-details-link" target="_blank" href="${authorURL}">
                                 <fmt:message key="jnt_forgeEntry.label.authorURL"/>
                             </a>
                         </c:if>
                         <div class="developperEmail">
                             <c:if test="${not empty authorEmail}">
-                                <a class="link_text"
+                                <a class="module-details-link"
                                    href="mailto:${authorEmail}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message
                                         key="jnt_forgeEntry.label.authorEmail"/></a>
                             </c:if>
@@ -191,7 +192,7 @@
                     </c:when>
                 </c:choose></h2>
             <%--TAGS AND DOWNLOAD--%>
-            <div class="row">
+            <div class="row" style="padding-bottom:10px;">
                 <div class="col-sm-9" style="margin-bottom: 20px;">
                     <c:forEach items="${assignedTags}" var="tag" varStatus="status">
                         <tag class="module-tag">${fn:escapeXml(tag.string)}</tag>
@@ -246,7 +247,10 @@
                         <c:url value="${url.base}${currentNode.path}.store-module-v2-edit.html" var="editModule"/>
                         <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_self">Edit Module</a></p>
                     </c:if>
-
+                    <c:if test="${hasRepositoryAccess || isDeveloper}">
+                        <div style="padding-bottom:10px;">
+                        </div>
+                    </c:if>
                     ${description}
                 </div>
             </div>
