@@ -567,7 +567,7 @@
                                 <button type="submit" class="btn btn-warning">Save Metadata</button>
                             </form>
                         </div>
-                        <div role="tabpanel" class="tab-pane active" id="versions">
+                        <div role="tabpanel" class="tab-pane" id="versions">
                             <div class="row">
                                 <div class="col-md-12" style="margin-top: 15px">
                                     <template:module node="${currentNode}" view="changeLogv3-edit"/>
