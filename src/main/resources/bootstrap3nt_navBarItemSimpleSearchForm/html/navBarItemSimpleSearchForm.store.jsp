@@ -16,7 +16,6 @@
     });
 </script>
 <template:addResources type="css" resources="main.css"/>
-<template:addCacheDependency uuid="${currentNode.properties.result.string}"/>
 <c:if test="${not empty currentNode.properties.result.node}">
     <c:url value='${url.base}${currentNode.properties.result.node.path}.html' var="searchUrl"/>
     <s:form method="post" class="navbar-form navbar-search navbar-left" action="${searchUrl}" role="search" id="search">
@@ -25,8 +24,6 @@
                 <span class="input-group-addon" id="basic-addon1"><i class="material-icons">search</i></span>
                 <c:set var="searchPath" value="${renderContext.site.path}"/>
                 <fmt:message key='bootstrap3nt_navBarSimpleSearchForm.label.search' var="placeholder"/>
-                    <%--<s:term match="exact_phrase" id="searchTerm" searchIn="content"--%>
-                    <%--class="form-control input-lg quicksearch search-query" placeholder="${placeholder}"/>--%>
                 <s:pagePath value="${searchPath}" display="false" includeChildren="true"/>
                 <s:site value="${renderContext.site.name}" includeReferencesFrom="systemsite" display="false"/>
                 <s:language value="${renderContext.mainResource.locale}" display="false"/>
@@ -43,7 +40,7 @@
                        class="copy-term"/>
 
                 <input type="hidden" name="src_properties(jnt:forgePackage).description.match" value="all_words"/>
-                <input type="text" name="term" id="term-search" class="form-control input-lg quicksearch search-query"/>
+                <input type="text" name="term" id="term-search" class="form-control input-lg quicksearch search-query" value="${paramValues['term'][0]}"/>
             </div>
         </div>
     </s:form>
