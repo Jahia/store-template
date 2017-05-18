@@ -22,7 +22,7 @@
 
 <template:addCacheDependency node="${moduleMap.latestVersion}"/>
 <c:set var="hasRepositoryAccess" value="${jcr:hasPermission(currentNode, 'repositoryExplorer')}"/>
-<c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
+<c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/><c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
 <%@include file="../../commons/authorName.jspf" %>
 <jsp:useBean id="uniqueDependants" class="java.util.LinkedHashMap"/>
 <jcr:sql
@@ -201,6 +201,7 @@
                 <div class="col-sm-3">
                     <div class="row">
                         <div class="col-sm-12">
+                            ${moduleMap.latestVersion}
                             <a class="btn btn-default module-download-btn pull-right"
                                href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>">
                                 Download (${versionNumber.string})

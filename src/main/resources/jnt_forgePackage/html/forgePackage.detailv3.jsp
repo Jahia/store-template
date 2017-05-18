@@ -27,6 +27,7 @@
         sql="SELECT * FROM [jnt:forgePackageVersion] AS packageVersion
             WHERE isdescendantnode(packageVersion,['${currentNode.path}'])"
 />
+<c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
 <c:set var="hasRepositoryAccess" value="${jcr:hasPermission(currentNode, 'repositoryExplorer')}"/>
 <c:set var="sortedModules" value="${forge:sortByVersion(query.nodes)}"/>
 <c:set target="${moduleMap}" property="latestVersion" value="${forge:latestVersion(sortedModules)}"/>
@@ -193,13 +194,14 @@
                     </c:forEach>
                 </div>
                 <div class="col-sm-2">
-                    <a class="btn btn-default module-download-btn"
-                       href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>">
-                        <%--<fmt:message key="jnt_forgeEntry.label.downloadCurrentVersion">--%>
-                        <%--<fmt:param value="${versionNumber.string}"/>--%>
-                        <%--</fmt:message>--%>
-                        Download (${versionNumber.string})
-                    </a>
+                    ${moduleMap.latestVersion}
+                    <c:set var="versionFiles" value="${jcr:getChildrenOfType(moduleMap.latestVersion, 'jnt:file')}"/>
+                    <c:forEach items="${versionFiles}" var="file" varStatus="status">
+                        <a class="btn btn-default module-download-btn"
+                           href="<c:url value="${url.context}${url.files}${file.path}" context="/"/>">
+                            Download (${versionNumber.string})
+                        </a>
+                    </c:forEach>
                 </div>
             </div>
             <%--DESCRIPTION--%>
@@ -210,7 +212,11 @@
                             <c:param name="selectedPaths" value="${currentNode.path}"/>
                             <c:param name="workspace" value="live"/>
                         </c:url>
-                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_blank">Edit Module</a></p>
+                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_blank">Open in repository explorer</a></p>
+                    </c:if>
+                    <c:if test="${isDeveloper}">
+                        <c:url value="${url.base}${currentNode.path}.store-module-v2-edit.html" var="editModule"/>
+                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_self">Edit Module</a></p>
                     </c:if>
                     ${description}
                 </div>
