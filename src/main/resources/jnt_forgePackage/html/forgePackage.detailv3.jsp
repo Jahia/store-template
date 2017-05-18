@@ -194,7 +194,6 @@
                     </c:forEach>
                 </div>
                 <div class="col-sm-2">
-                    ${moduleMap.latestVersion}
                     <c:set var="versionFiles" value="${jcr:getChildrenOfType(moduleMap.latestVersion, 'jnt:file')}"/>
                     <c:forEach items="${versionFiles}" var="file" varStatus="status">
                         <a class="btn btn-default module-download-btn"

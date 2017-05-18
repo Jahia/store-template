@@ -201,7 +201,6 @@
                 <div class="col-sm-3">
                     <div class="row">
                         <div class="col-sm-12">
-                            ${moduleMap.latestVersion}
                             <a class="btn btn-default module-download-btn pull-right"
                                href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>">
                                 Download (${versionNumber.string})

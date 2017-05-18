@@ -29,9 +29,14 @@
 <jsp:useBean id="uniqueDependants" class="java.util.LinkedHashMap"/>
 <jcr:sql
         var="query"
-        sql="SELECT * FROM [jnt:forgeModuleVersion] AS moduleVersion
-            WHERE isdescendantnode(moduleVersion,['${currentNode.path}'])"
+        sql="SELECT * FROM [jnt:forgePackageVersion] AS packageVersion
+            WHERE isdescendantnode(packageVersion,['${currentNode.path}'])"
 />
+
+<c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
+<c:if test="${isDeveloper}">
+    <c:set var="viewAsUser" value="${not empty param['viewAs'] && param['viewAs'] eq 'user'}"/>
+</c:if>
 <c:set var="sortedModules" value="${forge:sortByVersion(query.nodes)}"/>
 <c:set target="${moduleMap}" property="latestVersion" value="${forge:latestVersion(sortedModules)}"/>
 <c:set var="title" value="${currentNode.properties['jcr:title'].string}"/>
@@ -346,6 +351,11 @@
                         <li role="presentation"><a href="#versions" aria-controls="versions" role="tab"
                                                    data-toggle="tab">Versions</a>
                         </li>
+                        <c:if test="${(isDeveloper && not viewAsUser)}">
+                            <li role="presentation"><a href="#permissions" aria-controls="permissions" role="tab"
+                                                       data-toggle="tab">Permissions</a>
+                            </li>
+                        </c:if>
                     </ul>
 
                     <!-- Tab panes -->
@@ -592,6 +602,16 @@
                             </div>
 
                         </div>
+                        <c:if test="${(isDeveloper && not viewAsUser)}">
+                            <div role="tabpanel" class="tab-pane" id="permissions">
+                                <div class="row">
+                                    <div class="col-md-12" style="margin-top: 15px">
+                                        <iframe width="100%" height="650px;" frameBorder="0" src="${fn:replace(currentNode.url,".html",".permissions.html")}"></iframe>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </c:if>
                     </div>
                 </div>
             </div>
