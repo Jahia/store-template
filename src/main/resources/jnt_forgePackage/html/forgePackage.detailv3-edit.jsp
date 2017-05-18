@@ -86,7 +86,15 @@
     <c:set var="preload">${preload}'${screenshot.url}'<c:if
             test="${not stat.last}">,</c:if></c:set>
 </c:forEach>
+
 <script>
+
+    <%--var selectedTab = null;--%>
+    <%--<c:forEach items="${renderContext.request.parameterMap}" var="parameter">--%>
+        <%--<c:if test="${parameter.key eq 'tab'}">--%>
+            <%--selectedTab = '${parameter.value[0]}'.replace(".html", "");--%>
+        <%--</c:if>--%>
+    <%--</c:forEach>--%>
     var tagsList = [];
     <c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
     tagsList.push('${fn:toLowerCase(tag.string)}');
@@ -271,6 +279,11 @@
         $("#publishModule").click(function () {
             publishModule($(this).data('publish'));
         });
+
+        //Activate tab
+//        if (selectedTab != null) {
+//            $('.nav-tabs a[href="#' + selectedTab + '"]').tab('show');
+//        }
     });
 </script>
 
@@ -438,6 +451,9 @@
                         <div role="tabpanel" class="tab-pane" id="installfaq">
                             <div class="row">
                                 <div class="col-md-12" style="margin-top: 15px">
+                                    <%--<c:url value='${url.base}${currentNode.path}.store-module-v2-edit.html' var="installfaqURL">--%>
+                                        <%--<c:param name='tab' value='installfaq' />--%>
+                                    <%--</c:url>--%>
                                     <template:tokenizedForm
                                             allowsMultipleSubmits="true">
                                         <form class="form-horizontal"
@@ -445,7 +461,7 @@
                                               method="post">
                                             <input type="hidden" name="jcrMethodToCall" value="PUT"/>
                                             <input type="hidden" name="jcrRedirectTo"
-                                                   value="<c:url value='${url.base}${currentNode.path}.store-module-v2-edit'/>"/>
+                                                   value="<c:url value='${url.base}${currentNode.path}.store-module-v2-edit' />"/>
                                             <div class="form-group">
                                                 <label for="install"
                                                        class="control-label col-sm-2">How To Install</label>
