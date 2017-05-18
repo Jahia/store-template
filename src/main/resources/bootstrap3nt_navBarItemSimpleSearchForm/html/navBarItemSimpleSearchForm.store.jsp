@@ -8,6 +8,13 @@
 <%--@elvariable id="currentNode" type="org.jahia.services.content.JCRNodeWrapper"--%>
 <%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
 
+<script>
+    $(document).ready(function () {
+        $("#term-search").keyup(function(){
+            $(".copy-term").val($(this).val());
+        })
+    });
+</script>
 <template:addResources type="css" resources="main.css"/>
 <template:addCacheDependency uuid="${currentNode.properties.result.string}"/>
 <c:if test="${not empty currentNode.properties.result.node}">
@@ -18,8 +25,8 @@
                 <span class="input-group-addon" id="basic-addon1"><i class="material-icons">search</i></span>
                 <c:set var="searchPath" value="${renderContext.site.path}"/>
                 <fmt:message key='bootstrap3nt_navBarSimpleSearchForm.label.search' var="placeholder"/>
-                <s:term match="all_words" id="searchTerm" searchIn="content,siteContent,tags,files"
-                        class="form-control input-lg quicksearch search-query" placeholder="${placeholder}"/>
+                    <%--<s:term match="exact_phrase" id="searchTerm" searchIn="content"--%>
+                    <%--class="form-control input-lg quicksearch search-query" placeholder="${placeholder}"/>--%>
                 <s:pagePath value="${searchPath}" display="false" includeChildren="true"/>
                 <s:site value="${renderContext.site.name}" includeReferencesFrom="systemsite" display="false"/>
                 <s:language value="${renderContext.mainResource.locale}" display="false"/>
@@ -27,6 +34,16 @@
                             selectionOptions="jmix:forgeElement,jnt:forgeModule,jnt:forgePackage" display="false"/>
                 <s:nodeProperty nodeType="jnt:forgeModule" name="published" value="true" display="false"/>
                 <s:nodeProperty nodeType="jnt:forgePackage" name="published" value="true" display="false"/>
+                <input type="hidden" name="src_properties(jnt:forgeModule).description.value" value=""
+                       class="copy-term"/>
+
+                <input type="hidden" name="src_properties(jnt:forgeModule).description.match" value="all_words"/>
+
+                <input type="hidden" name="src_properties(jnt:forgePackage).description.value" value=""
+                       class="copy-term"/>
+
+                <input type="hidden" name="src_properties(jnt:forgePackage).description.match" value="all_words"/>
+                <input type="text" name="term" id="term-search" class="form-control input-lg quicksearch search-query"/>
             </div>
         </div>
     </s:form>
