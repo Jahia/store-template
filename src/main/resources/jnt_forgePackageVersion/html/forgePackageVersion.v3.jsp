@@ -51,13 +51,13 @@
         </div>
         <div class="col-xs-8">
             <div class="top-15 float-right">
-                <%--<c:if test="${isDeveloper}">--%>
-                    <%--<button class="btn btn-xs btn-default circleVersionButton downloadModuleVersionButton"--%>
-                            <%--onclick="updateReferences('<c:url--%>
-                                    <%--value="${url.base}${currentNode.path}.updateReferences.do"/>')">--%>
-                        <%--<span><i class="material-icons downloadVersion">link</i></span>--%>
-                    <%--</button>--%>
-                <%--</c:if>--%>
+                <c:if test="${isDeveloper}">
+                    <button class="btn btn-xs btn-default circleVersionButton downloadModuleVersionButton"
+                            onclick="updateReferences('<c:url
+                                    value="${url.base}${currentNode.path}.updateReferences.do"/>')">
+                        <span><i class="material-icons downloadVersion">link</i></span>
+                    </button>
+                </c:if>
                 <c:set var="versionFile" value="${jcr:getChildrenOfType(currentNode, 'jnt:file')}"/>
                 <c:forEach items="${versionFile}" var="file" varStatus="status">
                     <a class="squareVersionButton btn btn-xs btn-default downloadModuleVersionButton"

@@ -98,7 +98,7 @@
             </div>
         </div>
     </c:if>
-    <div class="row" id="moduleChangeLog">
+    <div class="row moduleChangeLog" id="moduleChangeLog">
         <div class="col-sm-12">
             <c:if test="${functions:length(nextVersions) > 0 && isDeveloper && not viewAsUser}">
                 <div class="newVersions">

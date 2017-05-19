@@ -203,10 +203,11 @@
                                 <i class="material-icons noselect" title="${moduleStatus}">check_circle</i>
                             </span>
                     </c:when>
-                </c:choose></h2>
+                </c:choose>
+            </h2>
             <%--TAGS AND DOWNLOAD--%>
-            <div class="row" style="padding-bottom:10px;">
-                <div class="col-sm-9" style="margin-bottom: 20px;">
+            <div class="row padding-bottom-10">
+                <div class="col-sm-9 bottom-20">
                     <c:forEach items="${assignedTags}" var="tag" varStatus="status">
                         <tag class="module-tag">${fn:escapeXml(tag.string)}</tag>
                     </c:forEach>
@@ -219,29 +220,29 @@
                                 Download (${versionNumber.string})
                             </a>
                             <c:if test="${not empty previousVersions}">
-                            <div class="meta-info align-right">
-                                <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal"
-                                   href="#">
-                                    <fmt:message key="jnt_forgemodule.clickToBrowse"/>
-                                </a>
-                            </div>
+                                <div class="meta-info align-right">
+                                    <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal"
+                                       href="#">
+                                        <fmt:message key="jnt_forgemodule.clickToBrowse"/>
+                                    </a>
+                                </div>
                             </c:if>
                         </div>
                         <c:if test="${not empty previousVersions}">
-                        <!-- ** Start CHANGE LOG MODAL -->
-                        <div id="changeLogModal" class="modal fade" role="dialog" tabindex="-1">
-                            <div class="modal-dialog changeLogDialog">
-                                <div class="modal-header">
-                                    <button type="button" class="close pull-right"
-                                            data-dismiss="modal">&times;</button>
-                                    <h2><fmt:message key="jnt_forgeEntry.versions"/></h2>
-                                </div>
-                                <div class="modal-content">
-                                    <template:module node="${currentNode}" view="changeLogv3"/>
+                            <!-- ** Start CHANGE LOG MODAL -->
+                            <div id="changeLogModal" class="modal fade" role="dialog" tabindex="-1">
+                                <div class="modal-dialog changeLogDialog">
+                                    <div class="modal-header">
+                                        <button type="button" class="close pull-right"
+                                                data-dismiss="modal">&times;</button>
+                                        <h2><fmt:message key="jnt_forgeEntry.versions"/></h2>
+                                    </div>
+                                    <div class="modal-content">
+                                        <template:module node="${currentNode}" view="changeLogv3"/>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- ** End CHANGE LOG MODAL -->
+                            <!-- ** End CHANGE LOG MODAL -->
                         </c:if>
                     </div>
                 </div>

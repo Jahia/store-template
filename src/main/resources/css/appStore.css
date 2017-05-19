@@ -836,17 +836,6 @@ a.video span {
     padding: 25px 45px;
 }
 
-.meta-info {
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    display: inline-block;
-    padding: 10px 15px 10px 0;
-    text-align: left;
-    vertical-align: top;
-    width: 200px;
-    font-family: 'Lato',sans-serif !important;
-}
-
 .meta-info.large{
     width: 300px;
 }
@@ -855,25 +844,11 @@ a.video span {
     margin-top:10px;
 }
 
-.meta-info .title {
-    color: #333;
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 2px;
-}
-
 h6.title{
     color: #333;
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 2px;
-}
-
-.meta-info .content {
-    line-height: 24px;
-    font-size: 18px;
-    font-weight: 400;
-    color: #777;
 }
 
 #moduleForgeAdminPanel{
@@ -1596,7 +1571,7 @@ input.fs1 {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     display: inline-block;
-    padding: 8px 16px 8px 0;
+    padding: 8px 16px 0 0;
     text-align: left;
     vertical-align: top;
     width: 100%;
@@ -1646,13 +1621,15 @@ input.fs1 {
     font-family: "Lato", sans-serif;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 12px;
+    font-size: 10px;
+    line-height:25px;
     color: #ffb91e;
     border-radius: 20px;
     border: 2px solid #ffb91e;
     padding: 2px 8px;
-    margin: 8px;
+    margin: 4px;
     box-sizing: border-box;
+    white-space: nowrap;
 }
 
 /*ROW SYSTEM FOR DETAILS*/
@@ -1774,6 +1751,10 @@ img.zoom-img {
     margin-top: 20px;
 }
 
+.bottom-20 {
+    margin-bottom: 20px;
+}
+
 .left-5 {
     margin-left: 5px;
 }
@@ -1788,6 +1769,10 @@ img.zoom-img {
 .padding-x-10 {
     padding-left: 10px;
     padding-right: 10px;
+}
+
+.padding-bottom-10 {
+    padding-bottom:10px;
 }
 
 .rotate-90 {
@@ -1900,7 +1885,7 @@ img.zoom-img {
 }
 
 .module-details-content {
-    line-height: 27px;
+    line-height: 15px;
     font-size: 12px;
     font-weight: 400;
     color: #777;
@@ -1930,4 +1915,9 @@ img.zoom-img {
 .read-more {
     max-height: 200px;
     overflow-y: hidden;
+}
+
+.moduleChangeLog {
+    margin-right:0;
+    margin-left:0
 }
