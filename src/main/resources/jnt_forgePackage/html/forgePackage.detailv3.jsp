@@ -62,6 +62,25 @@
     <c:set var="icon" value="${iconItem}"/>
 </c:forEach>
 
+<script>
+    function showReadMore(id, button) {
+        var contentDiv = $('#'+id);
+        if(contentDiv.hasClass('read-more')) {
+            contentDiv.removeClass('read-more');
+            $(button).html('Read Less');
+        } else {
+            contentDiv.addClass('read-more');
+            $(button).html('Read More');
+        }
+    }
+    $(document).ready(function () {
+        if($("#installText").innerHeight() > 200) {
+            $("#installText").addClass('read-more');
+            $("#installReadMoreButton").show();
+        }
+    })
+</script>
+
 <div class="container" style="margin-top: 50px;">
     <div class="row">
         <div class="col-md-2">
@@ -259,7 +278,12 @@
                         <h2>How To Install</h2>
                         <span></span>
                     </c:if>
-                    ${howToInstall}
+                    <div id="installText">
+                        ${howToInstall}
+                    </div>
+                </div>
+                <div class="col-md-6 col-md-offset-4" id="installReadMoreButton" style="display: none">
+                    <button class="btn btn-default" onclick="showReadMore('installText',this);">Read More</button>
                 </div>
             </div>
             <%--IMAGES--%>

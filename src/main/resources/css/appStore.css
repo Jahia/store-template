@@ -1926,3 +1926,8 @@ img.zoom-img {
     color: #03A9F4;
     text-decoration: none;
 }
+
+.read-more {
+    max-height: 200px;
+    overflow-y: hidden;
+}

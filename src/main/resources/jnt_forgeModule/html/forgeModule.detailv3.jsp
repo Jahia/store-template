@@ -77,6 +77,19 @@
 <c:set value="${moduleMap.previousVersions}" var="previousVersions"/>
 <c:set value="${moduleMap.nextVersions}" var="nextVersions"/>
 
+<script>
+    function showReadMore(id, button) {
+        var contentDiv = $('#'+id);
+        if(contentDiv.hasClass('read-more')) {
+            contentDiv.removeClass('read-more');
+            $(button).html('Read Less');
+        } else {
+            contentDiv.addClass('read-more');
+            $(button).html('Read More');
+        }
+    }
+</script>
+
 <div class="container" style="margin-top: 50px;">
     <div class="row">
         <div class="col-md-2">
@@ -373,7 +386,12 @@
                         <h2>How To Install</h2>
                         <span></span>
                     </c:if>
+                    <div class="read-more" id="installText">
                     ${howToInstall}
+                    </div>
+                </div>
+                <div class="col-md-6 col-md-offset-4">
+                    <button class="btn btn-default" onclick="showReadMore('installText',this);">Read More</button>
                 </div>
             </div>
             <%--IMAGES--%>
