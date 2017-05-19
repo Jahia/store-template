@@ -80,10 +80,10 @@
         var contentDiv = $('#' + id);
         if (contentDiv.hasClass('read-more')) {
             contentDiv.removeClass('read-more');
-            $(button).html('Read Less');
+            $(button).html('Read Less...');
         } else {
             contentDiv.addClass('read-more');
-            $(button).html('Read More');
+            $(button).html('Read More...');
         }
     }
     $(document).ready(function () {
@@ -298,21 +298,24 @@
                     </div>
                 </div>
             </div>
-            <%--HOW TO INSTALL--%>
-            <div class="row">
-                <div class="col-md-12 module-section-title">
-                    <c:if test="${not empty howToInstall}">
+            <%--How to Install--%>
+            <c:if test="${not empty howToInstall}">
+                <div class="row">
+                    <div class="col-md-12 module-section-title">
+
                         <h2>How To Install</h2>
                         <span></span>
-                    </c:if>
-                    <div id="installText">
-                        ${howToInstall}
+
+                        <div id="installText">
+                                ${howToInstall}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-md-offset-4" id="installReadMoreButton" style="display: none">
+                        <a class="modal-link-text" onclick="showReadMore('installText',this);">Read More...</a>
                     </div>
                 </div>
-                <div class="col-md-6 col-md-offset-4" id="installReadMoreButton" style="display: none">
-                    <button class="btn btn-default" onclick="showReadMore('installText',this);">Read More</button>
-                </div>
-            </div>
+            </c:if>
+            <%--Changelog--%>
             <c:if test="${not empty moduleMap.latestVersion.properties.changeLog.string}">
                 <div class="row">
                     <div class="col-md-12 module-section-title">
@@ -324,7 +327,7 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-md-offset-4" id="changeLogReadMoreButton" style="display: none">
-                        <button class="btn btn-default" onclick="showReadMore('changeLogText',this);">Read More</button>
+                        <a class="modal-link-text" onclick="showReadMore('changeLogText',this);">Read More...</a>
                     </div>
                 </div>
             </c:if>
