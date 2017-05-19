@@ -68,8 +68,7 @@
                         <ul id="tag-display"></ul>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-aply-filter">Apply filter</button>
+                        <button type="button" class="btn btn-aply-filter" data-dismiss="modal">Apply filter</button>
                     </div>
                 </div>
             </div>
