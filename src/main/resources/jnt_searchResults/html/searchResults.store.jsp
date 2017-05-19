@@ -63,6 +63,7 @@
 
 <jcr:nodeProperty name="jcr:title" node="${currentNode}" var="title"/>
 <jcr:nodeProperty name="autoSuggest" node="${currentNode}" var="autoSuggest"/>
+<div class="filter-info"></div>
 <div id="${currentNode.UUID}">
     <div class="resultsList">
         <c:if test="${param.autoSuggest != false && autoSuggest.boolean && (empty moduleMap || empty moduleMap.begin || moduleMap.begin == 0)}">
