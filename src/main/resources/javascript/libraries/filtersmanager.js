@@ -5,11 +5,10 @@ function FiltersManager() {
     self.QUICKSEARCH = 'quicksearch';
 
     var $isotope = null;
-    var filtersContainer = {
-        categories: [],
-        tags: [],
-        quicksearch: []
-    };
+    var filtersContainer = {};
+    filtersContainer[self.CATEGORIES] = [];
+    filtersContainer[self.TAGS] = [];
+    filtersContainer[self.QUICKSEARCH] = [];
 
     self.initializeIsotope = function(instance) {
         $isotope = instance;
@@ -93,6 +92,10 @@ function FiltersManager() {
             });
         });
         return filterTypeElementCount;
+    };
+
+    self.getTotalFilteredElementCount = function() {
+        return $isotope.isotope('getFilteredItemElements').length;
     };
 
     function findValue(selectedValue) {

@@ -177,6 +177,7 @@
             $('.btn-aply-filter').on('click', tagFilterClick);
             setupFilters();
             updateCategoriesCount();
+            updateFilterRendering();
         });
         $(function () {
 //            var qsRegex;
@@ -294,6 +295,9 @@
                 $filter.append("<li class='filter-tag'>" + $(category).val() + '</li>');
 
             });
+
+            var $searchResultsCount = $(".searchResultsCount");
+            $searchResultsCount.html(" " + filterManager.getTotalFilteredElementCount());
         }
     </script>
 </template:addResources>
