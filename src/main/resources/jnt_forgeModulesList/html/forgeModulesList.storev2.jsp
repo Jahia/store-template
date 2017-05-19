@@ -44,7 +44,11 @@
 <jcr:sql var="allmodules" sql="${allModules}"/>
 
 <c:set var="latestModulesIds" value="" />
-<div class="filter-info"></div>
+<div class="row">
+<div class="col-md-12">
+    <ul class="filter-info list-inline"></ul>
+</div>
+</div>
 <div class="row">
     <h4 style="color: #03a9f4;">JAHIA PACKAGES</h4>
     <c:forEach items="${packages.nodes}" var="module" varStatus="status" begin="0" end="2">
