@@ -1921,3 +1921,18 @@ img.zoom-img {
     margin-right:0;
     margin-left:0
 }
+
+.module-category {
+    font-family: "Lato", sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 10px;
+    line-height:25px;
+    color: #6ed870;
+    border-radius: 20px;
+    border: 2px solid #6ed870;
+    padding: 2px 8px;
+    margin: 4px;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
