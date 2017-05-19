@@ -286,12 +286,12 @@
             children.each(function (index, category) {
                 var value = $(category).data("filter");
                 if (value != "all") {
-                    $filter.append("<li class='module-category'>" + category.childNodes[0].data + '</li>');
+                    $filter.append("<li class='filter-category'>" + category.childNodes[0].data + '</li>');
                 }
             });
             var $checkboxes = $('#myModal').find('input[type="checkbox"]').filter(":checked");
             $checkboxes.each(function (index, category) {
-                $filter.append("<li class='module-tag'>" + $(category).val() + '</li>');
+                $filter.append("<li class='filter-tag'>" + $(category).val() + '</li>');
 
             });
         }
