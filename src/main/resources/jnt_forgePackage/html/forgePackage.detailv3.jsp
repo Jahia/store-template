@@ -77,8 +77,8 @@
 
 <script>
     function showReadMore(id, button) {
-        var contentDiv = $('#'+id);
-        if(contentDiv.hasClass('read-more')) {
+        var contentDiv = $('#' + id);
+        if (contentDiv.hasClass('read-more')) {
             contentDiv.removeClass('read-more');
             $(button).html('Read Less');
         } else {
@@ -87,9 +87,15 @@
         }
     }
     $(document).ready(function () {
-        if($("#installText").innerHeight() > 200) {
-            $("#installText").addClass('read-more');
+        var $installText = $("#installText");
+        if ($installText.innerHeight() > 200) {
+            $installText.addClass('read-more');
             $("#installReadMoreButton").show();
+        }
+        var $changeLogText = $("#changeLogText");
+        if ($changeLogText.innerHeight() > 200) {
+            $changeLogText.addClass('read-more');
+            $("#changeLogReadMoreButton").show();
         }
     })
 </script>
@@ -106,83 +112,84 @@
                 </div>
                 <%--MODULE DETAILS--%>
                 <div class="col-md-12" style="margin-top: 20px">
-                    <a class="btn btn-default module-download-btn" data-toggle="collapse" data-target="#collapseExample">Module Details</a>
+                    <a class="btn btn-default module-download-btn" data-toggle="collapse"
+                       data-target="#collapseExample">Module Details</a>
                 </div>
                 <div class="collapse module-details" id="collapseExample">
-                <div class="col-md-12">
-                    <div class="meta-info">
-                        <div class="module-details-title">
-                            <fmt:message key="jnt_forgeEntry.label.moduleId"/>
-                        </div>
-                        <div class="module-details-content">
-                            ${currentNode.name}
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="meta-info">
-                        <div class="module-details-title">
-                            <fmt:message key="jnt_forgeEntry.label.authorName" var="authorLabel"/>
-                            ${fn:replace(authorLabel,':','')}
-                        </div>
-                        <div class="module-details-content">
-                            ${authorName}
+                    <div class="col-md-12">
+                        <div class="meta-info">
+                            <div class="module-details-title">
+                                <fmt:message key="jnt_forgeEntry.label.moduleId"/>
+                            </div>
+                            <div class="module-details-content">
+                                ${currentNode.name}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="meta-info">
-                        <div class="module-details-title">
-                            <fmt:message key="jnt_forgeEntry.label.updated" var="updatedLabel"/>
-                            ${fn:replace(updatedLabel,':','')}
-                        </div>
-                        <div class="module-details-content">
-                            <%--${latestVersion.properties['jcr:lastModified'].date.time}--%>
-                            <time itemprop="datePublished">
-                                <fmt:formatDate
-                                        value="${moduleMap.latestVersion.properties['jcr:lastModified'].date.time}"
-                                        pattern="yyyy-MM-dd"/>
-                            </time>
+                    <div class="col-md-12">
+                        <div class="meta-info">
+                            <div class="module-details-title">
+                                <fmt:message key="jnt_forgeEntry.label.authorName" var="authorLabel"/>
+                                ${fn:replace(authorLabel,':','')}
+                            </div>
+                            <div class="module-details-content">
+                                ${authorName}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="meta-info">
-                        <div class="module-details-title">
-                            <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion" var="JahiaVersionLabel"/>
-                            ${fn:replace(JahiaVersionLabel,':','')}
-                        </div>
-                        <div class="module-details-content">
-                            ${fn:replace(moduleMap.latestVersion.properties['requiredVersion'].node.displayableName,'version-','')}<br/>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="meta-info">
-                        <div class="module-details-title">
-                            <fmt:message key="jnt_forgeEntry.label.category"/>
-                        </div>
-                        <div class="module-details-content">
-                            ${category.node.displayableName}
+                    <div class="col-md-12">
+                        <div class="meta-info">
+                            <div class="module-details-title">
+                                <fmt:message key="jnt_forgeEntry.label.updated" var="updatedLabel"/>
+                                ${fn:replace(updatedLabel,':','')}
+                            </div>
+                            <div class="module-details-content">
+                                <%--${latestVersion.properties['jcr:lastModified'].date.time}--%>
+                                <time itemprop="datePublished">
+                                    <fmt:formatDate
+                                            value="${moduleMap.latestVersion.properties['jcr:lastModified'].date.time}"
+                                            pattern="yyyy-MM-dd"/>
+                                </time>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="meta-info large">
-                        <c:if test="${not empty authorURL}">
-                            <a class="module-details-link" target="_blank" href="${authorURL}">
-                                <fmt:message key="jnt_forgeEntry.label.authorURL"/>
-                            </a>
-                        </c:if>
-                        <div class="developperEmail">
-                            <c:if test="${not empty authorEmail}">
-                                <a class="module-details-link"
-                                   href="mailto:${authorEmail}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message
-                                        key="jnt_forgeEntry.label.authorEmail"/></a>
+                    <div class="col-md-12">
+                        <div class="meta-info">
+                            <div class="module-details-title">
+                                <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion" var="JahiaVersionLabel"/>
+                                ${fn:replace(JahiaVersionLabel,':','')}
+                            </div>
+                            <div class="module-details-content">
+                                ${fn:replace(moduleMap.latestVersion.properties['requiredVersion'].node.displayableName,'version-','')}<br/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="meta-info">
+                            <div class="module-details-title">
+                                <fmt:message key="jnt_forgeEntry.label.category"/>
+                            </div>
+                            <div class="module-details-content">
+                                ${category.node.displayableName}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="meta-info large">
+                            <c:if test="${not empty authorURL}">
+                                <a class="module-details-link" target="_blank" href="${authorURL}">
+                                    <fmt:message key="jnt_forgeEntry.label.authorURL"/>
+                                </a>
                             </c:if>
+                            <div class="developperEmail">
+                                <c:if test="${not empty authorEmail}">
+                                    <a class="module-details-link"
+                                       href="mailto:${authorEmail}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message
+                                            key="jnt_forgeEntry.label.authorEmail"/></a>
+                                </c:if>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
 
             </div>
@@ -247,11 +254,13 @@
                             <c:param name="selectedPaths" value="${currentNode.path}"/>
                             <c:param name="workspace" value="live"/>
                         </c:url>
-                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_blank">Open in repository explorer</a></p>
+                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_blank">Open in
+                            repository explorer</a></p>
                     </c:if>
                     <c:if test="${isDeveloper}">
                         <c:url value="${url.base}${currentNode.path}.store-module-v2-edit.html" var="editModule"/>
-                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_self">Edit Module</a></p>
+                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_self">Edit
+                            Module</a></p>
                     </c:if>
                     ${description}
                 </div>
@@ -278,9 +287,10 @@
                 AND ([jcr:primaryType] = 'jnt:forgeModule') and localName() = '${module.name}'
                 ORDER BY [jcr:title] ASC"/>
                                     <c:forEach items="${appStoreModule.nodes}" var="linkedModule">
-                                    <li class="list-group-item"><a href="<c:url value="${linkedModule.url}" context="/"/>">${functions:abbreviate(module.properties.moduleName.string,60,70,'...')}</a>
-                                        <span class="pull-right">${module.properties.moduleVersion.string}</span>
-                                    </li>
+                                        <li class="list-group-item"><a
+                                                href="<c:url value="${linkedModule.url}" context="/"/>">${functions:abbreviate(module.properties.moduleName.string,60,70,'...')}</a>
+                                            <span class="pull-right">${module.properties.moduleVersion.string}</span>
+                                        </li>
                                     </c:forEach>
                                 </c:forEach>
                             </ul>
@@ -303,6 +313,21 @@
                     <button class="btn btn-default" onclick="showReadMore('installText',this);">Read More</button>
                 </div>
             </div>
+            <c:if test="${not empty moduleMap.latestVersion.properties.changeLog.string}">
+                <div class="row">
+                    <div class="col-md-12 module-section-title">
+                        <h2>Changelog ${versionNumber.string}</h2>
+                        <span></span>
+
+                        <div id="changeLogText">
+                                ${moduleMap.latestVersion.properties.changeLog.string}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-md-offset-4" id="changeLogReadMoreButton" style="display: none">
+                        <button class="btn btn-default" onclick="showReadMore('changeLogText',this);">Read More</button>
+                    </div>
+                </div>
+            </c:if>
             <%--IMAGES--%>
             <c:if test="${not empty jcr:getChildrenOfType(screenshots,'jnt:file')}">
                 <div class="row">

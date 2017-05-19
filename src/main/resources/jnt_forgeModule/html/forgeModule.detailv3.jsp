@@ -88,6 +88,18 @@
             $(button).html('Read More');
         }
     }
+    $(document).ready(function () {
+        var $installText = $("#installText");
+        if($installText.innerHeight() > 200) {
+            $installText.addClass('read-more');
+            $("#installReadMoreButton").show();
+        }
+        var $changeLogText = $("#changeLogText");
+        if($changeLogText.innerHeight() > 200) {
+            $changeLogText.addClass('read-more');
+            $("#changeLogReadMoreButton").show();
+        }
+    })
 </script>
 
 <div class="container" style="margin-top: 50px;">
@@ -387,14 +399,29 @@
                         <h2>How To Install</h2>
                         <span></span>
                     </c:if>
-                    <div class="read-more" id="installText">
+                    <div id="installText">
                     ${howToInstall}
                     </div>
                 </div>
-                <div class="col-md-6 col-md-offset-4">
+                <div class="col-md-6 col-md-offset-4" id="installReadMoreButton" style="display: none">
                     <button class="btn btn-default" onclick="showReadMore('installText',this);">Read More</button>
                 </div>
             </div>
+            <c:if test="${not empty moduleMap.latestVersion.properties.changeLog.string}">
+                <div class="row">
+                    <div class="col-md-12 module-section-title">
+                        <h2>Changelog ${versionNumber.string}</h2>
+                        <span></span>
+
+                        <div id="changeLogText">
+                                ${moduleMap.latestVersion.properties.changeLog.string}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-md-offset-4" id="changeLogReadMoreButton" style="display: none">
+                        <button class="btn btn-default" onclick="showReadMore('changeLogText',this);">Read More</button>
+                    </div>
+                </div>
+            </c:if>
             <%--IMAGES--%>
             <c:if test="${not empty jcr:getChildrenOfType(screenshots,'jnt:file')}">
                 <div class="row">
