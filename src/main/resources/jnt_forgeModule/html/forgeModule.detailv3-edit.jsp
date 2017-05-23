@@ -336,11 +336,13 @@
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#home" aria-controls="informations" role="tab"
-                                                                  data-toggle="tab">Informations</a></li>
+                                                                  data-toggle="tab">Information</a></li>
                         <li role="presentation"><a href="#installfaq" aria-controls="install" role="tab"
                                                    data-toggle="tab">Install/FAQ</a></li>
                         <li role="presentation"><a href="#medias" aria-controls="medias" role="tab"
-                                                   data-toggle="tab">Medias</a></li>
+                                                   data-toggle="tab">Screenshots</a></li>
+                        <li role="presentation"><a href="#video" aria-controls="videos" role="tab"
+                                                   data-toggle="tab">Video</a></li>
                         <li role="presentation"><a href="#metadata" aria-controls="metadata" role="tab"
                                                    data-toggle="tab">Metadata</a>
                         <li role="presentation"><a href="#versions" aria-controls="versions" role="tab"
@@ -475,6 +477,13 @@
                                                    class="file-loading">
                                         </form>
                                     </template:tokenizedForm>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="video">
+                            <div class="row">
+                                <div class="col-md-12" style="margin-top: 15px">
+                                    <template:module node="${currentNode}" view="videov2"/>
                                 </div>
                             </div>
                         </div>
