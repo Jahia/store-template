@@ -111,87 +111,80 @@
                     <div class="clearfix"></div>
                 </div>
                 <%--MODULE DETAILS--%>
-                <div class="col-md-12" style="margin-top: 20px">
-                    <a class="btn btn-default module-download-btn" data-toggle="collapse"
-                       data-target="#collapseExample">Module Details</a>
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="module-details-title">
+                            <fmt:message key="jnt_forgeEntry.label.moduleId"/>
+                        </div>
+                        <div class="module-details-content">
+                            ${currentNode.name}
+                        </div>
+                    </div>
                 </div>
-                <div class="collapse module-details" id="collapseExample">
-                    <div class="col-md-12">
-                        <div class="meta-info">
-                            <div class="module-details-title">
-                                <fmt:message key="jnt_forgeEntry.label.moduleId"/>
-                            </div>
-                            <div class="module-details-content">
-                                ${currentNode.name}
-                            </div>
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="module-details-title">
+                            <fmt:message key="jnt_forgeEntry.label.authorName" var="authorLabel"/>
+                            ${fn:replace(authorLabel,':','')}
+                        </div>
+                        <div class="module-details-content">
+                            ${authorName}
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <div class="meta-info">
-                            <div class="module-details-title">
-                                <fmt:message key="jnt_forgeEntry.label.authorName" var="authorLabel"/>
-                                ${fn:replace(authorLabel,':','')}
-                            </div>
-                            <div class="module-details-content">
-                                ${authorName}
-                            </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="module-details-title">
+                            <fmt:message key="jnt_forgeEntry.label.updated" var="updatedLabel"/>
+                            ${fn:replace(updatedLabel,':','')}
+                        </div>
+                        <div class="module-details-content">
+                            <%--${latestVersion.properties['jcr:lastModified'].date.time}--%>
+                            <time itemprop="datePublished">
+                                <fmt:formatDate
+                                        value="${moduleMap.latestVersion.properties['jcr:lastModified'].date.time}"
+                                        pattern="yyyy-MM-dd"/>
+                            </time>
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <div class="meta-info">
-                            <div class="module-details-title">
-                                <fmt:message key="jnt_forgeEntry.label.updated" var="updatedLabel"/>
-                                ${fn:replace(updatedLabel,':','')}
-                            </div>
-                            <div class="module-details-content">
-                                <%--${latestVersion.properties['jcr:lastModified'].date.time}--%>
-                                <time itemprop="datePublished">
-                                    <fmt:formatDate
-                                            value="${moduleMap.latestVersion.properties['jcr:lastModified'].date.time}"
-                                            pattern="yyyy-MM-dd"/>
-                                </time>
-                            </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="module-details-title">
+                            <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion" var="JahiaVersionLabel"/>
+                            ${fn:replace(JahiaVersionLabel,':','')}
+                        </div>
+                        <div class="module-details-content">
+                            ${fn:replace(moduleMap.latestVersion.properties['requiredVersion'].node.displayableName,'version-','')}<br/>
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <div class="meta-info">
-                            <div class="module-details-title">
-                                <fmt:message key="jnt_forgeEntry.label.relatedJahiaVersion" var="JahiaVersionLabel"/>
-                                ${fn:replace(JahiaVersionLabel,':','')}
-                            </div>
-                            <div class="module-details-content">
-                                ${fn:replace(moduleMap.latestVersion.properties['requiredVersion'].node.displayableName,'version-','')}<br/>
-                            </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="module-details-title">
+                            <fmt:message key="jnt_forgeEntry.label.category"/>
+                        </div>
+                        <div class="module-details-content">
+                            ${category.node.displayableName}
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <div class="meta-info">
-                            <div class="module-details-title">
-                                <fmt:message key="jnt_forgeEntry.label.category"/>
-                            </div>
-                            <div class="module-details-content">
-                                ${category.node.displayableName}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="meta-info large">
-                            <c:if test="${not empty authorURL}">
-                                <a class="module-details-link" target="_blank" href="${authorURL}">
-                                    <fmt:message key="jnt_forgeEntry.label.authorURL"/>
-                                </a>
+                </div>
+                <div class="col-md-12">
+                    <div class="meta-info large">
+                        <c:if test="${not empty authorURL}">
+                            <a class="module-details-link" target="_blank" href="${authorURL}">
+                                <fmt:message key="jnt_forgeEntry.label.authorURL"/>
+                            </a>
+                        </c:if>
+                        <div class="developperEmail">
+                            <c:if test="${not empty authorEmail}">
+                                <a class="module-details-link"
+                                   href="mailto:${authorEmail}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message
+                                        key="jnt_forgeEntry.label.authorEmail"/></a>
                             </c:if>
-                            <div class="developperEmail">
-                                <c:if test="${not empty authorEmail}">
-                                    <a class="module-details-link"
-                                       href="mailto:${authorEmail}?Subject=${fn:replace(title, " ","%20")}%20-%20Version:%20${versionNumber.string}"><fmt:message
-                                            key="jnt_forgeEntry.label.authorEmail"/></a>
-                                </c:if>
-                            </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
         <div class="col-md-9">

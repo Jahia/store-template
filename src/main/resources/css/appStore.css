@@ -1969,3 +1969,7 @@ img.zoom-img {
     box-sizing: border-box;
     white-space: nowrap;
 }
+
+.jahia-color {
+    color: #03A9F4
+}

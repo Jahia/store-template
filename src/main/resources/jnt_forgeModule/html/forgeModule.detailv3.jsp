@@ -22,7 +22,8 @@
 
 <template:addCacheDependency node="${moduleMap.latestVersion}"/>
 <c:set var="hasRepositoryAccess" value="${jcr:hasPermission(currentNode, 'repositoryExplorer')}"/>
-<c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/><c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
+<c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/><c:set var="isDeveloper"
+                                                                                        value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
 <%@include file="../../commons/authorName.jspf" %>
 <jsp:useBean id="uniqueDependants" class="java.util.LinkedHashMap"/>
 <jcr:sql
@@ -79,8 +80,8 @@
 
 <script>
     function showReadMore(id, button) {
-        var contentDiv = $('#'+id);
-        if(contentDiv.hasClass('read-more')) {
+        var contentDiv = $('#' + id);
+        if (contentDiv.hasClass('read-more')) {
             contentDiv.removeClass('read-more');
             $(button).html('Read Less...');
         } else {
@@ -90,12 +91,12 @@
     }
     $(document).ready(function () {
         var $installText = $("#installText");
-        if($installText.innerHeight() > 200) {
+        if ($installText.innerHeight() > 200) {
             $installText.addClass('read-more');
             $("#installReadMoreButton").show();
         }
         var $changeLogText = $("#changeLogText");
-        if($changeLogText.innerHeight() > 200) {
+        if ($changeLogText.innerHeight() > 200) {
             $changeLogText.addClass('read-more');
             $("#changeLogReadMoreButton").show();
         }
@@ -113,10 +114,6 @@
                     <div class="clearfix"></div>
                 </div>
                 <%--MODULE DETAILS--%>
-                <div class="col-md-12" style="margin-top: 20px">
-                    <a class="btn btn-default module-download-btn" data-toggle="collapse" data-target="#collapseExample">Module Details</a>
-                </div>
-                <div class="collapse module-details" id="collapseExample">
                 <div class="col-md-12">
                     <div class="meta-info">
                         <div class="module-details-title">
@@ -204,7 +201,6 @@
                         </div>
                     </div>
                 </div>
-                </div>
             </div>
         </div>
         <div class="col-md-9">
@@ -263,18 +259,18 @@
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-12">
                     <div class="btn-group">
-                    <c:if test="${hasRepositoryAccess}">
-                        <c:url value="/engines/manager.jsp" var="editModule">
-                            <c:param name="selectedPaths" value="${currentNode.path}"/>
-                            <c:param name="workspace" value="live"/>
-                        </c:url>
-                        <a class="btn btn-default module-download-btn" href="${editModule}" target="_blank">Open in repository explorer</a>
-                    </c:if>
+                        <c:if test="${hasRepositoryAccess}">
+                            <c:url value="/engines/manager.jsp" var="editModule">
+                                <c:param name="selectedPaths" value="${currentNode.path}"/>
+                                <c:param name="workspace" value="live"/>
+                            </c:url>
+                            <a class="btn btn-link" href="${editModule}" target="_blank" title="Open in repository explorer"><i class="material-icons jahia-color">explore</i></a>
+                        </c:if>
 
-                    <c:if test="${isDeveloper}">
-                        <c:url value="${url.base}${currentNode.path}.store-module-v2-edit.html" var="editModule"/>
-                        <a class="btn btn-default module-download-btn" href="${editModule}" target="_self">Edit Module</a>
-                    </c:if>
+                        <c:if test="${isDeveloper}">
+                            <c:url value="${url.base}${currentNode.path}.store-module-v2-edit.html" var="editModule"/>
+                            <a class="btn btn-link" href="${editModule}" target="_self" title="Edit"><i class="material-icons jahia-color">mode_edit</i> </a>
+                        </c:if>
                     </div>
                     <c:if test="${hasRepositoryAccess || isDeveloper}">
                         <div style="padding-bottom:20px;">
