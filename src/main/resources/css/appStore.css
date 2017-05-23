@@ -1662,11 +1662,13 @@ input.fs1 {
 .screenshot-container {
     margin: 8px;
     max-width: calc(25% - 16px);
+    height: 100px;
     float: left;
 }
 
 .screenshot-container img {
     width: 100%;
+    height: 100px;
 }
 
 img[data-action="zoom"] {
