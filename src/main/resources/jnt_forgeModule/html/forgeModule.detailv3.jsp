@@ -103,7 +103,7 @@
     })
 </script>
 
-<div class="container" style="margin-top: 50px;">
+<div class="container" style="margin-top: 50px; min-height:calc(100vh - 280px);">
     <div class="row">
         <div class="col-md-2">
             <div class="row">
