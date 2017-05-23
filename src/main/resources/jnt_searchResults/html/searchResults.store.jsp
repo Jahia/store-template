@@ -21,7 +21,7 @@
 
 <template:addResources type="inlinejavascript">
     <script type="text/javascript">
-        var tagClasses = ["label-info", "label-success", "label-warning", "label-danger"];
+        var modulesStatus = {};
         var modulesTags = {};
         var modulesCategories = {};
         var tagCountMap = {};
@@ -133,6 +133,12 @@
                 <div class="category-grid">
                     <s:resultIterator begin="${moduleMap.begin}" end="${moduleMap.end}" varStatus="status" hits="${moduleMap['resultsHits']}">
                         <c:set var="module" value="${hit.rawHit}"></c:set>
+                        <!-- add status to status map -->
+                        <c:if test="${not empty module.properties['status'].string}">
+                            <script type="text/javascript">
+                                modulesStatus['${module.properties['status'].string}'] = "${module.properties['status'].string}".substring(0,1).toUpperCase() + "${module.properties['status'].string}".substring(1);
+                            </script>
+                        </c:if>
                         <c:set var="categories" value=""/>
                         <!--Set module categories for filtering purposes-->
                         <c:forEach items="${module.properties['j:defaultCategory']}" var="cat" varStatus="vs">
@@ -159,7 +165,10 @@
                             </script>
                         </c:forEach>
                         <div class="grid-sizer col-lg-4 col-md-6 col-xs-12"></div>
-                        <div class="col-lg-4 col-md-6 col-xs-12 moduleCard" data-filter-categories="${categories} all" data-filter-tags="${moduleTags}">
+                        <div class="col-lg-4 col-md-6 col-xs-12 moduleCard"
+                             data-filter-status="${module.properties['status'].string} all"
+                             data-filter-categories="${categories} all"
+                             data-filter-tags="${moduleTags}">
                             <div id="module-${module.identifier}">
                                 <template:module node="${module}" view="v2"/>
                             </div>

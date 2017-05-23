@@ -14,21 +14,12 @@
 <template:addResources type="javascript" resources="libraries/benalman/debounce.js"/>
 <template:addResources type="inlinejavascript">
     <script type="text/javascript">
-        var filterNames = {
-            "cert-filter": "<fmt:message key="jnt_storefilter.label.certification"/>",
-            "tag-filter" : "<fmt:message key="jnt_storefilter.label.tags"/>",
-            "cat-filter" : "<fmt:message key="jnt_storefilter.label.categories"/>"
-        };
-
-        var filters                 = {
-            "cert-filter": "",
-            "tag-filter" : "",
-            "cat-filter" : ""
-        };
         var categories              = null;
+        var statuses                  = null;
         var filterManager           = new FiltersManager();
-        var categoryFilterClicked   = false;
+        var filterClicked   = false;
         var DEFAULT_CATEGORY_FILTER = 'all';
+        var DEFAULT_STATUS_FILTER = 'all';
 
         function setupFilters() {
             //Setup Isotope
@@ -42,7 +33,8 @@
             filterManager.initializeIsotope($isotope);
             //Add default value to filter manager
             filterManager.addValue(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER);
-            filterManager.filterItems([filterManager.CATEGORIES, filterManager.TAGS]);
+            filterManager.addValue(filterManager.STATUS, DEFAULT_STATUS_FILTER);
+            filterManager.filterItems([filterManager.CATEGORIES, filterManager.TAGS, filterManager.STATUS]);
 
             //Setup Quick Search Filter
             //Currently disabled.
@@ -51,7 +43,8 @@
 //                filterManager.resetFilter(filterManager.QUICKSEARCH);
 //                filterManager.addValue(filterManager.QUICKSEARCH, regexVal);
 //                filterManager.filterItems();
-//                updateCategoriesCount();
+//                updateDropdownFilterCount(filterManager.CATEGORIES);
+//                updateDropdownFilterCount(filterManager.STATUS);
 //            }, 200 ) );
 
             //Debounce so filtering doesn't happen every millisecond
@@ -70,55 +63,54 @@
                 }
             }
         }
-        function resetFilters() {
 
-            $(".forge").isotope({filter: ''});
-            $(".filter-reset").hide();
-            console.log("Menus Reset");
-            $(".forge-filter").each(function (index, object) {
-                var id = object.id;
-                console.log(id);
-                console.log(filterNames[id]);
-                $("#" + id).html(filterNames[id] + ' <span class="caret"></span>');
-            });
-            $("li.active").removeClass("active");
-
-        }
-
-        function categoryFilterClick(el) {
+        function dropdownFilterClick(el) {
             //remove or add filter
             //Set flag so that we don't close the dropdown when selecting/deselecting a filter.
-            categoryFilterClicked = true;
+            filterClicked = true;
             var $el               = $(el);
+            var filterType = $el.attr('data-filter-type');
             var $li               = $el.parent('li');
-            var categoryValue     = $el.attr('data-filter');
-            if (categoryValue == 'all') {
-                if ($li.hasClass('active') && filterManager.getFilterContainerSize(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER) > 1) {
+            var filterValue     = $el.attr('data-filter');
+
+            //If it's the default filter type
+            if (filterValue == getDefaultFilterValue(filterType)) {
+                if ($li.hasClass('active') && filterManager.getFilterContainerSize(filterType, getDefaultFilterValue(filterType)) > 1) {
                     $li.removeClass('active');
                 } else if (!$li.hasClass('active')) {
                     $li.siblings('li').removeClass('active');
                     $li.addClass('active');
-                    filterManager.resetFilter(filterManager.CATEGORIES);
-                    filterManager.addValue(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER);
+                    filterManager.resetFilter(filterType);
+                    filterManager.addValue(filterType, getDefaultFilterValue(filterType));
                 }
-            } else if (filterManager.containsValue(filterManager.CATEGORIES, categoryValue)) {
-                filterManager.removeValue(filterManager.CATEGORIES, categoryValue);
+            } else if (filterManager.containsValue(filterType, filterValue)) {
+                filterManager.removeValue(filterType, filterValue);
                 $li.removeClass('active');
                 //if no categories remain, then select ALL
-                if (filterManager.isEmpty(filterManager.CATEGORIES)) {
+                if (filterManager.isEmpty(filterType)) {
                     $li.siblings('.default').addClass('active');
-                    filterManager.addValue(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER);
+                    filterManager.addValue(filterType, getDefaultFilterValue(filterType));
                 }
             } else {
-                filterManager.addValue(filterManager.CATEGORIES, categoryValue);
+                filterManager.addValue(filterType, filterValue);
                 $li.addClass('active');
                 //Remove default 'all' filter if it is selected.
                 $li.siblings('.default').removeClass('active');
-                filterManager.removeValue(filterManager.CATEGORIES, DEFAULT_CATEGORY_FILTER)
+                filterManager.removeValue(filterType, getDefaultFilterValue(filterType))
             }
-            filterManager.filterItems([filterManager.CATEGORIES, filterManager.TAGS]);
-            updateCategoriesCount();
+            filterManager.filterItems([filterManager.CATEGORIES, filterManager.TAGS, filterManager.STATUS]);
+            updateDropdownFilterCount(filterManager.CATEGORIES);
+            updateDropdownFilterCount(filterManager.STATUS);
             updateFilterRendering();
+
+            function getDefaultFilterValue(filterType) {
+                switch (filterType) {
+                    case filterManager.CATEGORIES:
+                        return DEFAULT_CATEGORY_FILTER;
+                    case filterManager.STATUS:
+                        return DEFAULT_STATUS_FILTER;
+                }
+            }
         }
 
         function tagFilterClick(el) {
@@ -127,26 +119,35 @@
             $checkboxes.each(function (index, checkbox) {
                 var $checkbox = $(checkbox);
                 if ($checkbox.prop('checked')) {
-                    console.log($checkbox.val());
                     filterManager.addValue(filterManager.TAGS, $checkbox.val());
                 }
             });
-            filterManager.filterItems([filterManager.CATEGORIES, filterManager.TAGS]);
-            updateCategoriesCount();
+            filterManager.filterItems([filterManager.CATEGORIES, filterManager.TAGS, filterManager.STATUS]);
+            updateDropdownFilterCount(filterManager.CATEGORIES);
+            updateDropdownFilterCount(filterManager.STATUS);
             updateFilterRendering();
         }
 
-        function updateCategoriesCount() {
-            var categoryFilteredElementsCount = filterManager.getFilterTypeElementCount(filterManager.CATEGORIES);
-            _.each(categories, function (filterId) {
-                var filterBadge = $('a[data-filter*="' + filterId + '"] > span');
-                if (categoryFilteredElementsCount[filterId] > 0) {
-                    filterBadge.html(categoryFilteredElementsCount[filterId]);
+        function updateDropdownFilterCount(filterType) {
+            var filteredElementsCount = filterManager.getFilterTypeElementCount(filterType);
+            _.each(getFilters(filterType), function (filterId) {
+                var filterBadge = $('a[data-filter*="' + filterId + '"][data-filter-type="' + filterType +'"] > span');
+                if (filteredElementsCount[filterId] > 0) {
+                    filterBadge.html(filteredElementsCount[filterId]);
                     filterBadge.show();
                 } else {
                     filterBadge.hide();
                 }
             });
+        }
+
+        function getFilters(filterType) {
+            switch (filterType) {
+                case filterManager.CATEGORIES:
+                    return categories;
+                case filterManager.STATUS:
+                    return statuses;
+            }
         }
 
         $(document).ready(function () {
@@ -156,67 +157,39 @@
 
             //Get module Categories and init the filter selectors
             categories = getSortedCategories(modulesCategories);
-
             //Add categories selectors sorted
             var categorySelectorElement = $("ul#categoryList");
             $.each(categories, function (index, categoryString) {
                 var categorySplit = categoryString.split("--categoryID--");
                 categories[index] = categorySplit[1];
-                categorySelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='" + categorySplit[1] + "' onclick='categoryFilterClick(this);'>" + categorySplit[0] + "&nbsp;<span class='badge' style='vertical-align: text-top;'>0</span></a></li>");
+                categorySelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='" + categorySplit[1] + "' data-filter-type='" + filterManager.CATEGORIES + "' " + " onclick='dropdownFilterClick(this);'>" + categorySplit[0] + "&nbsp;<span class='badge' style='vertical-align: text-top;'>0</span></a></li>");
+            });
+            var statusSelectorElement = $("ul#statusList");
+            statuses = getSortedStatus(modulesStatus);
+            _.each(statuses, function(statusString, index) {
+                var statusSplit = statusString.split("--statusKey--");
+                statuses[index] = statusSplit[1];
+                statusSelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='" + statusSplit[1] + "' data-filter-type='" + filterManager.STATUS + "' " + " onclick='dropdownFilterClick(this);'>" + statusSplit[0] + "&nbsp;<span class='badge' style='vertical-align: text-top;'>0</span></a></li>");
             });
             categories.push('all');
-            $('.dropdown.categories').on('hide.bs.dropdown', function ($event) {
-                //Dont close the dropdown if its a filter that has been selected/deselected
-                if (categoryFilterClicked) {
-                    $event.preventDefault();
-                }
-                //reset the flag.
-                categoryFilterClicked = false;
-            });
+            statuses.push('all');
+            $('.dropdown.categories').on('hide.bs.dropdown', clearFilterSelected);
+            $('.dropdown.status').on('hide.bs.dropdown', clearFilterSelected);
             //Add event handler for modal apply filter button
             $('.btn-aply-filter').on('click', tagFilterClick);
             setupFilters();
-            updateCategoriesCount();
+            updateDropdownFilterCount(filterManager.CATEGORIES);
+            updateDropdownFilterCount(filterManager.STATUS);
             updateFilterRendering();
-        });
-        $(function () {
-//            var qsRegex;
-//
-//            var $quicksearch = $('.quicksearch').keyup( debounce( function() {
-//                var regexVal = $quicksearch.val().split(/\s+/).join('.*');
-//                qsRegex = new RegExp(regexVal, 'gi');
-//                $grid.isotope();
-//            }, 200 ) );
-//
-//            // store filter for each group
-//            $('.filters').on( 'click', 'a', function() {
-//                $('#search .quicksearch').val("");
-//                var $this = $(this);
-//                // get group key
-//                var $buttonGroup = $this.parents('.dropdown-menu');
-//                var filterGroup = $buttonGroup.attr('data-filter-group');
-//                // set filter for group
-//                filters[ filterGroup ] = $this.attr('data-filter');
-//                // combine filters
-//                var filterValue = concatValues( filters );
-//                $grid.isotope({ filter: filterValue });
-//            });
-//            var $grid = $('.forge').isotope({
-//                itemSelector: '.item',
-//                layoutMode: 'fitRows',
-//                filter: function() {
-//
-//                    if (qsRegex) {
-//                        return $(this).text().match(qsRegex);
-//                    } else {
-//                        $('.filters li').removeClass('active');
-//                        $('.filters li.all').addClass('active');
-//                        return true;
-//                    }
-//                }
-//            });
 
-            var filters = {};
+            function clearFilterSelected($event) {
+                //Dont close the dropdown if its a filter that has been selected/deselected
+                if (filterClicked) {
+                    $event.preventDefault();
+                }
+                //reset the flag.
+                filterClicked = false;
+            }
         });
 
         // flatten object by concatting values
@@ -251,9 +224,6 @@
             showTopTags: function () {
                 var columnsNbr = Math.max(Math.ceil(this.topTags.length / 25), 4);
                 this.targetElement.empty();
-                <%--this.targetElement.parent().append('<li><fmt:message key="jnt_sortFilter.topTags.label"/></l>');--%>
-                <%--this.targetElement.append('<li role="separator" class="divider"></li>');--%>
-
                 for (var i in this.topTags) {
                     var tagString = this.topTags[i];
                     this.targetElement.append('<li><div class="tag-selector"><label><input type="checkbox" name="checkbox" value="' + tagString + '" class="fs1">' + tagString + '</label></div></li>');
@@ -282,8 +252,15 @@
         function updateFilterRendering() {
             var $filter = $(".filter-info");
             $filter.empty();
-            var children = $("#categoryList").children(".active").children("a");
 
+            var statusChildren = $("#statusList").children(".active").children("a");
+            statusChildren.each(function (index, status) {
+                var value = $(status).data("filter");
+                if (value != "all") {
+                    $filter.append("<li class='filter-status'>" + status.childNodes[0].data + '</li>');
+                }
+            });
+            var children = $("#categoryList").children(".active").children("a");
             children.each(function (index, category) {
                 var value = $(category).data("filter");
                 if (value != "all") {
@@ -291,9 +268,8 @@
                 }
             });
             var $checkboxes = $('#myModal').find('input[type="checkbox"]').filter(":checked");
-            $checkboxes.each(function (index, category) {
-                $filter.append("<li class='filter-tag'>" + $(category).val() + '</li>');
-
+            $checkboxes.each(function (index, tag) {
+                $filter.append("<li class='filter-tag'>" + $(tag).val() + '</li>');
             });
 
             var $searchResultsCount = $(".searchResultsCount");
@@ -307,13 +283,26 @@
 <fmt:message key="jnt_forgeEntry.status.supported" var="supportedLabel"/>
 <ul class="nav navbar-nav navbar-right">
     <button type="button" class="btn btn-default btn-tagsmodal" data-toggle="modal" data-target="#myModal">Tags</button>
+    <li class="dropdown status">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+           aria-expanded="false">
+            <fmt:message key="jnt_storefilter.label.certification"/> <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu filters" id="statusList">
+            <li class="active default"><a href="#" data-filter="all" data-filter-type="status" onclick="dropdownFilterClick(this);"><fmt:message
+                    key="jnt_storefilter.label.all"/>&nbsp;<span class='badge'
+                                                                 style='vertical-align: text-top;'>0</span></a></li>
+            </a></li>
+            <li role="separator" class="divider"></li>
+        </ul>
+    </li>
     <li class="dropdown categories">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
            aria-expanded="false">
             <fmt:message key="jnt_storefilter.label.categories"/> <span class="caret"></span>
         </a>
-        <ul class="dropdown-menu filters cat-filter-list" id="categoryList">
-            <li class="active default"><a href="#" data-filter="all" onclick="categoryFilterClick(this);"><fmt:message
+        <ul class="dropdown-menu filters" id="categoryList">
+            <li class="active default"><a href="#" data-filter="all" data-filter-type="categories" onclick="dropdownFilterClick(this);"><fmt:message
                     key="jnt_storefilter.label.all"/>&nbsp;<span class='badge'
                                                                  style='vertical-align: text-top;'>0</span></a></li>
             </a></li>

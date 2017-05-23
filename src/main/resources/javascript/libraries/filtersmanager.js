@@ -3,12 +3,14 @@ function FiltersManager() {
     self.CATEGORIES = 'categories';
     self.TAGS = 'tags';
     self.QUICKSEARCH = 'quicksearch';
+    self.STATUS = 'status';
 
     var $isotope = null;
     var filtersContainer = {};
     filtersContainer[self.CATEGORIES] = [];
     filtersContainer[self.TAGS] = [];
     filtersContainer[self.QUICKSEARCH] = [];
+    filtersContainer[self.STATUS] = [];
 
     self.initializeIsotope = function(instance) {
         $isotope = instance;
@@ -41,6 +43,9 @@ function FiltersManager() {
                 if (!_.isEmpty(filterValues[self.TAGS])) {
                     filterResults[self.TAGS] = $(this).attr("data-filter-" + self.TAGS).match(new RegExp(filterValues[self.TAGS], 'gi')) != null;
                 }
+                if (!_.isEmpty(filterValues[self.STATUS])) {
+                    filterResults[self.STATUS] = $(this).attr("data-filter-" + self.STATUS).match(new RegExp(filterValues[self.STATUS], 'gi')) != null;
+                }
                 filterResults = _.values(filterResults).join(" ");
                 return filterResults.indexOf('false') == -1;
             }
@@ -64,7 +69,7 @@ function FiltersManager() {
     };
 
     self.removeValue = function(filterType, value) {
-        for(var i = 0; i < filtersContainer[filterType].length > 0; i++) {
+        for(var i = 0; i < filtersContainer[filterType].length; i++) {
             if (filtersContainer[filterType][i] == value) {
                 filtersContainer[filterType].splice(i, 1);
                 return true;
@@ -82,8 +87,8 @@ function FiltersManager() {
         var filterTypeElementCount = {};
         var availableFilters = filtersContainer[filterType].join(" ");
         _.each(elements, function(element){
-            var elementCategories = $(element).attr('data-filter-categories').split(' ');
-            _.each(elementCategories, function(filterId){
+            var elementFilterValues = $(element).attr('data-filter-' + filterType).split(' ');
+            _.each(elementFilterValues, function(filterId){
                 if (availableFilters.indexOf(filterId) == -1) {
                     //skip the filter if it isn't after of this filter set
                     return;

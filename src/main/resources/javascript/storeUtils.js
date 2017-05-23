@@ -96,6 +96,15 @@ function getSortedCategories(modulesCategories){
     return categories;
 }
 
+function getSortedStatus(modulesStatus) {
+    var status = [];
+    _.each(modulesStatus, function(title, key) {
+        status.push(title + '--statusKey--' + key);
+    });
+    status.sort();
+    return status;
+}
+
 function moduleDoAddReview(modulePath, form) {
 
     $.post(modulePath+".addReview.do", form.serialize(), function(result) {
