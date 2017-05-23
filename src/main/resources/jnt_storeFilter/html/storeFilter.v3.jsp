@@ -208,7 +208,7 @@
             targetElement: null,
             init         : function () {
                 this.targetElement = $("ul#tag-display");
-                this.topTags       = getTopKTags(tagCountMap, this.topTagsNumber);
+                this.topTags       = getTopKTags(tagCountMap, this.topTagsNumber).sort();
                 this.searchEngine  = new Bloodhound({
                     initialize    : true,
                     local         : getSortedTags(modulesTags),
