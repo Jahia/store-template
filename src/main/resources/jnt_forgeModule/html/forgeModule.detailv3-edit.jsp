@@ -484,6 +484,7 @@
                             <div class="row">
                                 <div class="col-md-12" style="margin-top: 15px">
                                     <template:module node="${currentNode}" view="videov2"/>
+                                    <template:module path="${videoNode.path}" view="lightbox"/>
                                 </div>
                             </div>
                         </div>
