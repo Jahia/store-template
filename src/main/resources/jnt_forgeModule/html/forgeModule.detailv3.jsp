@@ -258,7 +258,7 @@
             <%--DESCRIPTION--%>
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-12">
-                    <div class="btn-group">
+                    <div class="col-md-12">
                         <c:if test="${hasRepositoryAccess}">
                             <c:url value="/engines/manager.jsp" var="editModule">
                                 <c:param name="selectedPaths" value="${currentNode.path}"/>
@@ -272,10 +272,8 @@
                             <a class="btn btn-link" href="${editModule}" target="_self" title="Edit"><i class="material-icons jahia-color">mode_edit</i> </a>
                         </c:if>
                     </div>
-                    <c:if test="${hasRepositoryAccess || isDeveloper}">
-                        <div style="padding-bottom:20px;">
-                        </div>
-                    </c:if>
+                </div>
+                <div class="col-md-12">
                     ${description}
                 </div>
             </div>

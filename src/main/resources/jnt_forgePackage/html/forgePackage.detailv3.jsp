@@ -242,19 +242,20 @@
             <%--DESCRIPTION--%>
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-12">
-                    <c:if test="${hasRepositoryAccess}">
-                        <c:url value="/engines/manager.jsp" var="editModule">
-                            <c:param name="selectedPaths" value="${currentNode.path}"/>
-                            <c:param name="workspace" value="live"/>
-                        </c:url>
-                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_blank">Open in
-                            repository explorer</a></p>
-                    </c:if>
-                    <c:if test="${isDeveloper}">
-                        <c:url value="${url.base}${currentNode.path}.store-module-v2-edit.html" var="editModule"/>
-                        <p><a class="btn btn-default module-download-btn" href="${editModule}" target="_self">Edit
-                            Module</a></p>
-                    </c:if>
+                        <c:if test="${hasRepositoryAccess}">
+                            <c:url value="/engines/manager.jsp" var="editModule">
+                                <c:param name="selectedPaths" value="${currentNode.path}"/>
+                                <c:param name="workspace" value="live"/>
+                            </c:url>
+                            <a class="btn btn-link" href="${editModule}" target="_blank" title="Open in repository explorer"><i class="material-icons jahia-color">explore</i></a>
+                        </c:if>
+
+                        <c:if test="${isDeveloper}">
+                            <c:url value="${url.base}${currentNode.path}.store-module-v2-edit.html" var="editModule"/>
+                            <a class="btn btn-link" href="${editModule}" target="_self" title="Edit"><i class="material-icons jahia-color">mode_edit</i> </a>
+                        </c:if>
+                </div>
+                <div class="col-md-12">
                     ${description}
                 </div>
             </div>
