@@ -17,7 +17,7 @@
                 class="home"
             </c:when>
             <c:otherwise>
-                class="detail fixed <c:if test="${isAdminPage}">admin-header</c:if>" data-spy="affix" data-offset-top="0"
+                class="detail fixed <c:if test="${isAdminPage}">admin-header</c:if>" data-offset-top="0"
             </c:otherwise>
         </c:choose>
 >
