@@ -40,7 +40,7 @@
 <c:set var="authorURL" value="${currentNode.properties['authorURL'].string}"/>
 <c:set var="authorEmail" value="${currentNode.properties['authorEmail'].string}"/>
 <c:set var="published" value="${currentNode.properties['published'].boolean}"/>
-
+<c:set var="status" value="${currentNode.properties['status'].string}"/>
 <c:set var="hasVideoNode" value="${jcr:hasChildrenOfType(currentNode, 'jnt:videostreaming')}"/>
 <c:if test="${hasVideoNode}">
     <jcr:node var="videoNode" path="${currentNode.path}/video"/>
@@ -549,19 +549,19 @@
                                                 <select class="form-control"
                                                         name="status" id="status">
                                                     <option value="community"
-                                                            <c:if test="${authorNameDisplayedAs eq 'community'}">selected</c:if>>
+                                                            <c:if test="${status eq 'community'}">selected</c:if>>
                                                         <fmt:message key="jnt_forgeEntry.status.community"/>
                                                     </option>
                                                     <option value="labs"
-                                                            <c:if test="${authorNameDisplayedAs eq 'labs'}">selected</c:if>>
+                                                            <c:if test="${status eq 'labs'}">selected</c:if>>
                                                         <fmt:message key="jnt_forgeEntry.status.labs"/>
                                                     </option>
                                                     <option value="prereleased"
-                                                            <c:if test="${authorNameDisplayedAs eq 'prereleased'}">selected</c:if>>
+                                                            <c:if test="${status eq 'prereleased'}">selected</c:if>>
                                                         <fmt:message key="jnt_forgeEntry.status.prereleased"/>
                                                     </option>
                                                     <option value="supported"
-                                                            <c:if test="${authorNameDisplayedAs eq 'supported'}">selected</c:if>>
+                                                            <c:if test="${status eq 'supported'}">selected</c:if>>
                                                         <fmt:message key="jnt_forgeEntry.status.supported"/>
                                                     </option>
 
