@@ -56,57 +56,6 @@
                 }, "json");
             }
             </c:if>
-
-            $(document).ready(function() {
-                $.validator.addMethod("integer", function(value, element) {
-                    return this.optional(element) || /^-?\d+$/.test(value);
-                });
-
-                $("#forgeModuleVideoForm-${id}").validate({
-
-                    rules: {
-                        'provider': {
-                            required: true
-                        },
-                        'identifier': {
-                            required: true
-                        },
-                        width: {
-                            integer: true
-                        },
-                        height: {
-                            integer: true
-                        }
-                    },
-                    messages: {
-                        provider: {
-                            required: "<fmt:message key='jnt_forgeEntry.label.askVideoProvider'/>"
-                        },
-                        identifier: {
-                            required: "<fmt:message key='jnt_forgeEntry.label.askVideoIdentifier'/>"
-                        },
-                        width: {
-                            integer: "<fmt:message key='jnt_forgeEntry.label.askInteger'/>"
-                        },
-                        height: {
-                            integer: "<fmt:message key='jnt_forgeEntry.label.askInteger'/>"
-                        }
-                    },
-                    submitHandler: function(form) {
-                        $.post('<c:url value='${url.base}${currentNode.path}.${hasVideoNode ? "editVideo" : "addVideo"}.do'/>',
-                            $(form).serialize(), function() {
-                                window.location = '${fn:replace(currentNode.url,".html",".store-module-v2.html")}';
-                            }, "json");
-                    },
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).addClass("error").removeClass(validClass).parents('.control-group').addClass("error");
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).removeClass("error").addClass(validClass).parents('.control-group').removeClass("error");
-                    }
-                });
-            });
-
         </script>
 
     </template:addResources>
