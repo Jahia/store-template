@@ -1532,7 +1532,7 @@ input.fs1 {
     margin-left: -5px;
 }
 
-.module-section-title span {
+.module-section-title span:nth-child(2) {
     border-bottom: 2px dotted #c1dbf3;
     width: 100%;
     display: block;
