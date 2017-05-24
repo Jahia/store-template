@@ -34,10 +34,6 @@
 <fmt:message key="jnt_forgeEntry.status.labs" var="labsLabel"/>
 <fmt:message key="jnt_forgeEntry.status.prereleased" var="prereleasedLabel"/>
 <fmt:message key="jnt_forgeEntry.status.supported" var="supportedLabel"/>
-<c:set var="moduleStatus" value="${not empty currentNode.properties['status'].string?currentNode.properties['status'].string:'community'}"/>
-<c:if test="${moduleStatus eq 'supported' or currentNode.properties['supportedByJahia'].boolean}">
-    <c:set var="moduleStatus" value="supported"/>
-</c:if>
 <c:set var="published" value="${currentNode.properties['published'].boolean}"/>
 <c:if test="${currentNode.properties['published'].boolean or isAdminPage}">
     <!-- Module Card -->
@@ -56,13 +52,26 @@
                 </c:choose>
 
                 <author>${authorName}
-                    <c:choose>
-                        <c:when test="${moduleStatus eq 'supported'}">
-                            <span class="module-supported">
-                                <i class="material-icons noselect" title="${moduleStatus}">check_circle</i>
-                            </span>
-                        </c:when>
-                    </c:choose>
+                    <c:if test="${not empty currentNode.properties['status'].string}">
+                        <span class="module-badge-16 module-${currentNode.properties['status'].string}">
+                            <i class="material-icons noselect" title="${currentNode.properties['status'].string}">
+                                <c:choose>
+                                    <c:when test="${currentNode.properties['status'].string eq 'supported'}">
+                                        check_circle
+                                    </c:when>
+                                    <c:when test="${currentNode.properties['status'].string eq 'community'}">
+                                        group_work
+                                    </c:when>
+                                    <c:when test="${currentNode.properties['status'].string eq 'prereleased'}">
+                                        offline_pin
+                                    </c:when>
+                                    <c:when test="${currentNode.properties['status'].string eq 'labs'}">
+                                        bug_report
+                                    </c:when>
+                                </c:choose>
+                            </i>
+                        </span>
+                    </c:if>
                 </author>
             </div>
             <p class="card-desc">${functions:abbreviate(functions:removeHtmlTags(description), 80,95,'...')}</p>

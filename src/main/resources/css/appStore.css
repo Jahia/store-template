@@ -1497,7 +1497,6 @@ input.fs1 {
     font-size: 16px;
     float: right;
     margin-left: 8px;
-    color: #03A9F4;
 }
 
 .jps-moduleCard .card-desc {
@@ -1739,8 +1738,34 @@ img.zoom-img {
     text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
 }
 
-.module-supported {
-    color: #03A9F4;
+span.module-badge-24 i {
+    font-size: 24px;
+    margin-left: 8px;
+}
+
+span.module-badge-16 i {
+    font-size: 16px;
+    margin-left: 8px;
+}
+
+span.module-badge-16.module-supported,
+span.module-badge-24.module-supported {
+     color: #03A9F4;
+ }
+
+span.module-badge-16.module-community,
+span.module-badge-24.module-community {
+    color: #4CAF50;
+}
+
+span.module-badge-16.module-labs,
+span.module-badge-24.module-labs {
+    color: #673AB7;
+}
+
+span.module-badge-16.module-prereleased,
+span.module-badge-24.module-prereleased {
+    color: #FF9800;
 }
 
 .align-right {

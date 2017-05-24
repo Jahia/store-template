@@ -100,7 +100,7 @@
         var newTagVal = $('#newTag').val();
         if (newTagVal.trim() != "") {
             tagsList.push(newTagVal.toLowerCase());
-            $('#newTag').val('')
+            $('#newTag').val('');
             renderLists();
             addEventOnTagItem();
         }
@@ -314,14 +314,26 @@
             <div class="row">
                 <div class="col-md-10">
                     <h2>${title}
-                        <c:choose>
-                            <c:when test="${moduleStatus eq 'supported'}">
-                            <span class="module-supported">
-                                <i class="material-icons noselect" title="${moduleStatus}">check_circle</i>
-                            </span>
-                            </c:when>
-                        </c:choose></h2>
-
+                    <c:if test="${not empty currentNode.properties['status'].string}">
+                        <span class="module-badge-24 module-${currentNode.properties['status'].string}">
+                            <i class="material-icons noselect" title="${currentNode.properties['status'].string}">
+                                <c:choose>
+                                    <c:when test="${currentNode.properties['status'].string eq 'supported'}">
+                                        check_circle
+                                    </c:when>
+                                    <c:when test="${currentNode.properties['status'].string eq 'community'}">
+                                        group_work
+                                    </c:when>
+                                    <c:when test="${currentNode.properties['status'].string eq 'prereleased'}">
+                                        offline_pin
+                                    </c:when>
+                                    <c:when test="${currentNode.properties['status'].string eq 'labs'}">
+                                        bug_report
+                                    </c:when>
+                                </c:choose>
+                            </i>
+                        </span>
+                    </c:if>
                 </div>
             </div>
             <div class="row">

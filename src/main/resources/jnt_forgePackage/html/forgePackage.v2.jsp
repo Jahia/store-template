@@ -66,9 +66,26 @@
             <div class="card-topMain">
                 <h1 class="truncate">${title}</h1>
                 <author>${authorName}
-                    <span class="module-supported">
-                        <i class="material-icons noselect">check_circle</i>
-                    </span>
+                    <c:if test="${not empty currentNode.properties['status'].string}">
+                        <span class="module-badge-16 module-${currentNode.properties['status'].string}">
+                            <i class="material-icons noselect" title="${currentNode.properties['status'].string}">
+                                <c:choose>
+                                    <c:when test="${currentNode.properties['status'].string eq 'supported'}">
+                                        check_circle
+                                    </c:when>
+                                    <c:when test="${currentNode.properties['status'].string eq 'community'}">
+                                        group_work
+                                    </c:when>
+                                    <c:when test="${currentNode.properties['status'].string eq 'prereleased'}">
+                                        offline_pin
+                                    </c:when>
+                                    <c:when test="${currentNode.properties['status'].string eq 'labs'}">
+                                        bug_report
+                                    </c:when>
+                                </c:choose>
+                            </i>
+                        </span>
+                    </c:if>
                 </author>
             </div>
             <p class="card-desc">${functions:abbreviate(functions:removeHtmlTags(description), 80,95,'...')}</p>
