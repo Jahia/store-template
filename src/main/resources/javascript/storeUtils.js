@@ -61,7 +61,9 @@ function getTopKTags(tagCountMap, k) {
     for (var tag in tagCountMap)
         if (tagCountMap.hasOwnProperty(tag)) {
             var count = tagCountMap[tag];
-            arr[count].push(tag);
+            if (arr[count] !== undefined){
+                arr[count].push(tag);
+            }
         }
 
     var topTen = [];

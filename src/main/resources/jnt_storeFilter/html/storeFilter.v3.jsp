@@ -207,8 +207,10 @@
             searchEngine : null,
             targetElement: null,
             init         : function () {
+                this.headingElement = $("h4#tags-heading");
+                this.headingElement.html("Top tags (sorted by rank)");
                 this.targetElement = $("ul#tag-display");
-                this.topTags       = getTopKTags(tagCountMap, this.topTagsNumber).sort();
+                this.topTags       = getTopKTags(tagCountMap, this.topTagsNumber);
                 this.searchEngine  = new Bloodhound({
                     initialize    : true,
                     local         : getSortedTags(modulesTags),
@@ -223,6 +225,7 @@
 
             showTopTags: function () {
                 var columnsNbr = Math.max(Math.ceil(this.topTags.length / 25), 4);
+                this.headingElement.removeClass("hide").addClass("show");
                 this.targetElement.empty();
                 for (var i in this.topTags) {
                     var tagString = this.topTags[i];
@@ -238,6 +241,7 @@
                         self.showTopTags();
                         return;
                     }
+                    self.headingElement.addClass("hide").removeClass("show");
                     self.targetElement.empty();
                     var columnsNbr = Math.max(Math.ceil(data.length / 25), 2);
                     for (var i in data) {

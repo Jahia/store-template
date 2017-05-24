@@ -65,6 +65,7 @@
                         <input type="text" class="form-control" id="usr" placeholder="FILTER TAGS">
                     </div>
                     <div class="modal-body" style="max-height:500px;">
+                        <h4 class="jahia-color" id="tags-heading"></h4>
                         <ul id="tag-display"></ul>
                     </div>
                     <div class="modal-footer">

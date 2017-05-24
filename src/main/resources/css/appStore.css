@@ -554,7 +554,7 @@ a.video span {
     overflow-y:auto;
 }
 .review-modal .modal-header{
-    background-color: #00A0E3;
+    background-color: #03A9F4;
     color: #fff;
     line-height: 120px;
     font-size: 36px;
@@ -866,13 +866,16 @@ h6.title{
 .modal-header {
     background-color: white;
     color: rgba(0, 160, 227, 0.1);
-    -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: rgba(0, 160, 227, 0.55);
     line-height: 120px;
     font-size: 56px;
     text-align: center;
     letter-spacing: 6px;
-    border-bottom: 1px solid rgba(0, 160, 227, 0.55);
+    border-bottom: 1px solid rgba(3, 173, 249, 0.5);
+}
+
+.modal-header input::placeholder {
+    color: #03A9F4;
+    opacity: 0.5;
 }
 
 .select2-container-multi{
