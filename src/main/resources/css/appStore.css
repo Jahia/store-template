@@ -1978,3 +1978,18 @@ img.zoom-img {
 .jahia-color {
     color: #03A9F4
 }
+
+.list-group-item {
+    padding: 0;
+    font-size: 12px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.list-group-item .material-icons {
+    font-size: 14px;
+}
+
+.meta-info .title {
+    color: #666666;
+}

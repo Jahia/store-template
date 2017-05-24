@@ -305,7 +305,7 @@
                 </div>
             </div>
             <%--FAQ--%>
-            <c:if test="${not (fn:length(fn:trim(FAQ)) eq 0) && (not isDeveloper || viewAsUser)}">
+            <c:if test="${not (fn:length(fn:trim(FAQ)) eq 0)}">
                 <div class="row">
                     <div class="col-md-12 module-section-title">
                         <h2>FAQ</h2>
@@ -321,7 +321,7 @@
                 </div>
             </c:if>
             <%--How to Install--%>
-            <c:if test="${not (fn:length(fn:trim(howToInstall)) eq 0) && (not isDeveloper || viewAsUser)}">
+            <c:if test="${not (fn:length(fn:trim(howToInstall)) eq 0)}">
                 <div class="row">
                     <div class="col-md-12 module-section-title">
 
