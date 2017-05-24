@@ -106,6 +106,12 @@
             $faqText.addClass('read-more');
             $("#faqReadMoreButton").show();
         }
+
+        var $licenseText = $("#licenseText");
+        if ($licenseText.innerHeight() > 200) {
+            $licenseText.addClass('read-more');
+            $("#licenseReadMoreButton").show();
+        }
     })
 </script>
 
@@ -397,7 +403,7 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-md-offset-4" id="licenseReadMoreButton" style="display: none">
-                        <a class="modal-link-text" onclick="showReadMore('faqText',this);">Read More...</a>
+                        <a class="modal-link-text" onclick="showReadMore('licenseText',this);">Read More...</a>
                     </div>
                 </div>
             </c:if>

@@ -111,8 +111,8 @@
         }
 
         var $licenseText = $("#licenseText");
-        if ($faqText.innerHeight() > 200) {
-            $faqText.addClass('read-more');
+        if ($licenseText.innerHeight() > 200) {
+            $licenseText.addClass('read-more');
             $("#licenseReadMoreButton").show();
         }
     })
@@ -501,7 +501,7 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-md-offset-4" id="licenseReadMoreButton" style="display: none">
-                        <a class="modal-link-text" onclick="showReadMore('faqText',this);">Read More...</a>
+                        <a class="modal-link-text" onclick="showReadMore('licenseText',this);">Read More...</a>
                     </div>
                 </div>
             </c:if>
