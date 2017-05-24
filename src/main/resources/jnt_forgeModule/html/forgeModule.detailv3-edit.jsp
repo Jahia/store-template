@@ -52,10 +52,7 @@
 </c:if>
 
 <c:set var="FAQ" value="${currentNode.properties['FAQ'].string}"/>
-<c:if test="${fn:length( fn:trim( functions:removeHtmlTags( fn:replace(FAQ, '&nbsp;', ' ') ))) eq 0
-                        && (not isDeveloper || viewAsUser)}">
-    <c:set var="emptyFAQ" value="true"/>
-</c:if>
+<c:set var="license" value="${currentNode.properties['license'].string}"/>
 
 <jcr:nodeProperty node="${moduleMap.latestVersion}" name="versionNumber" var="versionNumber"/>
 <jcr:nodeProperty node="${currentNode}" name="j:tagList" var="assignedTags"/>
@@ -154,7 +151,7 @@
             var completion     = data['completion'];
             var canBePublished = data['canBePublished'];
             var bar            = $('#completion').css('width', completion + "%");
-            bar.children('.ratingCount').html(completion + "%");
+            bar.children('.ratingCount').html(completion + "% complete");
             if (completion < 60) {
                 bar.removeClass('progress-bar-success');
                 bar.removeClass('progress-bar-warning');
@@ -310,8 +307,15 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-4">
-                    <div class="btn-group" role="group">
+                <div class="col-md-12">
+                    <div class="progress">
+                        <div id="completion" class="progress-bar" role="progressbar" aria-valuemax="100">
+                            <span class="ratingCount"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-md-offset-8">
+                    <div class="btn-group btn-group-xs pull-right" role="group">
                         <a href="<c:url value="${url.base}${currentNode.path}.html"/>" class="btn btn-primary"
                            target="_blank">
                             View
@@ -326,10 +330,6 @@
                         </button>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div id="completion" class="progress-bar" role="progressbar"><span
-                            class="ratingCount"></span></div>
-                </div>
             </div>
             <div class="row">
                 <div class="col-md-12" style="margin-top: 10px">
@@ -339,6 +339,8 @@
                                                                   data-toggle="tab">Information</a></li>
                         <li role="presentation"><a href="#installfaq" aria-controls="install" role="tab"
                                                    data-toggle="tab">Install/FAQ</a></li>
+                        <li role="presentation"><a href="#modulelicense" aria-controls="license" role="tab"
+                                                   data-toggle="tab">License</a></li>
                         <li role="presentation"><a href="#medias" aria-controls="medias" role="tab"
                                                    data-toggle="tab">Screenshots</a></li>
                         <li role="presentation"><a href="#video" aria-controls="videos" role="tab"
@@ -460,6 +462,35 @@
                                             </div>
                                             <div class="col-sm-3 col-sm-offset-2">
                                                 <button type="submit" class="btn btn-warning">Save Install/FAQ</button>
+                                            </div>
+                                        </form>
+                                    </template:tokenizedForm>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="modulelicense">
+                            <div class="row">
+                                <div class="col-md-12" style="margin-top: 15px">
+                                    <template:tokenizedForm
+                                            allowsMultipleSubmits="true">
+                                        <form class="form-horizontal"
+                                              action="<c:url value='${url.base}${currentNode.path}'/>"
+                                              method="post">
+                                            <input type="hidden" name="jcrMethodToCall" value="PUT"/>
+                                            <input type="hidden" name="jcrRedirectTo"
+                                                   value="<c:url value='${url.base}${currentNode.path}.store-module-v2-edit'/>"/>
+                                            <div class="form-group">
+                                                <label for="license"
+                                                       class="control-label col-sm-2">License</label>
+                                                <div class="col-sm-10">
+                                            <textarea class="ckarea form-control" name="license"
+                                                      id="license" rows="5" cols="60">
+                                                <c:out value="${license}"/>
+                                            </textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-sm-offset-2">
+                                                <button type="submit" class="btn btn-warning">Save License</button>
                                             </div>
                                         </form>
                                     </template:tokenizedForm>

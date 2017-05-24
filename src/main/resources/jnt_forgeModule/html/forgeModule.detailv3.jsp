@@ -39,11 +39,8 @@
 <c:set var="authorURL" value="${currentNode.properties['authorURL'].string}"/>
 <c:set var="authorEmail" value="${currentNode.properties['authorEmail'].string}"/>
 
-<c:if test="${isDeveloper}">
-    <c:set var="viewAsUser" value="${not empty param['viewAs'] && param['viewAs'] eq 'user'}"/>
-</c:if>
-
 <c:set var="FAQ" value="${currentNode.properties['FAQ'].string}"/>
+<c:set var="license" value="${currentNode.properties['license'].string}"/>
 
 <c:set var="hasVideoNode" value="${jcr:hasChildrenOfType(currentNode, 'jnt:videostreaming')}"/>
 <c:if test="${hasVideoNode}">
@@ -111,6 +108,12 @@
         if ($faqText.innerHeight() > 200) {
             $faqText.addClass('read-more');
             $("#faqReadMoreButton").show();
+        }
+
+        var $licenseText = $("#licenseText");
+        if ($faqText.innerHeight() > 200) {
+            $faqText.addClass('read-more');
+            $("#licenseReadMoreButton").show();
         }
     })
 </script>
@@ -470,6 +473,22 @@
                         <h2>Video</h2>
                         <span></span>
                         <template:module path="${videoNode.path}" view="lightbox"/>
+                    </div>
+                </div>
+            </c:if>
+            <%--LICENSE--%>
+            <c:if test="${not (fn:length(fn:trim(license)) eq 0)}">
+                <div class="row">
+                    <div class="col-md-12 module-section-title">
+                        <h2>License</h2>
+                        <span></span>
+
+                        <div id="licenseText">
+                            ${license}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-md-offset-4" id="licenseReadMoreButton" style="display: none">
+                        <a class="modal-link-text" onclick="showReadMore('faqText',this);">Read More...</a>
                     </div>
                 </div>
             </c:if>
