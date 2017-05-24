@@ -37,6 +37,12 @@
 <c:set var="authorURL" value="${currentNode.properties['authorURL'].string}"/>
 <c:set var="authorEmail" value="${currentNode.properties['authorEmail'].string}"/>
 
+<c:if test="${isDeveloper}">
+    <c:set var="viewAsUser" value="${not empty param['viewAs'] && param['viewAs'] eq 'user'}"/>
+</c:if>
+
+<c:set var="FAQ" value="${currentNode.properties['FAQ'].string}"/>
+
 <c:set var="hasVideoNode" value="${jcr:hasChildrenOfType(currentNode, 'jnt:videostreaming')}"/>
 <c:if test="${hasVideoNode}">
     <jcr:node var="videoNode" path="${currentNode.path}/video"/>
@@ -96,6 +102,12 @@
         if ($changeLogText.innerHeight() > 200) {
             $changeLogText.addClass('read-more');
             $("#changeLogReadMoreButton").show();
+        }
+
+        var $faqText = $("#faqText");
+        if ($faqText.innerHeight() > 200) {
+            $faqText.addClass('read-more');
+            $("#faqReadMoreButton").show();
         }
     })
 </script>
@@ -292,8 +304,24 @@
                     </div>
                 </div>
             </div>
+            <%--FAQ--%>
+            <c:if test="${not (fn:length(fn:trim(FAQ)) eq 0) && (not isDeveloper || viewAsUser)}">
+                <div class="row">
+                    <div class="col-md-12 module-section-title">
+                        <h2>FAQ</h2>
+                        <span></span>
+
+                        <div id="faqText">
+                                ${FAQ}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-md-offset-4" id="faqReadMoreButton" style="display: none">
+                        <a class="modal-link-text" onclick="showReadMore('faqText',this);">Read More...</a>
+                    </div>
+                </div>
+            </c:if>
             <%--How to Install--%>
-            <c:if test="${not empty howToInstall}">
+            <c:if test="${not (fn:length(fn:trim(howToInstall)) eq 0) && (not isDeveloper || viewAsUser)}">
                 <div class="row">
                     <div class="col-md-12 module-section-title">
 
@@ -310,7 +338,7 @@
                 </div>
             </c:if>
             <%--Changelog--%>
-            <c:if test="${not empty moduleMap.latestVersion.properties.changeLog.string}">
+            <c:if test="${not (fn:length(fn:trim(moduleMap.latestVersion.properties.changeLog.string)) eq 0)}">
                 <div class="row">
                     <div class="col-md-12 module-section-title">
                         <h2>Changelog ${versionNumber.string}</h2>
