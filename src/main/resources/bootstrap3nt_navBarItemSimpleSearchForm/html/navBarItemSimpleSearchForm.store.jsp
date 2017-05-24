@@ -31,15 +31,17 @@
                             selectionOptions="jmix:forgeElement,jnt:forgeModule,jnt:forgePackage" display="false"/>
                 <s:nodeProperty nodeType="jnt:forgeModule" name="published" value="true" display="false"/>
                 <s:nodeProperty nodeType="jnt:forgePackage" name="published" value="true" display="false"/>
-                <input type="hidden" name="src_properties(jnt:forgeModule).description.value" value=""
+                <input type="hidden" name="src_properties(jnt:forgeModule).description.value" value="${paramValues['term'][0]}"
                        class="copy-term"/>
-
                 <input type="hidden" name="src_properties(jnt:forgeModule).description.match" value="all_words"/>
 
-                <input type="hidden" name="src_properties(jnt:forgePackage).description.value" value=""
+                <input type="hidden" name="src_properties(jnt:forgePackage).description.value" value="${paramValues['term'][0]}"
                        class="copy-term"/>
-
                 <input type="hidden" name="src_properties(jnt:forgePackage).description.match" value="all_words"/>
+
+                <input type="hidden" name="src_properties(mix:title).jcr:title.value" value="${paramValues['term'][0]}"
+                       class="copy-term"/>
+                <input type="hidden" name="src_properties(mix:title).jcr:title.match" value="all_words"/>
                 <input type="text" name="term" id="term-search" class="form-control input-lg quicksearch search-query" value="${paramValues['term'][0]}"/>
             </div>
         </div>
