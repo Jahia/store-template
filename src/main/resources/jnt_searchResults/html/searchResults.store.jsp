@@ -129,8 +129,8 @@
             <c:if test="${not empty requestScope[endName]}">
                 <c:set target="${moduleMap}" property="end" value="${requestScope[endName]}"/>
             </c:if>
-            <div class="row forge" style="position: relative; height: 1000px;">
-                <div class="category-grid">
+            <div class="row forge filter-grid-container" style="position: relative; height: 1000px;">
+                <div class="filter-grid">
                     <s:resultIterator begin="${moduleMap.begin}" end="${moduleMap.end}" varStatus="status" hits="${moduleMap['resultsHits']}">
                         <c:set var="module" value="${hit.rawHit}"></c:set>
                         <!-- add status to status map -->

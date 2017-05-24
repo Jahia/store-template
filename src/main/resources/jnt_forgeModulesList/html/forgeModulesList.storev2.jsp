@@ -46,39 +46,87 @@
 
 <c:set var="latestModulesIds" value="" />
 <div class="row">
-<div class="col-md-12">
-    <ul class="filter-info list-inline"></ul>
+    <div class="col-md-12">
+        <ul class="filter-info list-inline"></ul>
+    </div>
 </div>
-</div>
-<div class="row">
+<div class="row filter-grid-container">
     <h4 style="color: #03a9f4;">JAHIA PACKAGES</h4>
-    <c:forEach items="${packages.nodes}" var="module" varStatus="status" begin="0" end="2">
-        <c:if test="${module.properties['published'].boolean}">
-            <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12">
-                <template:module node="${module}" view="v2"/>
-            </div>
-        </c:if>
-    </c:forEach>
-</div>
-
-<c:if test="${not empty latest.nodes}">
-    <div class="row">
-        <h4 style="color: #03a9f4;">LATEST</h4>
-        <c:forEach items="${latest.nodes}" var="module" varStatus="status">
+    <div class="filter-grid">
+        <c:forEach items="${packages.nodes}" var="module" varStatus="status" begin="0" end="2">
             <c:if test="${module.properties['published'].boolean}">
-                <c:set var="latestModulesIds" value="${latestModulesIds},${module.identifier}" />
-                <div id="module-${module.identifier}" class="col-lg-4 col-md-6 col-xs-12">
-                    <template:module node="${module}" view="v2"/>
+                <!-- add status to status map -->
+                <c:if test="${not empty module.properties['status'].string}">
+                    <script type="text/javascript">
+                        modulesStatus['${module.properties['status'].string}'] = "${module.properties['status'].string}".substring(0,1).toUpperCase() + "${module.properties['status'].string}".substring(1);
+                    </script>
+                </c:if>
+                <!--Set module categories for filtering purposes-->
+                <c:set var="categories" value=""/>
+                <c:forEach items="${module.properties['j:defaultCategory']}" var="category" varStatus="categoryStatus" >
+                    <c:set var='categories' value='${categories}${not categoryStatus.first ? " " : ""}${category.node.identifier}' />
+                </c:forEach>
+                <!--Set module tags for filtering purposes-->
+                <c:set var="moduleTags" value=""/>
+                <c:forEach items="${module.properties['j:tagList']}" var="moduleTag" varStatus="tagStatus">
+                    <c:set var='moduleTags' value='${moduleTags}${not tagStatus.first ? " " : ""}${moduleTag.string}' />
+                </c:forEach>
+                <div class="grid-sizer col-lg-4 col-md-6 col-xs-12"></div>
+                <div class="col-lg-4 col-md-6 col-xs-12"
+                     data-filter-status="${module.properties['status'].string} all"
+                     data-filter-categories="${categories} all"
+                     data-filter-tags="${moduleTags}">
+                    <div id="module-${module.identifier}">
+                        <template:module node="${module}" view="v2"/>
+                    </div>
                 </div>
             </c:if>
         </c:forEach>
     </div>
+</div>
+
+<c:if test="${not empty latest.nodes}">
+    <div class="row filter-grid-container">
+        <h4 style="color: #03a9f4;">LATEST</h4>
+        <div class="filter-grid">
+            <c:forEach items="${latest.nodes}" var="module" varStatus="status">
+                <c:if test="${module.properties['published'].boolean}">
+                    <!-- add status to status map -->
+                    <c:if test="${not empty module.properties['status'].string}">
+                        <script type="text/javascript">
+                            modulesStatus['${module.properties['status'].string}'] = "${module.properties['status'].string}".substring(0,1).toUpperCase() + "${module.properties['status'].string}".substring(1);
+                        </script>
+                    </c:if>
+                    <!--Set module categories for filtering purposes-->
+                    <c:set var="categories" value=""/>
+                    <c:forEach items="${module.properties['j:defaultCategory']}" var="category" varStatus="categoryStatus" >
+                        <c:set var='categories' value='${categories}${not categoryStatus.first ? " " : ""}${category.node.identifier}' />
+                    </c:forEach>
+                    <!--Set module tags for filtering purposes-->
+                    <c:set var="moduleTags" value=""/>
+                    <c:forEach items="${module.properties['j:tagList']}" var="moduleTag" varStatus="tagStatus">
+                        <c:set var='moduleTags' value='${moduleTags}${not tagStatus.first ? " " : ""}${moduleTag.string}' />
+                    </c:forEach>
+                    <c:set var="latestModulesIds" value="${latestModulesIds},${module.identifier}" />
+                    <div class="grid-sizer col-lg-4 col-md-6 col-xs-12"></div>
+                    <div class="col-lg-4 col-md-6 col-xs-12"
+                         data-filter-status="${module.properties['status'].string} all"
+                         data-filter-categories="${categories} all"
+                         data-filter-tags="${moduleTags}">
+                        <div id="module-${module.identifier}">
+                            <template:module node="${module}" view="v2"/>
+                        </div>
+                    </div>
+                </c:if>
+            </c:forEach>
+        </div>
+    </div>
 </c:if>
 
 <c:if test="${not empty allmodules.nodes}">
-    <div class="row">
+    <div class="row filter-grid-container">
         <h4 style="color: #03a9f4;">ALL MODULES</h4>
-        <div class="category-grid">
+        <div class="filter-grid">
             <c:forEach items="${allmodules.nodes}" var="module" varStatus="status">
                 <c:if test="${module.properties['published'].boolean and !fn:contains(latestModulesIds, module.identifier)}">
                     <!-- add status to status map -->

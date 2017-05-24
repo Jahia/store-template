@@ -15,7 +15,6 @@ function FiltersManager() {
     self.initializeIsotope = function(instance) {
         $isotope = instance;
     };
-    // init Isotope
 
     self.filterItems = function(filters) {
         var filterValues = {};
@@ -30,25 +29,29 @@ function FiltersManager() {
             }
         }
         //If all filters are empty then don't filter the items
-        $isotope.isotope({
-            filter: function () {
-                var filterResults = {};
-                //Currently all filters evaluated as an `AND` operator
-                if (!_.isEmpty(filterValues[self.QUICKSEARCH])) {
-                    filterResults[self.QUICKSEARCH] = $(this).text().match(new RegExp(filterValues[self.QUICKSEARCH], 'gi')) != null;
+        _.each($isotope, function(grid){
+            $(grid).isotope({
+                filter: function () {
+                    var filterResults = {};
+                    //Currently all filters evaluated as an `AND` operator
+                    if (!_.isEmpty(filterValues[self.QUICKSEARCH])) {
+                        filterResults[self.QUICKSEARCH] = $(this).text().match(new RegExp(filterValues[self.QUICKSEARCH], 'gi')) != null;
+                    }
+                    if (!_.isEmpty(filterValues[self.CATEGORIES])) {
+                        filterResults[self.CATEGORIES] = $(this).attr("data-filter-" + self.CATEGORIES).match(new RegExp(filterValues[self.CATEGORIES], 'gi')) != null;
+                    }
+                    if (!_.isEmpty(filterValues[self.TAGS])) {
+                        filterResults[self.TAGS] = $(this).attr("data-filter-" + self.TAGS).match(new RegExp(filterValues[self.TAGS], 'gi')) != null;
+                    }
+                    if (!_.isEmpty(filterValues[self.STATUS])) {
+                        filterResults[self.STATUS] = $(this).attr("data-filter-" + self.STATUS).match(new RegExp(filterValues[self.STATUS], 'gi')) != null;
+                    }
+                    filterResults = _.values(filterResults).join(" ");
+                    var show = filterResults.indexOf('false') == -1;
+                    $(this).attr('data-filter-element', show ? "show" : "hide");
+                    return show;
                 }
-                if (!_.isEmpty(filterValues[self.CATEGORIES])) {
-                    filterResults[self.CATEGORIES] = $(this).attr("data-filter-" + self.CATEGORIES).match(new RegExp(filterValues[self.CATEGORIES], 'gi')) != null;
-                }
-                if (!_.isEmpty(filterValues[self.TAGS])) {
-                    filterResults[self.TAGS] = $(this).attr("data-filter-" + self.TAGS).match(new RegExp(filterValues[self.TAGS], 'gi')) != null;
-                }
-                if (!_.isEmpty(filterValues[self.STATUS])) {
-                    filterResults[self.STATUS] = $(this).attr("data-filter-" + self.STATUS).match(new RegExp(filterValues[self.STATUS], 'gi')) != null;
-                }
-                filterResults = _.values(filterResults).join(" ");
-                return filterResults.indexOf('false') == -1;
-            }
+            });
         });
     };
 
@@ -83,24 +86,31 @@ function FiltersManager() {
     };
 
     self.getFilterTypeElementCount = function (filterType) {
-        var elements = $isotope.isotope('getFilteredItemElements');
         var filterTypeElementCount = {};
         var availableFilters = filtersContainer[filterType].join(" ");
-        _.each(elements, function(element){
-            var elementFilterValues = $(element).attr('data-filter-' + filterType).split(' ');
-            _.each(elementFilterValues, function(filterId){
-                if (availableFilters.indexOf(filterId) == -1) {
-                    //skip the filter if it isn't after of this filter set
-                    return;
-                }
-                filterTypeElementCount[filterId] = !(filterId in filterTypeElementCount) ? 1 : filterTypeElementCount[filterId] + 1;
+
+        _.each($isotope, function(grid){
+            var elements = $(grid).isotope('getFilteredItemElements');
+            _.each(elements, function(element){
+                var elementFilterValues = $(element).attr('data-filter-' + filterType).split(' ');
+                _.each(elementFilterValues, function(filterId){
+                    if (availableFilters.indexOf(filterId) == -1) {
+                        //skip the filter if it isn't after of this filter set
+                        return;
+                    }
+                    filterTypeElementCount[filterId] = !(filterId in filterTypeElementCount) ? 1 : filterTypeElementCount[filterId] + 1;
+                });
             });
         });
         return filterTypeElementCount;
     };
 
     self.getTotalFilteredElementCount = function() {
-        return $isotope.isotope('getFilteredItemElements').length;
+        var totalElementsCount = 0;
+        _.each($isotope, function(grid){
+            totalElementsCount += $(grid).isotope('getFilteredItemElements').length;
+        });
+        return totalElementsCount;
     };
 
     function findValue(selectedValue) {

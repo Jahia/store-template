@@ -23,12 +23,16 @@
 
         function setupFilters() {
             //Setup Isotope
-            var $isotope = $('.category-grid').isotope({
-                itemSelector   : '[data-filter-categories]',
-                percentPosition: true,
-                masonry        : {
-                    columnWidth: '.grid-sizer'
-                }
+            var $isotope =  $('.filter-grid');
+            _.each($('.filter-grid'), function(grid) {
+                var $grid = $(grid);
+                $grid.isotope({
+                    itemSelector   : '[data-filter-categories]',
+                    percentPosition: true,
+                    masonry        : {
+                        columnWidth: '.grid-sizer'
+                    }
+                });
             });
             filterManager.initializeIsotope($isotope);
             //Add default value to filter manager
@@ -43,8 +47,7 @@
 //                filterManager.resetFilter(filterManager.QUICKSEARCH);
 //                filterManager.addValue(filterManager.QUICKSEARCH, regexVal);
 //                filterManager.filterItems();
-//                updateDropdownFilterCount(filterManager.CATEGORIES);
-//                updateDropdownFilterCount(filterManager.STATUS);
+//                afterFilterItems();
 //            }, 200 ) );
 
             //Debounce so filtering doesn't happen every millisecond
@@ -99,9 +102,7 @@
                 filterManager.removeValue(filterType, getDefaultFilterValue(filterType))
             }
             filterManager.filterItems([filterManager.CATEGORIES, filterManager.TAGS, filterManager.STATUS]);
-            updateDropdownFilterCount(filterManager.CATEGORIES);
-            updateDropdownFilterCount(filterManager.STATUS);
-            updateFilterRendering();
+            afterFilterElements();
 
             function getDefaultFilterValue(filterType) {
                 switch (filterType) {
@@ -123,9 +124,7 @@
                 }
             });
             filterManager.filterItems([filterManager.CATEGORIES, filterManager.TAGS, filterManager.STATUS]);
-            updateDropdownFilterCount(filterManager.CATEGORIES);
-            updateDropdownFilterCount(filterManager.STATUS);
-            updateFilterRendering();
+            afterFilterElements();
         }
 
         function updateDropdownFilterCount(filterType) {
@@ -178,9 +177,7 @@
             //Add event handler for modal apply filter button
             $('.btn-aply-filter').on('click', tagFilterClick);
             setupFilters();
-            updateDropdownFilterCount(filterManager.CATEGORIES);
-            updateDropdownFilterCount(filterManager.STATUS);
-            updateFilterRendering();
+            afterFilterElements();
 
             function clearFilterSelected($event) {
                 //Dont close the dropdown if its a filter that has been selected/deselected
@@ -278,6 +275,29 @@
 
             var $searchResultsCount = $(".searchResultsCount");
             $searchResultsCount.html(" " + filterManager.getTotalFilteredElementCount());
+        }
+
+        /**
+         * @function
+         * This function will hide any filter grid container that does not display any elements
+         */
+        function updateGridVisibility() {
+            var $grid = $('div.filter-grid-container');
+            $grid.each(function(index, el) {
+                var $el = $(el);
+                if ($el.find('div[data-filter-element="show"]').length > 0) {
+                    $el.css('visibility', "visible");
+                } else {
+                    $el.css('visibility', "hidden");
+                }
+            });
+        }
+
+        function afterFilterElements() {
+            updateDropdownFilterCount(filterManager.CATEGORIES);
+            updateDropdownFilterCount(filterManager.STATUS);
+            updateFilterRendering();
+            updateGridVisibility();
         }
     </script>
 </template:addResources>
