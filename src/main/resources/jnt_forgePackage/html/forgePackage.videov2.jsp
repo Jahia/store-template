@@ -64,9 +64,14 @@
 
 <c:choose>
     <c:when test="${hasVideoNode}">
-        <p>
-            <a id="remove-video-${id}" href="#" onclick="removeVideo()"><fmt:message key="jnt_forgeEntry.label.remove"/> : ${videoProvider} - ${videoIdentifier}&nbsp;<i class="glyphicon glyphicon-remove"></i></a>
-        </p>
+        <div class="row">
+        <div class="col-md-1">
+            <a id="remove-video-${id}" href="#" onclick="removeVideo()" class="btn btn-danger"><span><i class="material-icons">delete_forever</i></span></a>
+        </div>
+        <div class="col-md-6">
+            <p><span class="text text-warning small">Only one video allowed, you need to delete any previous one before selecting a new video. Click button to delete current video.</span></p>
+        </div>
+        </div>
     </c:when>
     <c:otherwise>
         <template:tokenizedForm>

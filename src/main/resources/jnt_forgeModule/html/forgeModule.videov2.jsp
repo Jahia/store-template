@@ -22,7 +22,7 @@
 <c:set var="id" value="${currentNode.identifier}"/>
 <c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
 <c:if test="${isDeveloper}">
-    <c:set var="viewAsUser" value="${not empty param['viewAs'] && param['viewAs'] eq 'user'}" />
+    <c:set var="viewAsUser" value="${not empty param['viewAs'] && param['viewAs'] eq 'user'}"/>
 </c:if>
 <c:set var="hasVideoNode" value="${jcr:hasChildrenOfType(currentNode, 'jnt:videostreaming')}"/>
 <c:set var="isEmptyTab" value="false"/>
@@ -49,8 +49,8 @@
 
         <script type="text/javascript">
             <c:if test="${hasVideoNode}">
-            function removeVideo(){
-                $.post('<c:url value="${url.base}${videoNode.path}"/>',{jcrMethodToCall: 'delete'}, function() {
+            function removeVideo() {
+                $.post('<c:url value="${url.base}${videoNode.path}"/>', {jcrMethodToCall: 'delete'}, function () {
                     $('#editVideos').modal('toggle');
                     window.location = '${fn:replace(currentNode.url,".html",".store-module-v2-edit.html")}';
                 }, "json");
@@ -63,9 +63,16 @@
 
 <c:choose>
     <c:when test="${hasVideoNode}">
-        <p>
-            <a id="remove-video-${id}" href="#" onclick="removeVideo()"><fmt:message key="jnt_forgeEntry.label.remove"/> : ${videoProvider} - ${videoIdentifier}&nbsp;<i class="glyphicon glyphicon-remove"></i></a>
-        </p>
+        <div class="row">
+            <div class="col-md-1">
+                <a id="remove-video-${id}" href="#" onclick="removeVideo()" class="btn btn-danger"><span><i
+                        class="material-icons">delete_forever</i></span></a>
+            </div>
+            <div class="col-md-6">
+                <p><span class="text text-warning small">Only one video allowed, you need to delete any previous one before selecting a new video. Click button to delete current video.</span>
+                </p>
+            </div>
+        </div>
     </c:when>
     <c:otherwise>
         <template:tokenizedForm>
@@ -76,22 +83,27 @@
                 <fieldset>
 
                     <div class="form-group">
-                        <label class="control-label" for="provider"><fmt:message key="jnt_forgeEntry.label.videoProvider"/></label>
+                        <label class="control-label" for="provider"><fmt:message
+                                key="jnt_forgeEntry.label.videoProvider"/></label>
                         <select name="provider" id="provider" class="form-control">
                             <option value="youtube" ${videoProvider eq 'youtube' ? 'selected' : ''}>youtube</option>
-                            <option value="dailymotion" ${videoProvider eq 'dailymotion' ? 'selected' : ''}>dailymotion</option>
+                            <option value="dailymotion" ${videoProvider eq 'dailymotion' ? 'selected' : ''}>
+                                dailymotion
+                            </option>
                             <option value="vimeo" ${videoProvider eq 'vimeo' ? 'selected' : ''}>vimeo</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label" for="identifier"><fmt:message key="jnt_forgeEntry.label.videoIdentifier"/></label>
+                        <label class="control-label" for="identifier"><fmt:message
+                                key="jnt_forgeEntry.label.videoIdentifier"/></label>
                         <input placeholder="<fmt:message key="jnt_forgeEntry.label.videoIdentifier" />" type="text"
                                name="identifier" id="identifier" value="${videoIdentifier}" class="form-control"/>
                     </div>
 
                     <div class="form-group">
-                        <input type="submit" class="btn btn-primary" value="<fmt:message key="jnt_forgeEntry.label.submit"/>"/>
+                        <input type="submit" class="btn btn-primary"
+                               value="<fmt:message key="jnt_forgeEntry.label.submit"/>"/>
                     </div>
 
                 </fieldset>

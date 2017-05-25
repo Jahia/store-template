@@ -552,9 +552,17 @@
                         <div role="tabpanel" class="tab-pane" id="video">
                             <div class="row">
                                 <div class="col-md-12" style="margin-top: 15px">
+                                    <div class="row">
+                                        <div class="col-md-12">
                                     <template:module node="${currentNode}" view="videov2"/>
+                                        </div>
+                                    </div>
                                     <c:if test="${hasVideoNode}">
+                                    <div class="row">
+                                        <div class="col-md-12">
                                         <template:module path="${videoNode.path}" view="lightbox"/>
+                                        </div>
+                                    </div>
                                     </c:if>
                                 </div>
                             </div>
