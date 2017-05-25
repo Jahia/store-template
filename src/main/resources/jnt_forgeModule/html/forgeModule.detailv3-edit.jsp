@@ -320,26 +320,28 @@
             <div class="row">
                 <div class="col-md-10">
                     <h2>${title}
-                    <c:if test="${not empty currentNode.properties['status'].string}">
-                        <span class="module-badge-24 module-${currentNode.properties['status'].string}">
-                            <i class="material-icons noselect" title="${currentNode.properties['status'].string}">
-                                <c:choose>
-                                    <c:when test="${currentNode.properties['status'].string eq 'supported'}">
-                                        check_circle
-                                    </c:when>
-                                    <c:when test="${currentNode.properties['status'].string eq 'community'}">
-                                        group_work
-                                    </c:when>
-                                    <c:when test="${currentNode.properties['status'].string eq 'prereleased'}">
-                                        offline_pin
-                                    </c:when>
-                                    <c:when test="${currentNode.properties['status'].string eq 'labs'}">
-                                        bug_report
-                                    </c:when>
-                                </c:choose>
-                            </i>
-                        </span>
-                    </c:if>
+                        <c:if test="${not empty currentNode.properties['status'].string}">
+                            <span class="module-badge-24 module-${currentNode.properties['status'].string}"
+                                  style="vertical-align: middle">
+                                <i class="material-icons noselect" title="${currentNode.properties['status'].string}">
+                                    <c:choose>
+                                        <c:when test="${currentNode.properties['status'].string eq 'supported'}">
+                                            check_circle
+                                        </c:when>
+                                        <c:when test="${currentNode.properties['status'].string eq 'community'}">
+                                            group_work
+                                        </c:when>
+                                        <c:when test="${currentNode.properties['status'].string eq 'prereleased'}">
+                                            offline_pin
+                                        </c:when>
+                                        <c:when test="${currentNode.properties['status'].string eq 'labs'}">
+                                            bug_report
+                                        </c:when>
+                                    </c:choose>
+                                </i>
+                            </span>
+                        </c:if>
+                    </h2>
                 </div>
             </div>
             <div class="row">
