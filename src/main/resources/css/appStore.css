@@ -1690,6 +1690,10 @@ img.zoom-img {
     cursor: pointer;
     cursor: -webkit-zoom-out;
     cursor: -moz-zoom-out;
+    max-height:80%;
+    max-width: 80%;
+    height:80%;
+    width: 80%;
 }
 .zoom-overlay {
     z-index: 420;

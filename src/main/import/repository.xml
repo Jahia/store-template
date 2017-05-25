@@ -200,8 +200,8 @@
                                        jcr:title="Store search result"/>
                                 <container jcr:primaryType="jnt:contentList">
                                     <results autoSuggest="true"
-                                 autoSuggestHitCount="2"
-                                 autoSuggestMaxTermCount="1"
+                                 autoSuggestHitCount="3"
+                                 autoSuggestMaxTermCount="3"
                                  autoSuggestMinimumHitCount="2"
                                  j:view="store"
                                  jcr:mixinTypes="jmix:renderable"
@@ -1010,11 +1010,12 @@
                                     </homeHeader>
                                 </homeHeader>
                                 <container fluid="false"
-                                           j:id="content"
-                                           j:skin="skins.custom"
-                                           jcr:mixinTypes="jmix:customSkin jmix:skinnable"
-                                           jcr:primaryType="bootstrap3nt:container">
-                                    <container jcr:primaryType="jnt:contentList">
+                                j:id="content"
+                                j:skin="skins.custom"
+                                jcr:mixinTypes="jmix:customSkin jmix:skinnable"
+                                jcr:primaryType="bootstrap3nt:container">
+                                    <container jcr:mixinTypes="jmix:accessControlled"
+                                   jcr:primaryType="jnt:contentList">
                                         <file-upload-form j:id="myModulesUploadForm"
                                              j:skin="skins.custom"
                                              j:view="jarv3"
