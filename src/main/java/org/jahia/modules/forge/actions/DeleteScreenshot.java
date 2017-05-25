@@ -51,7 +51,9 @@ public class DeleteScreenshot extends Action {
     public ActionResult doExecute(HttpServletRequest req, RenderContext renderContext, Resource resource, JCRSessionWrapper session, Map<String, List<String>> parameters, URLResolver urlResolver) throws Exception {
 
         JCRNodeWrapper module = resource.getNode();
-        if(module.getParent().getName().equals("screenshots") && module.getParent().getParent().isNodeType("jnt:forgeModule")) {
+        if(module.getParent().getName().equals("screenshots") &&
+                (module.getParent().getParent().isNodeType("jnt:forgeModule") ||
+                        module.getParent().getParent().isNodeType("jnt:forgePackage"))) {
             session.checkout(module);
             logger.info("Screenshot " + module.getDisplayableName() + " has been deleted by user " + renderContext.getUser().getUsername());
             module.remove();
