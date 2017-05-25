@@ -79,6 +79,28 @@
             test="${not stat.last}">,</c:if></c:set>
 </c:forEach>
 <script>
+
+    var tabManager = {
+        storage : 'superUglyTabNav',
+        moduleId : '${currentNode.identifier}',
+        init : function() {
+            var self = this;
+            $('.nav-tabs a').on("click", function(e) {
+                self.saveTab(this.href.split("#")[1])
+            });
+            var obj = JSON.parse(localStorage.getItem(this.storage));
+            if (obj && obj.moduleId == this.moduleId) {
+                $('.nav-tabs a[href="#' + obj.tab + '"]').tab('show');
+            }
+        },
+        saveTab : function(tab) {
+            localStorage.setItem(this.storage, JSON.stringify({
+                moduleId : this.moduleId,
+                tab : tab
+            }));
+        }
+    };
+
     var tagsList = [];
     <c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
     tagsList.push('${fn:toLowerCase(tag.string)}');
@@ -263,6 +285,8 @@
         $("#publishModule").click(function () {
             publishModule($(this).data('publish'));
         });
+
+        tabManager.init();
     });
 </script>
 
