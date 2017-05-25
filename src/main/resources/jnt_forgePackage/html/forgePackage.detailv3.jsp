@@ -337,11 +337,17 @@
                     <div class="col-md-12 module-section-title">
                         <h2>Changelog ${versionNumber.string}</h2>
                         <span></span>
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="col-md-12">
                         <div id="changeLogText">
                                 ${moduleMap.latestVersion.properties.changeLog.string}
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-md-6 col-md-offset-4" id="changeLogReadMoreButton" style="display: none">
                         <a class="modal-link-text" onclick="showReadMore('changeLogText',this);">Read More...</a>
                     </div>
@@ -353,11 +359,17 @@
                     <div class="col-md-12 module-section-title">
                         <h2>FAQ</h2>
                         <span></span>
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="col-md-12">
                         <div id="faqText">
                                 ${FAQ}
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-md-6 col-md-offset-4" id="faqReadMoreButton" style="display: none">
                         <a class="modal-link-text" onclick="showReadMore('faqText',this);">Read More...</a>
                     </div>
@@ -367,14 +379,19 @@
             <c:if test="${not (fn:length(fn:trim(howToInstall)) eq 0)}">
                 <div class="row">
                     <div class="col-md-12 module-section-title">
-
                         <h2>How To Install</h2>
                         <span></span>
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="col-md-12">
                         <div id="installText">
                                 ${howToInstall}
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-md-6 col-md-offset-4" id="installReadMoreButton" style="display: none">
                         <a class="modal-link-text" onclick="showReadMore('installText',this);">Read More...</a>
                     </div>
@@ -386,6 +403,11 @@
                     <div class="col-md-12 module-section-title">
                         <h2>Images</h2>
                         <span></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
                         <template:module node="${screenshots}" view="v3">
                             <template:param name="id" value="${currentNode.identifier}"/>
                         </template:module>
@@ -398,6 +420,11 @@
                     <div class="col-md-12 module-section-title">
                         <h2>Video</h2>
                         <span></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
                         <template:module path="${videoNode.path}" view="lightbox"/>
                     </div>
                 </div>
@@ -408,11 +435,18 @@
                     <div class="col-md-12 module-section-title">
                         <h2>License</h2>
                         <span></span>
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="col-md-12">
                         <div id="licenseText">
                                 ${license}
                         </div>
                     </div>
+                </div>
+
+                <div class="row">
                     <div class="col-md-6 col-md-offset-4" id="licenseReadMoreButton" style="display: none">
                         <a class="modal-link-text" onclick="showReadMore('licenseText',this);">Read More...</a>
                     </div>
