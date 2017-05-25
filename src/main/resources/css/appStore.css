@@ -1749,22 +1749,43 @@ span.module-badge-16 i {
     margin-left: 8px;
 }
 
+span.module-filter-badge-16 i {
+    font-size: 16px;
+    margin-right: 5px;
+    margin-left: -10px;
+    vertical-align: text-bottom;
+}
+
+span.module-tag-badge-13 i {
+    font-size: 13px;
+    margin-left: 5px;
+    vertical-align: text-bottom;
+}
+
 span.module-badge-16.module-supported,
+span.module-filter-badge-16.module-supported,
+span.module-tag-badge-13.module-supported,
 span.module-badge-24.module-supported {
      color: #03A9F4;
  }
 
 span.module-badge-16.module-community,
+span.module-filter-badge-16.module-community,
+span.module-tag-badge-13.module-community,
 span.module-badge-24.module-community {
     color: #4CAF50;
 }
 
 span.module-badge-16.module-labs,
+span.module-filter-badge-16.module-labs,
+span.module-tag-badge-13.module-labs,
 span.module-badge-24.module-labs {
     color: #673AB7;
 }
 
 span.module-badge-16.module-prereleased,
+span.module-filter-badge-16.module-prereleased,
+span.module-tag-badge-13.module-prereleased,
 span.module-badge-24.module-prereleased {
     color: #FF9800;
 }

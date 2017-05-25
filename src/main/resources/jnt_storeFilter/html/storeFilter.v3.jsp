@@ -130,7 +130,7 @@
         function updateDropdownFilterCount(filterType) {
             var filteredElementsCount = filterManager.getFilterTypeElementCount(filterType);
             _.each(getFilters(filterType), function (filterId) {
-                var filterBadge = $('a[data-filter*="' + filterId + '"][data-filter-type="' + filterType +'"] > span');
+                var filterBadge = $('a[data-filter*="' + filterId + '"][data-filter-type="' + filterType +'"] > span.badge');
                 if (filteredElementsCount[filterId] > 0) {
                     filterBadge.html(filteredElementsCount[filterId]);
                     filterBadge.show();
@@ -147,6 +147,27 @@
                 case filterManager.STATUS:
                     return statuses;
             }
+        }
+
+        function generateStatusIconSpan(status, subClassType) {
+            var icon = null;
+            var size = subClassType == 'filter' ? 16 : 13;
+            switch(status) {
+                case 'supported':
+                    icon = 'check_circle';
+                    break;
+                case 'community' :
+                    icon = 'group_work';
+                    break;
+                case 'labs' :
+                    icon = 'bug_report';
+                    break;
+                case 'prereleased':
+                    icon = 'offline_pin';
+                    break;
+            }
+            return '<span class="module-' + subClassType + '-badge-' + size +' module-' + status + '"><i class="material-icons noselect" title="' + status + '">' + icon + '</i></span>';
+
         }
 
         $(document).ready(function () {
@@ -168,7 +189,7 @@
             _.each(statuses, function(statusString, index) {
                 var statusSplit = statusString.split("--statusKey--");
                 statuses[index] = statusSplit[1];
-                statusSelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='" + statusSplit[1] + "' data-filter-type='" + filterManager.STATUS + "' " + " onclick='dropdownFilterClick(this);'>" + statusSplit[0] + "&nbsp;<span class='badge' style='vertical-align: text-top;'>0</span></a></li>");
+                statusSelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='" + statusSplit[1] + "' data-filter-type='" + filterManager.STATUS + "' " + " onclick='dropdownFilterClick(this);'>" + generateStatusIconSpan(statusSplit[1], "filter") + statusSplit[0] + "&nbsp;<span class='badge' style='vertical-align: text-top;'>0</span></a></li>");
             });
             categories.push('all');
             statuses.push('all');
@@ -258,7 +279,7 @@
             statusChildren.each(function (index, status) {
                 var value = $(status).data("filter");
                 if (value != "all") {
-                    $filter.append("<li class='filter-status'>" + status.childNodes[0].data + '</li>');
+                    $filter.append("<li class='filter-status'>" + status.childNodes[1].data + generateStatusIconSpan($(status).attr('data-filter'), "tag") +'</li>');
                 }
             });
             var children = $("#categoryList").children(".active").children("a");
@@ -313,10 +334,13 @@
             <fmt:message key="jnt_storefilter.label.certification"/> <span class="caret"></span>
         </a>
         <ul class="dropdown-menu filters" id="statusList">
-            <li class="active default"><a href="#" data-filter="all" data-filter-type="status" onclick="dropdownFilterClick(this);"><fmt:message
-                    key="jnt_storefilter.label.all"/>&nbsp;<span class='badge'
-                                                                 style='vertical-align: text-top;'>0</span></a></li>
-            </a></li>
+            <li class="active default">
+                <a href="#" data-filter="all" data-filter-type="status" onclick="dropdownFilterClick(this);">
+                    <fmt:message key="jnt_storefilter.label.all"/>
+                    &nbsp;
+                    <span class='badge' style='vertical-align: text-top;'>0</span>
+                </a>
+            </li>
             <li role="separator" class="divider"></li>
         </ul>
     </li>
@@ -326,10 +350,13 @@
             <fmt:message key="jnt_storefilter.label.categories"/> <span class="caret"></span>
         </a>
         <ul class="dropdown-menu filters" id="categoryList">
-            <li class="active default"><a href="#" data-filter="all" data-filter-type="categories" onclick="dropdownFilterClick(this);"><fmt:message
-                    key="jnt_storefilter.label.all"/>&nbsp;<span class='badge'
-                                                                 style='vertical-align: text-top;'>0</span></a></li>
-            </a></li>
+            <li class="active default">
+                <a href="#" data-filter="all" data-filter-type="categories" onclick="dropdownFilterClick(this);">
+                    <fmt:message key="jnt_storefilter.label.all"/>
+                    &nbsp;
+                    <span class='badge' style='vertical-align: text-top;'>0</span>
+                </a>
+            </li>
             <li role="separator" class="divider"></li>
         </ul>
     </li>
