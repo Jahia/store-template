@@ -223,7 +223,7 @@
             </div>
         </c:if>
         <c:if test="${moduleMap['listTotalSize'] == 0}">
-            <h4><fmt:message key="search.results.no.results"/></h4>
+            <h4><fmt:message key="jnt_searchResults.label.searchResults"/>&nbsp;<span class="label label-info">0</span></h4>
         </c:if>
     </div>
 </div>
