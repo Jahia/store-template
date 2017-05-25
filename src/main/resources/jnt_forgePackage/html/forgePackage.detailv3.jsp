@@ -184,6 +184,18 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-12">
+                    <div class="meta-info">
+                        <div class="module-details-title">
+                            <fmt:message key="jnt_forgeModuleVersion.status"/>
+                        </div>
+                        <div class="module-details-content">
+                            ${fn:toUpperCase(currentNode.properties['status'].string)}
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-md-12">
                     <div class="meta-info large">
                         <c:if test="${not empty authorURL}">
