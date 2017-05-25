@@ -2018,3 +2018,11 @@ span.module-badge-24.module-prereleased {
 .meta-info .title {
     color: #666666;
 }
+
+.download-unavailable {
+    max-width:150px;
+    font-size:12px;
+    line-height: 15px;
+    font-weight: 400;
+    padding:5px;
+}

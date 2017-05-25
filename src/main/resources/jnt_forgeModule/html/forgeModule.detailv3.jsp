@@ -251,18 +251,28 @@
                 <div class="col-sm-3">
                     <div class="row">
                         <div class="col-sm-12">
-                            <a class="btn btn-default module-download-btn pull-right"
-                               href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>">
-                                Download (${versionNumber.string})
-                            </a>
-                            <c:if test="${not empty previousVersions}">
-                                <div class="meta-info align-right">
-                                    <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal"
-                                       href="#">
-                                        <fmt:message key="jnt_forgemodule.clickToBrowse"/>
+                            <c:choose>
+                                <c:when test="${moduleMap.latestVersion.properties['published'].boolean}">
+                                    <a class="btn btn-default module-download-btn pull-right"
+                                       href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>">
+                                        Download (${versionNumber.string})
                                     </a>
-                                </div>
-                            </c:if>
+
+                                    <c:if test="${not empty previousVersions}">
+                                        <div class="meta-info align-right">
+                                            <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal"
+                                               href="#">
+                                                <fmt:message key="jnt_forgemodule.clickToBrowse"/>
+                                            </a>
+                                        </div>
+                                    </c:if>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="alert alert-warning download-unavailable" role="alert">
+                                        <span class=""><fmt:message key="jnt_forgemodule.noDownloadableVersionAvailable"/></span>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                         <c:if test="${not empty previousVersions}">
                             <!-- ** Start CHANGE LOG MODAL -->
