@@ -297,6 +297,7 @@
                     ${description}
                 </div>
             </div>
+            <%--DEPENDENCIES--%>
             <div class="row">
                 <div class="col-md-12 module-section-title">
                     <h2>Embedded Modules</h2>
@@ -330,6 +331,22 @@
                     </div>
                 </div>
             </div>
+            <%--Changelog--%>
+            <c:if test="${not (fn:length(fn:trim(moduleMap.latestVersion.properties.changeLog.string)) eq 0)}">
+                <div class="row">
+                    <div class="col-md-12 module-section-title">
+                        <h2>Changelog ${versionNumber.string}</h2>
+                        <span></span>
+
+                        <div id="changeLogText">
+                                ${moduleMap.latestVersion.properties.changeLog.string}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-md-offset-4" id="changeLogReadMoreButton" style="display: none">
+                        <a class="modal-link-text" onclick="showReadMore('changeLogText',this);">Read More...</a>
+                    </div>
+                </div>
+            </c:if>
             <%--FAQ--%>
             <c:if test="${not (fn:length(fn:trim(FAQ)) eq 0)}">
                 <div class="row">
@@ -360,22 +377,6 @@
                     </div>
                     <div class="col-md-6 col-md-offset-4" id="installReadMoreButton" style="display: none">
                         <a class="modal-link-text" onclick="showReadMore('installText',this);">Read More...</a>
-                    </div>
-                </div>
-            </c:if>
-            <%--Changelog--%>
-            <c:if test="${not (fn:length(fn:trim(moduleMap.latestVersion.properties.changeLog.string)) eq 0)}">
-                <div class="row">
-                    <div class="col-md-12 module-section-title">
-                        <h2>Changelog ${versionNumber.string}</h2>
-                        <span></span>
-
-                        <div id="changeLogText">
-                                ${moduleMap.latestVersion.properties.changeLog.string}
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-md-offset-4" id="changeLogReadMoreButton" style="display: none">
-                        <a class="modal-link-text" onclick="showReadMore('changeLogText',this);">Read More...</a>
                     </div>
                 </div>
             </c:if>
