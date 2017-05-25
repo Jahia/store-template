@@ -295,7 +295,7 @@
             });
 
             var $searchResultsCount = $(".searchResultsCount");
-            $searchResultsCount.html(" " + filterManager.getTotalFilteredElementCount());
+            $searchResultsCount.html(filterManager.getTotalFilteredElementCount());
         }
 
         /**
