@@ -205,9 +205,9 @@
             targetElement: null,
             init         : function () {
                 this.headingElement = $("h4#tags-heading");
-                this.headingElement.html("Top tags (sorted by rank)");
+                this.headingElement.html("Top 40 tags");
                 this.targetElement = $("ul#tag-display");
-                this.topTags       = getTopKTags(tagCountMap, this.topTagsNumber);
+                this.topTags       = getTopKTags(tagCountMap, this.topTagsNumber).sort();
                 this.searchEngine  = new Bloodhound({
                     initialize    : true,
                     local         : getSortedTags(modulesTags),
