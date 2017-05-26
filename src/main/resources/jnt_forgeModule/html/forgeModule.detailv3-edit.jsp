@@ -280,6 +280,27 @@
             });
         });
 
+        $('#screenshots').on('filebatchuploadcomplete', function(event, files, extra) {
+            console.log('File batch upload complete');
+            window.location.reload(true);
+        });
+
+        $('#screenshots').on('fileuploaded', function(event, data, previewId, index) {
+            console.log('File uploaded triggered');
+            console.log(data);
+            var files = $('#screenshots').fileinput('getFileStack');
+            console.log(files);
+            if(files.length == 0){
+                window.location.reload(true);
+            }
+            var filenames = data.filenames.filter(function(filename){
+                return filename !== undefined && filename != data.filenames[index];
+            });
+            if(filenames.length==0){
+                window.location.reload(true);
+            }
+        });
+
         addEventOnTagItem();
         updateCompletionStatus();
         $("#publishModule").click(function () {
