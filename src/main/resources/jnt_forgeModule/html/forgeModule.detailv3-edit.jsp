@@ -19,6 +19,7 @@
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <template:addResources type="javascript" resources="libraries/zoom/zoom.js"/>
+<template:addResources type="javascript" resources="libraries/fileinput/plugins/sortable.js"/>
 <template:addResources type="javascript" resources="libraries/fileinput/fileinput.js"/>
 <template:addResources type="css" resources="libraries/fileinput.css"/>
 <template:addResources type="javascript" resources="ckeditor.js"/>
@@ -256,7 +257,8 @@
             ]
         });
 
-        $("#screenshots").fileinput({
+        var $screenshots = $('#screenshots');
+        $screenshots.fileinput({
             uploadUrl              : "<c:url value='${url.base}${currentNode.path}/screenshots/*'/>", // server upload action
             uploadAsync            : true,
             maxFileCount           : 10,
@@ -266,26 +268,21 @@
             initialPreview         : [${preload}],
             initialPreviewConfig   : [
                     <c:forEach items="${jcr:getChildrenOfType(screenshots,'jmix:image')}" var="screenshot" varStatus="stat">{
-                    url: '<c:url value="${url.base}${screenshot.path}.deleteScreenshot.do"/>'
+                    url: '<c:url value="${url.base}${screenshot.path}.deleteScreenshot.do"/>',
+                    identifier:'${screenshot.identifier}'
                 }<c:if test="${not stat.last}">, </c:if>
                 </c:forEach>
             ]
 
         });
-        //Initializing ck editors
-        $('.ckarea').each(function (index, object) {
-            var textarea = $(object);
-            CKEDITOR.replace(textarea.attr('id'), {
-                toolbar: 'Basic'
-            });
-        });
 
-        $('#screenshots').on('filebatchuploadcomplete', function(event, files, extra) {
+
+        $screenshots.on('filebatchuploadcomplete', function(event, files, extra) {
             console.log('File batch upload complete');
             window.location.reload(true);
         });
 
-        $('#screenshots').on('fileuploaded', function(event, data, previewId, index) {
+        $screenshots.on('fileuploaded', function(event, data, previewId, index) {
             console.log('File uploaded triggered');
             console.log(data);
             var files = $('#screenshots').fileinput('getFileStack');
@@ -299,6 +296,26 @@
             if(filenames.length==0){
                 window.location.reload(true);
             }
+        });
+
+        $screenshots.on('filesorted', function(event, params) {
+            console.log('File sorted');
+            console.log(params);
+            var newNodeOrder = [];
+            params.stack.forEach(function(extraData){
+                newNodeOrder.push(extraData.identifier);
+            });
+            $.post('<c:url value="${url.base}${screenshots.path}.reorderScreenshots.do"/>',{'nodes':newNodeOrder},function(data){
+                console.log(data);
+            },"json");
+        });
+
+        //Initializing ck editors
+        $('.ckarea').each(function (index, object) {
+            var textarea = $(object);
+            CKEDITOR.replace(textarea.attr('id'), {
+                toolbar: 'Basic'
+            });
         });
 
         addEventOnTagItem();

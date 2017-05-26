@@ -8,4 +8,7 @@
     <bean class="org.jahia.modules.forge.actions.DeleteScreenshot">
         <property name="requireAuthenticatedUser" value="true"/>
     </bean>
+    <bean class="org.jahia.modules.forge.actions.ReorderScreenshots">
+        <property name="requireAuthenticatedUser" value="true"/>
+    </bean>
 </beans>
