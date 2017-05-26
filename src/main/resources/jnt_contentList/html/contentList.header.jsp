@@ -11,6 +11,7 @@
 </c:if>
 <template:addResources type="css" resources="appStore.css"/>
 <template:addResources type="javascript" resources="libraries/storeUtils.js"/>
+<c:if test="${empty param.dx}">
 <header
         <c:choose>
             <c:when test="${isHomePage or isSearchResultPage}">
@@ -25,6 +26,7 @@
         <template:module node="${subchild}" editable="false"/>
     </c:forEach>
 </header>
+</c:if>
 <%--<c:if test="${!(isHomePage or isSearchResultPage)}">--%>
     <%--<div class="top-color-sep"></div>--%>
 <%--</c:if>--%>

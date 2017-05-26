@@ -118,7 +118,7 @@
     })
 </script>
 
-<div class="container" style="margin-top: 50px; min-height:calc(100vh - 280px);">
+<div class="container" style="<c:if test="${empty param.dx}">margin-top: 50px;</c:if> min-height:calc(100vh - 280px);">
     <div class="row">
         <div class="col-md-2">
             <div class="row">
@@ -128,6 +128,7 @@
                          style="display:block;"/>
                     <div class="clearfix"></div>
                 </div>
+                <c:if test="${empty param.dx}">
                 <%--MODULE DETAILS--%>
                 <div class="col-md-12">
                     <div class="meta-info">
@@ -228,6 +229,7 @@
                         </div>
                     </div>
                 </div>
+                </c:if>
             </div>
         </div>
         <div class="col-md-9">
