@@ -262,7 +262,8 @@
             ]
         });
 
-        $("#screenshots").fileinput({
+        var $screenshots = $('#screenshots');
+        $screenshots.fileinput({
             uploadUrl              : "<c:url value='${url.base}${currentNode.path}/screenshots/*'/>", // server upload action
             uploadAsync            : true,
             maxFileCount           : 10,
@@ -272,11 +273,46 @@
             initialPreview         : [${preload}],
             initialPreviewConfig   : [
                     <c:forEach items="${jcr:getChildrenOfType(screenshots,'jmix:image')}" var="screenshot" varStatus="stat">{
-                    url: '<c:url value="${url.base}${screenshot.path}.deleteScreenshot.do"/>'
+                    url: '<c:url value="${url.base}${screenshot.path}.deleteScreenshot.do"/>',
+                    identifier:'${screenshot.identifier}'
                 }<c:if test="${not stat.last}">, </c:if>
                 </c:forEach>
             ]
 
+        });
+
+
+        $screenshots.on('filebatchuploadcomplete', function(event, files, extra) {
+            console.log('File batch upload complete');
+            window.location.reload(true);
+        });
+
+        $screenshots.on('fileuploaded', function(event, data, previewId, index) {
+            console.log('File uploaded triggered');
+            console.log(data);
+            var files = $('#screenshots').fileinput('getFileStack');
+            console.log(files);
+            if(files.length == 0){
+                window.location.reload(true);
+            }
+            var filenames = data.filenames.filter(function(filename){
+                return filename !== undefined && filename != data.filenames[index];
+            });
+            if(filenames.length==0){
+                window.location.reload(true);
+            }
+        });
+
+        $screenshots.on('filesorted', function(event, params) {
+            console.log('File sorted');
+            console.log(params);
+            var newNodeOrder = [];
+            params.stack.forEach(function(extraData){
+                newNodeOrder.push(extraData.identifier);
+            });
+            $.post('<c:url value="${url.base}${screenshots.path}.reorderScreenshots.do"/>',{'nodes':newNodeOrder},function(data){
+                console.log(data);
+            },"json");
         });
         //Initializing ck editors
         $('.ckarea').each(function (index, object) {
