@@ -19,6 +19,12 @@
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <template:addResources type="javascript" resources="libraries/zoom/zoom.js"/>
+<template:addResources type="javascript" resources="libraries/photoswipe/photoswipe.js"/>
+<template:addResources type="javascript" resources="libraries/photoswipe/photoswipe-ui-defaults.js"/>
+<template:addResources type="javascript" resources="libraries/photoswipe/initialize.js"/>
+<template:addResources type="css" resources="libraries/photoswipe/photoswipe.css"/>
+<template:addResources type="css" resources="libraries/photoswipe/default-skin/default-skin.css"/>
+<template:addResources type="css" resources="libraries/photoswipe/gallerycss.css"/>
 
 <%@include file="../../commons/authorName.jspf" %>
 
@@ -425,7 +431,7 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <template:module node="${screenshots}" view="v3">
+                        <template:module node="${screenshots}" view="photoswipe">
                             <template:param name="id" value="${currentNode.identifier}"/>
                         </template:module>
                     </div>
