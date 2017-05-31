@@ -22,18 +22,14 @@
 </template:addResources>
 <%--Get pakcages--%>
 <c:set var="statementPackages"
-       value="SELECT * FROM [jnt:content]
-                WHERE ISDESCENDANTNODE('${renderContext.site.path}') AND [published]=true
-                AND ([jcr:primaryType] = 'jnt:forgePackage')
-                ORDER BY [jcr:created] DESC"/>
+       value="SELECT module.* FROM [jnt:forgePackage] as module inner join [jnt:forgePackageVersion] as version on ischildnode(version,module)
+                WHERE ISDESCENDANTNODE(module,'${renderContext.site.path}') AND module.[published]=true ORDER BY version.[jcr:created] DESC"/>
 <jcr:sql var="packages" sql="${statementPackages}"/>
 
 <%--Latest modules--%>
 <c:set var="latestModules"
-       value="SELECT * FROM [jnt:content]
-                WHERE ISDESCENDANTNODE('${renderContext.site.path}') AND [published]=true
-                AND ([jcr:primaryType] = 'jnt:forgeModule')
-                ORDER BY [jcr:created] DESC"/>
+       value="SELECT module.* FROM [jnt:forgeModule] as module inner join [jnt:forgeModuleVersion] as version on ischildnode(version,module)
+                WHERE ISDESCENDANTNODE(module,'${renderContext.site.path}') AND module.[published]=true ORDER BY version.[jcr:created] DESC"/>
 <jcr:sql var="latest" sql="${latestModules}" limit="3"/>
 
 <%--All modules--%>
@@ -53,8 +49,10 @@
 <div class="row filter-grid-container">
     <h4 style="color: #03a9f4;">JAHIA PACKAGES</h4>
     <div class="filter-grid">
-        <c:forEach items="${packages.nodes}" var="module" varStatus="status" begin="0" end="2">
-            <c:if test="${module.properties['published'].boolean}">
+        <c:set var="packagesNames" value=""/>
+        <c:forEach items="${packages.nodes}" var="module" varStatus="status">
+            <c:if test="${not fn:contains(packagesNames, module.identifier)}">
+                <c:set var="packagesNames" value="${packagesNames},${module.identifier}"/>
                 <!-- add status to status map -->
                 <c:if test="${not empty module.properties['status'].string}">
                     <script type="text/javascript">
