@@ -65,12 +65,34 @@
                         window.parent.location.reload(true);
                     }, "json");
                 });
-                $("#fileVersion").fileinput({
+                var $fileVersion = $("#fileVersion");
+                $fileVersion.fileinput({
                     uploadUrl            : "<c:url value='${url.base}${renderContext.site.path}/contents/modules-repository.createEntryFromJar.do'/>", // server upload action
                     uploadAsync          : true,
                     maxFileCount         : 1,
                     showPreview          : false,
                     allowedFileExtensions: ['jar']
+                });
+
+                $fileVersion.on('filebatchuploadcomplete', function(event, files, extra) {
+                    console.log('File batch upload complete');
+                    window.location.reload(true);
+                });
+
+                $fileVersion.on('fileuploaded', function(event, data, previewId, index) {
+                    console.log('File uploaded triggered');
+                    console.log(data);
+                    var files = $fileVersion.fileinput('getFileStack');
+                    console.log(files);
+                    if(files.length == 0){
+                        window.location.reload(true);
+                    }
+                    var filenames = data.filenames.filter(function(filename){
+                        return filename !== undefined && filename != data.filenames[index];
+                    });
+                    if(filenames.length==0){
+                        window.location.reload(true);
+                    }
                 });
             });
         </script>

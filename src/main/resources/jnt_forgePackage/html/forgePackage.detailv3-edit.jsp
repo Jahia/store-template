@@ -290,7 +290,7 @@
         $screenshots.on('fileuploaded', function(event, data, previewId, index) {
             console.log('File uploaded triggered');
             console.log(data);
-            var files = $('#screenshots').fileinput('getFileStack');
+            var files = $screenshots.fileinput('getFileStack');
             console.log(files);
             if(files.length == 0){
                 window.location.reload(true);
