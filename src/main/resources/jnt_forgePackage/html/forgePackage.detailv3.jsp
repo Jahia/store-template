@@ -164,7 +164,7 @@
                             <%--${latestVersion.properties['jcr:lastModified'].date.time}--%>
                             <time itemprop="datePublished">
                                 <fmt:formatDate
-                                        value="${moduleMap.latestVersion.properties['jcr:lastModified'].date.time}"
+                                        value="${moduleMap.latestVersion.properties['jcr:created'].date.time}"
                                         pattern="yyyy-MM-dd"/>
                             </time>
                         </div>

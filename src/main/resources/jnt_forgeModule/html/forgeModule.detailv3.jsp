@@ -28,8 +28,8 @@
 
 <template:addCacheDependency node="${moduleMap.latestVersion}"/>
 <c:set var="hasRepositoryAccess" value="${jcr:hasPermission(currentNode, 'repositoryExplorer')}"/>
-<c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/><c:set var="isDeveloper"
-                                                                                        value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
+<c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>
+
 <%@include file="../../commons/authorName.jspf" %>
 <jsp:useBean id="uniqueDependants" class="java.util.LinkedHashMap"/>
 <jcr:sql
@@ -166,7 +166,7 @@
                             <%--${latestVersion.properties['jcr:lastModified'].date.time}--%>
                             <time itemprop="datePublished">
                                 <fmt:formatDate
-                                        value="${moduleMap.latestVersion.properties['jcr:lastModified'].date.time}"
+                                        value="${moduleMap.latestVersion.properties['jcr:created'].date.time}"
                                         pattern="yyyy-MM-dd"/>
                             </time>
                         </div>
