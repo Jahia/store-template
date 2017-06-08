@@ -16,12 +16,6 @@
 <%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
-
-<template:addResources type="css" resources="libraries/bootstrap3-wysihtml5.min.css,
-                                             libraries/bootstrap-editable.css,
-                                             libraries/jqtree.css"/>
-<template:addResources type="javascript" resources="libraries/bootstrap-editable.min.js"/>
-
 <template:addResources type="css" resources="libraries/fileinput.min.css"/>
 <template:addResources type="css" resources="appStore.css"/>
 <template:addResources type="javascript" resources="libraries/fileinput/plugins/canvas-to-blob.min.js,
@@ -55,14 +49,6 @@
     <template:addResources type="inlinejavascript">
         <script type="text/javascript">
             $(document).ready(function () {
-                $('.publishVersion').click(function () {
-                    var data                = {};
-                    data['published']       = $(this).attr("data-value");
-                    data['jcrMethodToCall'] = 'put';
-                    $.post($(this).attr("data-target"), data, function () {
-                        window.parent.location.reload(true);
-                    }, "json");
-                });
                 $("#fileVersion").fileinput({
                     uploadUrl            : "<c:url value='${url.base}${renderContext.site.path}/contents/modules-repository.createEntryFromJar.do'/>", // server upload action
                     uploadAsync          : true,

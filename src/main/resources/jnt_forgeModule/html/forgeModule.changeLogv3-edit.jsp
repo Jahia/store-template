@@ -17,11 +17,6 @@
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 
-<template:addResources type="css" resources="libraries/bootstrap3-wysihtml5.min.css,
-                                             libraries/bootstrap-editable.css,
-                                             libraries/jqtree.css"/>
-<template:addResources type="javascript" resources="libraries/bootstrap-editable.min.js"/>
-
 <template:addResources type="css" resources="libraries/fileinput.min.css"/>
 <template:addResources type="css" resources="appStore.css"/>
 <template:addResources type="javascript" resources="libraries/fileinput/plugins/canvas-to-blob.min.js,

@@ -345,8 +345,18 @@
                 AND ([jcr:primaryType] = 'jnt:forgeModule') and localName() = '${module.name}'
                 ORDER BY [jcr:title] ASC"/>
                                     <c:forEach items="${appStoreModule.nodes}" var="linkedModule">
+                                        <c:choose>
+                                            <c:when test="${empty param.dx}">
+                                                <c:url value="${linkedModule.url}" context="/" var="moduleURL"/>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:url value="${linkedModule.url}" context="/" var="moduleURL">
+                                                    <c:param name="dx" value="true"/>
+                                                </c:url>
+                                            </c:otherwise>
+                                        </c:choose>
                                         <li class="list-group-item"><a
-                                                href="<c:url value="${linkedModule.url}" context="/"/>">${functions:abbreviate(module.properties.moduleName.string,60,70,'...')}</a>
+                                                href="${moduleURL}">${functions:abbreviate(module.properties.moduleName.string,60,70,'...')}</a>
                                             <span class="pull-right">${module.properties.moduleVersion.string}</span>
                                         </li>
                                     </c:forEach>

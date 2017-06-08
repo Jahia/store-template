@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <content xmlns:j="http://www.jahia.org/jahia/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0">
     <modules jcr:primaryType="jnt:modules">
-        <store-template j:dependencies="bootstrap3-components bootstrap3-core contact default event facets font-awesome jquery privateappstore search teasers"
+        <store-template j:dependencies="bootstrap3-components bootstrap3-core default font-awesome jquery privateappstore search"
                       j:installedModules="store-template"
                       j:modulePriority="0"
-                      j:moduleType="module"
+                      j:moduleType="templatesSet"
                       j:title="Jahia Store Template"
                       jcr:primaryType="jnt:module">
                 
@@ -179,7 +179,7 @@
                                            jcr:mixinTypes="jmix:renderable"
                                            jcr:primaryType="bootstrap3nt:navBarItemSimpleSearchForm"
                                            position="left"
-                                           result="/modules/store-template/search-results"/>
+                                           result="/modules/store-template/home/search-results"/>
                                             <storefilter j:view="v3"
                                            jcr:mixinTypes="jmix:renderable"
                                            jcr:primaryType="jnt:storeFilter"
@@ -198,40 +198,7 @@
                                        jcr:mixinTypes="mix:title"
                                        jcr:primaryType="jnt:translation"
                                        jcr:title="Store search result"/>
-                                <container jcr:primaryType="jnt:contentList">
-                                    <results autoSuggest="true"
-                                 autoSuggestHitCount="3"
-                                 autoSuggestMaxTermCount="3"
-                                 autoSuggestMinimumHitCount="2"
-                                 j:view="store"
-                                 jcr:mixinTypes="jmix:renderable"
-                                 jcr:primaryType="jnt:searchResults">
-                                        <j:translation_fr jcr:language="fr"
-                                             jcr:mixinTypes="mix:title"
-                                             jcr:primaryType="jnt:translation"
-                                             jcr:title="Results"/>
-                                        <j:translation_de jcr:language="de"
-                                             jcr:mixinTypes="mix:title"
-                                             jcr:primaryType="jnt:translation"
-                                             jcr:title="Results"/>
-                                        <j:translation_pt jcr:language="pt"
-                                             jcr:mixinTypes="mix:title"
-                                             jcr:primaryType="jnt:translation"
-                                             jcr:title="Results"/>
-                                        <j:translation_en jcr:language="en"
-                                             jcr:mixinTypes="mix:title"
-                                             jcr:primaryType="jnt:translation"
-                                             jcr:title="Results"/>
-                                        <j:translation_it jcr:language="it"
-                                             jcr:mixinTypes="mix:title"
-                                             jcr:primaryType="jnt:translation"
-                                             jcr:title="Results"/>
-                                        <j:translation_es jcr:language="es"
-                                             jcr:mixinTypes="mix:title"
-                                             jcr:primaryType="jnt:translation"
-                                             jcr:title="Results"/>
-                                    </results>
-                                </container>
+
                             </store-search-results>
                             <store-home j:hiddenTemplate="false"
                               jcr:mixinTypes="jmix:accessControlled"
@@ -242,12 +209,11 @@
                                        jcr:title="Home v2"/>
                                 <container jcr:primaryType="jnt:contentList">
                                     <forgeModulesList columnsNumber="3"
-                                          j:view="storev2"
-                                          jcr:mixinTypes="jmix:renderable"
-                                          jcr:primaryType="jnt:forgeModulesList"
-                                          nbOfModulePerPage="20"/>
+                                                      j:view="storev2"
+                                                      jcr:mixinTypes="jmix:renderable"
+                                                      jcr:primaryType="jnt:forgeModulesList"
+                                                      nbOfModulePerPage="20"/>
                                 </container>
-                                <j:acl jcr:primaryType="jnt:acl"/>
                             </store-home>
                         </home-base>
                         <store-module-v2 j:applyOn="jnt:forgeModule jnt:forgePackage"
@@ -414,55 +380,6 @@
                                 </main-resource-display>
                             </pageContent>
                         </store-module-v2>
-                        <changelog j:applyOn="jnt:forgeModule jnt:forgePackage"
-                          j:defaultTemplate="false"
-                          j:hiddenTemplate="false"
-                          j:view="store"
-                          jcr:primaryType="jnt:contentTemplate">
-                            <j:translation_fr jcr:language="fr"
-                                    jcr:mixinTypes="mix:title"
-                                    jcr:primaryType="jnt:translation"
-                                    jcr:title="changelog"/>
-                            <j:translation_de jcr:language="de"
-                                    jcr:mixinTypes="mix:title"
-                                    jcr:primaryType="jnt:translation"
-                                    jcr:title="changelog"/>
-                            <j:translation_pt jcr:language="pt"
-                                    jcr:mixinTypes="mix:title"
-                                    jcr:primaryType="jnt:translation"
-                                    jcr:title="changelog"/>
-                            <j:translation_en jcr:language="en"
-                                    jcr:mixinTypes="mix:title"
-                                    jcr:primaryType="jnt:translation"
-                                    jcr:title="changelog"/>
-                            <j:translation_it jcr:language="it"
-                                    jcr:mixinTypes="mix:title"
-                                    jcr:primaryType="jnt:translation"
-                                    jcr:title="changelog"/>
-                            <j:translation_es jcr:language="es"
-                                    jcr:mixinTypes="mix:title"
-                                    jcr:primaryType="jnt:translation"
-                                    jcr:title="changelog"/>
-                            <pagecontent jcr:primaryType="jnt:contentList">
-                                <main-resource-display j:mainResourceView="changeLogv2"
-                                            jcr:primaryType="jnt:mainResourceDisplay"/>
-                                <file-upload-form j:bindedComponent="/modules/store-template/templates/base/changelog/pagecontent/main-resource-display"
-                                       j:view="jar"
-                                       jcr:mixinTypes="jmix:renderable"
-                                       jcr:primaryType="jnt:fileUpload"/>
-                            </pagecontent>
-                            <pageContent j:classname="changeLogWrapper"
-                               j:skin="skins.custom"
-                               jcr:mixinTypes="jmix:customSkin jmix:skinnable"
-                               jcr:primaryType="jnt:contentList">
-                                <main-resource-display j:mainResourceView="changeLogv2"
-                                            j:mockupStyle="changeLog"
-                                            jcr:mixinTypes="jmix:accessControlled"
-                                            jcr:primaryType="jnt:mainResourceDisplay">
-                                    <j:acl j:inherit="true" jcr:primaryType="jnt:acl"/>
-                                </main-resource-display>
-                            </pageContent>
-                        </changelog>
                         <footer jcr:primaryType="jnt:contentList">
                             <storefooter jcr:primaryType="jnt:storeFooter"/>
                         </footer>
@@ -1166,7 +1083,7 @@
                 </templates>
                 
                 <home j:isHomePage="true"
-               j:templateName="v2-home"
+               j:templateName="store-home"
                jcr:primaryType="jnt:page">
                     <j:translation_en jcr:language="en"
                               jcr:mixinTypes="mix:title"
@@ -1176,14 +1093,51 @@
                               jcr:mixinTypes="mix:title"
                               jcr:primaryType="jnt:translation"
                               jcr:title="Home"/>
-                    <bootstrap-column jcr:primaryType="jnt:contentList"/>
+                    <search-results j:templateName="store-search-results" jcr:primaryType="jnt:page">
+                        <j:translation_en jcr:language="en"
+                                          jcr:mixinTypes="mix:title"
+                                          jcr:primaryType="jnt:translation"
+                                          jcr:title="Search Results"/>
+                        <j:translation_fr jcr:language="fr"
+                                          jcr:mixinTypes="mix:title"
+                                          jcr:primaryType="jnt:translation"
+                                          jcr:title="Search Results"/>
+                        <container jcr:primaryType="jnt:contentList">
+                            <results autoSuggest="true"
+                                     autoSuggestHitCount="3"
+                                     autoSuggestMaxTermCount="3"
+                                     autoSuggestMinimumHitCount="2"
+                                     j:view="store"
+                                     jcr:mixinTypes="jmix:renderable"
+                                     jcr:primaryType="jnt:searchResults">
+                                <j:translation_fr jcr:language="fr"
+                                                  jcr:mixinTypes="mix:title"
+                                                  jcr:primaryType="jnt:translation"
+                                                  jcr:title="Results"/>
+                                <j:translation_de jcr:language="de"
+                                                  jcr:mixinTypes="mix:title"
+                                                  jcr:primaryType="jnt:translation"
+                                                  jcr:title="Results"/>
+                                <j:translation_pt jcr:language="pt"
+                                                  jcr:mixinTypes="mix:title"
+                                                  jcr:primaryType="jnt:translation"
+                                                  jcr:title="Results"/>
+                                <j:translation_en jcr:language="en"
+                                                  jcr:mixinTypes="mix:title"
+                                                  jcr:primaryType="jnt:translation"
+                                                  jcr:title="Results"/>
+                                <j:translation_it jcr:language="it"
+                                                  jcr:mixinTypes="mix:title"
+                                                  jcr:primaryType="jnt:translation"
+                                                  jcr:title="Results"/>
+                                <j:translation_es jcr:language="es"
+                                                  jcr:mixinTypes="mix:title"
+                                                  jcr:primaryType="jnt:translation"
+                                                  jcr:title="Results"/>
+                            </results>
+                        </container>
+                    </search-results>
                 </home>
-                <search-results j:templateName="store-search-results" jcr:primaryType="jnt:page">
-                    <j:translation_en jcr:language="fr"
-                              jcr:mixinTypes="mix:title"
-                              jcr:primaryType="jnt:translation"
-                              jcr:title="Search results"/>
-                </search-results>
             </store-template>
     </modules>
 </content>

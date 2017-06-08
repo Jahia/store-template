@@ -377,11 +377,21 @@
                                                            value="${forge:sortByVersion(query.nodes)}"/>
                                                     <c:set var="latestVersion"
                                                            value="${forge:latestVersion(sortedModules)}"/>
+                                                    <c:choose>
+                                                        <c:when test="${empty param.dx}">
+                                                            <c:url value="${module.url}" context="/" var="moduleURL"/>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <c:url value="${module.url}" context="/" var="moduleURL">
+                                                                <c:param name="dx" value="true"/>
+                                                            </c:url>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                     <li class="list-group-item"><a
-                                                            href='<c:url value="${module.url}" context="/"/>'
+                                                            href='${moduleURL}'
                                                             title="${module.displayableName}">${functions:abbreviate(module.displayableName,30,40,'...')}</a>
                                                         <span class="pull-right">
-                                                                <a href="<c:url value="${latestVersion.properties.url.string}"/>"><i
+                                                                <a href="<c:url value="${latestVersion.properties.url.string}"/>" download="${latestVersion.name}.jar"><i
                                                                         class="material-icons">file_download</i></a>
                                                             </span>
                                                     </li>
@@ -390,7 +400,7 @@
                                             </c:if>
                                         </c:forEach>
                                         <c:if test="${nonSystemRefFound eq 'false'}">
-                                            <li class="list-group-item list-group-item-info"> NONE</li>
+                                            <li class="list-group-item list-group-item-info">NONE</li>
                                         </c:if>
                                     </ul>
                                 </c:when>
@@ -428,12 +438,23 @@
                                                        value="${forge:sortByVersion(query.nodes)}"/>
                                                 <c:set var="latestVersion"
                                                        value="${forge:latestVersion(sortedModules)}"/>
+                                                <c:choose>
+                                                    <c:when test="${empty param.dx}">
+                                                        <c:url value="${module.url}" context="/" var="moduleURL"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:url value="${module.url}" context="/" var="moduleURL">
+                                                            <c:param name="dx" value="true"/>
+                                                        </c:url>
+                                                    </c:otherwise>
+                                                </c:choose>
+
                                                 <li class="list-group-item">
-                                                    <a href='<c:url value="${module.url}" context="/"/>'
+                                                    <a href='${moduleURL}'
                                                        title="${module.displayableName}">${functions:abbreviate(module.displayableName,30,40,'...')}</a>
 
                                                     <span class="pull-right">
-                                                            <a href="<c:url value="${latestVersion.properties.url.string}"/>"><i
+                                                            <a href="<c:url value="${latestVersion.properties.url.string}"/>" download="${latestVersion.name}.jar"><i
                                                                     class="material-icons">file_download</i></a>
                                                         </span>
                                                 </li>

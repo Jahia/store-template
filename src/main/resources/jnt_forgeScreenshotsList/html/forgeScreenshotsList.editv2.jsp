@@ -104,10 +104,6 @@
             data['jcrReturnContentTypeOverride']='application/json; charset=UTF-8';
             data['jcrNewNodeOutputFormat']='${renderContext.mainResource.template}.html';
             data['form-token']=$('#file_upload_form_${currentNode.identifier} input[name=form-token]').val();
-            //Remove previews and put loading gif instead
-            <c:url value='${url.currentModule}/img/loading.gif' var="loadingURL"/>
-            $(".file-preview").empty();
-            $(".file-preview").append('<img class="pull-center" src="${loadingURL}" style="margin-left:50%"/>');
             //Send pictures to server for node creation
             $.ajax({
                 url: '<c:url value="${url.base}${currentNode.path}"/>',
