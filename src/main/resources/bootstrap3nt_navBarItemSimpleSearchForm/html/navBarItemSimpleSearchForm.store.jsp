@@ -17,14 +17,13 @@
                 <c:set var="searchPath" value="${renderContext.site.path}"/>
                 <fmt:message key='bootstrap3nt_navBarSimpleSearchForm.label.search' var="placeholder"/>
                 <s:pagePath value="${searchPath}" display="false" includeChildren="true"/>
-                <s:term match="all_words" id="searchTerm" searchIn="content"
-                        class="form-control input-lg quicksearch search-query" placeholder="${placeholder}" applyFilterOnWildcardTerm="true"/>
+                <s:term match="all_words" id="searchTerm" searchIn="title,siteContent"
+                        class="form-control input-lg search-query" placeholder="${placeholder}" applyFilterOnWildcardTerm="true"/>
                 <s:site value="${renderContext.site.name}" includeReferencesFrom="systemsite" display="false"/>
                 <s:language value="${renderContext.mainResource.locale}" display="false"/>
                 <s:nodeType value="jmix:forgeElement"
-                            selectionOptions="jmix:forgeElement,jnt:forgeModule,jnt:forgePackage" display="false"/>
+                            selectionOptions="jmix:forgeElement" display="false"/>
                 <s:nodeProperty nodeType="jnt:forgeModule" name="published" value="true" display="false"/>
-                <s:nodeProperty nodeType="jnt:forgePackage" name="published" value="true" display="false"/>
             </div>
         </div>
     </s:form>
