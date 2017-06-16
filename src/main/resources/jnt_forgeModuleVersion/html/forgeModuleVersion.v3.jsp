@@ -138,7 +138,7 @@
                         ${requiredVersion.node.displayableName}
                     </span> <strong>&nbsp;-&nbsp;</strong>
                     <span><strong><fmt:message key="jnt_forgeEntry.label.updated"/></strong></span>
-                    <span><fmt:formatDate value="${currentNode.properties['jcr:lastModified'].date.time}"
+                    <span><fmt:formatDate value="${currentNode.properties['jcr:created'].date.time}"
                                           pattern="yyyy-MM-dd"/></span>
                 </div>
             </footer>
