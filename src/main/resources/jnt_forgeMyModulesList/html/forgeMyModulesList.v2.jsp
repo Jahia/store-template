@@ -12,9 +12,6 @@
 <template:addResources type="javascript" resources="storeUtils.js"/>
 <%--<template:include view="hidden.header"/>--%>
 <c:set var="publishedCondition" value=""/>
-<c:if test="${!jcr:hasPermission(renderContext.site, 'jahiaForgeModerateModule')}">
-    <c:set var="publishedCondition" value=" AND [published]=true"/>
-</c:if>
 <c:set var="columnsNumber" value="${currentNode.properties['columnsNumber'].long}"/>
 <c:set var="count" value="1"/>
 <template:addResources type="inlinejavascript">
