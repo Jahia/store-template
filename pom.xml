@@ -58,9 +58,20 @@
   <name>Jahia Store Template</name>
   <description>This is the custom profile module (Jahia Store Template) for running on a Digital Experience Manager server.</description>
   <scm>
-    <connection>scm:dummy:uri</connection>
-    <developerConnection>scm:dummy:uri</developerConnection>
+    <connection>scm:git:git@github.com:Jahia/store-template.git</connection>
+    <url>scm:git:git@github.com:Jahia/store-template</url>
+    <developerConnection>scm:git:git@github.com:Jahia/store-template.git</developerConnection>
   </scm>
+  <distributionManagement>
+    <repository>
+      <id>jahia-enterprise-releases</id>
+      <url>https://devtools.jahia.com/nexus/content/repositories/jahia-enterprise-releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>jahia-enterprise-snapshots</id>
+      <url>https://devtools.jahia.com/nexus/content/repositories/jahia-enterprise-snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
   <properties>
     <jahia-depends>font-awesome,jquery,bootstrap3-core,bootstrap3-components,default,privateappstore,search</jahia-depends>
   </properties>
