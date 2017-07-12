@@ -34,5 +34,4 @@
         <function-class>org.jahia.modules.forge.tags.ForgeFunctions</function-class>
         <function-signature>java.util.List nextVersions(java.util.List)</function-signature>
     </function>
-
 </taglib>

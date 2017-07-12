@@ -27,6 +27,12 @@
     <template:addResources type="inlinejavascript">
         <script type="text/javascript">
 
+            function updateReferences(url) {
+                $.get(url,{},function(results){
+                    window.parent.location.reload(true);
+                },"json");
+            }
+
             $(document).ready(function () {
 
                 <c:url var="postURL" value="${url.base}${currentNode.path}"/>
@@ -35,6 +41,12 @@
                     <jsp:param name="postURL" value='${postURL}'/>
                     <jsp:param name="fullEditor" value='false'/>
                     </jsp:include>
+                });
+
+                $('#toggle-changeLog-${currentNode.identifier}').click(function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    $('#changeLog-${currentNode.identifier}').editable('toggle');
                 });
 
                 $('#toggle-changeLog-${currentNode.identifier}').click(function (e) {
@@ -55,7 +67,11 @@
             </div>
 
             <div class="pull-right">
-
+<c:if test="${isDeveloper && not viewAsUser}">
+                <a class="btn btn-small detailButton" href="#" onclick="updateReferences('<c:url value="${url.base}${currentNode.path}.updateReferences.do"/>')">
+                    Update References
+                </a>
+</c:if>
                 <a class="btn btn-small detailButton" href="${currentNode.properties.url.string}"
                    onclick="countDownload('<c:url value="${url.base}${currentNode.path}"/>')">
                     <fmt:message key="jnt_forgeEntry.label.downloadVersion">

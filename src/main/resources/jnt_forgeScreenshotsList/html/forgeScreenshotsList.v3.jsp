@@ -17,20 +17,13 @@
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 
-<c:if test="${fn:length( fn:trim( functions:removeHtmlTags( fn:replace(param['propertyName'], '&nbsp;', ' ') ))) eq 0
-                && (not isDeveloper || viewAsUser)}">
-    <template:addResources type="inlinejavascript">
-
-        <script type="text/javascript">
-
-            $(document).ready(function() {
-
-                var tabID = $('${param['wrapperSelector']}').parent('.tab-pane').attr("id");
-                var navTabSelector = "a[href='#" + tabID + "']";
-
-                $(".jnt_bootstrapTabularList").find(navTabSelector).parent().remove();
-            });
-        </script>
-
-    </template:addResources>
+<c:set var="pictures" value="${jcr:getChildrenOfType(currentNode, 'jmix:image')}"/>
+<c:if test="${!empty pictures}">
+    <section style="max-width: 920px;margin: 0 auto;">
+        <c:forEach var="moduleScreenshot" items="${pictures}" varStatus="status">
+            <div class="screenshot-container">
+                <img src="${moduleScreenshot.url}" alt="${moduleScreenshot.displayableName}" data-action="zoom" />
+            </div>
+        </c:forEach>
+    </section>
 </c:if>

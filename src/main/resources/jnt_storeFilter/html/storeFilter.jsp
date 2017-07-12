@@ -21,7 +21,8 @@
             "cert-filter":"",
             "tag-filter":"",
             "cat-filter":""
-        }
+        };
+
         function resetFilters(){
 
             $(".forge").isotope({filter:''});

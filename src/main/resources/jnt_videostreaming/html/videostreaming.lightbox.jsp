@@ -21,24 +21,40 @@
 <c:if test="${currentNode.properties.provider.string eq 'youtube'}">
 <div id="videostreaming_${currentNode.identifier}" class="videostreaming">
     <a href="//www.youtube.com/watch?v=${currentNode.properties.identifier.string}" data-lity class="video">
-        <span></span>
-        <img src="http://img.youtube.com/vi/${currentNode.properties.identifier.string}/0.jpg" />
+        <span><i class="material-icons jahia-color" style="font-size: 96px;">play_circle_outline</i></span>
+        <img src="http://img.youtube.com/vi/${currentNode.properties.identifier.string}/mqdefault.jpg" />
     </a>
 </div>
 </c:if>
 <c:if test="${currentNode.properties.provider.string eq 'vimeo'}">
+    <script>
+        $(document).ready(function(){
+            var url = 'https://vimeo.com/api/oembed.json?url=https://vimeo.com/${currentNode.properties.identifier.string}';
+            $.get(url,null,function(data){
+                $(".vimeo-thumbnail").attr("src",data.thumbnail_url);
+            },"json");
+        })
+    </script>
     <div id="videostreaming_${currentNode.identifier}" class="videostreaming">
         <a href="//player.vimeo.com/video/${currentNode.properties.identifier.string}" data-lity class="video">
-            <span></span>
-            <img src="<c:url value='${url.currentModule}/img/video_background.png'/>" />
+            <span><i class="material-icons jahia-color" style="font-size: 96px;">play_circle_outline</i></span>
+            <img class="vimeo-thumbnail"/>
         </a>
     </div>
 </c:if>
 <c:if test="${currentNode.properties.provider.string eq 'dailymotion'}">
+    <script>
+        $(document).ready(function(){
+            var url = 'https://api.dailymotion.com/video/${currentNode.properties.identifier.string}?fields=thumbnail_240_url';
+            $.get(url,null,function(data){
+                $(".daily-thumbnail").attr("src",data.thumbnail_240_url);
+            },"json");
+        })
+    </script>
     <div id="videostreaming_${currentNode.identifier}" class="videostreaming">
         <a href="//dailymotion.com/embed/video/${currentNode.properties.identifier.string}" data-lity class="video">
-            <span></span>
-            <img src="<c:url value='${url.currentModule}/img/video_background.png'/>" />
+            <span><i class="material-icons jahia-color" style="font-size: 96px;">play_circle_outline</i></span>
+            <img class="daily-thumbnail" />
         </a>
     </div>
 </c:if>

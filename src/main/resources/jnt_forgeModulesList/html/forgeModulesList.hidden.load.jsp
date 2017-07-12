@@ -24,9 +24,11 @@
 <c:set var="statement"
        value="SELECT * FROM [jnt:content]
                 WHERE ISDESCENDANTNODE('${renderContext.site.path}') ${publishedCondition}
-                AND ([jcr:primaryType] = 'jnt:forgeModule' OR [jcr:primaryType] = 'jnt:forgePackage')
+                AND ([jcr:primaryType] = 'jnt:forgeModule')
                 ORDER BY [jcr:created] DESC"/>
+
 
 <query:definition var="listQuery" statement="${statement}"/>
 <c:set target="${moduleMap}" property="listQuery" value="${listQuery}" />
+
 <template:addCacheDependency flushOnPathMatchingRegexp="${renderContext.site.path}/contents/modules-repository/.*"/>

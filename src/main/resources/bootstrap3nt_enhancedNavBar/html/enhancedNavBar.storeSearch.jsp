@@ -33,7 +33,7 @@
             <c:set var="navbarClasses" value="${navbarClasses} ${styleName.string}"/>
         </c:if>
 
-        <nav id="filters" class="navbar navbar-default${navbarClasses}" data-spy="affix" data-offset-top="500">
+        <nav id="filters" class="navbar navbar-default${navbarClasses}" data-offset-top="500">
             <div class="container${currentNode.properties.fluid.boolean ? '-fluid' : ''}">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
