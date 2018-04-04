@@ -55,6 +55,7 @@
     <template:addResources type="css" resources="bootstrap.min.css"/>
     <template:addResources type="css" resources="appstore.css"/>
     <template:addResources type="css" resources="bootstrap.icon-large.min.css"/>
+    <template:addResources type="css" resources="store_fixes.css"/>
 
 </head>
 <body style="background-color: #fff;" <c:if test="${renderContext.mainResource.resolvedTemplate eq 'changelog2'}"> class="changeLogWrapper"</c:if>>

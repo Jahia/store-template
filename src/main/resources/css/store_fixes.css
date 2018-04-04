@@ -1,0 +1,127 @@
+
+/*======= App Store UI fixes =======*/
+
+
+/* New selectors */
+
+#content h4 {
+    color: #03a9f4;
+    padding-left: 23px;
+    font-weight: 600;
+    margin-top: 24px;
+}
+
+h4#tags-heading {
+    font-size: 16px;
+    padding-left: 47px;
+    margin-bottom: 18px;
+}
+
+ul.filter-info.list-inline {
+    margin-top: 16px;
+    margin-bottom: 4px;
+    padding-left: 8px;
+}
+
+.dropdown-menu .badge {
+    background-color: #4792d2;
+}
+
+.modal-dialog.changeLogDialog {
+    min-height: 480px;
+}
+
+.changeLogDialog .modal-header {
+    display: none;
+}
+
+
+/* Login modal */
+
+.login-dialog .modal-header {
+    color: #999;
+    text-transform: uppercase;
+    border-bottom: 1px solid #cecece;
+    letter-spacing: 2px;
+    height: 64px;
+    margin-bottom: 24px;
+}
+
+.login-dialog h4.modal-title {
+    padding: 0;
+    line-height: 37px;
+    font-weight: 600;
+}
+
+.login-dialog .checkbox {
+    display: inline-block;
+    margin-right: 16px;
+    margin-left: -16px;
+    margin-bottom: 12px;
+    margin-top: 2px;
+}
+
+.login-dialog .checkbox label {
+    font-weight: 500;
+    color: rgba(0,0,0,0.87);
+}
+
+.login-dialog .checkbox input[type=checkbox] {
+    position: relative;
+    margin-left: initial;
+}
+
+
+/* Overrides */
+
+.jps-moduleCard .card-desc {
+    height: 54px;
+}
+
+.navbar-fixed-top {
+    border-bottom: 2px solid #f8f8f8;
+    box-shadow: none !important;
+}
+
+search.search-bar {
+    margin-top: 20px;
+}
+
+#search .form-control {
+    font-size: 20px;
+}
+
+.tag-modal .modal-header {
+    padding: 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.modal-header input::placeholder {
+    color: rgba(0, 0, 0, 0.64);
+    font-weight: 600;
+}
+
+.moduleImage {
+    width: 80px;
+    float: none;
+    margin-top: 20px;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+}
+
+
+/* Media queries */
+
+@media screen and (max-width: 768px) {
+
+    .navbar-collapse {
+        background: #ffffff;
+        margin-top: 8px;
+        margin-bottom: -20px;
+    }
+
+    .navbar-collapse.collapse.in {
+        border-bottom: 2px solid #f8f8f8;
+    }
+
+}

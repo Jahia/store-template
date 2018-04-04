@@ -29,7 +29,7 @@
         </button>
 
         <div id="loginForm_${currentNode.identifier}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="loginFormModalLabel_${currentNode.identifier}">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog login-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -72,7 +72,7 @@
                                     <div class="col-sm-offset-2 col-sm-10">
                                         <div class="checkbox">
                                             <label for="useCookie">
-                                                <input type="checkbox" id="useCookie" name="useCookie"/>
+                                                <input type="checkbox" id="useCookie" name="useCookie" class="fs1"/>
                                                 <fmt:message key="bootstrap3nt_navBarItemLoginForm.menu.rememberMe"/>
                                             </label>
                                         </div>

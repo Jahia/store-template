@@ -59,7 +59,7 @@
 
         <!-- Modal -->
         <div class="modal fade tag-modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document" style="width:90%">
+            <div class="modal-dialog login-dialog" role="document" style="width:90%">
                 <div class="modal-content">
                     <div class="modal-header">
                         <input type="text" class="form-control" id="usr" placeholder="FILTER TAGS">

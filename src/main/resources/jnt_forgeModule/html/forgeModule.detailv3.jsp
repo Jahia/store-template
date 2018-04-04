@@ -302,7 +302,7 @@
                         <c:if test="${not empty previousVersions}">
                             <!-- ** Start CHANGE LOG MODAL -->
                             <div id="changeLogModal" class="modal fade" role="dialog" tabindex="-1">
-                                <div class="modal-dialog changeLogDialog">
+                                <div class="modal-dialog login-dialog changeLogDialog">
                                     <div class="modal-header">
                                         <button type="button" class="close pull-right"
                                                 data-dismiss="modal">&times;</button>
