@@ -87,10 +87,10 @@
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-default" type="button" data-dismiss="modal">
-                                <i class="glyphicon glyphicon-remove glyphicon-white"></i>&nbsp;<fmt:message key='bootstrap3nt_navBarItemLoginForm.menu.button.close'/>
+                                <fmt:message key='bootstrap3nt_navBarItemLoginForm.menu.button.close'/>
                             </button>
                             <button class="btn btn-primary" type="submit">
-                                <i class="glyphicon glyphicon-ok glyphicon-white"></i>&nbsp;<fmt:message key='bootstrap3nt_navBarItemLoginForm.menu.button.title'/>
+                                <fmt:message key='bootstrap3nt_navBarItemLoginForm.menu.button.title'/>
                             </button>
                         </div>
                     </ui:loginArea>

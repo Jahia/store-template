@@ -27,6 +27,7 @@
                                                     "/>
 
 <template:addResources type="css" resources="appStore.css"/>
+<template:addResources type="css" resources="store_fixes.css"/>
 
 <c:set var="id" value="${currentNode.identifier}"/>
 <c:set var="isDeveloper" value="${jcr:hasPermission(currentNode, 'jcr:write')}"/>

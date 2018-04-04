@@ -25,6 +25,7 @@
 <template:addResources type="css" resources="libraries/photoswipe/photoswipe.css"/>
 <template:addResources type="css" resources="libraries/photoswipe/default-skin/default-skin.css"/>
 <template:addResources type="css" resources="libraries/photoswipe/gallerycss.css"/>
+<template:addResources type="css" resources="store_fixes.css"/>
 
 <template:addCacheDependency node="${moduleMap.latestVersion}"/>
 <c:set var="hasRepositoryAccess" value="${jcr:hasPermission(currentNode, 'repositoryExplorer')}"/>

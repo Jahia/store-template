@@ -53,7 +53,7 @@
     <template:addResources type="javascript" resources="libraries/underscore-min.js"/>
     <template:addResources type="javascript" resources="libraries/filtersmanager.js"/>
     <template:addResources type="css" resources="bootstrap.min.css"/>
-    <template:addResources type="css" resources="appstore.css"/>
+    <template:addResources type="css" resources="appStore.css"/>
     <template:addResources type="css" resources="bootstrap.icon-large.min.css"/>
     <template:addResources type="css" resources="store_fixes.css"/>
 

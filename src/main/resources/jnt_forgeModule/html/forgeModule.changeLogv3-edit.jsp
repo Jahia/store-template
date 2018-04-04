@@ -19,6 +19,7 @@
 
 <template:addResources type="css" resources="libraries/fileinput.min.css"/>
 <template:addResources type="css" resources="appStore.css"/>
+<template:addResources type="css" resources="store_fixes.css"/>
 <template:addResources type="javascript" resources="libraries/fileinput/plugins/canvas-to-blob.min.js,
                                                     libraries/fileinput/plugins/sortable.min.js,
                                                     libraries/fileinput/plugins/purify.min.js,
