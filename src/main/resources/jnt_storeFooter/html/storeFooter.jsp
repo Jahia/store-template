@@ -37,7 +37,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <p><i class="material-icons" style="font-size: 16px;vertical-align: text-bottom;">copyright</i>2002-2017&nbsp;All Rights Reserved by Jahia Solutions Group SA</p>
+                <p><i class="material-icons" style="font-size: 16px;vertical-align: text-bottom;">copyright</i>2002-2019&nbsp;All Rights Reserved by Jahia Solutions Group SA</p>
                 <div class="clear"></div>
             </div>
             <div class="col-md-6">
