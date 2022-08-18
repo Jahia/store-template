@@ -49,10 +49,11 @@
   <parent>
     <groupId>org.jahia.modules</groupId>
     <artifactId>jahia-modules</artifactId>
-    <version>7.1.1.0</version>
+    <version>8.0.0.0</version>
   </parent>
   <artifactId>store-template</artifactId>
-  <version>2.0.6-SNAPSHOT</version>
+  <groupId>org.jahia.community.modules</groupId>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <name>Jahia Store Template</name>
   <description>This is the custom profile module (Jahia Store Template) for running on a Digital Experience Manager server.</description>
@@ -98,6 +99,7 @@
         <configuration>
           <instructions>
             <Jahia-Module-Type>templatesSet</Jahia-Module-Type>
+			<Require-Capability>osgi.extender;filter:="(osgi.extender=org.jahia.bundles.blueprint.extender.config)"</Require-Capability>
             <Import-Package>${jahia.plugin.projectPackageImport},
                             org.jahia.services.search,
                             *</Import-Package>
