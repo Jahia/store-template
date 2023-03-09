@@ -54,7 +54,20 @@
                 <author>${authorName}
                     <c:if test="${not empty currentNode.properties['status'].string}">
                         <span class="module-badge-16 module-${currentNode.properties['status'].string}">
-                            <i class="material-icons noselect" title="${currentNode.properties['status'].string}">
+                            <i class="material-icons noselect" title="<c:choose>
+                                   <c:when test="${currentNode.properties['status'].string eq 'supported'}">
+                                       <fmt:message key="jnt_forgeEntry.status.supported"/>: <fmt:message key="jnt_forgeEntry.status.supported.explanation"/>
+                                   </c:when>
+                                   <c:when test="${currentNode.properties['status'].string eq 'community'}">
+                                       <fmt:message key="jnt_forgeEntry.status.community"/>: <fmt:message key="jnt_forgeEntry.status.community.explanation"/>
+                                   </c:when>
+                                   <c:when test="${currentNode.properties['status'].string eq 'prereleased'}">
+                                       <fmt:message key="jnt_forgeEntry.status.prereleased"/>: <fmt:message key="jnt_forgeEntry.status.prereleased.explanation"/>
+                                   </c:when>
+                                   <c:when test="${currentNode.properties['status'].string eq 'labs'}">
+                                       <fmt:message key="jnt_forgeEntry.status.labs"/>: <fmt:message key="jnt_forgeEntry.status.labs.explanation"/>
+                                   </c:when>
+                               </c:choose>">
                                 <c:choose>
                                     <c:when test="${currentNode.properties['status'].string eq 'supported'}">
                                         check_circle
