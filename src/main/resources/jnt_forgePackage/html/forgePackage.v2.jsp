@@ -81,6 +81,9 @@
                                    <c:when test="${currentNode.properties['status'].string eq 'labs'}">
                                        <fmt:message key="jnt_forgeEntry.status.labs"/>: <fmt:message key="jnt_forgeEntry.status.labs.explanation"/>
                                    </c:when>
+                                   <c:when test="${currentNode.properties['status'].string eq 'legacy'}">
+                                       <fmt:message key="jnt_forgeEntry.status.legacy"/>: <fmt:message key="jnt_forgeEntry.status.legacy.explanation"/>
+                                   </c:when>
                                </c:choose>">
                                 <c:choose>
                                     <c:when test="${currentNode.properties['status'].string eq 'supported'}">
@@ -94,6 +97,9 @@
                                     </c:when>
                                     <c:when test="${currentNode.properties['status'].string eq 'labs'}">
                                         bug_report
+                                    </c:when>
+                                    <c:when test="${currentNode.properties['status'].string eq 'legacy'}">
+                                        elderly
                                     </c:when>
                                 </c:choose>
                             </i>

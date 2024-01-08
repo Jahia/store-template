@@ -158,6 +158,7 @@
 <fmt:message key="jnt_forgeEntry.status.labs" var="labsLabel"/>
 <fmt:message key="jnt_forgeEntry.status.prereleased" var="prereleasedLabel"/>
 <fmt:message key="jnt_forgeEntry.status.supported" var="supportedLabel"/>
+<fmt:message key="jnt_forgeEntry.status.legacy" var="legacyLabel"/>
 <ul class="nav navbar-nav navbar-right" data-input="#tag-search">
     <li class="dropdown hidden-xs">
         <a href="#" id="cert-filter" class="dropdown-toggle forge-filter" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><fmt:message key="jnt_storefilter.label.certification"/> <span class="caret"></span></a>

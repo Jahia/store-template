@@ -165,6 +165,9 @@
                 case 'prereleased':
                     icon = 'offline_pin';
                     break;
+                case 'deprecated':
+                    icon = 'elderly';
+                    break;
             }
             return '<span class="module-' + subClassType + '-badge-' + size +' module-' + status + '"><i class="material-icons noselect" title="' + status + '">' + icon + '</i></span>';
 
@@ -326,6 +329,7 @@
 <fmt:message key="jnt_forgeEntry.status.labs" var="labsLabel"/>
 <fmt:message key="jnt_forgeEntry.status.prereleased" var="prereleasedLabel"/>
 <fmt:message key="jnt_forgeEntry.status.supported" var="supportedLabel"/>
+<fmt:message key="jnt_forgeEntry.status.legacy" var="legacyLabel"/>
 <ul class="nav navbar-nav navbar-right">
     <button type="button" class="btn btn-default btn-tagsmodal" data-toggle="modal" data-target="#myModal">Tags</button>
     <li class="dropdown status">

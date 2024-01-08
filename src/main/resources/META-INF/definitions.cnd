@@ -14,6 +14,6 @@
 
 [jmix:forgeElement] mixin
  - forcedRating (string) hidden
- - status (string, choicelist[resourceBundle]) = 'community' autocreated < 'community', 'labs', 'prereleased', 'supported'
+ - status (string, choicelist[resourceBundle]) = 'community' autocreated < 'community', 'labs', 'prereleased', 'supported', 'legacy'
 
 [jnt:storeFooter] > jnt:content, jmix:siteComponent
