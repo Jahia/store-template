@@ -379,6 +379,9 @@
                                         <c:when test="${currentNode.properties['status'].string eq 'labs'}">
                                             bug_report
                                         </c:when>
+                                        <c:when test="${currentNode.properties['status'].string eq 'legacy'}">
+                                            elderly
+                                        </c:when>
                                     </c:choose>
                                 </i>
                             </span>
@@ -647,6 +650,10 @@
                                                     <option value="supported"
                                                             <c:if test="${status eq 'supported'}">selected</c:if>>
                                                         <fmt:message key="jnt_forgeEntry.status.supported"/>
+                                                    </option>
+                                                    <option value="legacy"
+                                                            <c:if test="${status eq 'legacy'}">selected</c:if>>
+                                                        <fmt:message key="jnt_forgeEntry.status.legacy"/>
                                                     </option>
 
                                                 </select>

@@ -1791,6 +1791,13 @@ span.module-badge-24.module-prereleased {
     color: #FF9800;
 }
 
+span.module-badge-16.module-legacy,
+span.module-filter-badge-16.module-legacy,
+span.module-tag-badge-13.module-legacy,
+span.module-badge-24.module-legacy {
+    color: #7C0A02;
+}
+
 .align-right {
     text-align: right !important;
 }
