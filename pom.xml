@@ -98,6 +98,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
+            <Jahia-Depends>skins</Jahia-Depends>
             <Jahia-Module-Type>templatesSet</Jahia-Module-Type>
 			<Require-Capability>osgi.extender;filter:="(osgi.extender=org.jahia.bundles.blueprint.extender.config)"</Require-Capability>
             <Import-Package>${jahia.plugin.projectPackageImport},
