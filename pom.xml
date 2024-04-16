@@ -44,8 +44,7 @@
         please contact the sales department at sales@jahia.com.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jahia.modules</groupId>
@@ -54,7 +53,7 @@
     </parent>
     <artifactId>store-template</artifactId>
     <groupId>org.jahia.community.modules</groupId>
-    <version>3.0.3-SNAPSHOT</version>
+    <version>3.0.3</version>
     <packaging>bundle</packaging>
     <name>Jahia Store Template</name>
     <description>This is the custom profile module (Jahia Store Template) for running on a Digital Experience Manager
@@ -64,7 +63,7 @@
         <connection>scm:git:git@github.com:Jahia/store-template.git</connection>
         <url>scm:git:git@github.com:Jahia/store-template</url>
         <developerConnection>scm:git:git@github.com:Jahia/store-template.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>store-template-3.0.3</tag>
     </scm>
     <distributionManagement>
         <repository>
