@@ -53,7 +53,7 @@
     </parent>
     <artifactId>store-template</artifactId>
     <groupId>org.jahia.community.modules</groupId>
-    <version>3.0.4</version>
+    <version>3.0.5-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Jahia Store Template</name>
     <description>This is the custom profile module (Jahia Store Template) for running on a Digital Experience Manager
@@ -63,7 +63,7 @@
         <connection>scm:git:git@github.com:Jahia/store-template.git</connection>
         <url>scm:git:git@github.com:Jahia/store-template</url>
         <developerConnection>scm:git:git@github.com:Jahia/store-template.git</developerConnection>
-        <tag>3_0_4</tag>
+        <tag>HEAD</tag>
     </scm>
     <distributionManagement>
         <repository>
