@@ -22,7 +22,7 @@
 <div id="videostreaming_${currentNode.identifier}" class="videostreaming">
     <a href="//www.youtube.com/watch?v=${currentNode.properties.identifier.string}" data-lity class="video">
         <span><i class="material-icons jahia-color" style="font-size: 96px;">play_circle_outline</i></span>
-        <img src="http://img.youtube.com/vi/${currentNode.properties.identifier.string}/mqdefault.jpg" />
+        <img src="https://img.youtube.com/vi/${currentNode.properties.identifier.string}/mqdefault.jpg" />
     </a>
 </div>
 </c:if>
