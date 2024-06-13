@@ -260,7 +260,7 @@
         <div class="col-md-9">
             <div class="row">
                 <div class="col-md-10">
-                    <h2>${title}
+                    <h1>${title}
                         <c:if test="${not empty currentNode.properties['status'].string}">
                             <span class="module-badge-24 module-${currentNode.properties['status'].string}"
                                   style="vertical-align: middle">
@@ -301,7 +301,7 @@
                                 </i>
                             </span>
                         </c:if>
-                    </h2>
+                    </h1>
                 </div>
             </div>
             <%--TAGS AND DOWNLOAD--%>
