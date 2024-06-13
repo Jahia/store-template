@@ -400,7 +400,7 @@
                                                    var="ref">
                                             <jcr:sql var="appStoreModule" sql="SELECT * FROM [jnt:content]
                 WHERE ISDESCENDANTNODE('${renderContext.site.path}') AND [published]=true
-                AND ([jcr:primaryType] = 'jnt:forgeModule') and localName() = '${ref}'
+                AND ([jcr:primaryType] = 'jnt:forgeModule') and localName() = '${fn:split(ref, '=')[0]}'
                 ORDER BY [jcr:title] ASC"/>
                                             <c:if test="${functions:length(appStoreModule.nodes) gt 0}">
                                                 <c:set var="nonSystemRefFound" value="true"/>
