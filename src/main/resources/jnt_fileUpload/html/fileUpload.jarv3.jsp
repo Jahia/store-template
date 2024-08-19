@@ -24,7 +24,7 @@
             uploadUrl: "<c:url value='${url.base}${renderContext.site.path}/contents/modules-repository.createEntryFromJar.do'/>", // server upload action
             uploadAsync: true,
             maxFileCount: 5,
-            allowedFileExtensions:['jar']
+            allowedFileExtensions:['jar','tgz']
         });
     });
 </script>

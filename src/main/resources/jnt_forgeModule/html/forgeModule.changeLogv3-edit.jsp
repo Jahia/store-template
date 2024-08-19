@@ -67,7 +67,7 @@
                     uploadAsync          : true,
                     maxFileCount         : 1,
                     showPreview          : false,
-                    allowedFileExtensions: ['jar']
+                    allowedFileExtensions: ['jar','tgz']
                 });
 
                 $fileVersion.on('filebatchuploadcomplete', function(event, files, extra) {

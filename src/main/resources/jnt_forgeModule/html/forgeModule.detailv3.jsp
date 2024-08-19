@@ -316,11 +316,21 @@
                         <div class="col-sm-12">
                             <c:choose>
                                 <c:when test="${moduleMap.latestVersion.properties['published'].boolean}">
-                                    <a class="btn btn-default module-download-btn pull-right"
-                                       href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>">
-                                        Download (${versionNumber.string})
-                                    </a>
-
+                                    <c:set var="versionFile" value="${jcr:getChildrenOfType(moduleMap.latestVersion, 'jnt:file')}"/>
+                                    <c:if test="${empty versionFile}">
+                                        <a class="btn btn-default module-download-btn pull-right"
+                                           href="<c:url value="${moduleMap.latestVersion.properties.url.string}"/>">
+                                            Download (${versionNumber.string})
+                                        </a>
+                                    </c:if>
+                                    <c:if test="${not empty versionFile}">
+                                        <c:forEach items="${versionFile}" var="file" varStatus="status">
+                                        <a class="btn btn-default module-download-btn pull-right"
+                                           href="<c:url value="${url.context}${url.files}${file.path}" context="/"/>">
+                                            Download (${versionNumber.string})
+                                        </a>
+                                        </c:forEach>
+                                    </c:if>
                                     <c:if test="${not empty previousVersions}">
                                         <div class="meta-info align-right">
                                             <a class="modal-link-text" data-toggle="modal" data-target="#changeLogModal"
