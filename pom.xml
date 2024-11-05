@@ -53,7 +53,7 @@
     </parent>
     <artifactId>store-template</artifactId>
     <groupId>org.jahia.community.modules</groupId>
-    <version>3.0.5-SNAPSHOT</version>
+    <version>3.1.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Jahia Store Template</name>
     <description>This is the custom profile module (Jahia Store Template) for running on a Digital Experience Manager
