@@ -14,22 +14,22 @@
 <template:addResources type="javascript" resources="libraries/benalman/debounce.js"/>
 <template:addResources type="inlinejavascript">
     <script type="text/javascript">
-        var categories              = null;
-        var statuses                  = null;
-        var filterManager           = new FiltersManager();
-        var filterClicked   = false;
+        var categories = null;
+        var statuses = null;
+        var filterManager = new FiltersManager();
+        var filterClicked = false;
         var DEFAULT_CATEGORY_FILTER = 'all';
         var DEFAULT_STATUS_FILTER = 'all';
 
         function setupFilters() {
             //Setup Isotope
-            var $isotope =  $('.filter-grid');
-            _.each($('.filter-grid'), function(grid) {
+            var $isotope = $('.filter-grid');
+            _.each($('.filter-grid'), function (grid) {
                 var $grid = $(grid);
                 $grid.isotope({
-                    itemSelector   : '[data-filter-categories]',
+                    itemSelector: '[data-filter-categories]',
                     percentPosition: true,
-                    masonry        : {
+                    masonry: {
                         columnWidth: '.grid-sizer'
                     }
                 });
@@ -71,10 +71,10 @@
             //remove or add filter
             //Set flag so that we don't close the dropdown when selecting/deselecting a filter.
             filterClicked = true;
-            var $el               = $(el);
+            var $el = $(el);
             var filterType = $el.attr('data-filter-type');
-            var $li               = $el.parent('li');
-            var filterValue     = $el.attr('data-filter');
+            var $li = $el.parent('li');
+            var filterValue = $el.attr('data-filter');
 
             //If it's the default filter type
             if (filterValue == getDefaultFilterValue(filterType)) {
@@ -130,7 +130,7 @@
         function updateDropdownFilterCount(filterType) {
             var filteredElementsCount = filterManager.getFilterTypeElementCount(filterType);
             _.each(getFilters(filterType), function (filterId) {
-                var filterBadge = $('a[data-filter*="' + filterId + '"][data-filter-type="' + filterType +'"] > span.badge');
+                var filterBadge = $('a[data-filter*="' + filterId + '"][data-filter-type="' + filterType + '"] > span.badge');
                 if (filteredElementsCount[filterId] > 0) {
                     filterBadge.html(filteredElementsCount[filterId]);
                     filterBadge.show();
@@ -152,7 +152,7 @@
         function generateStatusIconSpan(status, subClassType) {
             var icon = null;
             var size = subClassType == 'filter' ? 16 : 13;
-            switch(status) {
+            switch (status) {
                 case 'supported':
                     icon = 'check_circle';
                     break;
@@ -169,7 +169,7 @@
                     icon = 'elderly';
                     break;
             }
-            return '<span class="module-' + subClassType + '-badge-' + size +' module-' + status + '"><i class="material-icons noselect" title="' + status + '">' + icon + '</i></span>';
+            return '<span class="module-' + subClassType + '-badge-' + size + ' module-' + status + '"><i class="material-icons noselect" title="' + status + '">' + icon + '</i></span>';
 
         }
 
@@ -189,7 +189,7 @@
             });
             var statusSelectorElement = $("ul#statusList");
             statuses = getSortedStatus(modulesStatus);
-            _.each(statuses, function(statusString, index) {
+            _.each(statuses, function (statusString, index) {
                 var statusSplit = statusString.split("--statusKey--");
                 statuses[index] = statusSplit[1];
                 statusSelectorElement.append("<li><a href='#' class='forge-filter-field' data-filter='" + statusSplit[1] + "' data-filter-type='" + filterManager.STATUS + "' " + " onclick='dropdownFilterClick(this);'>" + generateStatusIconSpan(statusSplit[1], "filter") + statusSplit[0] + "&nbsp;<span class='badge' style='vertical-align: text-top;'>0</span></a></li>");
@@ -224,21 +224,21 @@
 
         var tagSystem = {
             topTagsNumber: 40,
-            topTags      : [],
-            searchEngine : null,
+            topTags: [],
+            searchEngine: null,
             targetElement: null,
-            init         : function () {
+            init: function () {
                 this.headingElement = $("h4#tags-heading");
                 this.headingElement.html("Top 40 tags");
                 this.targetElement = $("ul#tag-display");
-                this.topTags       = getTopKTags(tagCountMap, this.topTagsNumber).sort();
-                this.searchEngine  = new Bloodhound({
-                    initialize    : true,
-                    local         : getSortedTags(modulesTags),
+                this.topTags = getTopKTags(tagCountMap, this.topTagsNumber).sort();
+                this.searchEngine = new Bloodhound({
+                    initialize: true,
+                    local: getSortedTags(modulesTags),
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
                     datumTokenizer: Bloodhound.tokenizers.whitespace
                 });
-                var self           = this;
+                var self = this;
                 $("#usr").on("input", $.debounce(500, function (e) {
                     self.showSuggestedTags.call(self, e.currentTarget.value);
                 }))
@@ -282,7 +282,7 @@
             statusChildren.each(function (index, status) {
                 var value = $(status).data("filter");
                 if (value != "all") {
-                    $filter.append("<li class='filter-status'>" + status.childNodes[1].data + generateStatusIconSpan($(status).attr('data-filter'), "tag") +'</li>');
+                    $filter.append("<li class='filter-status'>" + status.childNodes[1].data + generateStatusIconSpan($(status).attr('data-filter'), "tag") + '</li>');
                 }
             });
             var children = $("#categoryList").children(".active").children("a");
@@ -307,7 +307,7 @@
          */
         function updateGridVisibility() {
             var $grid = $('div.filter-grid-container');
-            $grid.each(function(index, el) {
+            $grid.each(function (index, el) {
                 var $el = $(el);
                 if ($el.find('div[data-filter-element="show"]').length > 0) {
                     $el.css('visibility', "visible");
@@ -332,6 +332,7 @@
 <fmt:message key="jnt_forgeEntry.status.legacy" var="legacyLabel"/>
 <ul class="nav navbar-nav navbar-right">
     <button type="button" class="btn btn-default btn-tagsmodal" data-toggle="modal" data-target="#myModal">Tags</button>
+    <button type="button" class="btn btn-default btn-tagsmodal" style="margin-left:0px;" onclick="window.location.href='${url.server}${url.context}/feed';"><img src="<c:url value='/modules/store-template/img/rss.png'/>" alt=""/></button>
     <li class="dropdown status">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
            aria-expanded="false">
