@@ -5,3 +5,5 @@
 *.iml
 .DS_Store
 target/
+/pom.xml.releaseBackup
+/release.properties
