@@ -22,7 +22,7 @@
 <template:addResources type="javascript" resources="libraries/fileinput/plugins/sortable.js"/>
 <template:addResources type="javascript" resources="libraries/fileinput/fileinput.js"/>
 <template:addResources type="css" resources="libraries/fileinput.css"/>
-<template:addResources type="javascript" resources="ckeditor.js"/>
+<script src='<c:url value="/modules/ckeditor/javascript/ckeditor.js" />'></script>
 <template:addCacheDependency node="${moduleMap.latestVersion}"/>
 <template:addCacheDependency path="${currentNode.path}/screenshots"/>
 <c:set var="hasRepositoryAccess" value="${jcr:hasPermission(currentNode, 'repositoryExplorer')}"/>
