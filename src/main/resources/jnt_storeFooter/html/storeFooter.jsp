@@ -37,12 +37,14 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <p><i class="material-icons" style="font-size: 16px;vertical-align: text-bottom;">copyright</i>2002-2019&nbsp;All Rights Reserved by Jahia Solutions Group SA</p>
+                <p><i class="material-icons" style="font-size: 16px;vertical-align: text-bottom;">copyright</i>2002-2025&nbsp;All Rights Reserved by Jahia Solutions Group SA</p>
                 <div class="clear"></div>
             </div>
             <div class="col-md-6">
-                <p class="pull-right text-right"><a class="iubenda-nostyle iubenda-embed" href="https://www.iubenda.com/privacy-policy/816082" title="Privacy Policy" target="_blank">Privacy Policy</a> /
-                    <a href="https://www.jahia.com/terms-of-use-jahia" title="Terms of Use">Terms of Use</a> / <a href="https://www.jahia.com/cookies" title="Cookies">Cookies</a><br>
+                <p class="pull-right text-right">
+                    <a href="https://www.iubenda.com/privacy-policy/88352193" class="iubenda-nostyle no-brand iubenda-noiframe iubenda-embed iubenda-noiframe " title="Privacy Policy ">Privacy Policy</a><script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src="https://cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script> / 
+                    <a href="https://www.jahia.com/terms-of-use-jahia" title="Terms of Use">Terms of Use</a> / 
+                    <a href="https://www.iubenda.com/privacy-policy/88352193/cookie-policy" class="iubenda-nostyle no-brand iubenda-noiframe iubenda-embed iubenda-noiframe " title="Cookie Policy ">Cookie Policy</a><script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src="https://cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script><br>
                     <a href="https://www.facebook.com/JahiaSolutions" title="Facebook" target="_blank"><span class="fa-stack fa-lg"> <i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-facebook fa-stack-1x fa-inverse"></i> </span> </a> <a href="https://www.linkedin.com/company/jahia-solutions" title="LinkedIn" target="_blank"> <span class="fa-stack fa-lg"> <i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i> </span> </a> <a class="social-icon si-small si-light si-twitter" href="https://twitter.com/Jahia" target="_blank" title="Twitter"> <span class="fa-stack fa-lg"> <i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-twitter fa-stack-1x fa-inverse"></i> </span> </a> <a class="social-icon si-small si-light si-youtube" href="http://www.youtube.com/jahiacms" target="_blank" title="YouTube"> <span class="fa-stack fa-lg"> <i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-youtube fa-stack-1x fa-inverse"></i> </span> </a>
                 </p>
                 <div class="clear"></div>
