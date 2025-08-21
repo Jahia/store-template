@@ -318,7 +318,7 @@
         $('.ckarea').each(function (index, object) {
             var textarea = $(object);
             CKEDITOR.replace(textarea.attr('id'), {
-                toolbar: 'Basic'
+                toolbar: 'Full'
             });
         });
 
