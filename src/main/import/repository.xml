@@ -104,6 +104,7 @@
                                 <homeHeader j:view="header"
                                             jcr:mixinTypes="jmix:renderable"
                                             jcr:primaryType="jnt:contentList">
+                                    <full-read-only-notifier jcr:primaryType="jnt:full_read_only_notifier"/>
                                     <header-menu fluid="false"
                                                  inverse="false"
                                                  j:classname="header clearfix"

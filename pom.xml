@@ -76,7 +76,7 @@
         </snapshotRepository>
     </distributionManagement>
     <properties>
-        <jahia-depends>font-awesome,jquery,bootstrap3-core,bootstrap3-components,privateappstore,search,skins
+        <jahia-depends>font-awesome,jquery,bootstrap3-core,bootstrap3-components,privateappstore,search,skins,full-read-only-notifier
         </jahia-depends>
         <jahia.plugin.version>6.10</jahia.plugin.version>
     </properties>
