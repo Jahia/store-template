@@ -26,6 +26,8 @@ package org.jahia.modules.forge.tags;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.templates.ModuleVersion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -38,13 +40,19 @@ import java.util.*;
  * Time: 5:59 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ForgeFunctions {
+public final class ForgeFunctions {
+
+    private static final Logger logger = LoggerFactory.getLogger(ForgeFunctions.class);
+
+    private ForgeFunctions() {
+        // utility class - prevent instantiation
+    }
 
     public static List<JCRNodeWrapper> sortModulesByVersion(NodeIterator moduleIterator) {
         // get Version
 
-        LinkedList<ModuleVersion> versions = new LinkedList<ModuleVersion>();
-        Map<ModuleVersion,JCRNodeWrapper> modules = new HashMap<ModuleVersion, JCRNodeWrapper>();
+        LinkedList<ModuleVersion> versions = new LinkedList<>();
+        Map<ModuleVersion,JCRNodeWrapper> modules = new HashMap<>();
         while (moduleIterator.hasNext()) {
             JCRNodeWrapper module = (JCRNodeWrapper) moduleIterator.nextNode();
             try {
@@ -52,12 +60,12 @@ public class ForgeFunctions {
                 versions.add(moduleVersion);
                 modules.put(moduleVersion,module);
             } catch (RepositoryException e) {
-                // unable to read version, do nothing
+                logger.warn("Unable to read versionNumber for node {} - skipping from sorted list", module.getPath(), e);
             }
         }
         Collections.sort(versions);
         Collections.reverse(versions);
-        LinkedList<JCRNodeWrapper> sortedVersions = new LinkedList<JCRNodeWrapper>();
+        LinkedList<JCRNodeWrapper> sortedVersions = new LinkedList<>();
         for (ModuleVersion version : versions) {
             sortedVersions.add(modules.get(version));
         }
@@ -74,7 +82,7 @@ public class ForgeFunctions {
                     return module;
                 }
             } catch (RepositoryException e) {
-                // property cannot be read, do nothing
+                logger.warn("Unable to read 'published' property for node {} - skipping", module.getPath(), e);
             }
         }
         return  null;
@@ -82,10 +90,10 @@ public class ForgeFunctions {
 
     public static List<JCRNodeWrapper> previousVersions(List<JCRNodeWrapper> modules) {
         JCRNodeWrapper lastVersion = latestVersion(modules);
-        if (lastVersion == null || modules == null) {
-            return null;
+        if (lastVersion == null) {
+            return Collections.emptyList();
         }
-        List<JCRNodeWrapper> previousModules= new ArrayList<JCRNodeWrapper>(modules);
+        List<JCRNodeWrapper> previousModules = new ArrayList<>(modules);
         for (JCRNodeWrapper module: modules) {
             previousModules.remove(module);
             if (StringUtils.equals(lastVersion.getPath(),module.getPath())) {
@@ -97,10 +105,10 @@ public class ForgeFunctions {
 
     public static List<JCRNodeWrapper> nextVersions(List<JCRNodeWrapper> modules) {
         JCRNodeWrapper lastVersion = latestVersion(modules);
-        if (lastVersion == null|| modules == null) {
+        if (lastVersion == null) {
             return modules;
         }
-        List<JCRNodeWrapper> nextModules= new ArrayList<JCRNodeWrapper>(modules);
+        List<JCRNodeWrapper> nextModules = new ArrayList<>(modules);
         boolean delete = false;
         for (JCRNodeWrapper module: modules) {
             if (StringUtils.equals(lastVersion.getPath(),module.getPath())) {

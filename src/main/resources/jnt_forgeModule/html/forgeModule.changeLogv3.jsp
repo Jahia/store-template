@@ -18,12 +18,13 @@
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <template:addResources type="css" resources="libraries/fileinput.min.css"/>
 <template:addResources type="css" resources="appStore.css"/>
+<c:set var="safeLocale" value="${fn:replace(fn:replace(renderContext.mainResourceLocale, '..', ''), '/', '')}"/>
 <template:addResources type="javascript" resources="libraries/fileinput/plugins/canvas-to-blob.min.js,
                                                     libraries/fileinput/plugins/sortable.min.js,
                                                     libraries/fileinput/plugins/purify.min.js,
                                                     libraries/fileinput/fileinput.js,
                                                     libraries/fileinput/themes/fa/theme.js,
-                                                    libraries/fileinput/locales/${renderContext.mainResourceLocale}.js
+                                                    libraries/fileinput/locales/${safeLocale}.js
                                                     "/>
 
 <c:set var="id" value="${currentNode.identifier}"/>

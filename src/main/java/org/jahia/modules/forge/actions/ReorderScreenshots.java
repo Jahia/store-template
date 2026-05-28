@@ -23,7 +23,6 @@
  */
 package org.jahia.modules.forge.actions;
 
-import antlr.StringUtils;
 import org.jahia.bin.Action;
 import org.jahia.bin.ActionResult;
 import org.jahia.services.content.JCRNodeWrapper;
@@ -33,6 +32,7 @@ import org.jahia.services.render.Resource;
 import org.jahia.services.render.URLResolver;
 import org.slf4j.Logger;
 
+import javax.jcr.ItemNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
@@ -46,21 +46,37 @@ import java.util.Map;
  */
 public class ReorderScreenshots extends Action {
 
-    private transient static Logger logger = org.slf4j.LoggerFactory.getLogger(ReorderScreenshots.class);
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(ReorderScreenshots.class);
 
     @Override
     public ActionResult doExecute(HttpServletRequest req, RenderContext renderContext, Resource resource, JCRSessionWrapper session, Map<String, List<String>> parameters, URLResolver urlResolver) throws Exception {
 
         List<String> orderedIds = parameters.get("nodes[]");
         JCRNodeWrapper screenshots = resource.getNode();
-        if(screenshots.isNodeType("jnt:forgeScreenshotsList")) {
-            for (String orderedId : orderedIds) {
-                screenshots.orderBefore(org.apache.commons.lang.StringUtils.substringAfterLast(session.getNodeByIdentifier(orderedId).getPath(),"/"),null);
-            }
-            session.save();
-        } else {
+        if (!screenshots.isNodeType("jnt:forgeScreenshotsList")) {
             return ActionResult.INTERNAL_ERROR_JSON;
         }
+        if (orderedIds == null) {
+            return ActionResult.BAD_REQUEST;
+        }
+        for (String orderedId : orderedIds) {
+            final JCRNodeWrapper candidate;
+            try {
+                candidate = session.getNodeByIdentifier(orderedId);
+            } catch (ItemNotFoundException e) {
+                logger.warn("ReorderScreenshots: unknown node identifier {}", orderedId);
+                return ActionResult.BAD_REQUEST;
+            }
+            // Only allow reordering nodes that actually belong to this screenshots list
+            // (prevents reordering / referencing arbitrary nodes via a forged identifier - IDOR).
+            if (!candidate.getParent().getIdentifier().equals(screenshots.getIdentifier())) {
+                logger.warn("ReorderScreenshots: node {} is not a child of {} - rejected",
+                        orderedId, screenshots.getPath());
+                return ActionResult.BAD_REQUEST;
+            }
+            screenshots.orderBefore(candidate.getName(), null);
+        }
+        session.save();
         return ActionResult.OK_JSON;
     }
 }
