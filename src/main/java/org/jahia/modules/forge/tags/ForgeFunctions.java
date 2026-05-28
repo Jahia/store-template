@@ -26,6 +26,8 @@ package org.jahia.modules.forge.tags;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.templates.ModuleVersion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -40,6 +42,8 @@ import java.util.*;
  */
 public class ForgeFunctions {
 
+    private static final Logger logger = LoggerFactory.getLogger(ForgeFunctions.class);
+
     public static List<JCRNodeWrapper> sortModulesByVersion(NodeIterator moduleIterator) {
         // get Version
 
@@ -52,7 +56,7 @@ public class ForgeFunctions {
                 versions.add(moduleVersion);
                 modules.put(moduleVersion,module);
             } catch (RepositoryException e) {
-                // unable to read version, do nothing
+                logger.warn("Unable to read versionNumber for node {} - skipping from sorted list", module.getPath(), e);
             }
         }
         Collections.sort(versions);
@@ -74,7 +78,7 @@ public class ForgeFunctions {
                     return module;
                 }
             } catch (RepositoryException e) {
-                // property cannot be read, do nothing
+                logger.warn("Unable to read 'published' property for node {} - skipping", module.getPath(), e);
             }
         }
         return  null;

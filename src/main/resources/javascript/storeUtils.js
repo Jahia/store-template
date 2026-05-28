@@ -108,12 +108,15 @@ function getSortedStatus(modulesStatus) {
 }
 
 function moduleDoAddReview(modulePath, form) {
-
-    $.post(modulePath+".addReview.do", form.serialize(), function(result) {
-
-        if (result['moduleUrl'] != "")
-            window.location = result['moduleUrl'];
-
+    $.post(modulePath + ".addReview.do", form.serialize(), function (result) {
+        var dest = result['moduleUrl'];
+        if (dest && dest !== "") {
+            // Block open redirect: only follow same-origin or relative URLs
+            if (/^https?:\/\//i.test(dest) && dest.indexOf(window.location.origin) !== 0) {
+                return;
+            }
+            window.location = dest;
+        }
     }, "json");
 }
 

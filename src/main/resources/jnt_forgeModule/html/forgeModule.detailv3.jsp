@@ -193,7 +193,7 @@
                             ${fn:replace(authorLabel,':','')}
                         </div>
                         <div class="module-details-content">
-                            ${authorName}
+                            ${fn:escapeXml(authorName)}
                         </div>
                     </div>
                 </div>
@@ -241,9 +241,13 @@
                 <div class="col-md-12">
                     <div class="meta-info large">
                         <c:if test="${not empty authorURL}">
-                            <a class="module-details-link" target="_blank" href="${authorURL}">
-                                <fmt:message key="jnt_forgeEntry.label.authorURL"/>
-                            </a>
+                            <%-- Only render http(s) URLs (blocks javascript:/data: scheme XSS) and escape the attribute value --%>
+                            <c:set var="safeAuthorURL" value="${(fn:startsWith(fn:toLowerCase(authorURL), 'http://') or fn:startsWith(fn:toLowerCase(authorURL), 'https://')) ? authorURL : ''}"/>
+                            <c:if test="${not empty safeAuthorURL}">
+                                <a class="module-details-link" target="_blank" rel="noopener noreferrer" href="${fn:escapeXml(safeAuthorURL)}">
+                                    <fmt:message key="jnt_forgeEntry.label.authorURL"/>
+                                </a>
+                            </c:if>
                         </c:if>
                         <div class="developperEmail">
                             <c:if test="${not empty authorEmail}">
@@ -260,7 +264,7 @@
         <div class="col-md-9">
             <div class="row">
                 <div class="col-md-10">
-                    <h1>${title}
+                    <h1>${fn:escapeXml(title)}
                         <c:if test="${not empty currentNode.properties['status'].string}">
                             <span class="module-badge-24 module-${currentNode.properties['status'].string}"
                                   style="vertical-align: middle">

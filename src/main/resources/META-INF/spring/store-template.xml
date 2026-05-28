@@ -7,8 +7,12 @@
         http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.0.xsd">
     <bean class="org.jahia.modules.forge.actions.DeleteScreenshot">
         <property name="requireAuthenticatedUser" value="true"/>
+        <property name="requiredPermission" value="jcr:write"/>
+        <property name="requiredMethods" value="POST"/>
     </bean>
     <bean class="org.jahia.modules.forge.actions.ReorderScreenshots">
         <property name="requireAuthenticatedUser" value="true"/>
+        <property name="requiredPermission" value="jcr:write"/>
+        <property name="requiredMethods" value="POST"/>
     </bean>
 </beans>

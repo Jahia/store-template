@@ -167,13 +167,13 @@
                 <c:set var="categoryIdentifier" value="${cat.string}"/>
                 <jcr:node var="category" uuid="${categoryIdentifier}"/>
             </c:forEach>
-            modulesTags['${module.identifier}'] = [];
+            modulesTags['${fn:escapeXml(module.identifier)}'] = [];
             <c:if test="${category != null}">
-                modulesCategories['${category.properties['jcr:title'].string}'] = "${category.identifier}";
+                modulesCategories['${functions:escapeJavaScript(category.properties["jcr:title"].string)}'] = "${functions:escapeJavaScript(category.identifier)}";
             </c:if>
             <c:forEach items="${module.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
-                modulesTags['${module.identifier}'].push('${currentTag.string}');
-                tagCountMap['${currentTag.string}'] = tagCountMap['${currentTag.string}'] ? tagCountMap['${currentTag.string}'] + 1 : 1;
+                modulesTags['${fn:escapeXml(module.identifier)}'].push('${functions:escapeJavaScript(currentTag.string)}');
+                tagCountMap['${functions:escapeJavaScript(currentTag.string)}'] = tagCountMap['${functions:escapeJavaScript(currentTag.string)}'] ? tagCountMap['${functions:escapeJavaScript(currentTag.string)}'] + 1 : 1;
             </c:forEach>
         </c:if>
     </c:forEach>
@@ -184,13 +184,13 @@
                 <c:set var="categoryIdentifier" value="${cat.string}"/>
                 <jcr:node var="category" uuid="${categoryIdentifier}"/>
             </c:forEach>
-            modulesTags['${module.identifier}'] = [];
+            modulesTags['${fn:escapeXml(module.identifier)}'] = [];
             <c:if test="${category != null}">
-                modulesCategories['${category.properties['jcr:title'].string}'] = "${category.identifier}";
+                modulesCategories['${functions:escapeJavaScript(category.properties["jcr:title"].string)}'] = "${functions:escapeJavaScript(category.identifier)}";
             </c:if>
             <c:forEach items="${module.properties['j:tagList']}" var="currentTag" varStatus="moduleStatus">
-                modulesTags['${module.identifier}'].push('${currentTag.string}');
-                tagCountMap['${currentTag.string}'] = tagCountMap['${currentTag.string}'] ? tagCountMap['${currentTag.string}'] + 1 : 1;
+                modulesTags['${fn:escapeXml(module.identifier)}'].push('${functions:escapeJavaScript(currentTag.string)}');
+                tagCountMap['${functions:escapeJavaScript(currentTag.string)}'] = tagCountMap['${functions:escapeJavaScript(currentTag.string)}'] ? tagCountMap['${functions:escapeJavaScript(currentTag.string)}'] + 1 : 1;
             </c:forEach>
         </c:if>
     </c:forEach>

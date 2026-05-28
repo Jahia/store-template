@@ -45,14 +45,14 @@
             <div class="card-topMain">
                 <c:choose>
                     <c:when test="${not empty currentResource.moduleParams.showColorTitle}">
-                        <h1 class="truncate <c:choose><c:when test="${published}">text-success</c:when><c:otherwise>text-danger</c:otherwise></c:choose>">${title}</h1>
+                        <h1 class="truncate <c:choose><c:when test="${published}">text-success</c:when><c:otherwise>text-danger</c:otherwise></c:choose>">${fn:escapeXml(title)}</h1>
                     </c:when>
                     <c:otherwise>
-                        <h1 class="truncate">${title}</h1>
+                        <h1 class="truncate">${fn:escapeXml(title)}</h1>
                     </c:otherwise>
                 </c:choose>
 
-                <author>${authorName}
+                <author>${fn:escapeXml(authorName)}
                     <c:if test="${not empty currentNode.properties['status'].string}">
                         <span class="module-badge-16 module-${currentNode.properties['status'].string}">
                             <i class="material-icons noselect" title="<c:choose>

@@ -104,7 +104,7 @@
 
     var tagsList = [];
     <c:forEach items="${currentNode.properties['j:tagList']}" var="tag">
-    tagsList.push('${fn:toLowerCase(tag.string)}');
+    tagsList.push('${functions:escapeJavaScript(fn:toLowerCase(tag.string))}');
     </c:forEach>
     function addTag() {
         var newTagVal = $('#newTag').val();

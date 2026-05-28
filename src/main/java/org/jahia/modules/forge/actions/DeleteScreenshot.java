@@ -50,15 +50,27 @@ public class DeleteScreenshot extends Action {
     @Override
     public ActionResult doExecute(HttpServletRequest req, RenderContext renderContext, Resource resource, JCRSessionWrapper session, Map<String, List<String>> parameters, URLResolver urlResolver) throws Exception {
 
-        JCRNodeWrapper module = resource.getNode();
-        if(module.getParent().getName().equals("screenshots") &&
-                (module.getParent().getParent().isNodeType("jnt:forgeModule") ||
-                        module.getParent().getParent().isNodeType("jnt:forgePackage"))) {
-            session.checkout(module);
-            logger.info("Screenshot " + module.getDisplayableName() + " has been deleted by user " + renderContext.getUser().getUsername());
-            module.remove();
-            session.save();
+        JCRNodeWrapper screenshot = resource.getNode();
+
+        // Only allow deleting an actual file/image node that lives directly under a
+        // module's (or package's) "screenshots" folder. This prevents the action from
+        // being abused to delete arbitrary content that merely happens to sit under a
+        // node named "screenshots". jcr:write is enforced by the Spring bean configuration.
+        boolean isImageOrFile = screenshot.isNodeType("jnt:file") || screenshot.isNodeType("jmix:image");
+        boolean hasValidLocation = "screenshots".equals(screenshot.getParent().getName()) &&
+                (screenshot.getParent().getParent().isNodeType("jnt:forgeModule") ||
+                        screenshot.getParent().getParent().isNodeType("jnt:forgePackage"));
+
+        if (!isImageOrFile || !hasValidLocation) {
+            logger.warn("DeleteScreenshot: node {} is not a valid screenshot - rejected", screenshot.getPath());
+            return ActionResult.BAD_REQUEST;
         }
+
+        session.checkout(screenshot);
+        logger.info("Screenshot {} has been deleted by user {}", screenshot.getDisplayableName(),
+                renderContext.getUser().getUsername());
+        screenshot.remove();
+        session.save();
         return ActionResult.OK_JSON;
     }
 }
