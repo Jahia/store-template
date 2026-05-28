@@ -40,15 +40,19 @@ import java.util.*;
  * Time: 5:59 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ForgeFunctions {
+public final class ForgeFunctions {
 
     private static final Logger logger = LoggerFactory.getLogger(ForgeFunctions.class);
+
+    private ForgeFunctions() {
+        // utility class - prevent instantiation
+    }
 
     public static List<JCRNodeWrapper> sortModulesByVersion(NodeIterator moduleIterator) {
         // get Version
 
-        LinkedList<ModuleVersion> versions = new LinkedList<ModuleVersion>();
-        Map<ModuleVersion,JCRNodeWrapper> modules = new HashMap<ModuleVersion, JCRNodeWrapper>();
+        LinkedList<ModuleVersion> versions = new LinkedList<>();
+        Map<ModuleVersion,JCRNodeWrapper> modules = new HashMap<>();
         while (moduleIterator.hasNext()) {
             JCRNodeWrapper module = (JCRNodeWrapper) moduleIterator.nextNode();
             try {
@@ -61,7 +65,7 @@ public class ForgeFunctions {
         }
         Collections.sort(versions);
         Collections.reverse(versions);
-        LinkedList<JCRNodeWrapper> sortedVersions = new LinkedList<JCRNodeWrapper>();
+        LinkedList<JCRNodeWrapper> sortedVersions = new LinkedList<>();
         for (ModuleVersion version : versions) {
             sortedVersions.add(modules.get(version));
         }
@@ -86,10 +90,10 @@ public class ForgeFunctions {
 
     public static List<JCRNodeWrapper> previousVersions(List<JCRNodeWrapper> modules) {
         JCRNodeWrapper lastVersion = latestVersion(modules);
-        if (lastVersion == null || modules == null) {
-            return null;
+        if (lastVersion == null) {
+            return Collections.emptyList();
         }
-        List<JCRNodeWrapper> previousModules= new ArrayList<JCRNodeWrapper>(modules);
+        List<JCRNodeWrapper> previousModules = new ArrayList<>(modules);
         for (JCRNodeWrapper module: modules) {
             previousModules.remove(module);
             if (StringUtils.equals(lastVersion.getPath(),module.getPath())) {
@@ -101,10 +105,10 @@ public class ForgeFunctions {
 
     public static List<JCRNodeWrapper> nextVersions(List<JCRNodeWrapper> modules) {
         JCRNodeWrapper lastVersion = latestVersion(modules);
-        if (lastVersion == null|| modules == null) {
+        if (lastVersion == null) {
             return modules;
         }
-        List<JCRNodeWrapper> nextModules= new ArrayList<JCRNodeWrapper>(modules);
+        List<JCRNodeWrapper> nextModules = new ArrayList<>(modules);
         boolean delete = false;
         for (JCRNodeWrapper module: modules) {
             if (StringUtils.equals(lastVersion.getPath(),module.getPath())) {

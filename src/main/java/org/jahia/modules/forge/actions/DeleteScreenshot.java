@@ -45,7 +45,7 @@ import java.util.Map;
  */
 public class DeleteScreenshot extends Action {
 
-    private transient static Logger logger = org.slf4j.LoggerFactory.getLogger(DeleteScreenshot.class);
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(DeleteScreenshot.class);
 
     @Override
     public ActionResult doExecute(HttpServletRequest req, RenderContext renderContext, Resource resource, JCRSessionWrapper session, Map<String, List<String>> parameters, URLResolver urlResolver) throws Exception {
