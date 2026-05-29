@@ -812,27 +812,27 @@
                                                                   jcr:mixinTypes="mix:title"
                                                                   jcr:primaryType="jnt:translation"
                                                                   jcr:title="Settings"/>
-                                                <forgesettings jcr:primaryType="jnt:forgeSettings"/>
+                                                <!-- jnt:forgeSettings used to be rendered here via a Spring Web Flow.
+                                                     It has been replaced by the Site Settings React app served at
+                                                     /jahia/administration/{siteKey}/forgeSettings. -->
                                             </settings>
                                             <roles jcr:primaryType="jnt:contentList">
                                                 <j:translation_en jcr:language="en"
                                                                   jcr:mixinTypes="mix:title"
                                                                   jcr:primaryType="jnt:translation"
                                                                   jcr:title="Roles"/>
-                                                <manage-roles jcr:primaryType="jnt:manageRoles"
-                                                              roles="reader store-administrator store-developer">
-                                                    <j:translation_en jcr:language="en"
-                                                                      jcr:mixinTypes="mix:title"
-                                                                      jcr:primaryType="jnt:translation"
-                                                                      jcr:title="Private App Store roles"/>
-                                                </manage-roles>
+                                                <!-- jnt:manageRoles used to be rendered here via a Spring Web Flow.
+                                                     It has been replaced by the Site Settings React app served at
+                                                     /jahia/administration/{siteKey}/storeRoles. -->
                                             </roles>
                                             <categories jcr:primaryType="jnt:contentList">
                                                 <j:translation_en jcr:language="en"
                                                                   jcr:mixinTypes="mix:title"
                                                                   jcr:primaryType="jnt:translation"
                                                                   jcr:title="Categories"/>
-                                                <categorysettings jcr:primaryType="jnt:categorySettings"/>
+                                                <!-- jnt:categorySettings used to be rendered here via a Spring Web Flow.
+                                                     It has been replaced by the Site Settings React app served at
+                                                     /jahia/administration/{siteKey}/categorySettings. -->
                                             </categories>
                                         </tab>
                                     </workspace-default>
