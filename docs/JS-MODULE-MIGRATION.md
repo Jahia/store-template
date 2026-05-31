@@ -173,12 +173,23 @@ Phase 2 builds the `search-results` page/view.
 - **Exit criteria**: an authorised user manages forge settings, categories, and roles from a page
   **inside the store website**, with full site chrome and en/fr i18n — ✅ achieved & browser-verified.
 
-### Phase 2 — Storefront read views — ~2–3 weeks
-- Cards: `forgeModule.v2`, `forgePackage.v2`, version cards; video; changelog (display).
-- Detail (display): `forgeModule.detailv3` / `forgePackage.detailv3` (tabs, screenshots carousel).
-- Lists + filtering: `forgeModulesList.storev2`, `forgeMyModulesList`, `storeFilter` rebuilt with
-  React state (replace isotope/select2). Reimplement `ForgeFunctions` version logic in TS.
-- Search results; navbar variants.
+### Phase 2 — Storefront read views — IN PROGRESS
+
+**Slice 2a — cards + list + detail — DONE (2026-05-31).**
+- ✅ `src/components/forge/`: `forgeCard.ts` (excerpt/icon helpers), `ForgeEntryCard.tsx` (card UI),
+  `versions.ts` (newest-first version sort + download URL — replaces Java `ForgeFunctions`),
+  `ForgeEntryDetail.tsx` (detail UI), `forge.module.css` + `detail.module.css`.
+- ✅ Views: `jnt:forgeModule`/`jnt:forgePackage` **`default` view** = card; **`default` template** =
+  full detail page (same `default` name, keyed apart by view-vs-template — no `jmix:mainResource`
+  needed). `jnt:forgeModulesList` **`default` view** = responsive grid querying `jmix:forgeElement`
+  WHERE `published = true` under the start node (defaults to `…/contents/modules-repository`).
+- ✅ Verified on a seeded site + E2E `privateappstore/tests/cypress/e2e/16-storefront.cy.ts` (2/2):
+  grid lists published modules and hides unpublished ones; detail page shows title/description,
+  versions newest-first, changelog, download links, status/supported badges.
+
+**Slice 2b — remaining:** filtering UI (`storeFilter` → React state, replacing isotope/select2;
+also wires the header search to a `search-results` page/view), `forgeMyModulesList`, dedicated
+version-card view, video embed, screenshots lightbox. Then retire the corresponding JSP views.
 - **Exit criteria**: browsing/search/detail run on JS views; corresponding JSP views retired.
 
 ### Phase 3 — Authoring / interactive views — ~2 weeks
