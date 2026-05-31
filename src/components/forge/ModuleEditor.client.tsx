@@ -2,6 +2,19 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 import styles from "./editor.module.css";
 import { gqlRequest } from "~/lib/graphql";
+import RichTextEditor from "./RichTextEditor";
+
+/**
+ * Sanitize richtext HTML before it is persisted, so a stored value can never
+ * carry script / event-handler / javascript: payloads into the detail page
+ * (which renders these fields with dangerouslySetInnerHTML). DOMPurify is the
+ * vetted sanitizer required by the security rules; it is imported dynamically so
+ * it stays out of the GraalVM SSR bundle and only loads in the browser on save.
+ */
+async function sanitizeHtml(html: string): Promise<string> {
+  const { default: DOMPurify } = await import("dompurify");
+  return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+}
 
 /** Editable fields of a forge module/package (all set via the jcr setValue mutation). */
 export interface EditableValues {
@@ -52,12 +65,14 @@ const SET_PROPERTY = /* GraphQL */ `
 `;
 
 // Order matters only for the form layout; the keys map 1:1 to JCR properties.
-const FIELDS: { key: keyof EditableValues; labelKey: keyof Labels; multiline?: boolean }[] = [
+// `richtext` fields are the JCR richtext properties (see definitions.cnd) and use
+// the RichTextEditor; the rest are single-line inputs.
+const FIELDS: { key: keyof EditableValues; labelKey: keyof Labels; richtext?: boolean }[] = [
   { key: "jcr:title", labelKey: "title" },
-  { key: "description", labelKey: "description", multiline: true },
-  { key: "howToInstall", labelKey: "howToInstall", multiline: true },
-  { key: "FAQ", labelKey: "faq", multiline: true },
-  { key: "license", labelKey: "license", multiline: true },
+  { key: "description", labelKey: "description", richtext: true },
+  { key: "howToInstall", labelKey: "howToInstall", richtext: true },
+  { key: "FAQ", labelKey: "faq", richtext: true },
+  { key: "license", labelKey: "license", richtext: true },
   { key: "authorEmail", labelKey: "authorEmail" },
   { key: "authorURL", labelKey: "authorURL" },
   { key: "codeRepository", labelKey: "codeRepository" },
@@ -67,10 +82,11 @@ const FIELDS: { key: keyof EditableValues; labelKey: keyof Labels; multiline?: b
  * In-site editor for a module's metadata — the React replacement for the legacy
  * detailv3-edit JSP. Visible only to users with jcr:write (the server gates
  * rendering). Saves each changed field via the generic jcr setValue mutation
- * (session-authenticated; JCR ACLs apply), then reloads to show the result.
+ * (session-authenticated; JCR ACLs apply), then shows a deterministic "Saved"
+ * state (the SSR detail reflects the change on next load).
  *
- * Richtext fields use plain textareas for now (raw value); a rich-text editor
- * island is a later refinement.
+ * Richtext fields (description, how-to-install, FAQ, license) use the
+ * RichTextEditor; their HTML is sanitized with DOMPurify before persisting.
  */
 export default function ModuleEditor({ path, language, values, labels }: ModuleEditorProps) {
   const [open, setOpen] = useState(false);
@@ -91,10 +107,12 @@ export default function ModuleEditor({ path, language, values, labels }: ModuleE
     try {
       const changed = FIELDS.filter((f) => draft[f.key] !== baseline[f.key]);
       for (const f of changed) {
+        const raw = draft[f.key] ?? "";
+        const value = f.richtext ? await sanitizeHtml(raw) : raw;
         await gqlRequest(SET_PROPERTY, {
           path,
           name: f.key,
-          value: draft[f.key] ?? "",
+          value,
           language,
         });
       }
@@ -138,12 +156,12 @@ export default function ModuleEditor({ path, language, values, labels }: ModuleE
             return (
               <div key={f.key} className={styles.field}>
                 <label htmlFor={fieldId}>{labels[f.labelKey]}</label>
-                {f.multiline ? (
-                  <textarea
+                {f.richtext ? (
+                  <RichTextEditor
                     id={fieldId}
-                    rows={4}
                     value={draft[f.key] ?? ""}
-                    onChange={(e) => update(f.key, e.target.value)}
+                    ariaLabel={labels[f.labelKey]}
+                    onChange={(html) => update(f.key, html)}
                   />
                 ) : (
                   <input
