@@ -10,8 +10,8 @@
     "static"
   ],
   "scripts": {
-    "build": "vite build",
-    "package": "npm pack --pack-destination build",
+    "build": "vite build && npm run package",
+    "package": "npm pack --pack-destination dist && mv -f dist/store-template-*.tgz dist/package.tgz",
     "watch": "vite build --watch",
     "deploy": "jahia-deploy"
   },
