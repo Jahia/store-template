@@ -12,6 +12,10 @@ jahiaComponent(
     name: "default",
     displayName: "Module page",
     componentType: "template",
+    // Render fresh so in-site edits show immediately (the cached fragment's
+    // flush races the editor's reload). Revisit with cache dependencies in the
+    // Phase 5 perf pass.
+    properties: { "cache.expiration": "0" },
   },
   (_props, { currentNode }) => {
     const title = currentNode.hasProperty("jcr:title")

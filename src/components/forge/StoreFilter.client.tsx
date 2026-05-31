@@ -79,7 +79,11 @@ export default function StoreFilter({ statuses, labels }: StoreFilterProps) {
   }, [search, status]);
 
   return (
-    <div className={styles.filter} ref={rootRef}>
+    <div
+      className={styles.filter}
+      ref={rootRef}
+      data-filter-ready={visible === null ? undefined : "true"}
+    >
       <input
         className={styles.search}
         type="search"

@@ -1,0 +1,89 @@
+.editor {
+  margin-bottom: 1.5rem;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.saved {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #15633a;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.field input,
+.field textarea {
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: #fff;
+  resize: vertical;
+}
+.field input:focus-visible,
+.field textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(70, 60, 186, 0.16);
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.55rem 1.1rem;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  transition: background 150ms var(--ease);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+.primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+.secondary {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.error {
+  padding: 0.7rem 0.9rem;
+  border-radius: 8px;
+  background: #fdecef;
+  color: #a50f35;
+  font-size: 0.9rem;
+}

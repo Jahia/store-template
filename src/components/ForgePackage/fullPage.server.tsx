@@ -9,6 +9,8 @@ jahiaComponent(
     name: "default",
     displayName: "Package page",
     componentType: "template",
+    // Render fresh so in-site edits show immediately (see ForgeModule fullPage).
+    properties: { "cache.expiration": "0" },
   },
   (_props, { currentNode }) => {
     const title = currentNode.hasProperty("jcr:title")

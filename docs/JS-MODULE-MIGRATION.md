@@ -215,10 +215,28 @@ download, plus my-modules, all run on JS views. Retiring the corresponding JSP v
 cutover (Phase 5).
 - **Exit criteria**: browsing/search/detail run on JS views — ✅ achieved & browser-verified.
 
-### Phase 3 — Authoring / interactive views — ~2 weeks
-- `detailv3-edit` (metadata/FAQ/license/tags edit, rich-text island), `my-modules` + JAR upload,
-  screenshot edit (reorder/delete), reviews submission.
-- Land the Java-actions decision (recommend: GraphQL mutations in `privateappstore`).
+### Phase 3 — Authoring / interactive views — IN PROGRESS
+
+**Java-actions decision — RESOLVED:** most authoring uses the dxm-provider's **generic `jcr`
+GraphQL mutations** (`mutateNode→mutateProperty→setValue`, `addNode`, `delete`, reorder) over a
+session-authenticated `fetch` (`src/lib/graphql.ts`); JCR ACLs enforce permissions. So the two
+store-template Java actions (DeleteScreenshot/ReorderScreenshots) are **dropped, not relocated**.
+Only the JAR upload keeps the existing `createEntryFromJar` Java action (it runs a Maven deploy).
+
+**Slice 3a — module metadata editing — DONE (2026-05-31).**
+- ✅ `ModuleEditor.client.tsx` (+ `editor.module.css`): in-site editor for jcr:title / description /
+  howToInstall / FAQ / license / author* / codeRepository, saving each changed field via the jcr
+  `setValue` mutation. Gated server-side by `node.hasPermission("jcr:write")` in `ForgeEntryDetail`.
+- ✅ Detail templates set `cache.expiration:"0"` so edits show on next load (the cached fragment's
+  flush raced the save; proper cache deps deferred to the Phase 5 perf pass).
+- ✅ E2E `17-authoring.cy.ts` (2/2): the editor shows for jcr:write users; editing title +
+  codeRepository persists (verified via reload). Full set 15+16+17 = **12/12**.
+- Island lessons codified: wait on a `data-*-ready` hydration marker before clicking; avoid async
+  `location.reload()` in favour of a deterministic success state (also stabilised the StoreFilter).
+
+**Slice 3b — remaining:** JAR upload form (→ the existing `createEntryFromJar.do` action),
+screenshot reorder/delete (jcr `reorderChildren`/`delete`), reviews submission (jcr `addNode`),
+rich-text editing for the richtext fields. Then retire the JSP edit views.
 - **Exit criteria**: authoring flows run on JS views; JSP edit views retired.
 
 ### Phase 4 — Page templates & prepackaged site — ~1 week

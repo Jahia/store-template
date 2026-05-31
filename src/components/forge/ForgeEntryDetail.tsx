@@ -1,4 +1,10 @@
-import { buildNodeUrl, getChildNodes, Island, Render } from "@jahia/javascript-modules-library";
+import {
+  buildNodeUrl,
+  getChildNodes,
+  Island,
+  Render,
+  useServerContext,
+} from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import clsx from "clsx";
 import styles from "./detail.module.css";
@@ -6,6 +12,24 @@ import { forgeIconUrl } from "./forgeCard";
 import { str, bool } from "./nodeProps";
 import { sortedVersionNodes } from "./versions";
 import Lightbox from "./Lightbox.client";
+import ModuleEditor from "./ModuleEditor.client";
+
+const EDITOR_LABELS = {
+  edit: "Edit module",
+  save: "Save",
+  saving: "Saving…",
+  cancel: "Cancel",
+  saved: "Saved",
+  error: "Save failed — check your permissions and try again.",
+  title: "Title",
+  description: "Description",
+  howToInstall: "How to install",
+  faq: "FAQ",
+  license: "License",
+  authorEmail: "Author email",
+  authorURL: "Author URL",
+  codeRepository: "Code repository",
+};
 
 function screenshots(node: JCRNodeWrapper): string[] {
   if (!node.hasNode("screenshots")) return [];
@@ -21,6 +45,7 @@ function screenshots(node: JCRNodeWrapper): string[] {
  * save. (Edit mode and reviews come in Phase 3.)
  */
 export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Element {
+  const { currentResource } = useServerContext();
   const title = str(node, "jcr:title") || node.getName();
   const description = str(node, "description");
   const license = str(node, "license");
@@ -32,6 +57,8 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
   const shots = screenshots(node);
   const versions = sortedVersionNodes(node);
   const videoNode = node.hasNode("video") ? node.getNode("video") : null;
+  const canEdit = node.hasPermission("jcr:write");
+  const language = currentResource.getLocale().getLanguage();
 
   return (
     <article className={styles.detail}>
@@ -58,6 +85,27 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
           </div>
         </div>
       </header>
+
+      {canEdit && (
+        <Island
+          component={ModuleEditor}
+          props={{
+            path: node.getPath(),
+            language,
+            values: {
+              "jcr:title": title,
+              description,
+              howToInstall: str(node, "howToInstall"),
+              FAQ: str(node, "FAQ"),
+              license,
+              authorEmail: str(node, "authorEmail"),
+              authorURL: str(node, "authorURL"),
+              codeRepository,
+            },
+            labels: EDITOR_LABELS,
+          }}
+        />
+      )}
 
       {description && (
         <section className={styles.section}>
