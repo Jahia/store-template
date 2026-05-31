@@ -43,7 +43,8 @@ export function ForgeEntryCard({
         )}
       </div>
       <div className={styles.cardBody}>
-        <h3 className={styles.cardTitle}>{title}</h3>
+        {/* h2: card titles sit directly under the page <h1>; h3 would skip a level (axe heading-order). */}
+        <h2 className={styles.cardTitle}>{title}</h2>
         {excerpt && <p className={styles.cardExcerpt}>{excerpt}</p>}
         <div className={styles.badges}>
           {status && (

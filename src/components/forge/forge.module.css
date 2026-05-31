@@ -101,7 +101,7 @@
 }
 .supported {
   background: #e7f6ec;
-  color: #15633a;
+  color: #0d4a2b; /* AAA: 9.25:1 on the badge background */
 }
 .reviewed {
   background: #e8ecfd;
