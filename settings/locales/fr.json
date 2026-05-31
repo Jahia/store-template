@@ -24,5 +24,15 @@
     "privacy": "Politique de confidentialité",
     "terms": "Conditions d'utilisation",
     "cookies": "Politique relative aux cookies"
+  },
+  "store": {
+    "filter": {
+      "search": "Filtrer",
+      "placeholder": "Filtrer les modules…",
+      "status": "Statut",
+      "all": "Tous",
+      "unit": "modules",
+      "none": "Aucun module ne correspond à vos filtres."
+    }
   }
 }

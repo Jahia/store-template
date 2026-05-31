@@ -29,6 +29,11 @@
   box-shadow: var(--shadow-md);
   border-color: #d4d0f0;
 }
+/* The [hidden] attribute (set by the filter island) needs higher specificity
+   than `.card { display: flex }` to actually hide the card. */
+.card[hidden] {
+  display: none;
+}
 
 .cardIcon {
   flex: 0 0 56px;

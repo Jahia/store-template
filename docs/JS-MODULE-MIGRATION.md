@@ -187,9 +187,18 @@ Phase 2 builds the `search-results` page/view.
   grid lists published modules and hides unpublished ones; detail page shows title/description,
   versions newest-first, changelog, download links, status/supported badges.
 
-**Slice 2b — remaining:** filtering UI (`storeFilter` → React state, replacing isotope/select2;
-also wires the header search to a `search-results` page/view), `forgeMyModulesList`, dedicated
-version-card view, video embed, screenshots lightbox. Then retire the corresponding JSP views.
+**Slice 2b — filtering + search — DONE (2026-05-31).**
+- ✅ `src/components/forge/StoreFilter.client.tsx` (+ `store-filter.module.css`): instant client-side
+  filter (text + status facets) over the SSR'd cards — the React replacement for isotope/select2.
+  Cards carry `data-forge-card`/`data-status`/`data-title`; the island toggles `[hidden]` and syncs
+  the URL (`src_terms`, `status`). SSR-safe (constant initial state; URL read in an effect → no
+  hydration mismatch). The header search now navigates to the list page and seeds this filter.
+- ✅ E2E (`16-storefront.cy.ts`, now 4/4): filter by status + by text hide/show the right cards.
+- Gotchas recorded: a `clientOnly` island still hydrates its placeholder → mismatch (use SSR-safe
+  state instead); `[hidden]` needs `.card[hidden]{display:none}` to beat `.card{display:flex}`.
+
+**Slice 2c — remaining:** `forgeMyModulesList` (logged-in user's modules), dedicated version-card
+view, video embed (`jnt:videostreaming`), screenshots lightbox. Then retire the corresponding JSP views.
 - **Exit criteria**: browsing/search/detail run on JS views; corresponding JSP views retired.
 
 ### Phase 3 — Authoring / interactive views — ~2 weeks

@@ -24,5 +24,15 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Use",
     "cookies": "Cookie Policy"
+  },
+  "store": {
+    "filter": {
+      "search": "Filter",
+      "placeholder": "Filter modules…",
+      "status": "Status",
+      "all": "All",
+      "unit": "modules",
+      "none": "No modules match your filters."
+    }
   }
 }

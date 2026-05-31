@@ -26,8 +26,9 @@ export function Header(): JSX.Element {
     ? getChildNodes(home, 50).filter((n) => n.isNodeType("jnt:page"))
     : [];
 
-  // Search targets the conventional search-results page (rendered in Phase 2).
-  const searchUrl = `${homeUrl.replace(/\.html$/, "")}/search-results.html`;
+  // Search navigates to the home modules list; its StoreFilter island reads
+  // ?src_terms and filters the grid.
+  const searchUrl = homeUrl;
 
   const isLoggedIn = renderContext.isLoggedIn();
   let username = "";

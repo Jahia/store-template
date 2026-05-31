@@ -26,7 +26,13 @@ export function ForgeEntryCard({
   reviewed,
 }: ForgeEntryCardProps): JSX.Element {
   return (
-    <a className={styles.card} href={detailUrl}>
+    <a
+      className={styles.card}
+      href={detailUrl}
+      data-forge-card=""
+      data-status={status || ""}
+      data-title={title.toLowerCase()}
+    >
       <div className={styles.cardIcon}>
         {iconUrl ? (
           <img src={iconUrl} alt="" width="56" height="56" loading="lazy" />
