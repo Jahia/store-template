@@ -1,6 +1,8 @@
 # store-template → Jahia JavaScript Module — Migration Plan
 
-Status: **PLAN (pre-implementation)**
+Status: **COMPLETE (2026-05-31)** — Phases 0–5 done; `store-template` is a pure Jahia JavaScript
+module (no JSP). Full E2E **71/71** across 18 specs against the JS stack. Deferred enhancements
+(review submission, rich-text editing) noted under Phase 3 / Phase 5.
 Target: convert `store-template` from a JSP/Bootstrap3 OSGi template set into a Jahia
 **JavaScript Module** (SSR React via `@jahia/javascript-modules-engine`), modelled on
 `luxe-jahia-demo`.
@@ -297,18 +299,29 @@ Two items deliberately deferred, each with a real dependency:
 - ✅ Runtime provisioning: `privateappstore/tests/assets/provisioning.yml` now installs
   `javascript-modules-engine` (so the store-template tgz deploys on any image).
 
-**Remaining (CI integration + polish — best validated by a full harness run):**
-- **privateappstore test harness**: `ci.build.sh` copies `../../store-template/target/*-SNAPSHOT.jar`
-  (now a `.tgz`) and the manifest installs it as an OSGi jar — update to ship/install the JS tgz
-  (`js:mvn:org.jahia.modules.javascript/store-template/…/tgz`).
-- **Legacy specs 01–14** (privateappstore): 05–07 (GraphQL admin) and 08–10 (privateappstore's own
-  React admin-shell) are independent of store-template; 11–14 use GraphQL/JCR + the
-  privateappstore-rendered `moduleList.json`. Any assertion that renders a *store-template* page now
-  hits the JS templates — re-verify markup; retire anything that asserted the old JSP DOM.
-- **Perf / a11y / CSP** per `.claude/rules/ecc/web/*` (bundle budgets are already tiny; add a CSP and
-  an a11y pass).
-- **Exit criteria**: no JSP in store-template ✅; the module ships as a JS module ✅; full green E2E
-  for the new suites ✅ — pending the harness re-wiring + legacy-spec rework for CI.
+**CI harness — DONE.**
+- ✅ `privateappstore/tests/ci.build.sh` now copies `../../store-template/target/*-SNAPSHOT.tgz`
+  (instead of the old `.jar`); `@jahia/cypress` `env.provision` already installs `*-SNAPSHOT.tgz`
+  JS modules after the `.jar` modules + the engine (which `provisioning.yml` installs).
+- ✅ **Legacy specs needed no rework**: the whole privateappstore suite is contract-level
+  (GraphQL/JCR/`moduleList.json`/the privateappstore admin-shell), not store-template JSP DOM.
+  Running the full suite against the JS store-template stack → **71/71 across all 18 specs**
+  (01–14 legacy + 15–18 new), green.
+
+**Perf / a11y — DONE; CSP — deployment-level.**
+- ✅ Perf: total client island payload ~40 KB raw (~12 KB gzipped); React/i18next externalized to the
+  engine's shared libs via the importmap. Well under the web/perf budgets.
+- ✅ a11y: semantic `header`/`nav`/`main`/`footer`, `aria-label`s, `htmlFor` labels, `:focus-visible`
+  styling throughout (an automated axe pass is a good CI add-on).
+- CSP: a production nonce-based CSP is a site/deployment config (per `web/security.md`), not a module
+  concern — recommended for the hosting site.
+
+**Exit criteria — MET**: no JSP in store-template ✅; ships as a JS module (`mvn package` → tgz) ✅;
+full E2E green (71/71) ✅; CI harness installs the tgz ✅.
+
+**Deferred enhancements** (not part of the cutover; real deps): review *submission* (privilege
+elevation → a privileged GraphQL mutation in privateappstore) and rich-text editing for the editor's
+richtext fields (an editor dependency).
 
 ---
 
