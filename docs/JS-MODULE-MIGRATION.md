@@ -107,17 +107,26 @@ store-template/                      (becomes a JS module; stays its own git rep
 Phases are incremental and shippable; JSP and JS views **coexist** during the migration, so the
 site keeps working after every phase. Effort numbers are rough order-of-magnitude, not commitments.
 
-### Phase 0 — Toolchain & skeleton (prove the pipeline) — ~1–2 days
-- New branch.
-- Add `package.json` (jahia block + scripts), `vite.config.js`, `tsconfig.json`, lint/format.
-- Hybrid Maven: `build-helper` attaches `dist/package.tgz`; keep `mvn:` deploy + provisioning.
-- Provision `javascript-modules-engine` in the test stack. ✅ *engine↔Jahia compatibility proven by
-  the 0bis spike (engine 1.2.0 ACTIVE; image pre-ships the engine; toolchain + GraalVM registration
-  validated).*
-- Ship a base **Page template** + one trivial component; deploy; render one page through the engine.
-- **Exit criteria**: a page served by the JS engine renders on the running stack via the existing
-  Maven/provisioning flow. *(The remaining unproven step from the spike — an actual HTTP page
-  render — is this phase's exit gate.)*
+### Phase 0 — Toolchain & skeleton (prove the pipeline) — **DONE** (2026-05-31)
+- ✅ New branch `SECURITY-571-js-module-migration`.
+- ✅ Added `package.json` (jahia block + scripts), `vite.config.js`, `tsconfig.json`, `.yarnrc.yml`,
+  `.gitignore` entries; JS source under `src/` (legacy JSP under `src/main` left untouched until
+  cutover — they don't collide; Vite only globs `*.server.tsx`/`*.client.tsx`).
+- ✅ Engine↔Jahia compatibility proven by the 0bis spike (engine 1.2.0 ACTIVE; image pre-ships it).
+- ✅ Base `Layout` + `Page/default.server.tsx` (`jnt:page` default template) build via Vite →
+  `dist/server/index.js`; packaged (`npm pack`) and deployed via `js:file:`.
+- ✅ **Exit criterion met — HTTP page render**: created a `phase0` site (templateSet `store-template`)
+  + a `jnt:page` home, rendered `/cms/render/default/en/sites/phase0/home.html` → our SSR output
+  `<body><main><h1 data-store-template="js">Phase 0 Home</h1></main></body>` (jcr:title → prop →
+  GraalVM SSR → HTTP). The whole pipeline works on the live stack.
+- **Deferred to cutover** (not blocking): hybrid Maven `build-helper` attach-tgz for CI/`mvn:`
+  provisioning, package-manager standardization (used `npx vite build` + `npm pack`; a classic
+  `yarn.lock` is committed for now), JSP/pom removal.
+
+> Dev-loop proven here: `npx vite build` → `npm pack --pack-destination build` →
+> `docker cp` the tgz → install via provisioning `installBundle: ["js:file:/tmp/…tgz"]`. Run
+> server-side Groovy via `executeScript: "file:/abs.groovy"` (JSON body — avoids the container
+> curl's multipart quirk) and have scripts write to a file (`println` doesn't reach Docker logs).
 
 ### Phase 1 — Site chrome + ADMIN vertical slice (delivers the original ask) — ~1 week
 - `Layout` (head/body, global CSS), navigation (port `enhancedNavBar`), footer
