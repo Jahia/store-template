@@ -1,8 +1,11 @@
 # store-template → Jahia JavaScript Module — Migration Plan
 
 Status: **COMPLETE (2026-05-31)** — Phases 0–5 done; `store-template` is a pure Jahia JavaScript
-module (no JSP). Full E2E **71/71** across 18 specs against the JS stack. Deferred enhancements
-(review submission, rich-text editing) noted under Phase 3 / Phase 5.
+module (no JSP). Full E2E **75/75** across 19 specs against the JS stack. The two deferred
+enhancements are now **DONE** (2026-05-31): in-site review **submission** (a `SubmitReview` Jahia
+action, CSRF-safe XHR, cross-owner elevation) and **rich-text editing** (a contenteditable editor
++ DOMPurify sanitization). See the "Deferred enhancements — delivered" section near the end and
+[SECURITY-CSP.md](./SECURITY-CSP.md) for the production CSP spec.
 Target: convert `store-template` from a JSP/Bootstrap3 OSGi template set into a Jahia
 **JavaScript Module** (SSR React via `@jahia/javascript-modules-engine`), modelled on
 `luxe-jahia-demo`.
@@ -255,12 +258,11 @@ Only the JAR upload keeps the existing `createEntryFromJar` Java action (it runs
 - ✅ E2E `17-authoring.cy.ts` (5/5): the upload form is wired to `createEntryFromJar.do`; a seeded
   review renders with its rating/title/content. Full set 15+16+17 = **15/15**.
 
-**Phase 3 — substantially COMPLETE** (owner authoring + JAR upload + reviews display all on JS views).
-Two items deliberately deferred, each with a real dependency:
-- **Review submission** — needs privilege elevation (any logged-in user reviews any module, not
-  owner-ACL `jcr` writes) → a dedicated privileged GraphQL mutation/action in `privateappstore`.
-- **Rich-text editing** — the metadata editor's richtext fields use plain textareas; swapping in a
-  rich-text editor adds an editor dependency.
+**Phase 3 — COMPLETE** (owner authoring + JAR upload + reviews display all on JS views). The two
+items deferred at the time are now delivered — see "Deferred enhancements — delivered" below:
+- **Review submission** — a `SubmitReview` Jahia action (privilege elevation via
+  `doExecuteWithSystemSessionAsUser`), reached by the form island over CSRF-safe XHR.
+- **Rich-text editing** — a contenteditable `RichTextEditor` + DOMPurify sanitization on save.
 - JSP edit views are retired at cutover (Phase 5).
 - **Exit criteria**: authoring flows run on JS views — ✅ achieved (bar the two deferred items).
 
@@ -308,20 +310,39 @@ Two items deliberately deferred, each with a real dependency:
   Running the full suite against the JS store-template stack → **71/71 across all 18 specs**
   (01–14 legacy + 15–18 new), green.
 
-**Perf / a11y — DONE; CSP — deployment-level.**
-- ✅ Perf: total client island payload ~40 KB raw (~12 KB gzipped); React/i18next externalized to the
-  engine's shared libs via the importmap. Well under the web/perf budgets.
+**Perf / a11y — DONE; CSP — speced (deployment-level).**
+- ✅ Perf: total client island payload ~14 KB gzipped (incl. the new review island ~1.3 KB and the
+  editor island ~2.5 KB); DOMPurify is a lazy ~9.6 KB-gz chunk loaded only on save. React/i18next
+  externalized to the engine's shared libs via the importmap. Well under the web/perf budgets.
 - ✅ a11y: semantic `header`/`nav`/`main`/`footer`, `aria-label`s, `htmlFor` labels, `:focus-visible`
   styling throughout (an automated axe pass is a good CI add-on).
-- CSP: a production nonce-based CSP is a site/deployment config (per `web/security.md`), not a module
-  concern — recommended for the hosting site.
+- ✅ CSP: a production CSP + companion headers are fully speced against the engine's real output in
+  [SECURITY-CSP.md](./SECURITY-CSP.md) (the one open item is a per-request nonce on the engine's inline
+  importmap; enforcement is reverse-proxy/Jahia config, not a module concern).
 
 **Exit criteria — MET**: no JSP in store-template ✅; ships as a JS module (`mvn package` → tgz) ✅;
-full E2E green (71/71) ✅; CI harness installs the tgz ✅.
+full E2E green (75/75 across 19 specs) ✅; CI harness installs the tgz ✅.
 
-**Deferred enhancements** (not part of the cutover; real deps): review *submission* (privilege
-elevation → a privileged GraphQL mutation in privateappstore) and rich-text editing for the editor's
-richtext fields (an editor dependency).
+## Deferred enhancements — delivered (2026-05-31)
+
+All three originally-deferred items are now implemented and verified end-to-end against the running
+stack (`19-reviewsAndRichtext.cy.ts`, 4/4; full suite 75/75):
+
+- **Review submission** — `SubmitReview` Jahia action in `privateappstore`
+  (`org.jahia.modules.forge.actions.SubmitReview`). Any authenticated user can review any
+  module/package: the write runs under `doExecuteWithSystemSessionAsUser` (ACL-bypass + correct
+  `jcr:createdBy`), one review per user, aggregate `jmix:rating` maintained, review created in the
+  page's own workspace (live/default). The `ReviewForm` island posts to it over **XMLHttpRequest**
+  (Jahia's CSRF guard patches XHR, not fetch). _Chosen over a GraphQL mutation because the Jahia
+  GraphQL endpoint is permission-gated and unreachable by ordinary users._ This also surfaced and
+  fixed a migration regression: `_dsannotations` had been narrowed to the `graphql` package,
+  silently un-registering every `@Component(service=Action.class)` (incl. the kept
+  `CreateEntryFromJar` upload) — restored by also scanning the `actions` package.
+- **Rich-text editing** — a dependency-free contenteditable `RichTextEditor` (bold/italic/headings/
+  lists/link/clear) for the richtext metadata fields; HTML sanitized with **DOMPurify**
+  (dynamically imported client-side, so it never enters the GraalVM SSR bundle) before persisting.
+- **CSP** — speced in [SECURITY-CSP.md](./SECURITY-CSP.md) (DOMPurify is the implemented
+  sanitization half; CSP enforcement is deployment config).
 
 ---
 
