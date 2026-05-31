@@ -121,6 +121,17 @@ dist/             build output (client islands, server bundle, package.tgz)
   bundle (the failure mode that ruled out Apollo). Do not "fix" it by adding a
   dependency.
 
+## Accessibility invariants (verified against an axe-core audit)
+
+- **`Layout` owns the one and only `<main>` landmark.** Page templates
+  (`templates/Page/*.server.tsx`) supply *content* as `Layout` children — they
+  must NOT render their own `<main>`, or you get a nested/duplicate `main`
+  landmark (axe flags three best-practice violations at once).
+- **Muted/secondary text must use `var(--color-text-muted)`**, never a hardcoded
+  gray. The token is tuned to WCAG **AAA** enhanced contrast (≥7:1) on every
+  surface; hardcoding a lighter gray silently drops below 7:1 and re-introduces
+  the contrast violation.
+
 ## Conventions
 
 - CSS Modules per component; design tokens as CSS custom properties.
