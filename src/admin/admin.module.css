@@ -220,3 +220,40 @@
   letter-spacing: 0.04em;
   color: #8a8a93;
 }
+
+/* Tabbed admin shell */
+.admin {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid #e2e2e6;
+}
+
+.tab {
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #6a6a73;
+  margin-bottom: -1px;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+.tab:hover {
+  color: #2a2a31;
+}
+.tabActive {
+  color: #463cba;
+  border-bottom-color: #463cba;
+}
+
+.tabPanel {
+  min-height: 6rem;
+}

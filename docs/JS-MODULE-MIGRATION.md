@@ -128,18 +128,28 @@ site keeps working after every phase. Effort numbers are rough order-of-magnitud
 > server-side Groovy via `executeScript: "file:/abs.groovy"` (JSON body — avoids the container
 > curl's multipart quirk) and have scripts write to a file (`println` doesn't reach Docker logs).
 
-### Phase 1 — Site chrome + ADMIN vertical slice (delivers the original ask) — ~1 week
-- `Layout` (head/body, global CSS), navigation (port `enhancedNavBar`), footer
-  (`storeFooter`/`storeTitle`/`storeLink`), login (island).
-- `store-admin` page as a React template with **Settings / Roles / Categories** tabs, rendering the
-  three admin screens **in-site**:
-  - Port `ForgeSettings`, `CategorySettings`, `ManageRoles` from the `privateappstore` React apps
-    into `store-template/src/admin/*` as client islands.
-  - Server view does the permission check (`siteAdminForgeSettings` / `jahiaForgeModerateModule`);
-    islands reuse the existing GraphQL contracts already exposed by `privateappstore`
-    (`forgeSettings`, `forgeCategorySettings`, `manageRolesSettings` + their mutations).
+### Phase 1 — Site chrome + ADMIN vertical slice (delivers the original ask)
+**Admin slice — DONE (2026-05-31).** The three admin screens render in-site.
+- ✅ `src/templates/Page/site-admin.server.tsx`: `jnt:page` template `site-admin`, resolves
+  siteKey + locale, checks `siteAdminForgeSettings`, mounts one `<Island>`.
+- ✅ `src/admin/`: ported `ForgeSettings`, `CategorySettings`, `ManageRoles` from privateappstore
+  (logic/i18n unchanged) into a tabbed `AdminApp.client.tsx` island; reuse the existing GraphQL
+  contracts (`forgeSettings`, `forgeCategorySettings`, `manageRolesSettings` + mutations).
+- ✅ Two forced deviations from the original "reuse verbatim" plan, both hard engine constraints:
+  - **Moonstone dropped** (React 18 vs the island runtime's React 19) → plain accessible HTML +
+    `admin.module.css`.
+  - **Apollo dropped** (its SSR build imports `node:module`, which GraalVM rejects at init) →
+    `fetch`-based `gql.ts` (`useGqlQuery` + `gqlRequest`), the luxe-idiomatic approach.
+  - Self-contained i18next (`i18n.ts` + `locales/en.json`, `privateappstore` namespace).
+- ✅ Verified on the `phase0` site: `/sites/phase0/admin.html` → HTTP 200, three `role="tab"`
+  buttons (i18n labels SSR'd), `<jsm-island>` with `{siteKey, language}`, active-tab `Loading…`;
+  client bundle 18 KB, server 38 KB, GraalVM init clean.
+- **Remaining for Phase 1**: full site chrome — `Layout` head/SEO, navigation (`enhancedNavBar`),
+  footer (`storeFooter`/`storeTitle`/`storeLink`), login island. Plus browser-level hydration/E2E
+  verification of the admin screens (basic-auth can't call the gated GraphQL; use the Cypress
+  session login). Plus `fr` locale for the admin i18n.
 - **Exit criteria**: an authorised user manages forge settings, categories, and roles from a page
-  **inside the store website** — the relocation goal, achieved on the new stack.
+  **inside the store website** — achieved (pending browser-hydration E2E sign-off).
 
 ### Phase 2 — Storefront read views — ~2–3 weeks
 - Cards: `forgeModule.v2`, `forgePackage.v2`, version cards; video; changelog (display).

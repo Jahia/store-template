@@ -36,7 +36,8 @@ export interface GqlQueryResult<T> {
   data: T | null;
   loading: boolean;
   error: Error | null;
-  refetch: () => Promise<void>;
+  /** Re-runs the query and resolves with the fresh data (or null on error). */
+  refetch: () => Promise<T | null>;
 }
 
 /** Runs a query on mount (and whenever the variables change), with a refetch(). */
@@ -50,13 +51,16 @@ export function useGqlQuery<T = unknown>(
   const [error, setError] = useState<Error | null>(null);
   const variablesKey = JSON.stringify(variables);
 
-  const run = useCallback(async () => {
+  const run = useCallback(async (): Promise<T | null> => {
     setLoading(true);
     setError(null);
     try {
-      setData(await gqlRequest<T>(query, JSON.parse(variablesKey), gqlUrl));
+      const fresh = await gqlRequest<T>(query, JSON.parse(variablesKey), gqlUrl);
+      setData(fresh);
+      return fresh;
     } catch (err) {
       setError(err instanceof Error ? err : new Error(String(err)));
+      return null;
     } finally {
       setLoading(false);
     }

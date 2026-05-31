@@ -49,9 +49,7 @@ jahiaComponent(
       <Layout title="Store administration">
         <main>
           <h1>Store administration</h1>
-          <section>
-            <Island component={AdminApp} props={{ app: "forgeSettings", siteKey, language }} />
-          </section>
+          <Island component={AdminApp} props={{ siteKey, language }} />
         </main>
       </Layout>
     );
