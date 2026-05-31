@@ -8,7 +8,7 @@ export interface VersionCardProps {
 }
 
 /** Presentational card for one module/package version (changelog is sanitized richtext). */
-export function VersionCard({ versionNumber, published, changeLogHtml, downloadUrl }: VersionCardProps): JSX.Element {
+export function VersionCard({ versionNumber, published, changeLogHtml, downloadUrl }: Readonly<VersionCardProps>): JSX.Element {
   return (
     <div className={styles.version}>
       <div className={styles.versionHead}>

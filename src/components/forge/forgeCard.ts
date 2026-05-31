@@ -4,12 +4,12 @@ import type { JCRNodeWrapper } from "org.jahia.services.content";
 /** Strip HTML tags + collapse whitespace from a Jahia richtext value. */
 export function stripHtml(html: string): string {
   return (html || "")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/\s+/g, " ")
+    .replaceAll(/<[^>]*>/g, " ")
+    .replaceAll(/&nbsp;/g, " ")
+    .replaceAll(/&amp;/g, "&")
+    .replaceAll(/&lt;/g, "<")
+    .replaceAll(/&gt;/g, ">")
+    .replaceAll(/\s+/g, " ")
     .trim();
 }
 

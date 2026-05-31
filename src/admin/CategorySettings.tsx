@@ -37,7 +37,7 @@ interface CategorySettingsData {
  * Categories screen — ported from privateappstore's React admin app.
  * Logic/i18n unchanged; Moonstone→HTML, Apollo→fetch (see gql.ts / admin.module.css).
  */
-export function CategorySettings({ siteKey }: { siteKey: string }) {
+export function CategorySettings({ siteKey }: Readonly<{ siteKey: string }>) {
   const { t } = useTranslation("privateappstore");
 
   const [rootCategoryInput, setRootCategoryInput] = useState("");
@@ -70,7 +70,7 @@ export function CategorySettings({ siteKey }: { siteKey: string }) {
     );
   }
 
-  const settings = data && data.forgeCategorySettings;
+  const settings = data?.forgeCategorySettings;
   if (!settings) {
     return (
       <div className={styles.error} role="alert">
@@ -94,7 +94,7 @@ export function CategorySettings({ siteKey }: { siteKey: string }) {
     const titles: Record<string, string> = {};
     for (const lang of settings.siteLanguages) {
       const existing = category.titles.find((x) => x.language === lang);
-      titles[lang] = (existing && existing.title) || "";
+      titles[lang] = existing?.title || "";
     }
     setEditingUuid(category.uuid);
     setEditingTitles(titles);
@@ -129,7 +129,7 @@ export function CategorySettings({ siteKey }: { siteKey: string }) {
       setNewCategoryName("");
       reportSuccess("categories.success.add");
       // Auto-open the editor for the new category.
-      const newUuid = added && added.addForgeCategory;
+      const newUuid = added?.addForgeCategory;
       const refreshed = await refetch();
       const created = refreshed?.forgeCategorySettings?.categories?.find((c) => c.uuid === newUuid);
       if (created) {
@@ -161,7 +161,7 @@ export function CategorySettings({ siteKey }: { siteKey: string }) {
 
   const handleDelete = async (category: Category) => {
     if (category.usages && category.usages.length > 0) {
-      const confirmed = window.confirm(
+      const confirmed = globalThis.confirm(
         t("categories.delete.confirmInUse", { count: category.usages.length }),
       );
       if (!confirmed) return;

@@ -20,7 +20,7 @@ export interface AdminAppProps {
  * Settings / Categories / Roles tabs. Each tab renders a ported screen; all
  * fetch from /modules/graphql (see gql.ts). One hydration island.
  */
-function AdminTabs({ siteKey, initialTab = "forgeSettings" }: { siteKey: string; initialTab?: Tab }) {
+function AdminTabs({ siteKey, initialTab = "forgeSettings" }: Readonly<{ siteKey: string; initialTab?: Tab }>) {
   const { t } = useTranslation("privateappstore");
   const [tab, setTab] = useState<Tab>(initialTab);
 
@@ -32,7 +32,7 @@ function AdminTabs({ siteKey, initialTab = "forgeSettings" }: { siteKey: string;
 
   return (
     <div className={styles.admin}>
-      <nav className={styles.tabs} role="tablist">
+      <div className={styles.tabs} role="tablist">
         {tabs.map((tb) => (
           <button
             key={tb.key}
@@ -45,7 +45,7 @@ function AdminTabs({ siteKey, initialTab = "forgeSettings" }: { siteKey: string;
             {tb.label}
           </button>
         ))}
-      </nav>
+      </div>
       <div className={styles.tabPanel} role="tabpanel">
         {tab === "forgeSettings" && <ForgeSettings siteKey={siteKey} />}
         {tab === "categorySettings" && <CategorySettings siteKey={siteKey} />}
@@ -55,7 +55,7 @@ function AdminTabs({ siteKey, initialTab = "forgeSettings" }: { siteKey: string;
   );
 }
 
-export default function AdminApp({ siteKey, initialTab, language = "en" }: AdminAppProps) {
+export default function AdminApp({ siteKey, initialTab, language = "en" }: Readonly<AdminAppProps>) {
   const i18n = getAdminI18n(language);
   return (
     <I18nextProvider i18n={i18n}>

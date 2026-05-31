@@ -1,4 +1,4 @@
-import { buildNodeUrl, jahiaComponent, useServerContext } from "@jahia/javascript-modules-library";
+import { buildNodeUrl, jahiaComponent } from "@jahia/javascript-modules-library";
 import styles from "~/components/forge/upload.module.css";
 
 /**

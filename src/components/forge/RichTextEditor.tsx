@@ -38,7 +38,7 @@ function exec(command: string, value?: string): void {
  * with DOMPurify before it is persisted (see ModuleEditor). Replaces the plain
  * textareas the fields used previously.
  */
-export default function RichTextEditor({ id, value, ariaLabel, onChange }: RichTextEditorProps) {
+export default function RichTextEditor({ id, value, ariaLabel, onChange }: Readonly<RichTextEditorProps>) {
   const ref = useRef<HTMLDivElement>(null);
 
   // Seed the surface once from the stored HTML. We intentionally do NOT bind
@@ -65,7 +65,7 @@ export default function RichTextEditor({ id, value, ariaLabel, onChange }: RichT
   };
 
   const insertLink = (): void => {
-    const url = window.prompt("Link URL", "https://");
+    const url = globalThis.prompt("Link URL", "https://");
     // Only allow safe schemes — never javascript:/data: — even though we also
     // sanitize on save.
     if (url && /^(https?:|mailto:)/i.test(url.trim())) {
@@ -116,7 +116,6 @@ export default function RichTextEditor({ id, value, ariaLabel, onChange }: RichT
         className={styles.rteSurface}
         contentEditable
         suppressContentEditableWarning
-        role="textbox"
         aria-multiline="true"
         aria-label={ariaLabel}
         onInput={emit}

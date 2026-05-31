@@ -88,7 +88,7 @@ const FIELDS: { key: keyof EditableValues; labelKey: keyof Labels; richtext?: bo
  * Richtext fields (description, how-to-install, FAQ, license) use the
  * RichTextEditor; their HTML is sanitized with DOMPurify before persisting.
  */
-export default function ModuleEditor({ path, language, values, labels }: ModuleEditorProps) {
+export default function ModuleEditor({ path, language, values, labels }: Readonly<ModuleEditorProps>) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<EditableValues>(values);
   // Baseline of last-saved values, so re-edits only push genuinely changed fields.
@@ -135,7 +135,7 @@ export default function ModuleEditor({ path, language, values, labels }: ModuleE
           <button type="button" className={clsx(styles.btn, styles.primary)} onClick={() => setOpen(true)}>
             {labels.edit}
           </button>
-          {status === "saved" && <span className={styles.saved} role="status">{labels.saved}</span>}
+          {status === "saved" && <output className={styles.saved}>{labels.saved}</output>}
         </div>
       )}
       {open && (
@@ -152,7 +152,7 @@ export default function ModuleEditor({ path, language, values, labels }: ModuleE
             </div>
           )}
           {FIELDS.map((f) => {
-            const fieldId = `edit-${String(f.key).replace(/:/g, "-")}`;
+            const fieldId = `edit-${String(f.key).replaceAll(":", "-")}`;
             return (
               <div key={f.key} className={styles.field}>
                 <label htmlFor={fieldId}>{labels[f.labelKey]}</label>

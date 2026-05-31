@@ -30,6 +30,7 @@
   gap: 0.1rem;
 }
 .star {
+  position: relative;
   font: inherit;
   font-size: 1.6rem;
   line-height: 1;
@@ -47,6 +48,19 @@
 }
 .starOn {
   color: #e8a000;
+}
+/* Visually hidden but still focusable/checkable: the native radio that backs
+   each star (the label carries the visible glyph and the data-star hook). */
+.starInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .field {
@@ -102,6 +116,7 @@
 }
 
 .done {
+  display: block;
   margin: 0 0 1.25rem;
   padding: 0.8rem 1rem;
   border-radius: var(--radius);

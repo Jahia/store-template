@@ -25,7 +25,7 @@ interface LoginProps {
  * that posts to the current page (Jahia authenticates and reloads). Logged in:
  * the username and a logout link.
  */
-export default function Login({ isLoggedIn, username, loginUrl, logoutUrl, labels }: LoginProps) {
+export default function Login({ isLoggedIn, username, loginUrl, logoutUrl, labels }: Readonly<LoginProps>) {
   const [open, setOpen] = useState(false);
 
   if (isLoggedIn) {
@@ -57,7 +57,6 @@ export default function Login({ isLoggedIn, username, loginUrl, logoutUrl, label
           className={styles.panel}
           method="post"
           action={loginUrl}
-          role="dialog"
           aria-label={labels.signIn}
         >
           <label htmlFor="login-username">{labels.username}</label>

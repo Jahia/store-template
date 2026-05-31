@@ -61,7 +61,7 @@ function postForm(url: string, body: string): Promise<{ status: number; body: st
  * the per-page OWASP-CSRFTOKEN header — it does NOT patch fetch, so a fetch POST
  * to the `.do` action would be rejected as a CSRF attack.
  */
-export default function ReviewForm({ actionUrl, language, hasReviewed, labels }: ReviewFormProps) {
+export default function ReviewForm({ actionUrl, language, hasReviewed, labels }: Readonly<ReviewFormProps>) {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [title, setTitle] = useState("");
@@ -83,9 +83,9 @@ export default function ReviewForm({ actionUrl, language, hasReviewed, labels }:
 
   if (status === "done") {
     return (
-      <p className={styles.done} role="status" data-review-done="true">
+      <output className={styles.done} data-review-done="true">
         {labels.thanks}
-      </p>
+      </output>
     );
   }
 
@@ -157,22 +157,26 @@ export default function ReviewForm({ actionUrl, language, hasReviewed, labels }:
         <span className={styles.ratingLabel}>{labels.yourRating}</span>
         <div className={styles.stars} role="radiogroup" aria-label={labels.yourRating}>
           {STAR_VALUES.map((v) => (
-            <button
+            <label
               key={v}
-              type="button"
               className={clsx(styles.star, v <= shown && styles.starOn)}
-              role="radio"
-              aria-checked={rating === v}
-              aria-label={`${v} star${v === 1 ? "" : "s"}`}
               data-star={v}
+              aria-label={`${v} star${v === 1 ? "" : "s"}`}
               onMouseEnter={() => setHover(v)}
               onMouseLeave={() => setHover(0)}
-              onFocus={() => setHover(v)}
-              onBlur={() => setHover(0)}
-              onClick={() => setRating(v)}
             >
+              <input
+                type="radio"
+                name="rating"
+                value={v}
+                checked={rating === v}
+                className={styles.starInput}
+                onChange={() => setRating(v)}
+                onFocus={() => setHover(v)}
+                onBlur={() => setHover(0)}
+              />
               ★
-            </button>
+            </label>
           ))}
         </div>
       </div>

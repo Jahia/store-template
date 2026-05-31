@@ -94,7 +94,7 @@ function isHttpUrl(url: string): boolean {
  * sanitized here — enable Jahia's server-side richtext HTML filtering for the store
  * site to cover those paths.
  */
-export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Element {
+export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): JSX.Element {
   const { currentResource, renderContext } = useServerContext();
   const title = str(node, "jcr:title") || node.getName();
   const description = str(node, "description");

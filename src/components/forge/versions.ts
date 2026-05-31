@@ -2,7 +2,7 @@ import { buildNodeUrl, getChildNodes } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 
 function parseVersion(v: string): number[] {
-  return (v || "").split(/[^0-9]+/).filter(Boolean).map(Number);
+  return (v || "").split(/\D+/).filter(Boolean).map(Number);
 }
 
 /** Descending comparator on dotted version numbers (1.10 > 1.9 > 1.0). */

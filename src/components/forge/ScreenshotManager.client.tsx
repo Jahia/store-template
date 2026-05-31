@@ -31,7 +31,7 @@ const REORDER = /* GraphQL */ `
  * by JCR ACLs. This replaces the legacy DeleteScreenshot / ReorderScreenshots
  * Java actions — no custom Java. Optimistic UI, reverting on error.
  */
-export default function ScreenshotManager({ path, items }: ScreenshotManagerProps) {
+export default function ScreenshotManager({ path, items }: Readonly<ScreenshotManagerProps>) {
   const [list, setList] = useState<Item[]>(items);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);

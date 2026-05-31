@@ -7,7 +7,7 @@ import styles from "./lightbox.module.css";
  * the legacy photoswipe/lity view. SSR-safe: thumbnails render on the server;
  * the overlay opens on click (client state). Receives image URLs as props.
  */
-export default function Lightbox({ images }: { images: string[] }) {
+export default function Lightbox({ images }: Readonly<{ images: string[] }>) {
   const [open, setOpen] = useState<number | null>(null);
 
   if (images.length === 0) return null;
@@ -28,7 +28,13 @@ export default function Lightbox({ images }: { images: string[] }) {
         ))}
       </div>
       {open !== null && (
-        <div className={styles.overlay} role="dialog" aria-modal="true" onClick={() => setOpen(null)}>
+        <div className={styles.overlay}>
+          <button
+            type="button"
+            className={styles.backdrop}
+            onClick={() => setOpen(null)}
+            aria-label="Close"
+          />
           <button type="button" className={styles.close} onClick={() => setOpen(null)} aria-label="Close">
             ×
           </button>
@@ -36,29 +42,18 @@ export default function Lightbox({ images }: { images: string[] }) {
             <button
               type="button"
               className={clsx(styles.nav, styles.prev)}
-              onClick={(e) => {
-                e.stopPropagation();
-                setOpen(open - 1);
-              }}
+              onClick={() => setOpen(open - 1)}
               aria-label="Previous"
             >
               ‹
             </button>
           )}
-          <img
-            className={styles.full}
-            src={images[open]}
-            alt=""
-            onClick={(e) => e.stopPropagation()}
-          />
+          <img className={styles.full} src={images[open]} alt="" />
           {open < images.length - 1 && (
             <button
               type="button"
               className={clsx(styles.nav, styles.next)}
-              onClick={(e) => {
-                e.stopPropagation();
-                setOpen(open + 1);
-              }}
+              onClick={() => setOpen(open + 1)}
               aria-label="Next"
             >
               ›

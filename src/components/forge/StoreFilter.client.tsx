@@ -30,7 +30,7 @@ const ALL = "__all__";
  * identically; the URL is read in an effect after mount (no hydration mismatch,
  * no `window` access during render).
  */
-export default function StoreFilter({ statuses, labels }: StoreFilterProps) {
+export default function StoreFilter({ statuses, labels }: Readonly<StoreFilterProps>) {
   const rootRef = useRef<HTMLDivElement>(null);
   const firstRun = useRef(true);
   const [search, setSearch] = useState("");
@@ -39,7 +39,7 @@ export default function StoreFilter({ statuses, labels }: StoreFilterProps) {
 
   // Seed from the URL once on the client (header search / shared links).
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(globalThis.location.search);
     const q = params.get("src_terms") || "";
     const s = params.get("status");
     if (q) setSearch(q);
@@ -54,8 +54,8 @@ export default function StoreFilter({ statuses, labels }: StoreFilterProps) {
     const term = search.trim().toLowerCase();
     let shown = 0;
     for (const card of cards) {
-      const title = card.getAttribute("data-title") || "";
-      const cardStatus = card.getAttribute("data-status") || "";
+      const title = card.dataset.title || "";
+      const cardStatus = card.dataset.status || "";
       const match = (term === "" || title.includes(term)) && (status === ALL || cardStatus === status);
       card.hidden = !match;
       if (match) shown++;
@@ -68,14 +68,15 @@ export default function StoreFilter({ statuses, labels }: StoreFilterProps) {
       firstRun.current = false;
       return;
     }
-    const next = new URLSearchParams(window.location.search);
+    const next = new URLSearchParams(globalThis.location.search);
     if (term) next.set("src_terms", term);
     else next.delete("src_terms");
     next.delete("q");
-    if (status !== ALL) next.set("status", status);
-    else next.delete("status");
+    if (status === ALL) next.delete("status");
+    else next.set("status", status);
     const qs = next.toString();
-    window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`);
+    const query = qs ? `?${qs}` : "";
+    globalThis.history.replaceState(null, "", `${globalThis.location.pathname}${query}${globalThis.location.hash}`);
   }, [search, status]);
 
   return (
@@ -93,7 +94,7 @@ export default function StoreFilter({ statuses, labels }: StoreFilterProps) {
         onChange={(e) => setSearch(e.target.value)}
       />
       {statuses.length > 0 && (
-        <div className={styles.facets} role="group" aria-label={labels.status}>
+        <fieldset className={styles.facets} aria-label={labels.status}>
           <button
             type="button"
             className={clsx(styles.facet, status === ALL && styles.facetActive)}
@@ -111,7 +112,7 @@ export default function StoreFilter({ statuses, labels }: StoreFilterProps) {
               {s}
             </button>
           ))}
-        </div>
+        </fieldset>
       )}
       {visible !== null && (
         <span className={styles.count}>

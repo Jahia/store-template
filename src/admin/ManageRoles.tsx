@@ -31,7 +31,7 @@ interface ManageRolesData {
  * Logic/i18n unchanged; Moonstone→HTML, Apollo→fetch. The original useLazyQuery
  * search becomes an on-demand fetch into local state.
  */
-export function ManageRoles({ siteKey }: { siteKey: string }) {
+export function ManageRoles({ siteKey }: Readonly<{ siteKey: string }>) {
   const { t } = useTranslation("privateappstore");
 
   const [openRole, setOpenRole] = useState<string | null>(null);
@@ -101,7 +101,7 @@ export function ManageRoles({ siteKey }: { siteKey: string }) {
   };
 
   const handleRevoke = async (role: string, member: Principal) => {
-    const confirmed = window.confirm(
+    const confirmed = globalThis.confirm(
       t("roles.revoke.confirm", { principal: member.displayName || member.name, role }),
     );
     if (!confirmed) return;
@@ -130,7 +130,7 @@ export function ManageRoles({ siteKey }: { siteKey: string }) {
     );
   }
 
-  const settings = data && data.manageRolesSettings;
+  const settings = data?.manageRolesSettings;
   if (!settings) {
     return <div className={styles.error}>{t("errors.load.failed")}</div>;
   }
@@ -235,7 +235,15 @@ export function ManageRoles({ siteKey }: { siteKey: string }) {
                     <li
                       key={`${p.type}:${p.name}`}
                       className={styles.searchResult}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => handleGrant(p)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleGrant(p);
+                        }
+                      }}
                     >
                       {p.displayName || p.name} <span className={styles.memberType}>{p.type}</span>
                     </li>

@@ -22,7 +22,7 @@ interface ForgeSettingsData {
  * primitives (Field/Input/Button) were replaced with plain accessible HTML +
  * admin.module.css, so it runs in a React 19 island (Moonstone is React 18).
  */
-export function ForgeSettings({ siteKey }: { siteKey: string }) {
+export function ForgeSettings({ siteKey }: Readonly<{ siteKey: string }>) {
   const { t } = useTranslation("privateappstore");
 
   const [url, setUrl] = useState("");
@@ -51,7 +51,7 @@ export function ForgeSettings({ siteKey }: { siteKey: string }) {
   };
 
   useEffect(() => {
-    if (data && data.forgeSettings) {
+    if (data?.forgeSettings) {
       syncFromSettings(data.forgeSettings);
     }
   }, [data]);
@@ -68,7 +68,7 @@ export function ForgeSettings({ siteKey }: { siteKey: string }) {
         // Blank password = keep existing (matches the legacy flow's behaviour).
         password: password || null,
       });
-      setSaveStatus(result && result.updateForgeSettings ? "success" : "error");
+      setSaveStatus(result?.updateForgeSettings ? "success" : "error");
       setPassword("");
       await refetch();
     } catch (err) {
@@ -80,7 +80,7 @@ export function ForgeSettings({ siteKey }: { siteKey: string }) {
   };
 
   const handleCancel = () => {
-    if (data && data.forgeSettings) {
+    if (data?.forgeSettings) {
       syncFromSettings(data.forgeSettings);
     }
     setSaveStatus("cancel");

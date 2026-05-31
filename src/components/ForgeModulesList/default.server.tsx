@@ -3,7 +3,6 @@ import {
   Island,
   jahiaComponent,
   Render,
-  useServerContext,
 } from "@jahia/javascript-modules-library";
 import { useTranslation } from "react-i18next";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
@@ -68,7 +67,7 @@ jahiaComponent(
         <Island component={StoreFilter} props={{ statuses, labels }} />
         <div className={styles.grid}>
           {entries.map((node) => (
-            <Render key={node.getIdentifier()} node={node as JCRNodeWrapper} view="default" readOnly />
+            <Render key={node.getIdentifier()} node={node} view="default" readOnly />
           ))}
         </div>
       </div>

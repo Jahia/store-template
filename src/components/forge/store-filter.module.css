@@ -28,6 +28,11 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
+  /* Reset the default <fieldset> chrome (border/padding/margin/min-width). */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
 }
 
 .facet {

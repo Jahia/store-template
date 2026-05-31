@@ -24,7 +24,7 @@ export function ForgeEntryCard({
   status,
   supported,
   reviewed,
-}: ForgeEntryCardProps): JSX.Element {
+}: Readonly<ForgeEntryCardProps>): JSX.Element {
   return (
     <a
       className={styles.card}

@@ -21,7 +21,7 @@
 .headIconPlaceholder {
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, var(--color-accent), #7b6cf0);
+  background: linear-gradient(135deg, var(--color-accent), #5544c4);
   color: #fff;
   font-weight: 750;
   font-size: 2rem;

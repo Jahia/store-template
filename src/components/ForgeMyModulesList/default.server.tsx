@@ -2,9 +2,7 @@ import {
   getNodesByJCRQuery,
   jahiaComponent,
   Render,
-  useServerContext,
 } from "@jahia/javascript-modules-library";
-import type { JCRNodeWrapper } from "org.jahia.services.content";
 import styles from "~/components/forge/forge.module.css";
 
 /**
@@ -26,7 +24,7 @@ jahiaComponent(
 
     const site = renderContext.getSite();
     const basePath = `${site.getPath()}/contents/modules-repository`;
-    const username = renderContext.getUser().getName().replace(/'/g, "''");
+    const username = renderContext.getUser().getName().replaceAll(/'/g, "''");
 
     const query =
       `SELECT * FROM [jmix:forgeElement] AS e ` +
@@ -42,7 +40,7 @@ jahiaComponent(
     return (
       <div className={styles.grid}>
         {entries.map((node) => (
-          <Render key={node.getIdentifier()} node={node as JCRNodeWrapper} view="default" readOnly />
+          <Render key={node.getIdentifier()} node={node} view="default" readOnly />
         ))}
       </div>
     );
