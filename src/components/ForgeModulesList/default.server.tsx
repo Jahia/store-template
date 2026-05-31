@@ -52,7 +52,7 @@ jahiaComponent(
           .map((e) => (e.hasProperty("status") ? e.getProperty("status").getString() : ""))
           .filter(Boolean),
       ),
-    ].sort();
+    ].sort((a, b) => a.localeCompare(b));
 
     const labels = {
       search: t("store.filter.search"),
