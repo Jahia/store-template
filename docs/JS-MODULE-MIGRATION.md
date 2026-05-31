@@ -142,14 +142,26 @@ site keeps working after every phase. Effort numbers are rough order-of-magnitud
     `fetch`-based `gql.ts` (`useGqlQuery` + `gqlRequest`), the luxe-idiomatic approach.
   - Self-contained i18next (`i18n.ts` + `locales/en.json`, `privateappstore` namespace).
 - ✅ Verified on the `phase0` site: `/sites/phase0/admin.html` → HTTP 200, three `role="tab"`
-  buttons (i18n labels SSR'd), `<jsm-island>` with `{siteKey, language}`, active-tab `Loading…`;
-  client bundle 18 KB, server 38 KB, GraalVM init clean.
-- **Remaining for Phase 1**: full site chrome — `Layout` head/SEO, navigation (`enhancedNavBar`),
-  footer (`storeFooter`/`storeTitle`/`storeLink`), login island. Plus browser-level hydration/E2E
-  verification of the admin screens (basic-auth can't call the gated GraphQL; use the Cypress
-  session login). Plus `fr` locale for the admin i18n.
+  buttons (i18n labels SSR'd), `<jsm-island>` with `{siteKey, language}`, active-tab `Loading…`.
+
+**Site chrome — DONE (2026-05-31).**
+- ✅ Full `Layout` (`src/templates/Layout.tsx` + `Layout.module.css`): `<head>` SEO + loads the
+  module's single `style.css` via `<AddResources>` (this also fixed the admin island being unstyled).
+- ✅ `src/styles/global.css`: design tokens + base (intentional, not Bootstrap defaults).
+- ✅ `src/components/chrome/`: `Header.tsx` (brand, nav from the home page's child pages, module
+  search box, login island), `Footer.tsx` (Jahia copyright + legal/social links, ported from the
+  JSP), `Login.client.tsx` (login/logout island — posts username/password to the current page so
+  Jahia's auth valve logs in; logout via `URLGenerator.getLogout()`).
+- ✅ Two islands per page (Login + AdminApp) hydrate independently.
+
+**Browser E2E — DONE.** `privateappstore/tests/cypress/e2e/15-inSiteAdmin.cy.ts` (guarded; **5/5
+pass**): chrome present, admin tabs hydrate, tab switching, and a Forge-settings save round-trips
+through `/modules/graphql` under the browser session.
+
+- **Remaining for Phase 1**: `fr` admin locale; i18n for the chrome strings (currently English);
+  the header search needs its Phase-2 `search-results` page/view to resolve.
 - **Exit criteria**: an authorised user manages forge settings, categories, and roles from a page
-  **inside the store website** — achieved (pending browser-hydration E2E sign-off).
+  **inside the store website** — ✅ achieved and browser-verified.
 
 ### Phase 2 — Storefront read views — ~2–3 weeks
 - Cards: `forgeModule.v2`, `forgePackage.v2`, version cards; video; changelog (display).

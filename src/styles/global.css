@@ -1,0 +1,62 @@
+/* Store design tokens + base. Global (non-module) CSS — bundled into the
+   module's single style.css and loaded once via <AddResources> in Layout. */
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #fafafb;
+  --color-surface-2: #f1f1f4;
+  --color-text: #1b1b1f;
+  --color-text-muted: #6a6a73;
+  --color-border: #e2e2e6;
+  --color-accent: #463cba;
+  --color-accent-hover: #382fa0;
+  --color-danger: #c4123f;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+
+  --radius: 8px;
+  --radius-lg: 12px;
+  --space: 1rem;
+  --container: 1200px;
+  --header-h: 64px;
+  --shadow-sm: 0 1px 2px rgba(20, 20, 30, 0.06);
+  --shadow-md: 0 6px 20px rgba(20, 20, 30, 0.1);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.01em;
+}

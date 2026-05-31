@@ -1,0 +1,44 @@
+.footer {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  margin-top: auto;
+}
+
+.inner {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 1.75rem var(--space);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.copy {
+  margin: 0;
+  flex: 1 1 auto;
+}
+
+.links,
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+
+.links a,
+.social a {
+  color: var(--color-text-muted);
+  font-weight: 550;
+}
+.links a:hover,
+.social a:hover {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.social {
+  gap: 0.25rem 0.85rem;
+}

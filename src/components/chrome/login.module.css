@@ -1,0 +1,102 @@
+.account {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.user {
+  font-weight: 600;
+  font-size: 0.9rem;
+  max-width: 12ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.logout:hover {
+  color: var(--color-danger);
+  text-decoration: none;
+}
+
+.login {
+  position: relative;
+}
+
+.loginBtn {
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: var(--color-accent);
+  color: #fff;
+  transition: background 150ms var(--ease);
+}
+.loginBtn:hover {
+  background: var(--color-accent-hover);
+}
+
+.panel {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  right: 0;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.panel label {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.panel input[type="text"],
+.panel input[name="username"],
+.panel input[type="password"] {
+  font: inherit;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+}
+.panel input:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(70, 60, 186, 0.16);
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500 !important;
+  color: var(--color-text-muted);
+}
+
+.submit {
+  margin-top: 0.35rem;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 7px;
+  border: none;
+  background: var(--color-accent);
+  color: #fff;
+  transition: background 150ms var(--ease);
+}
+.submit:hover {
+  background: var(--color-accent-hover);
+}

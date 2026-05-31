@@ -1,19 +1,34 @@
 import type { ReactNode } from "react";
+import { AddResources, buildModuleFileUrl, useServerContext } from "@jahia/javascript-modules-library";
+import "~/styles/global.css";
+import styles from "./Layout.module.css";
+import { Header } from "~/components/chrome/Header";
+import { Footer } from "~/components/chrome/Footer";
 
 /**
- * Minimal HTML document shell for store pages.
- *
- * Phase 0 skeleton: just enough <head>/<body> chrome to prove SSR rendering
- * through the javascript-modules-engine. Navigation, footer, login and the
- * design-system styling arrive in Phase 1 (see docs/JS-MODULE-MIGRATION.md).
+ * Store document shell: <head> (SEO + the module's single style.css) plus the
+ * site chrome (header / main / footer). Used by every page template.
  */
-export const Layout = ({ title, children }: { title?: string; children: ReactNode }): JSX.Element => (
-  <html lang="en">
-    <head>
-      <meta charSet="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>{title ?? "Jahia Store"}</title>
-    </head>
-    <body>{children}</body>
-  </html>
-);
+export const Layout = ({ title, children }: { title?: string; children: ReactNode }): JSX.Element => {
+  const { renderContext } = useServerContext();
+  const siteTitle = renderContext.getSite().getTitle();
+  const pageTitle = title ? `${title} — ${siteTitle}` : siteTitle || "Jahia Store";
+
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{pageTitle}</title>
+        <AddResources type="css" resources={buildModuleFileUrl("dist/assets/style.css")} />
+      </head>
+      <body>
+        <div className={styles.page}>
+          <Header />
+          <main className={styles.main}>{children}</main>
+          <Footer />
+        </div>
+      </body>
+    </html>
+  );
+};
