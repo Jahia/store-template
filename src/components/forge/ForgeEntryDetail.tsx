@@ -14,6 +14,22 @@ import { sortedVersionNodes } from "./versions";
 import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
 import ScreenshotManager from "./ScreenshotManager.client";
+import ReviewForm from "./ReviewForm.client";
+
+const REVIEW_LABELS = {
+  heading: "Write a review",
+  yourRating: "Your rating",
+  titleLabel: "Title",
+  titlePlaceholder: "Sum up your experience",
+  commentLabel: "Review",
+  commentPlaceholder: "What did you think of this module?",
+  submit: "Post review",
+  submitting: "Posting…",
+  thanks: "Thanks! Your review has been posted.",
+  alreadyReviewed: "You've already reviewed this module.",
+  pickRating: "Please pick a rating first.",
+  error: "Could not post your review — please try again.",
+};
 
 const EDITOR_LABELS = {
   edit: "Edit module",
@@ -68,7 +84,7 @@ function stars(rating: number): string {
  * save. (Edit mode and reviews come in Phase 3.)
  */
 export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Element {
-  const { currentResource } = useServerContext();
+  const { currentResource, renderContext } = useServerContext();
   const title = str(node, "jcr:title") || node.getName();
   const description = str(node, "description");
   const license = str(node, "license");
@@ -88,6 +104,9 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
     reviews.length > 0
       ? Math.round((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) * 10) / 10
       : 0;
+  const isLoggedIn = renderContext.isLoggedIn();
+  const currentUsername = isLoggedIn ? renderContext.getUser().getName() : "";
+  const hasReviewed = currentUsername !== "" && reviews.some((r) => r.author === currentUsername);
 
   return (
     <article className={styles.detail}>
@@ -205,23 +224,40 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
         </section>
       )}
 
-      {reviews.length > 0 && (
+      {(reviews.length > 0 || isLoggedIn) && (
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Reviews</h2>
-          <ul className={styles.reviews}>
-            {reviews.map((r, i) => (
-              <li key={`${r.author}-${i}`} className={styles.review}>
-                <div className={styles.reviewHead}>
-                  <span className={styles.stars} aria-label={`${r.rating} / 5`}>
-                    {stars(r.rating)}
-                  </span>
-                  {r.title && <span className={styles.reviewTitle}>{r.title}</span>}
-                  {r.author && <span className={styles.reviewAuthor}>{r.author}</span>}
-                </div>
-                {r.content && <p className={styles.reviewContent}>{r.content}</p>}
-              </li>
-            ))}
-          </ul>
+          {isLoggedIn && (
+            <Island
+              component={ReviewForm}
+              props={{
+                moduleId: node.getIdentifier(),
+                language,
+                hasReviewed,
+                labels: REVIEW_LABELS,
+              }}
+            />
+          )}
+          {reviews.length > 0 ? (
+            <ul className={styles.reviews}>
+              {reviews.map((r, i) => (
+                <li key={`${r.author}-${i}`} className={styles.review}>
+                  <div className={styles.reviewHead}>
+                    <span className={styles.stars} aria-label={`${r.rating} / 5`}>
+                      {stars(r.rating)}
+                    </span>
+                    {r.title && <span className={styles.reviewTitle}>{r.title}</span>}
+                    {r.author && <span className={styles.reviewAuthor}>{r.author}</span>}
+                  </div>
+                  {r.content && <p className={styles.reviewContent}>{r.content}</p>}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className={styles.muted}>
+              No reviews yet.{isLoggedIn ? " Be the first to review this module." : ""}
+            </p>
+          )}
         </section>
       )}
     </article>
