@@ -33,6 +33,29 @@ Difficulty profile of the 48 views (from inventory): **TRIVIAL 8 / MEDIUM 32 / H
 
 ---
 
+## 0bis. Engine spike — RESULT: **GO** (2026-05-31)
+
+Ran against the live stack (`jahia-ee-dev:8-SNAPSHOT`, license 8.2.0.6) before scaffolding.
+
+- **The dev image already ships the engine** (`javascript-modules-engine v1.3.0-SNAPSHOT`, bundle
+  [127]). JS modules are a first-class runtime on this build.
+- Installed **engine 1.2.0** via provisioning API (`mvn:org.jahia.modules/javascript-modules-engine/1.2.0`,
+  autoStart) — module manager hot-swapped 1.3.0-SNAPSHOT → 1.2.0; reached **ACTIVE**, registered 24
+  views, "Operation successful". We standardize on **1.2.0** (matches `[1.1,2)` + library 1.2.0).
+- **Toolchain validated**: a minimal module (`@jahia/vite-plugin` 1.2.0 + Vite 8 + React 19 on
+  Node 22) built `dist/server/index.js` with the `jahiaComponent()` registrations compiled to SSR.
+- **Deploy + registration validated**: `npm pack` tgz installed via `js:file:` provisioning →
+  `[GraalVMEngine] Registered bundle … in GraalVM engine`, and both component kinds bound:
+  `…_view_jnt:text_spike` and `…_template_jnt:page_spike`. Server components run on **GraalVM**
+  inside the JVM (synchronous direct-JCR access). Throwaway module cleanly uninstalled afterwards.
+- **Not exercised**: an HTTP GET of a rendered page (needs a content site; GraphQL `jcr` is locked
+  for basic-auth here). Deferred to Phase 0/1, where a site exists naturally. GraalVM component
+  registration is the conclusive SSR proof.
+- **Dev-loop note**: local `npm pack` + `js:file:` install works with no Maven/Nexus round-trip —
+  fast iteration for Phase 0+.
+
+---
+
 ## 1. Target architecture
 
 ```
@@ -88,10 +111,13 @@ site keeps working after every phase. Effort numbers are rough order-of-magnitud
 - New branch.
 - Add `package.json` (jahia block + scripts), `vite.config.js`, `tsconfig.json`, lint/format.
 - Hybrid Maven: `build-helper` attaches `dist/package.tgz`; keep `mvn:` deploy + provisioning.
-- Provision `javascript-modules-engine` in the test stack; confirm engine↔Jahia compatibility.
+- Provision `javascript-modules-engine` in the test stack. ✅ *engine↔Jahia compatibility proven by
+  the 0bis spike (engine 1.2.0 ACTIVE; image pre-ships the engine; toolchain + GraalVM registration
+  validated).*
 - Ship a base **Page template** + one trivial component; deploy; render one page through the engine.
 - **Exit criteria**: a page served by the JS engine renders on the running stack via the existing
-  Maven/provisioning flow.
+  Maven/provisioning flow. *(The remaining unproven step from the spike — an actual HTTP page
+  render — is this phase's exit gate.)*
 
 ### Phase 1 — Site chrome + ADMIN vertical slice (delivers the original ask) — ~1 week
 - `Layout` (head/body, global CSS), navigation (port `enhancedNavBar`), footer
@@ -145,7 +171,8 @@ site keeps working after every phase. Effort numbers are rough order-of-magnitud
 ## 4. Top risks
 1. Detail views + lists/filtering + edit forms (the HARD bucket) — the bulk of effort.
 2. E2E rework where assertions depend on Bootstrap3 markup.
-3. Engine ↔ Jahia version compatibility (verify Phase 0).
+3. ~~Engine ↔ Jahia version compatibility~~ — **RESOLVED** by the 0bis spike (engine 1.2.0 ACTIVE;
+   image pre-ships the engine). Standardized on engine 1.2.0.
 4. Java-actions relocation (Phase 3) touching the privateappstore module.
 
 ## 5. Immediate next step
