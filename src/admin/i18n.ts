@@ -1,6 +1,7 @@
 import i18next, { type i18n } from "i18next";
 import { initReactI18next } from "react-i18next";
 import en from "./locales/en.json";
+import fr from "./locales/fr.json";
 
 /**
  * Self-contained i18next instance for the admin islands, bundling the
@@ -21,7 +22,7 @@ export function getAdminI18n(language: string = "en"): i18n {
       fallbackLng: "en",
       ns: ["privateappstore"],
       defaultNS: "privateappstore",
-      resources: { en: { privateappstore: en } },
+      resources: { en: { privateappstore: en }, fr: { privateappstore: fr } },
       interpolation: { escapeValue: false },
     });
   } else if (instance.language !== language) {

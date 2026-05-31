@@ -1,0 +1,28 @@
+{
+  "site": {
+    "title": "Jahia Store"
+  },
+  "chrome": {
+    "search": {
+      "placeholder": "Rechercher des modules…",
+      "label": "Rechercher des modules"
+    },
+    "login": {
+      "signIn": "Connexion",
+      "signOut": "Déconnexion",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "rememberMe": "Se souvenir de moi"
+    }
+  },
+  "admin": {
+    "title": "Administration du store",
+    "denied": "Vous n'avez pas l'autorisation de gérer ce store."
+  },
+  "footer": {
+    "copyright": "© 2002–2026 Tous droits réservés par Jahia Solutions Group SA",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "cookies": "Politique relative aux cookies"
+  }
+}

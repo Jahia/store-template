@@ -5,6 +5,7 @@ import {
   Island,
   useServerContext,
 } from "@jahia/javascript-modules-library";
+import { useTranslation } from "react-i18next";
 import styles from "./Header.module.css";
 import Login from "./Login.client";
 
@@ -14,6 +15,7 @@ import Login from "./Login.client";
  * every page via Layout.
  */
 export function Header(): JSX.Element {
+  const { t } = useTranslation();
   const { renderContext, mainNode } = useServerContext();
   const site = renderContext.getSite();
   const home = site.getHome();
@@ -56,14 +58,26 @@ export function Header(): JSX.Element {
             className={styles.searchInput}
             type="search"
             name="src_terms"
-            placeholder="Search modules…"
-            aria-label="Search modules"
+            placeholder={t("chrome.search.placeholder")}
+            aria-label={t("chrome.search.label")}
           />
         </form>
 
         <Island
           component={Login}
-          props={{ isLoggedIn, username, loginUrl, logoutUrl }}
+          props={{
+            isLoggedIn,
+            username,
+            loginUrl,
+            logoutUrl,
+            labels: {
+              signIn: t("chrome.login.signIn"),
+              signOut: t("chrome.login.signOut"),
+              username: t("chrome.login.username"),
+              password: t("chrome.login.password"),
+              rememberMe: t("chrome.login.rememberMe"),
+            },
+          }}
         />
       </div>
     </header>

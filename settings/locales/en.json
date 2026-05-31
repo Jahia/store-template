@@ -1,5 +1,28 @@
 {
   "site": {
     "title": "Jahia Store"
+  },
+  "chrome": {
+    "search": {
+      "placeholder": "Search modules…",
+      "label": "Search modules"
+    },
+    "login": {
+      "signIn": "Log in",
+      "signOut": "Log out",
+      "username": "Username",
+      "password": "Password",
+      "rememberMe": "Remember me"
+    }
+  },
+  "admin": {
+    "title": "Store administration",
+    "denied": "You do not have permission to manage this store."
+  },
+  "footer": {
+    "copyright": "© 2002–2026 All Rights Reserved by Jahia Solutions Group SA",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "cookies": "Cookie Policy"
   }
 }

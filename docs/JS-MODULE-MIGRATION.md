@@ -158,10 +158,20 @@ site keeps working after every phase. Effort numbers are rough order-of-magnitud
 pass**): chrome present, admin tabs hydrate, tab switching, and a Forge-settings save round-trips
 through `/modules/graphql` under the browser session.
 
-- **Remaining for Phase 1**: `fr` admin locale; i18n for the chrome strings (currently English);
-  the header search needs its Phase-2 `search-results` page/view to resolve.
+**i18n (en/fr) — DONE (2026-05-31).**
+- ✅ Admin screens: `src/admin/locales/{en,fr}.json` (privateappstore namespace) wired into
+  `getAdminI18n(language)`; language comes from `currentResource.getLocale().getLanguage()`.
+- ✅ Chrome: `settings/locales/{en,fr}.json` (engine i18n) used via `useTranslation()` in
+  Header/Footer/site-admin; the Login island receives translated labels as **props** (keys used
+  only post-click wouldn't be in the SSR-collected store).
+- ✅ Verified on a fr-enabled site: `/cms/render/default/fr/.../admin.html` → French chrome
+  ("Administration du store", "Connexion", "Rechercher des modules") **and** French admin tabs
+  ("App Store privé", "Catégories App Store", "Rôles App Store").
+
+**Phase 1 — COMPLETE.** Remaining items belong to later phases: the header search resolves once
+Phase 2 builds the `search-results` page/view.
 - **Exit criteria**: an authorised user manages forge settings, categories, and roles from a page
-  **inside the store website** — ✅ achieved and browser-verified.
+  **inside the store website**, with full site chrome and en/fr i18n — ✅ achieved & browser-verified.
 
 ### Phase 2 — Storefront read views — ~2–3 weeks
 - Cards: `forgeModule.v2`, `forgePackage.v2`, version cards; video; changelog (display).

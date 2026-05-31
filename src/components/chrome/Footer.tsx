@@ -1,9 +1,10 @@
+import { useTranslation } from "react-i18next";
 import styles from "./Footer.module.css";
 
 const LEGAL = [
-  { href: "https://www.jahia.com/legal/privacy-policy.html", label: "Privacy Policy" },
-  { href: "https://www.jahia.com/terms-of-use-jahia", label: "Terms of Use" },
-  { href: "https://www.jahia.com/legal/cookies-policy.html", label: "Cookie Policy" },
+  { href: "https://www.jahia.com/legal/privacy-policy.html", key: "footer.privacy" },
+  { href: "https://www.jahia.com/terms-of-use-jahia", key: "footer.terms" },
+  { href: "https://www.jahia.com/legal/cookies-policy.html", key: "footer.cookies" },
 ];
 
 const SOCIAL = [
@@ -15,14 +16,15 @@ const SOCIAL = [
 
 /** Store footer: Jahia copyright + legal and social links (ported from the JSP). */
 export function Footer(): JSX.Element {
+  const { t } = useTranslation();
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
-        <p className={styles.copy}>© 2002–2026 All Rights Reserved by Jahia Solutions Group SA</p>
+        <p className={styles.copy}>{t("footer.copyright")}</p>
         <nav className={styles.links} aria-label="Legal">
           {LEGAL.map((l) => (
             <a key={l.href} href={l.href}>
-              {l.label}
+              {t(l.key)}
             </a>
           ))}
         </nav>

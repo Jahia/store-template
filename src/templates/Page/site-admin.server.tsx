@@ -1,4 +1,5 @@
 import { Island, jahiaComponent } from "@jahia/javascript-modules-library";
+import { useTranslation } from "react-i18next";
 import { Layout } from "~/templates/Layout";
 import AdminApp from "~/admin/AdminApp.client";
 
@@ -21,6 +22,7 @@ jahiaComponent(
     componentType: "template",
   },
   (_props, { renderContext, currentResource }) => {
+    const { t } = useTranslation();
     const site = renderContext.getSite();
     const siteKey = site.getSiteKey();
     // Call Java methods directly — GraalVM rejects optional-call (`?.()`) on host objects.
@@ -36,19 +38,19 @@ jahiaComponent(
 
     if (!allowed) {
       return (
-        <Layout title="Store administration">
+        <Layout title={t("admin.title")}>
           <main>
-            <h1>Store administration</h1>
-            <p>You do not have permission to manage this store.</p>
+            <h1>{t("admin.title")}</h1>
+            <p>{t("admin.denied")}</p>
           </main>
         </Layout>
       );
     }
 
     return (
-      <Layout title="Store administration">
+      <Layout title={t("admin.title")}>
         <main>
-          <h1>Store administration</h1>
+          <h1>{t("admin.title")}</h1>
           <Island component={AdminApp} props={{ siteKey, language }} />
         </main>
       </Layout>
