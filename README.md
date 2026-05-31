@@ -34,6 +34,23 @@ Jahia instance on `localhost:8080`:
 cd ../privateappstore/tests && npx cypress run
 ```
 
+## Accessibility
+
+**Conformance target: WCAG 2.2 Level AAA.**
+
+This applies to everything the template controls — document structure and
+landmarks, color and contrast, focus order, keyboard operability, and motion.
+Notably, all text meets the AAA **enhanced contrast** threshold (≥ 7:1), and the
+page exposes exactly one top-level `<main>` landmark.
+
+Some AAA success criteria are inherently **content-dependent** (e.g. 1.2.6
+sign-language for prerecorded video, 3.1.5 reading level) and therefore rest with
+the editors who publish into the store, not with this template. The template's
+job is to provide an AAA-capable structure and style system; the
+[accessibility invariants in AGENTS.md](./AGENTS.md) keep it that way across
+changes. The target is currently verified by manual axe-core / EqualWeb audits —
+there is no automated gate in the E2E suite yet.
+
 ## Documentation
 
 - [AGENTS.md](./AGENTS.md) — architecture, engine constraints, build/deploy/test,

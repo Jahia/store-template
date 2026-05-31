@@ -121,7 +121,11 @@ dist/             build output (client islands, server bundle, package.tgz)
   bundle (the failure mode that ruled out Apollo). Do not "fix" it by adding a
   dependency.
 
-## Accessibility invariants (verified against an axe-core audit)
+## Accessibility invariants (target: WCAG 2.2 Level AAA)
+
+This module targets **WCAG 2.2 Level AAA** for everything it controls (structure,
+color, focus, keyboard). The invariants below are what keep it there — don't
+regress them. Verified against an axe-core / EqualWeb audit.
 
 - **`Layout` owns the one and only `<main>` landmark.** Page templates
   (`templates/Page/*.server.tsx`) supply *content* as `Layout` children — they
