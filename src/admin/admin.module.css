@@ -65,7 +65,7 @@
 
 .hint {
   font-size: 0.78rem;
-  color: #6a6a73;
+  color: var(--color-text-muted);
 }
 
 .actions {
@@ -156,7 +156,7 @@
 .loading,
 .error {
   padding: 1rem;
-  color: #6a6a73;
+  color: var(--color-text-muted);
 }
 .error {
   color: #a50f35;
@@ -188,7 +188,7 @@
 
 .meta {
   font-size: 0.8rem;
-  color: #6a6a73;
+  color: var(--color-text-muted);
 }
 
 .searchResults {
@@ -249,7 +249,7 @@
   border: none;
   border-bottom: 2px solid transparent;
   background: transparent;
-  color: #6a6a73;
+  color: var(--color-text-muted);
   margin-bottom: -1px;
   transition: color 150ms ease, border-color 150ms ease;
 }
