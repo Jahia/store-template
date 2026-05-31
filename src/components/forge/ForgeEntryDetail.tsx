@@ -231,7 +231,7 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
             <Island
               component={ReviewForm}
               props={{
-                moduleId: node.getIdentifier(),
+                actionUrl: `${buildNodeUrl(node).replace(/\.html$/, "")}.submitReview.do`,
                 language,
                 hasReviewed,
                 labels: REVIEW_LABELS,

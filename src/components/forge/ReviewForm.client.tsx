@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import styles from "./review.module.css";
-import { gqlRequest } from "~/lib/graphql";
 
 interface ReviewLabels {
   heading: string;
@@ -19,8 +18,8 @@ interface ReviewLabels {
 }
 
 interface ReviewFormProps {
-  /** UUID of the module/package being reviewed. */
-  moduleId: string;
+  /** Render-servlet URL of the submitReview action on the module node. */
+  actionUrl: string;
   /** Content language tag (e.g. "en"), so the review lands in the right locale. */
   language: string;
   /** True if the current user already reviewed this module — render a note instead of a form. */
@@ -29,49 +28,40 @@ interface ReviewFormProps {
   labels: ReviewLabels;
 }
 
-interface SubmitResult {
-  submitForgeReview: {
-    rating: number;
-    reviewCount: number;
-    averageRating: number;
-    author: string;
-  };
-}
-
-const SUBMIT_REVIEW = /* GraphQL */ `
-  mutation SubmitForgeReview(
-    $moduleId: String!
-    $rating: Int!
-    $title: String
-    $comment: String
-    $language: String
-  ) {
-    submitForgeReview(
-      moduleId: $moduleId
-      rating: $rating
-      title: $title
-      comment: $comment
-      language: $language
-    ) {
-      rating
-      reviewCount
-      averageRating
-      author
-    }
-  }
-`;
-
 const STAR_VALUES = [1, 2, 3, 4, 5] as const;
+
+/**
+ * POST form-encoded data via XMLHttpRequest so Jahia's CSRF guard (which patches
+ * XHR, not fetch) attaches the OWASP-CSRFTOKEN header automatically.
+ */
+function postForm(url: string, body: string): Promise<{ status: number; body: string }> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.withCredentials = true;
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.onload = () => resolve({ status: xhr.status, body: xhr.responseText });
+    xhr.onerror = () => reject(new Error("Network error"));
+    xhr.send(body);
+  });
+}
 
 /**
  * In-site review form — the React replacement for the legacy jnt:addReview JSP.
  * Shown only to logged-in users (the server gates rendering). Posts a rating plus
- * optional title/comment through the privileged `submitForgeReview` mutation,
- * which attributes the review to the caller and bypasses the module ACL so any
- * user can review a module they don't own. One review per user: once submitted
- * (or if already reviewed) it shows a confirmation instead of the form.
+ * optional title/comment to the privateappstore `submitReview` action, which
+ * attributes the review to the caller and bypasses the module ACL so any user can
+ * review a module they don't own. (An action — not a GraphQL mutation — because
+ * the Jahia GraphQL endpoint is not reachable by ordinary users.) One review per
+ * user: once submitted (or if already reviewed) it shows a confirmation.
+ *
+ * Submits via XMLHttpRequest (not fetch): Jahia's CSRF guard injects a
+ * `/modules/CsrfServlet` script on every page that monkey-patches XHR to attach
+ * the per-page OWASP-CSRFTOKEN header — it does NOT patch fetch, so a fetch POST
+ * to the `.do` action would be rejected as a CSRF attack.
  */
-export default function ReviewForm({ moduleId, language, hasReviewed, labels }: ReviewFormProps) {
+export default function ReviewForm({ actionUrl, language, hasReviewed, labels }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [title, setTitle] = useState("");
@@ -108,19 +98,31 @@ export default function ReviewForm({ moduleId, language, hasReviewed, labels }: 
     setStatus("submitting");
     setMessage("");
     try {
-      await gqlRequest<SubmitResult>(SUBMIT_REVIEW, {
-        moduleId,
-        rating,
-        title: title.trim() || null,
-        comment: comment.trim() || null,
-        language,
-      });
-      setStatus("done");
-    } catch (err) {
+      const body = new URLSearchParams();
+      body.set("rating", String(rating));
+      if (title.trim()) body.set("title", title.trim());
+      if (comment.trim()) body.set("comment", comment.trim());
+      body.set("language", language);
+
+      const res = await postForm(actionUrl, body.toString());
+      if (res.status >= 200 && res.status < 300) {
+        setStatus("done");
+        return;
+      }
+      // The action returns user-facing messages ("You have already reviewed this
+      // module", "Rating must be between 1 and 5") in {error}; surface them.
+      let msg = labels.error;
+      try {
+        const json = JSON.parse(res.body) as { error?: string };
+        if (json?.error) msg = json.error;
+      } catch {
+        // keep the generic message
+      }
       setStatus("error");
-      // The mutation returns user-facing messages ("You have already reviewed this
-      // module", "Rating must be between 1 and 5"), so surface them directly.
-      setMessage(err instanceof Error && err.message ? err.message : labels.error);
+      setMessage(msg);
+    } catch {
+      setStatus("error");
+      setMessage(labels.error);
     }
   };
 
