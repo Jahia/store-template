@@ -39,6 +39,28 @@ function screenshotItems(node: JCRNodeWrapper): { name: string; url: string }[] 
   );
 }
 
+interface Review {
+  rating: number;
+  title: string;
+  content: string;
+  author: string;
+}
+
+function reviewItems(node: JCRNodeWrapper): Review[] {
+  if (!node.hasNode("reviews")) return [];
+  return getChildNodes(node.getNode("reviews"), 100, 0, (n) => n.isNodeType("jnt:review")).map((r) => ({
+    rating: r.hasProperty("rating") ? Number(r.getProperty("rating").getLong()) : 0,
+    title: str(r, "jcr:title"),
+    content: str(r, "content"),
+    author: str(r, "jcr:createdBy"),
+  }));
+}
+
+function stars(rating: number): string {
+  const n = Math.max(0, Math.min(5, Math.round(rating)));
+  return "★".repeat(n) + "☆".repeat(5 - n);
+}
+
 /**
  * Read-only detail of a forge module/package: header, description, video,
  * screenshots (lightbox), versions (rendered via their `default` view) and
@@ -61,6 +83,11 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
   const videoNode = node.hasNode("video") ? node.getNode("video") : null;
   const canEdit = node.hasPermission("jcr:write");
   const language = currentResource.getLocale().getLanguage();
+  const reviews = reviewItems(node);
+  const avgRating =
+    reviews.length > 0
+      ? Math.round((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) * 10) / 10
+      : 0;
 
   return (
     <article className={styles.detail}>
@@ -84,6 +111,14 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
             )}
             {supported && <span className={clsx(styles.badge, styles.supported)}>Supported by Jahia</span>}
             {reviewed && <span className={clsx(styles.badge, styles.reviewed)}>Reviewed by Jahia</span>}
+            {reviews.length > 0 && (
+              <span className={styles.ratingBadge} title={`${avgRating} / 5`}>
+                <span className={styles.stars} aria-hidden="true">
+                  {stars(avgRating)}
+                </span>
+                <span className={styles.ratingCount}>({reviews.length})</span>
+              </span>
+            )}
           </div>
         </div>
       </header>
@@ -167,6 +202,26 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
               </>
             )}
           </dl>
+        </section>
+      )}
+
+      {reviews.length > 0 && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Reviews</h2>
+          <ul className={styles.reviews}>
+            {reviews.map((r, i) => (
+              <li key={`${r.author}-${i}`} className={styles.review}>
+                <div className={styles.reviewHead}>
+                  <span className={styles.stars} aria-label={`${r.rating} / 5`}>
+                    {stars(r.rating)}
+                  </span>
+                  {r.title && <span className={styles.reviewTitle}>{r.title}</span>}
+                  {r.author && <span className={styles.reviewAuthor}>{r.author}</span>}
+                </div>
+                {r.content && <p className={styles.reviewContent}>{r.content}</p>}
+              </li>
+            ))}
+          </ul>
         </section>
       )}
     </article>

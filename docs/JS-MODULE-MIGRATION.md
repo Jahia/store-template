@@ -243,11 +243,24 @@ Only the JAR upload keeps the existing `createEntryFromJar` Java action (it runs
 - ✅ E2E `17-authoring.cy.ts` (3/3): upload two screenshots → reorder persists (verified via reload)
   → delete persists. Full set 15+16+17 = **13/13**.
 
-**Slice 3c — remaining:** JAR upload form (→ the existing `createEntryFromJar.do` action — multipart
-upload + Maven deploy), review submission (needs privilege elevation — any logged-in user reviews any
-module, so it can't use owner-ACL jcr writes; keep/port a privileged action or a dedicated GraphQL
-mutation), rich-text editing for the richtext fields. Then retire the JSP edit views.
-- **Exit criteria**: authoring flows run on JS views; JSP edit views retired.
+**Slice 3c — JAR upload + reviews display — DONE (2026-05-31).**
+- ✅ `FileUpload/default.server.tsx` (+ `upload.module.css`): the `jnt:fileUpload` view renders a
+  multipart form posting to `…modules-repository.createEntryFromJar.do` (file + redirectURL +
+  successRedirectUrl), gated on login. The existing Java action handles JAR parsing + Maven deploy +
+  node creation (the only authoring piece keeping a Java action).
+- ✅ Reviews **display** in `ForgeEntryDetail`: lists `jnt:review` children (stars/title/content/
+  author) + an average-rating badge in the header. Read-only.
+- ✅ E2E `17-authoring.cy.ts` (5/5): the upload form is wired to `createEntryFromJar.do`; a seeded
+  review renders with its rating/title/content. Full set 15+16+17 = **15/15**.
+
+**Phase 3 — substantially COMPLETE** (owner authoring + JAR upload + reviews display all on JS views).
+Two items deliberately deferred, each with a real dependency:
+- **Review submission** — needs privilege elevation (any logged-in user reviews any module, not
+  owner-ACL `jcr` writes) → a dedicated privileged GraphQL mutation/action in `privateappstore`.
+- **Rich-text editing** — the metadata editor's richtext fields use plain textareas; swapping in a
+  rich-text editor adds an editor dependency.
+- JSP edit views are retired at cutover (Phase 5).
+- **Exit criteria**: authoring flows run on JS views — ✅ achieved (bar the two deferred items).
 
 ### Phase 4 — Page templates & prepackaged site — ~1 week
 - Port `repository.xml` templates (base/home/store-home/search/module/edit/my-modules/changelog/
