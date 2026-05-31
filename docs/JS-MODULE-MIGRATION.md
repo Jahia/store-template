@@ -1,0 +1,153 @@
+# store-template → Jahia JavaScript Module — Migration Plan
+
+Status: **PLAN (pre-implementation)**
+Target: convert `store-template` from a JSP/Bootstrap3 OSGi template set into a Jahia
+**JavaScript Module** (SSR React via `@jahia/javascript-modules-engine`), modelled on
+`luxe-jahia-demo`.
+
+A primary near-term driver: render the Private App Store **admin screens (Forge settings,
+Categories, Roles) directly inside the website** again — which falls out naturally once the
+module is React, because JS modules render admin-style screens as ordinary in-site views
+with server-side permission checks (they do not register Jahia `adminRoute`s).
+
+---
+
+## 0. Reference facts (verified)
+
+| Fact | Source |
+|---|---|
+| Engine is an installable OSGi bundle; JSP modules and JS modules run side-by-side on Jahia 8.2 EE | `luxe` runs `jahia-ee:8.2`; privateappstore runs `jahia-ee-dev:8-SNAPSHOT` |
+| Enable engine via one provisioning line | `luxe/docker/provisioning.yml`: `- installOrUpgradeBundle: "mvn:org.jahia.modules/javascript-modules-engine"` |
+| JS module deps declared in `package.json` `jahia` block | `luxe template-set package.json`: `module-dependencies: "default,javascript-modules-engine=[1.1,2)"`, `module-type: templatesSet`, `server: dist/server/index.js`, `static-resources`, `required-version: 8.2.1.0` |
+| Build = `tsc --noEmit && vite build && yarn pack` → `dist/package.tgz`; Maven `build-helper` attaches the tgz so `mvn:` coordinates still resolve | `luxe template-set` `package.json` + `pom.xml` |
+| Server components read JCR **directly** (`getChildNodes`, `getNodesByJCRQuery`, props from node properties); client islands use `/modules/graphql` | `luxe` JcrQuery / Estate / SearchEstate |
+| Components register via `jahiaComponent({nodeType,name,componentType:'view'|'template'}, fn)`; co-located `definition.cnd`; `name` ⇒ view name (`default`, `cm`, `fullPage`, …) | `luxe` Section/Realtor/Page |
+| Interactivity via `<Island component={Client} props={serializable}/>` + `*.client.tsx` (default export) | `luxe` SearchEstate/Login |
+| i18n in `settings/locales/<lang>.json`, used via `useTranslation()` | `luxe` |
+
+`store-template` today: **48 JSP views / ~7,100 LOC**, 21 node-type view dirs, a **1,212-line**
+`repository.xml`, 3 Java classes (2 actions + 1 tag library), heavy jQuery stack
+(isotope, select2, photoswipe, wysihtml5, bootstrap-editable), Bootstrap3 LESS.
+
+Difficulty profile of the 48 views (from inventory): **TRIVIAL 8 / MEDIUM 32 / HARD 8**.
+
+---
+
+## 1. Target architecture
+
+```
+store-template/                      (becomes a JS module; stays its own git repo)
+├─ package.json                      jahia{} block + scripts (vite/tsc/pack/deploy)
+├─ vite.config.js                    @jahia/vite-plugin
+├─ tsconfig.json, eslint, prettier
+├─ pom.xml                           hybrid: build-helper attaches dist/package.tgz (keeps mvn: coords + CI)
+├─ settings/
+│  ├─ locales/{en,fr,de,es,it,pt}.json
+│  └─ definitions.cnd                (module-owned types not co-located)
+├─ src/
+│  ├─ templates/                     Page templates (Layout, base/home/search/module/edit/admin)
+│  ├─ components/<NodeType>/         default.server.tsx (+ cm/fullPage), *.client.tsx, *.module.css, definition.cnd
+│  └─ admin/                         ForgeSettings / CategorySettings / ManageRoles (in-site React)
+└─ static|icons|images
+```
+
+### Cross-cutting decisions (recommended; confirm before the relevant phase)
+1. **Server vs client data**: server views read JCR directly via the engine library; only
+   interactive islands hit `/modules/graphql`. (No Apollo in server code, no Next.js.)
+2. **`ForgeFunctions` (version sort/latest/prev/next)**: reimplement in TypeScript, server-side,
+   over direct JCR — trivial logic, removes the JSP tag-lib dependency.
+3. **Java actions `DeleteScreenshot` / `ReorderScreenshots`**: store-template becomes pure JS, so
+   move this server logic to **GraphQL mutations in the `privateappstore` Java module** (it already
+   hosts GraphQL extensions and the IDOR-prevention checks belong server-side). Islands call them.
+   *(Alt: keep a thin Java companion module. Decision needed at Phase 3.)*
+4. **Styling**: rebuild with CSS Modules per component; **drop Bootstrap3 / jQuery / LESS** and the
+   `bootstrap3-*`, `jquery` module dependencies. Follow `.claude/rules/ecc/web/design-quality.md`.
+5. **Plugin replacements**: isotope+select2 filtering → React state; photoswipe → a small React
+   lightbox or a vetted client lib in an island; wysihtml5/CKEditor → a React rich-text island;
+   file-input → native `<input type=file>` + island upload.
+6. **i18n**: migrate the ~150–200 JSP bundle keys into `settings/locales/*.json`.
+7. **Monorepo (optional)**: could adopt luxe-style yarn workspaces (`design-system` +
+   `template-set` + `prepackaged-site`); minimally, keep `store-template` as one JS-module package.
+
+### Runtime / dependency changes
+- Add provisioning line `installOrUpgradeBundle: "mvn:org.jahia.modules/javascript-modules-engine"`
+  to the test stacks that load store-template (privateappstore + store-template test provisioning).
+- `module-dependencies`: `default, javascript-modules-engine=[1.1,2), privateappstore, search`
+  (drop bootstrap3/jquery/font-awesome once views no longer use them).
+- Pin/confirm an engine build compatible with our Jahia (`required-version`); our stack is
+  8.2 EE-dev (license 8.2.0.6); luxe targets 8.2.1.0 — verify at Phase 0.
+
+---
+
+## 2. Phased plan (end state = complete JS module)
+
+Phases are incremental and shippable; JSP and JS views **coexist** during the migration, so the
+site keeps working after every phase. Effort numbers are rough order-of-magnitude, not commitments.
+
+### Phase 0 — Toolchain & skeleton (prove the pipeline) — ~1–2 days
+- New branch.
+- Add `package.json` (jahia block + scripts), `vite.config.js`, `tsconfig.json`, lint/format.
+- Hybrid Maven: `build-helper` attaches `dist/package.tgz`; keep `mvn:` deploy + provisioning.
+- Provision `javascript-modules-engine` in the test stack; confirm engine↔Jahia compatibility.
+- Ship a base **Page template** + one trivial component; deploy; render one page through the engine.
+- **Exit criteria**: a page served by the JS engine renders on the running stack via the existing
+  Maven/provisioning flow.
+
+### Phase 1 — Site chrome + ADMIN vertical slice (delivers the original ask) — ~1 week
+- `Layout` (head/body, global CSS), navigation (port `enhancedNavBar`), footer
+  (`storeFooter`/`storeTitle`/`storeLink`), login (island).
+- `store-admin` page as a React template with **Settings / Roles / Categories** tabs, rendering the
+  three admin screens **in-site**:
+  - Port `ForgeSettings`, `CategorySettings`, `ManageRoles` from the `privateappstore` React apps
+    into `store-template/src/admin/*` as client islands.
+  - Server view does the permission check (`siteAdminForgeSettings` / `jahiaForgeModerateModule`);
+    islands reuse the existing GraphQL contracts already exposed by `privateappstore`
+    (`forgeSettings`, `forgeCategorySettings`, `manageRolesSettings` + their mutations).
+- **Exit criteria**: an authorised user manages forge settings, categories, and roles from a page
+  **inside the store website** — the relocation goal, achieved on the new stack.
+
+### Phase 2 — Storefront read views — ~2–3 weeks
+- Cards: `forgeModule.v2`, `forgePackage.v2`, version cards; video; changelog (display).
+- Detail (display): `forgeModule.detailv3` / `forgePackage.detailv3` (tabs, screenshots carousel).
+- Lists + filtering: `forgeModulesList.storev2`, `forgeMyModulesList`, `storeFilter` rebuilt with
+  React state (replace isotope/select2). Reimplement `ForgeFunctions` version logic in TS.
+- Search results; navbar variants.
+- **Exit criteria**: browsing/search/detail run on JS views; corresponding JSP views retired.
+
+### Phase 3 — Authoring / interactive views — ~2 weeks
+- `detailv3-edit` (metadata/FAQ/license/tags edit, rich-text island), `my-modules` + JAR upload,
+  screenshot edit (reorder/delete), reviews submission.
+- Land the Java-actions decision (recommend: GraphQL mutations in `privateappstore`).
+- **Exit criteria**: authoring flows run on JS views; JSP edit views retired.
+
+### Phase 4 — Page templates & prepackaged site — ~1 week
+- Port `repository.xml` templates (base/home/store-home/search/module/edit/my-modules/changelog/
+  permissions/site-admin) to React templates; seed prepackaged content (luxe-style package or keep
+  `import/repository.xml`).
+- **Exit criteria**: a fresh site provisions entirely on JS templates.
+
+### Phase 5 — Cutover & cleanup — ~1 week
+- Remove remaining JSP, Bootstrap3/jQuery/LESS, dead deps; finalise co-located CND.
+- Update the Cypress E2E suites (privateappstore lifecycle specs + any store-template tests) for the
+  new markup; keep GraphQL/JCR-level assertions, rework DOM-dependent ones.
+- Performance + a11y per `.claude/rules/ecc/web/*`; configure CSP.
+- **Exit criteria**: no JSP remains; full green E2E; module ships as a JS module.
+
+---
+
+## 3. External contracts to preserve (must not break)
+- `…/contents/modules-repository.moduleList.json` catalog renderer + version filtering.
+- `…/{module}/{version}/file.jar.download` artifact download.
+- Module detail page URLs; `*.do` action endpoints still referenced by remote consumers.
+- `privateappstore` content types (`jnt:forgeModule`, `jnt:forgeModuleVersion`, …) — unchanged;
+  store-template only provides *views* for them.
+
+## 4. Top risks
+1. Detail views + lists/filtering + edit forms (the HARD bucket) — the bulk of effort.
+2. E2E rework where assertions depend on Bootstrap3 markup.
+3. Engine ↔ Jahia version compatibility (verify Phase 0).
+4. Java-actions relocation (Phase 3) touching the privateappstore module.
+
+## 5. Immediate next step
+Execute **Phase 0** (scaffold + engine provisioning + one rendered page), then **Phase 1**
+(chrome + the three admin screens in-site).
