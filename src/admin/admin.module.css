@@ -201,7 +201,14 @@
 }
 
 .searchResult {
+  display: block;
+  width: 100%;
   padding: 0.5rem 0.8rem;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
   cursor: pointer;
 }
 .searchResult:hover {

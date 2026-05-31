@@ -116,6 +116,10 @@ export default function RichTextEditor({ id, value, ariaLabel, onChange }: Reado
         className={styles.rteSurface}
         contentEditable
         suppressContentEditableWarning
+        // role=textbox is the correct ARIA for a contenteditable rich-text
+        // surface; SonarJS S6819 (prefer a native tag) is a false positive here
+        // because no native element holds formatted HTML — see AGENTS.md.
+        role="textbox"
         aria-multiline="true"
         aria-label={ariaLabel}
         onInput={emit}

@@ -175,7 +175,7 @@ export default function ReviewForm({ actionUrl, language, hasReviewed, labels }:
                 onFocus={() => setHover(v)}
                 onBlur={() => setHover(0)}
               />
-              ★
+              <span aria-hidden="true">★</span>
             </label>
           ))}
         </div>

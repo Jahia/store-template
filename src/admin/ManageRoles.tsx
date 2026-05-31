@@ -232,20 +232,14 @@ export function ManageRoles({ siteKey }: Readonly<{ siteKey: string }>) {
               {searchResults && searchResults.length > 0 ? (
                 <ul className={styles.searchResults}>
                   {searchResults.map((p) => (
-                    <li
-                      key={`${p.type}:${p.name}`}
-                      className={styles.searchResult}
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => handleGrant(p)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          handleGrant(p);
-                        }
-                      }}
-                    >
-                      {p.displayName || p.name} <span className={styles.memberType}>{p.type}</span>
+                    <li key={`${p.type}:${p.name}`}>
+                      <button
+                        type="button"
+                        className={styles.searchResult}
+                        onClick={() => handleGrant(p)}
+                      >
+                        {p.displayName || p.name} <span className={styles.memberType}>{p.type}</span>
+                      </button>
                     </li>
                   ))}
                 </ul>

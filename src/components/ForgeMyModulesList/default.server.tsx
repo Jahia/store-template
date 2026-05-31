@@ -24,7 +24,7 @@ jahiaComponent(
 
     const site = renderContext.getSite();
     const basePath = `${site.getPath()}/contents/modules-repository`;
-    const username = renderContext.getUser().getName().replaceAll(/'/g, "''");
+    const username = renderContext.getUser().getName().replaceAll("'", "''");
 
     const query =
       `SELECT * FROM [jmix:forgeElement] AS e ` +

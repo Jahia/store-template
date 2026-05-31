@@ -5,10 +5,10 @@ import type { JCRNodeWrapper } from "org.jahia.services.content";
 export function stripHtml(html: string): string {
   return (html || "")
     .replaceAll(/<[^>]*>/g, " ")
-    .replaceAll(/&nbsp;/g, " ")
-    .replaceAll(/&amp;/g, "&")
-    .replaceAll(/&lt;/g, "<")
-    .replaceAll(/&gt;/g, ">")
+    .replaceAll("&nbsp;", " ")
+    .replaceAll("&amp;", "&")
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">")
     .replaceAll(/\s+/g, " ")
     .trim();
 }
