@@ -122,8 +122,8 @@ export default function ModuleEditor({ path, language, values, labels }: ModuleE
       setBaseline(draft);
       setStatus("saved");
       setOpen(false);
-    } catch (err) {
-      console.error("Failed to save module:", err);
+    } catch {
+      // Surfaced to the user via the error state below; no console logging in production.
       setStatus("error");
     }
   };

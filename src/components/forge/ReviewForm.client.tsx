@@ -110,11 +110,20 @@ export default function ReviewForm({ actionUrl, language, hasReviewed, labels }:
         return;
       }
       // The action returns user-facing messages ("You have already reviewed this
-      // module", "Rating must be between 1 and 5") in {error}; surface them.
+      // module", "Rating must be between 1 and 5") in {error}; surface them, but
+      // narrow the parsed JSON safely and cap the length (don't echo arbitrary text).
       let msg = labels.error;
       try {
-        const json = JSON.parse(res.body) as { error?: string };
-        if (json?.error) msg = json.error;
+        const parsed: unknown = JSON.parse(res.body);
+        if (
+          parsed !== null &&
+          typeof parsed === "object" &&
+          "error" in parsed &&
+          typeof (parsed as Record<string, unknown>).error === "string"
+        ) {
+          const err = (parsed as { error: string }).error;
+          if (err.length > 0 && err.length <= 300) msg = err;
+        }
       } catch {
         // keep the generic message
       }
@@ -154,7 +163,7 @@ export default function ReviewForm({ actionUrl, language, hasReviewed, labels }:
               className={clsx(styles.star, v <= shown && styles.starOn)}
               role="radio"
               aria-checked={rating === v}
-              aria-label={String(v)}
+              aria-label={`${v} star${v === 1 ? "" : "s"}`}
               data-star={v}
               onMouseEnter={() => setHover(v)}
               onMouseLeave={() => setHover(0)}

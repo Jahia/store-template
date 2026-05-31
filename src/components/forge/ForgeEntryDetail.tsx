@@ -77,11 +77,22 @@ function stars(rating: number): string {
   return "★".repeat(n) + "☆".repeat(5 - n);
 }
 
+/** Only http(s) URLs are safe to render as a link href (blocks stored javascript:/data: URLs). */
+function isHttpUrl(url: string): boolean {
+  return /^https?:\/\//i.test(url.trim());
+}
+
 /**
- * Read-only detail of a forge module/package: header, description, video,
- * screenshots (lightbox), versions (rendered via their `default` view) and
- * metadata. Richtext fields are rendered as HTML — Jahia sanitizes richtext on
- * save. (Edit mode and reviews come in Phase 3.)
+ * Detail of a forge module/package: header, description, video, screenshots
+ * (lightbox), versions (rendered via their `default` view), metadata, an in-site
+ * editor (owners) and reviews.
+ *
+ * Richtext fields (description, license) are rendered with dangerouslySetInnerHTML.
+ * Defense-in-depth against stored XSS: the editor sanitizes with DOMPurify on save
+ * and a strict CSP is the backstop (see docs/SECURITY-CSP.md). Content written
+ * outside the editor (legacy JSP authoring, direct JCR/GraphQL writes) is NOT
+ * sanitized here — enable Jahia's server-side richtext HTML filtering for the store
+ * site to cover those paths.
  */
 export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Element {
   const { currentResource, renderContext } = useServerContext();
@@ -208,7 +219,13 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
               <>
                 <dt>Source</dt>
                 <dd>
-                  <a href={codeRepository}>{codeRepository}</a>
+                  {isHttpUrl(codeRepository) ? (
+                    <a href={codeRepository} rel="noopener noreferrer nofollow" target="_blank">
+                      {codeRepository}
+                    </a>
+                  ) : (
+                    codeRepository
+                  )}
                 </dd>
               </>
             )}
@@ -231,7 +248,7 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
             <Island
               component={ReviewForm}
               props={{
-                actionUrl: `${buildNodeUrl(node).replace(/\.html$/, "")}.submitReview.do`,
+                actionUrl: `${buildNodeUrl(node).replace(/\.html$/, "")}.SubmitReview.do`,
                 language,
                 hasReviewed,
                 labels: REVIEW_LABELS,
