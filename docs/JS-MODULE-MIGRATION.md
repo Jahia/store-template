@@ -262,11 +262,21 @@ Two items deliberately deferred, each with a real dependency:
 - JSP edit views are retired at cutover (Phase 5).
 - **Exit criteria**: authoring flows run on JS views — ✅ achieved (bar the two deferred items).
 
-### Phase 4 — Page templates & prepackaged site — ~1 week
-- Port `repository.xml` templates (base/home/store-home/search/module/edit/my-modules/changelog/
-  permissions/site-admin) to React templates; seed prepackaged content (luxe-style package or keep
-  `import/repository.xml`).
-- **Exit criteria**: a fresh site provisions entirely on JS templates.
+### Phase 4 — Page templates & prepackaged site — DONE (2026-05-31)
+- ✅ Page templates are React `componentType:"template"` registrations: a generic `jnt:page` `default`
+  (Layout + `Area "main"`), the `jnt:page` `site-admin` template, and the `jnt:forgeModule` /
+  `jnt:forgePackage` `default` content templates (detail pages). The legacy fixed JSP templates
+  (store-home/my-modules/etc.) collapse into the generic template + seeded area content.
+- ✅ `settings/import.xml`: the template set's initial content, imported into every site created with
+  store-template — a home page (`Area "main"` → a `forgeModulesList`), `home/my-modules` (JAR upload
+  + the user's modules), `home/administration` (the admin island via the `site-admin` template), and
+  `contents/modules-repository`. So `SiteCreationInfo`/`createSite` yields a complete working store
+  with no manual seeding (previously the JS module had no import.xml, so sites came up bare).
+- ✅ E2E `18-prepackaged.cy.ts` (3/3): a fresh site (no seeding) renders the home store, the
+  My-modules + Administration sub-pages, and a module dropped into the imported modules-repository
+  shows on home. Specs 16/17 were refactored to rely on this prepackaged structure (no more manual
+  page creation — which had caused a duplicate modules-list). Full set 15+16+17+18 = **18/18**.
+- **Exit criteria**: a fresh site provisions entirely on JS templates — ✅ achieved & browser-verified.
 
 ### Phase 5 — Cutover & cleanup — ~1 week
 - Remove remaining JSP, Bootstrap3/jQuery/LESS, dead deps; finalise co-located CND.

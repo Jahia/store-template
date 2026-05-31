@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Initial content imported into sites created with the store-template template set.
+  Gives a fresh store a working structure entirely on the JS templates:
+    - a home page rendering the published-modules grid (Area "main")
+    - a "My modules" page (JAR upload + the user's own modules)
+    - a site-administration page (the in-site admin island)
+    - a modules-repository folder where uploaded modules are created
+-->
+<content xmlns:j="http://www.jahia.org/jahia/1.0"
+         xmlns:jcr="http://www.jcp.org/jcr/1.0"
+         xmlns:jnt="http://www.jahia.org/jahia/nt/1.0">
+    <modules jcr:primaryType="jnt:modules">
+        <store-template>
+            <home j:isHomePage="true"
+                  j:templateName="default"
+                  jcr:primaryType="jnt:page"
+                  jcr:mixinTypes="jmix:keywords">
+                <j:translation_en jcr:language="en"
+                                  jcr:primaryType="jnt:translation"
+                                  jcr:mixinTypes="mix:title"
+                                  jcr:title="Store"/>
+                <main jcr:primaryType="jnt:contentList">
+                    <store-modules jcr:primaryType="jnt:forgeModulesList"/>
+                </main>
+
+                <my-modules j:templateName="default" jcr:primaryType="jnt:page">
+                    <j:translation_en jcr:language="en"
+                                      jcr:primaryType="jnt:translation"
+                                      jcr:mixinTypes="mix:title"
+                                      jcr:title="My modules"/>
+                    <main jcr:primaryType="jnt:contentList">
+                        <upload jcr:primaryType="jnt:fileUpload"/>
+                        <mine jcr:primaryType="jnt:forgeMyModulesList"/>
+                    </main>
+                </my-modules>
+
+                <administration j:templateName="site-admin" jcr:primaryType="jnt:page">
+                    <j:translation_en jcr:language="en"
+                                      jcr:primaryType="jnt:translation"
+                                      jcr:mixinTypes="mix:title"
+                                      jcr:title="Administration"/>
+                </administration>
+            </home>
+
+            <contents jcr:primaryType="jnt:contentFolder">
+                <modules-repository jcr:primaryType="jnt:contentFolder"/>
+            </contents>
+        </store-template>
+    </modules>
+</content>
