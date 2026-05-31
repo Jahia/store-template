@@ -1,0 +1,222 @@
+/* In-site admin styling — replaces the Moonstone primitives used by the
+   ported ForgeSettings / CategorySettings / ManageRoles components.
+   Intentionally small, accessible, and self-contained (no design-system dep
+   yet; the storefront design system arrives in a later phase). */
+
+.container {
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pageHeader h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.section {
+  border: 1px solid #e2e2e6;
+  border-radius: 10px;
+  padding: 1.25rem 1.25rem 1.5rem;
+  background: #fff;
+}
+
+.sectionTitle {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2a2a31;
+}
+
+.field input {
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #c4c4cc;
+  border-radius: 7px;
+  background: #fff;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.field input:focus-visible {
+  outline: none;
+  border-color: #463cba;
+  box-shadow: 0 0 0 3px rgba(70, 60, 186, 0.18);
+}
+
+.hint {
+  font-size: 0.78rem;
+  color: #6a6a73;
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.row .field {
+  flex: 1 1 240px;
+}
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.55rem 1rem;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  transition: background 150ms ease, border-color 150ms ease, opacity 150ms ease;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn.primary {
+  background: #463cba;
+  color: #fff;
+}
+.btn.primary:hover:not(:disabled) {
+  background: #382fa0;
+}
+
+.btn.secondary {
+  background: #f1f1f4;
+  color: #2a2a31;
+  border-color: #d6d6dd;
+}
+.btn.secondary:hover:not(:disabled) {
+  background: #e6e6ec;
+}
+
+.btn.danger {
+  background: #c4123f;
+  color: #fff;
+}
+.btn.danger:hover:not(:disabled) {
+  background: #a50f35;
+}
+
+.btn.ghost {
+  background: transparent;
+  color: #463cba;
+}
+.btn.ghost:hover:not(:disabled) {
+  background: rgba(70, 60, 186, 0.08);
+}
+
+.btn.small {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.alert {
+  padding: 0.7rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+.alert.success {
+  background: #e7f6ec;
+  color: #15633a;
+}
+.alert.error {
+  background: #fdecef;
+  color: #a50f35;
+}
+
+.loading,
+.error {
+  padding: 1rem;
+  color: #6a6a73;
+}
+.error {
+  color: #a50f35;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e8e8ec;
+  border-radius: 8px;
+}
+
+.itemActions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.meta {
+  font-size: 0.8rem;
+  color: #6a6a73;
+}
+
+.searchResults {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  border: 1px solid #e8e8ec;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.searchResult {
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+}
+.searchResult:hover {
+  background: #f1f1f4;
+}
+
+.typeToggle {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.memberType {
+  margin-left: 0.4rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #8a8a93;
+}
