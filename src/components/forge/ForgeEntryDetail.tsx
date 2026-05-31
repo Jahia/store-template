@@ -13,6 +13,7 @@ import { str, bool } from "./nodeProps";
 import { sortedVersionNodes } from "./versions";
 import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
+import ScreenshotManager from "./ScreenshotManager.client";
 
 const EDITOR_LABELS = {
   edit: "Edit module",
@@ -31,10 +32,10 @@ const EDITOR_LABELS = {
   codeRepository: "Code repository",
 };
 
-function screenshots(node: JCRNodeWrapper): string[] {
+function screenshotItems(node: JCRNodeWrapper): { name: string; url: string }[] {
   if (!node.hasNode("screenshots")) return [];
   return getChildNodes(node.getNode("screenshots"), 20, 0, (n) => n.isNodeType("jnt:file")).map(
-    (f) => buildNodeUrl(f),
+    (f) => ({ name: f.getName(), url: buildNodeUrl(f) }),
   );
 }
 
@@ -54,7 +55,8 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
   const supported = bool(node, "supportedByJahia");
   const reviewed = bool(node, "reviewedByJahia");
   const icon = forgeIconUrl(node);
-  const shots = screenshots(node);
+  const shots = screenshotItems(node);
+  const screenshotsPath = node.hasNode("screenshots") ? node.getNode("screenshots").getPath() : "";
   const versions = sortedVersionNodes(node);
   const videoNode = node.hasNode("video") ? node.getNode("video") : null;
   const canEdit = node.hasPermission("jcr:write");
@@ -123,7 +125,11 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
       {shots.length > 0 && (
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Screenshots</h2>
-          <Island component={Lightbox} props={{ images: shots }} />
+          {canEdit ? (
+            <Island component={ScreenshotManager} props={{ path: screenshotsPath, items: shots }} />
+          ) : (
+            <Island component={Lightbox} props={{ images: shots.map((s) => s.url) }} />
+          )}
         </section>
       )}
 

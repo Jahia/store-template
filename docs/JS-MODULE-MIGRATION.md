@@ -234,9 +234,19 @@ Only the JAR upload keeps the existing `createEntryFromJar` Java action (it runs
 - Island lessons codified: wait on a `data-*-ready` hydration marker before clicking; avoid async
   `location.reload()` in favour of a deterministic success state (also stabilised the StoreFilter).
 
-**Slice 3b — remaining:** JAR upload form (→ the existing `createEntryFromJar.do` action),
-screenshot reorder/delete (jcr `reorderChildren`/`delete`), reviews submission (jcr `addNode`),
-rich-text editing for the richtext fields. Then retire the JSP edit views.
+**Slice 3b — screenshot management — DONE (2026-05-31).**
+- ✅ `ScreenshotManager.client.tsx` (+ `screenshots.module.css`): owner-facing reorder (↑/↓) + delete
+  of a module's screenshots via the generic jcr mutations (`reorderChildren` / `delete`), optimistic
+  UI reverting on error. The direct replacement for the dropped DeleteScreenshot / ReorderScreenshots
+  Java actions — gated purely by JCR ACLs. The detail shows the manager to owners (jcr:write) and the
+  read-only Lightbox to everyone else.
+- ✅ E2E `17-authoring.cy.ts` (3/3): upload two screenshots → reorder persists (verified via reload)
+  → delete persists. Full set 15+16+17 = **13/13**.
+
+**Slice 3c — remaining:** JAR upload form (→ the existing `createEntryFromJar.do` action — multipart
+upload + Maven deploy), review submission (needs privilege elevation — any logged-in user reviews any
+module, so it can't use owner-ACL jcr writes; keep/port a privileged action or a dedicated GraphQL
+mutation), rich-text editing for the richtext fields. Then retire the JSP edit views.
 - **Exit criteria**: authoring flows run on JS views; JSP edit views retired.
 
 ### Phase 4 — Page templates & prepackaged site — ~1 week
