@@ -278,12 +278,37 @@ Two items deliberately deferred, each with a real dependency:
   page creation — which had caused a duplicate modules-list). Full set 15+16+17+18 = **18/18**.
 - **Exit criteria**: a fresh site provisions entirely on JS templates — ✅ achieved & browser-verified.
 
-### Phase 5 — Cutover & cleanup — ~1 week
-- Remove remaining JSP, Bootstrap3/jQuery/LESS, dead deps; finalise co-located CND.
-- Update the Cypress E2E suites (privateappstore lifecycle specs + any store-template tests) for the
-  new markup; keep GraphQL/JCR-level assertions, rework DOM-dependent ones.
-- Performance + a11y per `.claude/rules/ecc/web/*`; configure CSP.
-- **Exit criteria**: no JSP remains; full green E2E; module ships as a JS module.
+### Phase 5 — Cutover & cleanup — CORE DONE (2026-05-31)
+
+**Module cutover — DONE & verified.**
+- ✅ `pom.xml`: packaging `bundle` → `pom`; dropped the maven-bundle-plugin + jahia-modules parent
+  (OSGi-jar machinery) and `jahia-depends` (deps now in `package.json`'s `jahia` block). The build
+  runs the JS pipeline via `exec-maven-plugin` (`npm ci` + `npm run build`) and attaches
+  `dist/package.tgz` (`build-helper`) + copies it to `target/` (`antrun`). **`mvn package` produces
+  `store-template-3.1.8-SNAPSHOT.tgz`** (verified).
+- ✅ Removed the entire legacy `src/main` (284 files, ~4.4 MB): JSP views, the 3 Java classes
+  (DeleteScreenshot/ReorderScreenshots → jcr mutations; ForgeFunctions → `versions.ts`), the legacy
+  CND (jnt:storeFilter/Footer/Title/Link — unused by the JS module), CSS/LESS/jQuery, `repository.xml`.
+- ✅ Package manager standardized on **npm** (`package-lock.json`; dropped `yarn.lock`/`.yarnrc.yml`).
+- ✅ Contracts preserved: `moduleList.json` is rendered by **privateappstore** (a JSP/Java module,
+  untouched); all the JS module's content types come from privateappstore + core.
+- ✅ Verified: `npm run build` + `mvn package` both produce the tgz; deployed; full E2E
+  15+16+17+18 = **18/18** green with the legacy `src/main` gone.
+- ✅ Runtime provisioning: `privateappstore/tests/assets/provisioning.yml` now installs
+  `javascript-modules-engine` (so the store-template tgz deploys on any image).
+
+**Remaining (CI integration + polish — best validated by a full harness run):**
+- **privateappstore test harness**: `ci.build.sh` copies `../../store-template/target/*-SNAPSHOT.jar`
+  (now a `.tgz`) and the manifest installs it as an OSGi jar — update to ship/install the JS tgz
+  (`js:mvn:org.jahia.modules.javascript/store-template/…/tgz`).
+- **Legacy specs 01–14** (privateappstore): 05–07 (GraphQL admin) and 08–10 (privateappstore's own
+  React admin-shell) are independent of store-template; 11–14 use GraphQL/JCR + the
+  privateappstore-rendered `moduleList.json`. Any assertion that renders a *store-template* page now
+  hits the JS templates — re-verify markup; retire anything that asserted the old JSP DOM.
+- **Perf / a11y / CSP** per `.claude/rules/ecc/web/*` (bundle budgets are already tiny; add a CSP and
+  an a11y pass).
+- **Exit criteria**: no JSP in store-template ✅; the module ships as a JS module ✅; full green E2E
+  for the new suites ✅ — pending the harness re-wiring + legacy-spec rework for CI.
 
 ---
 
