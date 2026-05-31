@@ -1,14 +1,6 @@
 import { buildNodeUrl, getChildNodes } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 
-export interface VersionInfo {
-  name: string;
-  versionNumber: string;
-  published: boolean;
-  changeLog: string;
-  downloadUrl: string | null;
-}
-
 function parseVersion(v: string): number[] {
   return (v || "").split(/[^0-9]+/).filter(Boolean).map(Number);
 }
@@ -39,21 +31,15 @@ export function versionDownloadUrl(version: JCRNodeWrapper): string | null {
   return null;
 }
 
-/** Versions of a module/package, sorted newest-first (replaces ForgeFunctions.sortByVersion). */
-export function listVersions(node: JCRNodeWrapper): VersionInfo[] {
+/** Version child nodes of a module/package, sorted newest-first (replaces ForgeFunctions.sortByVersion). */
+export function sortedVersionNodes(node: JCRNodeWrapper): JCRNodeWrapper[] {
   const versions = getChildNodes(
     node,
     200,
     0,
     (n) => n.isNodeType("jnt:forgeModuleVersion") || n.isNodeType("jnt:forgePackageVersion"),
   );
-  return versions
-    .map((v) => ({
-      name: v.getName(),
-      versionNumber: v.hasProperty("versionNumber") ? v.getProperty("versionNumber").getString() : v.getName(),
-      published: v.hasProperty("published") && v.getProperty("published").getBoolean(),
-      changeLog: v.hasProperty("changeLog") ? v.getProperty("changeLog").getString() : "",
-      downloadUrl: versionDownloadUrl(v),
-    }))
-    .sort((a, b) => compareVersionsDesc(a.versionNumber, b.versionNumber));
+  const versionNumber = (v: JCRNodeWrapper) =>
+    v.hasProperty("versionNumber") ? v.getProperty("versionNumber").getString() : v.getName();
+  return versions.sort((a, b) => compareVersionsDesc(versionNumber(a), versionNumber(b)));
 }

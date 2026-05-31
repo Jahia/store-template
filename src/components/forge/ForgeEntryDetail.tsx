@@ -1,15 +1,11 @@
-import { buildNodeUrl, getChildNodes } from "@jahia/javascript-modules-library";
+import { buildNodeUrl, getChildNodes, Island, Render } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import clsx from "clsx";
 import styles from "./detail.module.css";
 import { forgeIconUrl } from "./forgeCard";
-import { listVersions } from "./versions";
-
-const str = (node: JCRNodeWrapper, name: string): string =>
-  node.hasProperty(name) ? node.getProperty(name).getString() : "";
-
-const bool = (node: JCRNodeWrapper, name: string): boolean =>
-  node.hasProperty(name) && node.getProperty(name).getBoolean();
+import { str, bool } from "./nodeProps";
+import { sortedVersionNodes } from "./versions";
+import Lightbox from "./Lightbox.client";
 
 function screenshots(node: JCRNodeWrapper): string[] {
   if (!node.hasNode("screenshots")) return [];
@@ -19,10 +15,10 @@ function screenshots(node: JCRNodeWrapper): string[] {
 }
 
 /**
- * Read-only detail of a forge module/package: header, description, screenshots,
- * versions (with changelog + download) and metadata. Richtext fields are
- * rendered as HTML — Jahia sanitizes richtext server-side on save.
- * (Edit mode, reviews and the photoswipe lightbox come in Phase 3.)
+ * Read-only detail of a forge module/package: header, description, video,
+ * screenshots (lightbox), versions (rendered via their `default` view) and
+ * metadata. Richtext fields are rendered as HTML — Jahia sanitizes richtext on
+ * save. (Edit mode and reviews come in Phase 3.)
  */
 export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Element {
   const title = str(node, "jcr:title") || node.getName();
@@ -34,7 +30,8 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
   const reviewed = bool(node, "reviewedByJahia");
   const icon = forgeIconUrl(node);
   const shots = screenshots(node);
-  const versions = listVersions(node);
+  const versions = sortedVersionNodes(node);
+  const videoNode = node.hasNode("video") ? node.getNode("video") : null;
 
   return (
     <article className={styles.detail}>
@@ -68,14 +65,17 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
         </section>
       )}
 
+      {videoNode && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Video</h2>
+          <Render node={videoNode} view="default" readOnly />
+        </section>
+      )}
+
       {shots.length > 0 && (
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Screenshots</h2>
-          <div className={styles.shots}>
-            {shots.map((src) => (
-              <img key={src} className={styles.shot} src={src} alt="" loading="lazy" />
-            ))}
-          </div>
+          <Island component={Lightbox} props={{ images: shots }} />
         </section>
       )}
 
@@ -84,27 +84,11 @@ export function ForgeEntryDetail({ node }: { node: JCRNodeWrapper }): JSX.Elemen
         {versions.length === 0 ? (
           <p className={styles.muted}>No versions published yet.</p>
         ) : (
-          <ul className={styles.versions}>
+          <div className={styles.versions}>
             {versions.map((v) => (
-              <li key={v.name} className={styles.version}>
-                <div className={styles.versionHead}>
-                  <span className={styles.versionNumber}>{v.versionNumber}</span>
-                  {!v.published && <span className={styles.draft}>draft</span>}
-                  {v.downloadUrl && (
-                    <a className={styles.download} href={v.downloadUrl}>
-                      Download
-                    </a>
-                  )}
-                </div>
-                {v.changeLog && (
-                  <div
-                    className={styles.changelog}
-                    dangerouslySetInnerHTML={{ __html: v.changeLog }}
-                  />
-                )}
-              </li>
+              <Render key={v.getIdentifier()} node={v} view="default" readOnly />
             ))}
-          </ul>
+          </div>
         )}
       </section>
 

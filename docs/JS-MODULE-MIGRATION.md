@@ -197,9 +197,23 @@ Phase 2 builds the `search-results` page/view.
 - Gotchas recorded: a `clientOnly` island still hydrates its placeholder → mismatch (use SSR-safe
   state instead); `[hidden]` needs `.card[hidden]{display:none}` to beat `.card{display:flex}`.
 
-**Slice 2c — remaining:** `forgeMyModulesList` (logged-in user's modules), dedicated version-card
-view, video embed (`jnt:videostreaming`), screenshots lightbox. Then retire the corresponding JSP views.
-- **Exit criteria**: browsing/search/detail run on JS views; corresponding JSP views retired.
+**Slice 2c — versions / video / my-modules / lightbox — DONE (2026-05-31).**
+- ✅ `VersionViews.server.tsx` + `VersionCard.tsx`: `default` view for `jnt:forgeModuleVersion` /
+  `jnt:forgePackageVersion`; the detail now renders versions via `<Render view="default">` over
+  `sortedVersionNodes()` (newest-first). Shared `nodeProps.ts` (`str`/`bool`).
+- ✅ `Videostreaming/default.server.tsx`: `jnt:videostreaming` → YouTube/Vimeo `<iframe>` from
+  `provider`+`identifier`; the detail renders the module's `video` child.
+- ✅ `ForgeMyModulesList/default.server.tsx`: the logged-in user's own modules (by `jcr:createdBy`,
+  no published filter — owners see their drafts).
+- ✅ `Lightbox.client.tsx`: screenshots gallery with click-to-zoom overlay (SSR thumbnails + client
+  overlay state) — replaces photoswipe/lity.
+- ✅ E2E (`16-storefront.cy.ts`, now 5/5): detail shows version + YouTube embed + download;
+  My-modules lists the user's modules incl. drafts. Full set 15+16 = **10/10**.
+
+**Phase 2 read views — COMPLETE.** Browse → filter/search → detail → versions/video/screenshots →
+download, plus my-modules, all run on JS views. Retiring the corresponding JSP views happens at
+cutover (Phase 5).
+- **Exit criteria**: browsing/search/detail run on JS views — ✅ achieved & browser-verified.
 
 ### Phase 3 — Authoring / interactive views — ~2 weeks
 - `detailv3-edit` (metadata/FAQ/license/tags edit, rich-text island), `my-modules` + JAR upload,
