@@ -17,11 +17,10 @@ jahiaComponent(
     componentType: "template",
   },
   ({ "jcr:title": title }: { "jcr:title"?: string }, { currentNode }) => (
+    // Layout supplies the single <main> landmark; this template only fills it.
     <Layout title={title}>
-      <main>
-        <h1 data-store-template="js">{title ?? currentNode.getName()}</h1>
-        <Area name="main" />
-      </main>
+      <h1 data-store-template="js">{title ?? currentNode.getName()}</h1>
+      <Area name="main" />
     </Layout>
   ),
 );

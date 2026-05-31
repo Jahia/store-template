@@ -38,21 +38,19 @@ jahiaComponent(
 
     if (!allowed) {
       return (
+        // Layout supplies the single <main> landmark; this template only fills it.
         <Layout title={t("admin.title")}>
-          <main>
-            <h1>{t("admin.title")}</h1>
-            <p>{t("admin.denied")}</p>
-          </main>
+          <h1>{t("admin.title")}</h1>
+          <p>{t("admin.denied")}</p>
         </Layout>
       );
     }
 
     return (
+      // Layout supplies the single <main> landmark; this template only fills it.
       <Layout title={t("admin.title")}>
-        <main>
-          <h1>{t("admin.title")}</h1>
-          <Island component={AdminApp} props={{ siteKey, language }} />
-        </main>
+        <h1>{t("admin.title")}</h1>
+        <Island component={AdminApp} props={{ siteKey, language }} />
       </Layout>
     );
   },
