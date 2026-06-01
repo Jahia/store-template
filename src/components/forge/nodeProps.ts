@@ -10,6 +10,19 @@ export function bool(node: JCRNodeWrapper, name: string): boolean {
   return node.hasProperty(name) && node.getProperty(name).getBoolean();
 }
 
+/** Read a multi-valued property as a string[] (each value's string form), or []. */
+export function strValues(node: JCRNodeWrapper, name: string): string[] {
+  if (!node.hasProperty(name)) return [];
+  try {
+    return node
+      .getProperty(name)
+      .getValues()
+      .map((v) => v.getString());
+  } catch {
+    return [];
+  }
+}
+
 /**
  * GraphQL workspace enum ("EDIT" | "LIVE") for the workspace this node was read
  * from. Client islands that mutate the node must target the same workspace —

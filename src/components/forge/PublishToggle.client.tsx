@@ -92,7 +92,7 @@ export default function PublishToggle({
       </span>
       <button
         type="button"
-        className={styles.btn}
+        className="store-btn store-btn--ghost"
         disabled={status === "saving"}
         aria-label={`${pub ? labels.unpublish : labels.publish} (${scope})`}
         onClick={toggle}

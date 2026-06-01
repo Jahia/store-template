@@ -8,8 +8,8 @@ import {
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import clsx from "clsx";
 import styles from "./detail.module.css";
-import { forgeIconUrl } from "./forgeCard";
-import { str, bool, jcrWorkspace } from "./nodeProps";
+import { forgeCategoryNames, forgeIconUrl } from "./forgeCard";
+import { str, bool, strValues, jcrWorkspace } from "./nodeProps";
 import { sortedVersionNodes } from "./versions";
 import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
@@ -58,7 +58,36 @@ const EDITOR_LABELS = {
     tooLarge: "Image is too large (max 2 MB).",
     invalidType: "Please choose an image file.",
   },
+  metadata: {
+    status: "Status",
+    category: "Category",
+    noCategories: "No categories are configured for this store yet.",
+    tags: "Tags",
+    tag: { add: "Add tag", remove: "Remove tag", placeholder: "Add a tag…" },
+  },
 };
+
+/** Allowed module status values (jmix:forgeElement `status` choicelist). */
+const STATUS_OPTIONS = ["community", "labs", "prereleased", "supported", "legacy"];
+
+/**
+ * Categories a developer can file a module under: the children of the site's
+ * configured root category (Store administration → Categories). Empty if no root
+ * category is set. Reading fails soft so the editor still renders without it.
+ */
+function siteCategoryOptions(site: JCRNodeWrapper): { uuid: string; name: string }[] {
+  try {
+    if (!site.hasProperty("rootCategory")) return [];
+    const root = site.getProperty("rootCategory").getNode() as unknown as JCRNodeWrapper;
+    if (!root) return [];
+    return getChildNodes(root, 200, 0, (n) => n.isNodeType("jnt:category")).map((c) => ({
+      uuid: c.getIdentifier(),
+      name: c.getDisplayableName(),
+    }));
+  } catch {
+    return [];
+  }
+}
 
 function screenshotItems(node: JCRNodeWrapper): { name: string; url: string }[] {
   if (!node.hasNode("screenshots")) return [];
@@ -85,7 +114,7 @@ function isHttpUrl(url: string): boolean {
  * site to cover those paths.
  */
 export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): JSX.Element {
-  const { currentResource } = useServerContext();
+  const { currentResource, renderContext } = useServerContext();
   const title = str(node, "jcr:title") || node.getName();
   const description = str(node, "description");
   const license = str(node, "license");
@@ -102,6 +131,13 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const language = currentResource.getLocale().getLanguage();
   const published = bool(node, "published");
   const workspace = jcrWorkspace(node);
+
+  // Metadata (editable by owners; shown to everyone in Details).
+  const categoryOptions = siteCategoryOptions(renderContext.getSite());
+  const categoryValue = strValues(node, "j:defaultCategory");
+  const categoryNames = forgeCategoryNames(node);
+  const tags = strValues(node, "j:tagList");
+  const hasDetails = Boolean(license || codeRepository || categoryNames.length || tags.length);
 
   return (
     <article className={styles.detail}>
@@ -152,6 +188,11 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
                 authorURL: str(node, "authorURL"),
                 codeRepository,
               },
+              status,
+              statusOptions: STATUS_OPTIONS,
+              categoryOptions,
+              categoryValue,
+              tags,
               labels: EDITOR_LABELS,
             }}
           />
@@ -195,10 +236,16 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
         )}
       </section>
 
-      {(license || codeRepository) && (
+      {hasDetails && (
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Details</h2>
           <dl className={styles.meta}>
+            {categoryNames.length > 0 && (
+              <>
+                <dt>Category</dt>
+                <dd>{categoryNames.join(", ")}</dd>
+              </>
+            )}
             {codeRepository && (
               <>
                 <dt>Source</dt>
@@ -218,6 +265,20 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
                 <dt>License</dt>
                 <dd>
                   <span className={styles.richtext} dangerouslySetInnerHTML={{ __html: license }} />
+                </dd>
+              </>
+            )}
+            {tags.length > 0 && (
+              <>
+                <dt>Tags</dt>
+                <dd>
+                  <ul className={styles.tagList} data-tag-list="">
+                    {tags.map((tag) => (
+                      <li key={tag} className={styles.tag}>
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
                 </dd>
               </>
             )}
