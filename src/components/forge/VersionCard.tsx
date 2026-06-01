@@ -2,6 +2,7 @@ import { Island } from "@jahia/javascript-modules-library";
 import styles from "./detail.module.css";
 import PublishToggle from "./PublishToggle.client";
 import VersionChangelogEditor, { type ChangelogLabels } from "./VersionChangelogEditor.client";
+import VersionDeleteButton, { type VersionDeleteLabels } from "./VersionDeleteButton.client";
 
 interface PublishLabels {
   publish: string;
@@ -27,6 +28,13 @@ interface VersionChangelogControl {
   labels: ChangelogLabels;
 }
 
+/** Owner-only delete control for this version (omitted for non-owners). */
+interface VersionDeleteControl {
+  path: string;
+  workspace: "EDIT" | "LIVE";
+  labels: VersionDeleteLabels;
+}
+
 export interface VersionCardProps {
   versionNumber: string;
   published: boolean;
@@ -34,6 +42,7 @@ export interface VersionCardProps {
   downloadUrl: string | null;
   publishControl?: VersionPublishControl | null;
   changelogControl?: VersionChangelogControl | null;
+  deleteControl?: VersionDeleteControl | null;
 }
 
 /** Presentational card for one module/package version (changelog is sanitized richtext). */
@@ -44,6 +53,7 @@ export function VersionCard({
   downloadUrl,
   publishControl,
   changelogControl,
+  deleteControl,
 }: Readonly<VersionCardProps>): JSX.Element {
   return (
     <div className={styles.version} data-forge-version="">
@@ -67,6 +77,17 @@ export function VersionCard({
           <a className={styles.download} href={downloadUrl}>
             Download
           </a>
+        )}
+        {deleteControl && (
+          <Island
+            component={VersionDeleteButton}
+            props={{
+              path: deleteControl.path,
+              workspace: deleteControl.workspace,
+              versionNumber,
+              labels: deleteControl.labels,
+            }}
+          />
         )}
       </div>
       {changeLogHtml && (

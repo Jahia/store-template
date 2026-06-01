@@ -23,6 +23,15 @@ const VERSION_CHANGELOG_LABELS = {
   ariaLabel: "Changelog",
 };
 
+const VERSION_DELETE_LABELS = {
+  remove: "Remove version",
+  confirmPrompt: "Delete this version?",
+  confirm: "Delete",
+  cancel: "Cancel",
+  deleting: "Deleting…",
+  error: "Could not remove the version — check your permissions and try again.",
+};
+
 const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrapper }) => {
   const { currentResource } = useServerContext();
   // Owners get publish + changelog controls on each version; everyone else sees
@@ -46,6 +55,9 @@ const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrap
         canEdit
           ? { path: currentNode.getPath(), workspace, language, labels: VERSION_CHANGELOG_LABELS }
           : null
+      }
+      deleteControl={
+        canEdit ? { path: currentNode.getPath(), workspace, labels: VERSION_DELETE_LABELS } : null
       }
     />
   );

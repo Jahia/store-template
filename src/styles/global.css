@@ -16,7 +16,8 @@
   --color-accent-hover: #0a3d85;
   --color-accent-soft: #e8f1fc; /* tinted surface for facets/badges */
   --color-navy: #14243f; /* headings / sidebar */
-  --color-danger: #a00f33; /* AAA: ≈8.1:1 on white */
+  --color-danger: #a00f33; /* AAA: ≈8.1:1 on white (and white-on-danger ≈8.0:1) */
+  --color-danger-hover: #850c2a;
 
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
@@ -131,6 +132,14 @@ h3 {
 .store-btn--ghost:hover:not(:disabled) {
   border-color: var(--color-accent);
   color: var(--color-accent);
+  text-decoration: none;
+}
+.store-btn--danger {
+  background: var(--color-danger);
+  color: #fff;
+}
+.store-btn--danger:hover:not(:disabled) {
+  background: var(--color-danger-hover);
   text-decoration: none;
 }
 .store-btn--sm {

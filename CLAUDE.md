@@ -22,10 +22,11 @@
   `[data-filter-ready]`, `[data-upload-ready]`, `[data-forge-card]`,
   `[role="tab"]`/`[role="tabpanel"]`, `[data-ckeditor-state]`,
   `[data-ckeditor5-styles]`, `[data-icon-input]`/`[data-icon-status]`,
-  `[data-changelog-ready]`, `[data-tag-list]`, `#edit-status`/`#edit-tags`, and
-  the shared global `.store-btn` button classes, `[data-detail-tabs-ready]`,
-  `[role="tab"]`/`[data-detail-panel]`. The Cypress suite in
-  `../privateappstore/tests` must stay green (`npx cypress run`).
+  `[data-changelog-ready]`, `[data-tag-list]`, `#edit-status`/`#edit-tags`,
+  `[data-version-delete-scope]`/`[data-version-delete-ready]`, and the shared
+  global `.store-btn` button classes (incl. `.store-btn--danger`),
+  `[data-detail-tabs-ready]`, `[role="tab"]`/`[data-detail-panel]`. The Cypress
+  suite in `../privateappstore/tests` must stay green (`npx cypress run`).
 - **Two tablists exist** when an owner opens the editor on a detail page: the
   detail section tabs (`aria-label="Module sections"`, DetailTabs) and the editor
   field tabs (`aria-label="Module fields"`, ModuleEditor). A bare `[role="tab"]`
