@@ -1,15 +1,22 @@
 /* Store design tokens + base. Global (non-module) CSS — bundled into the
-   module's single style.css and loaded once via <AddResources> in Layout. */
+   module's single style.css and loaded once via <AddResources> in Layout.
+
+   Palette aligned with store.jahia.com: a confident Jahia blue on a light,
+   corporate surface. The accent (#0e4ea8) clears WCAG AAA (≈7.9:1) BOTH as
+   text-on-white (links) and as a button fill (white-on-accent), so the
+   automated AAA contrast gate (axe color-contrast-enhanced) stays green. */
 :root {
   --color-bg: #ffffff;
-  --color-surface: #fafafb;
-  --color-surface-2: #f1f1f4;
-  --color-text: #1b1b1f;
-  --color-text-muted: #4f4f59;
-  --color-border: #e2e2e6;
-  --color-accent: #463cba;
-  --color-accent-hover: #382fa0;
-  --color-danger: #c4123f;
+  --color-surface: #f7f9fc;
+  --color-surface-2: #eef2f8;
+  --color-text: #1a2233;
+  --color-text-muted: #45506a; /* AAA: ≈7.9:1 on white */
+  --color-border: #d9e0ea;
+  --color-accent: #0e4ea8; /* Jahia blue — AAA both ways */
+  --color-accent-hover: #0a3d85;
+  --color-accent-soft: #e8f1fc; /* tinted surface for facets/badges */
+  --color-navy: #14243f; /* headings / sidebar */
+  --color-danger: #a00f33; /* AAA: ≈8.1:1 on white */
 
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
@@ -19,13 +26,28 @@
   --space: 1rem;
   --container: 1200px;
   --header-h: 64px;
-  --shadow-sm: 0 1px 2px rgba(20, 20, 30, 0.06);
-  --shadow-md: 0 6px 20px rgba(20, 20, 30, 0.1);
+  --shadow-sm: 0 1px 2px rgba(20, 30, 50, 0.06);
+  --shadow-md: 0 8px 24px rgba(20, 30, 50, 0.1);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ring: 0 0 0 3px rgba(14, 78, 168, 0.28); /* accent focus ring */
 }
 
 * {
   box-sizing: border-box;
+}
+
+/* Visually-hidden but available to assistive tech (e.g. a fieldset legend whose
+   visible label is rendered separately). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 html,
@@ -59,4 +81,59 @@ h1,
 h2,
 h3 {
   letter-spacing: -0.01em;
+  color: var(--color-navy);
+}
+
+/* ---------------------------------------------------------------------------
+   Shared button system. Plain global classes (not CSS-module-scoped) so every
+   island — publish toggle, module editor, login, downloads — renders the SAME
+   button, regardless of which CSS module owns the surrounding markup. This is
+   what keeps "Unpublish module" and "Edit module" visually identical/aligned.
+--------------------------------------------------------------------------- */
+.store-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.15;
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: background 150ms var(--ease), border-color 150ms var(--ease),
+    color 150ms var(--ease);
+}
+.store-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+.store-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.store-btn--primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+.store-btn--primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  text-decoration: none;
+}
+.store-btn--ghost {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.store-btn--ghost:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  text-decoration: none;
+}
+.store-btn--sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
 }
