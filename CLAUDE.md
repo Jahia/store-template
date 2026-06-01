@@ -21,8 +21,13 @@
 - **Preserve E2E selectors** when refactoring markup: `[data-editor-ready]`,
   `[data-filter-ready]`, `[data-upload-ready]`, `[data-forge-card]`,
   `[role="tab"]`/`[role="tabpanel"]`, `[data-ckeditor-state]`,
-  `[data-icon-input]`/`[data-icon-status]`, `[data-changelog-ready]`. The Cypress
-  suite in `../privateappstore/tests` must stay green (`npx cypress run`).
+  `[data-ckeditor5-styles]`, `[data-icon-input]`/`[data-icon-status]`,
+  `[data-changelog-ready]`, `[data-tag-list]`, `#edit-status`/`#edit-tags`, and
+  the shared global `.store-btn` button classes. The Cypress suite in
+  `../privateappstore/tests` must stay green (`npx cypress run`).
+- **The storefront filter root is a `<div>`, NOT an `<aside>`** — a complementary
+  landmark nested in `<main>` fails the axe AAA gate
+  (`landmark-complementary-is-top-level`, spec 20).
 
 ## SonarQube
 
@@ -33,6 +38,14 @@
 - Richtext fields use **CKEditor 5 from the deployed `richtext-ckeditor5` module**
   (federated remote, loaded at runtime by `loadCKEditor.ts`) — never bundled into
   store-template. Don't add a CKEditor/editor dependency to `package.json`.
+- **The federated `.` entry ships NO CSS** (`export * from "ckeditor5"`; the
+  stylesheet import lives in the remote's jContent-only `JahiaClassicEditor`). So
+  the storefront editor would mount unstyled. `loadCKEditor.ts` injects the
+  matching `ckeditor5.css` (vendored at `forge/vendor/ckeditor5.css`, version
+  **47.6.2** — keep it in step with the deployed remote) via a dynamic `?raw`
+  import (own chunk, owner-only). The Vite plugin builds emit assets only in the
+  SSR pass (`emitAssets:false` client); `?url` for CSS is silently dropped — use
+  `?raw`, not `?url`.
 
 ## Standing repo rules
 
