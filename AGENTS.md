@@ -5,10 +5,16 @@ Guidance for AI agents (and humans) working in this repo. Read this before editi
 ## What this is
 
 `store-template` is the **Jahia 8.2 JavaScript module** that renders the Private
-App Store website *and* its in-site admin (Forge settings / Categories / Roles).
-It was migrated from a legacy JSP/Bootstrap-3 template set to a **server-side
-React** module running on the `javascript-modules-engine` (GraalVM SSR + Vite).
+App Store website (storefront + module detail/authoring + JAR upload). It was
+migrated from a legacy JSP/Bootstrap-3 template set to a **server-side React**
+module running on the `javascript-modules-engine` (GraalVM SSR + Vite).
 See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
+
+> **Store administration** (Forge settings / Categories / Roles) lives in the
+> **Jahia site administration (jContent)**, provided by the `privateappstore`
+> module's React app — it is NOT in-site here (an earlier in-site admin was
+> removed). The chrome reads site branding (logo + footer) from the
+> `jmix:forgeSettings` properties set there.
 
 - Packaging: a Jahia JS module shipped as a `.tgz` (not a JAR). `mvn package`
   shells out to npm; the build artifact is `dist/package.tgz`.
@@ -28,8 +34,14 @@ See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
   from a server component. Props must be JSON-serializable (they cross the
   SSR→hydration boundary). Use a `data-*-ready` attribute set in a mount effect
   as a deterministic "hydrated" signal for tests.
-- **i18n**: site chrome uses the engine's `settings/locales`; the admin uses
-  `src/admin/locales` under the `privateappstore` namespace.
+- **i18n**: site chrome uses the engine's `settings/locales`.
+- **Site branding**: the header logo + footer (copyright + privacy/terms/cookies
+  + facebook/linkedin/twitter/youtube) are read server-side by the chrome from the
+  site node's `jmix:forgeSettings` properties (`forgeSettingsLogo` weakreference +
+  `forgeSettings*Url`/`forgeSettingsCopyright`), configured in jContent's Store
+  administration → Settings. Each falls back to a Jahia default when unset. They
+  are read in the page's render workspace, so **publish the site** to push branding
+  to LIVE (manual publication is the expected flow).
 - **Page templates** are React components with `componentType: "template"`.
   `settings/import.xml` seeds a working store on every store-template site.
 
@@ -73,11 +85,12 @@ store-developer/admin can use it.
 src/
   components/
     forge/        module/package cards, detail, screenshots (Lightbox),
-                  rich-text editor, versions, store filter
-    chrome/       site header (nav, search, login island), footer, layout
+                  CKEditor 5 richtext (loadCKEditor/CKEditorField), icon upload,
+                  versions, store filter, publish + changelog editors
+    chrome/       site header (logo, nav, search, login island), footer
+                  (reads jmix:forgeSettings branding), layout
     ForgeModulesList/, ForgeMyModulesList/, FileUpload/   server views
-  admin/          in-site admin island (AdminApp + ForgeSettings/CategorySettings/ManageRoles)
-  lib/            graphql.ts (fetch-based gqlRequest), helpers
+  lib/            graphql.ts (gqlRequest + gqlUpload multipart), helpers
 settings/         import.xml (seed structure) + locales
 docs/             JS-MODULE-MIGRATION.md, SECURITY-CSP.md
 dist/             build output (client islands, server bundle, package.tgz)
