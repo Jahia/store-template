@@ -2,6 +2,7 @@ import {
   buildEndpointUrl,
   buildNodeUrl,
   getChildNodes,
+  getNodesByJCRQuery,
   Island,
   useServerContext,
 } from "@jahia/javascript-modules-library";
@@ -9,6 +10,45 @@ import type { JCRNodeWrapper } from "org.jahia.services.content";
 import { useTranslation } from "react-i18next";
 import styles from "./Header.module.css";
 import Login from "./Login.client";
+
+/**
+ * Permission granted only by the "Store administrator" and "Store developer"
+ * site roles (see privateappstore roles.xml). We use it as the faithful proxy
+ * for "this user may manage their own modules", gating the My-modules nav entry.
+ */
+const STORE_ROLE_PERMISSION = "jahiaForgeUploadModule";
+
+/**
+ * Identifiers of nav pages that host the developer-only "My modules" list
+ * (jnt:forgeMyModulesList). Detected semantically — by content type, not by a
+ * hard-coded page name — so renaming the page keeps it gated. These pages are
+ * hidden from the nav unless the visitor is a Store administrator/developer.
+ */
+function myModulesPageIds(home: JCRNodeWrapper): Set<string> {
+  const ids = new Set<string>();
+  try {
+    const lists = getNodesByJCRQuery(
+      home.getSession(),
+      `SELECT * FROM [jnt:forgeMyModulesList] AS l WHERE ISDESCENDANTNODE(l, '${home.getPath()}')`,
+      20,
+    );
+    for (const list of lists) {
+      let owner: JCRNodeWrapper | null = list;
+      // Walk up to the page that owns this list (getParent throws at the root).
+      while (owner && !owner.isNodeType("jnt:page")) {
+        try {
+          owner = owner.getParent() as unknown as JCRNodeWrapper;
+        } catch {
+          owner = null;
+        }
+      }
+      if (owner) ids.add(owner.getIdentifier());
+    }
+  } catch {
+    // No query support / no such content — nothing to gate.
+  }
+  return ids;
+}
 
 /**
  * URL of the configured store logo (the `forgeSettingsLogo` weakreference on the
@@ -42,15 +82,22 @@ export function Header(): JSX.Element {
 
   const homeUrl = home ? buildNodeUrl(home) : buildNodeUrl(site);
   const logoUrl = siteLogoUrl(site);
+
+  const isLoggedIn = renderContext.isLoggedIn();
+  // "My modules" is for module owners only: shown when signed in AND the user
+  // holds a Store administrator/developer role (jahiaForgeUploadModule).
+  const canManageStore = isLoggedIn && site.hasPermission(STORE_ROLE_PERMISSION);
+  const restrictedPages = home && !canManageStore ? myModulesPageIds(home) : new Set<string>();
   const navPages = home
-    ? getChildNodes(home, 50).filter((n) => n.isNodeType("jnt:page"))
+    ? getChildNodes(home, 50).filter(
+        (n) => n.isNodeType("jnt:page") && !restrictedPages.has(n.getIdentifier()),
+      )
     : [];
 
   // Search navigates to the home modules list; its StoreFilter island reads
   // ?src_terms and filters the grid.
   const searchUrl = homeUrl;
 
-  const isLoggedIn = renderContext.isLoggedIn();
   let username = "";
   if (isLoggedIn) {
     username = renderContext.getUser().getName();

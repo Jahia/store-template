@@ -46,9 +46,13 @@ export default function Login({
         <span className={styles.user} title={username}>
           {username}
         </span>
-        <a className={styles.logout} href={logoutUrl}>
-          {labels.signOut}
-        </a>
+        {/* Real button (not a text link). Jahia's logout servlet accepts a GET,
+            so a plain form navigates without needing JS or a CSRF token. */}
+        <form className={styles.logoutForm} method="get" action={logoutUrl}>
+          <button type="submit" className="store-btn store-btn--ghost store-btn--sm">
+            {labels.signOut}
+          </button>
+        </form>
       </div>
     );
   }

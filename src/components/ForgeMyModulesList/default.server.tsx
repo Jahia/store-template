@@ -23,6 +23,16 @@ jahiaComponent(
     }
 
     const site = renderContext.getSite();
+    // Developer-only area: same gate as the My-modules nav entry. A logged-in
+    // user without a Store administrator/developer role has no modules to manage.
+    if (!site.hasPermission("jahiaForgeUploadModule")) {
+      return (
+        <div className={styles.empty}>
+          You need the Store developer or Store administrator role to submit modules.
+        </div>
+      );
+    }
+
     const basePath = `${site.getPath()}/contents/modules-repository`;
     const username = renderContext.getUser().getName().replaceAll("'", "''");
 

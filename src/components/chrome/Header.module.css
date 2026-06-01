@@ -34,7 +34,7 @@
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  background: linear-gradient(135deg, var(--color-accent), #7b6cf0);
+  background: linear-gradient(135deg, var(--color-accent), #2f7bd6);
   box-shadow: var(--shadow-sm);
 }
 
@@ -85,7 +85,7 @@
 .searchInput:focus-visible {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(70, 60, 186, 0.16);
+  box-shadow: var(--ring);
   background: #fff;
 }
 
