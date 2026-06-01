@@ -16,6 +16,7 @@ import ModuleEditor from "./ModuleEditor.client";
 import ScreenshotManager from "./ScreenshotManager.client";
 import PublishToggle from "./PublishToggle.client";
 import DetailTabs from "./DetailTabs.client";
+import FileUploadForm from "~/components/FileUpload/FileUpload.client";
 
 interface TabDef {
   id: string;
@@ -87,6 +88,20 @@ const EDITOR_LABELS = {
 
 /** Allowed module status values (jmix:forgeElement `status` choicelist). */
 const STATUS_OPTIONS = ["community", "labs", "prereleased", "supported", "legacy"];
+
+/**
+ * Labels for the owner-only "upload a new version" form on the detail page. Posts
+ * to the same createEntryFromJar action as the my-modules upload — the action
+ * upserts (matches the module by groupId+name in the package) and appends the
+ * version — so the only thing missing was an entry point on the module's own page.
+ */
+const ADD_VERSION_LABELS = {
+  fileLabel: "New version package (.jar / .war)",
+  submit: "Upload new version",
+  submitting: "Uploading…",
+  pickFile: "Please choose a module package first.",
+  error: "Upload failed — please try again.",
+};
 
 /**
  * Categories a developer can file a module under: the children of the site's
@@ -164,6 +179,17 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const language = currentResource.getLocale().getLanguage();
   const published = bool(node, "published");
   const workspace = jcrWorkspace(node);
+
+  // Owners can add a version by uploading its package from this page. The upload
+  // posts to createEntryFromJar on modules-repository (resolved in the rendered
+  // workspace, exactly like the my-modules upload form), which upserts the module
+  // and appends the version. Null for non-owners or if the repo is unavailable.
+  const repoPath = `${renderContext.getSite().getPath()}/contents/modules-repository`;
+  const session = node.getSession();
+  const uploadActionUrl =
+    canEdit && session.nodeExists(repoPath)
+      ? `${buildNodeUrl(session.getNode(repoPath)).replace(/\.html$/, "")}.createEntryFromJar.do`
+      : null;
 
   // Metadata (editable by owners; shown to everyone in the Information panel).
   const categoryOptions = siteCategoryOptions(renderContext.getSite());
@@ -380,6 +406,24 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
               <Render key={v.getIdentifier()} node={v} view="default" readOnly />
             ))}
           </div>
+        )}
+        {uploadActionUrl && (
+          <section className={styles.section} data-add-version="">
+            <h2 className={styles.sectionTitle}>Upload a new version</h2>
+            <p className={styles.muted}>
+              Upload a .jar or .war whose module name and group ID match this module to add it as a
+              new version.
+            </p>
+            <Island
+              component={FileUploadForm}
+              props={{
+                actionUrl: uploadActionUrl,
+                backUrl: buildNodeUrl(node),
+                accept: ".jar,.war",
+                labels: ADD_VERSION_LABELS,
+              }}
+            />
+          </section>
         )}
       </div>
 
