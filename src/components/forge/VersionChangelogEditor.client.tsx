@@ -67,8 +67,9 @@ export default function VersionChangelogEditor({
     try {
       const clean = await sanitizeHtml(draft ?? "");
       await gqlRequest(setChangeLogMutation(workspace), { path, value: clean, language });
-      setStatus("saved");
-      setOpen(false);
+      // The changelog is server-rendered outside this island; reload so the saved
+      // value shows immediately rather than after a manual refresh.
+      window.location.reload();
     } catch {
       setStatus("error");
     }
