@@ -9,11 +9,21 @@ import type { JCRNodeWrapper } from "org.jahia.services.content";
 import clsx from "clsx";
 import styles from "./detail.module.css";
 import { forgeIconUrl } from "./forgeCard";
-import { str, bool } from "./nodeProps";
+import { str, bool, jcrWorkspace } from "./nodeProps";
 import { sortedVersionNodes } from "./versions";
 import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
 import ScreenshotManager from "./ScreenshotManager.client";
+import PublishToggle from "./PublishToggle.client";
+
+const PUBLISH_LABELS = {
+  publish: "Publish module",
+  unpublish: "Unpublish module",
+  publishing: "Saving…",
+  publishedState: "Published",
+  draftState: "Draft",
+  error: "Could not change the published state.",
+};
 
 const EDITOR_LABELS = {
   edit: "Edit module",
@@ -72,6 +82,8 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const videoNode = node.hasNode("video") ? node.getNode("video") : null;
   const canEdit = node.hasPermission("jcr:write");
   const language = currentResource.getLocale().getLanguage();
+  const published = bool(node, "published");
+  const workspace = jcrWorkspace(node);
 
   return (
     <article className={styles.detail}>
@@ -100,24 +112,30 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
       </header>
 
       {canEdit && (
-        <Island
-          component={ModuleEditor}
-          props={{
-            path: node.getPath(),
-            language,
-            values: {
-              "jcr:title": title,
-              description,
-              howToInstall: str(node, "howToInstall"),
-              FAQ: str(node, "FAQ"),
-              license,
-              authorEmail: str(node, "authorEmail"),
-              authorURL: str(node, "authorURL"),
-              codeRepository,
-            },
-            labels: EDITOR_LABELS,
-          }}
-        />
+        <div className={styles.ownerBar} data-owner-bar="">
+          <Island
+            component={PublishToggle}
+            props={{ path: node.getPath(), published, workspace, scope: "module", labels: PUBLISH_LABELS }}
+          />
+          <Island
+            component={ModuleEditor}
+            props={{
+              path: node.getPath(),
+              language,
+              values: {
+                "jcr:title": title,
+                description,
+                howToInstall: str(node, "howToInstall"),
+                FAQ: str(node, "FAQ"),
+                license,
+                authorEmail: str(node, "authorEmail"),
+                authorURL: str(node, "authorURL"),
+                codeRepository,
+              },
+              labels: EDITOR_LABELS,
+            }}
+          />
+        </div>
       )}
 
       {description && (

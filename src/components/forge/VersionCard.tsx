@@ -1,19 +1,57 @@
+import { Island } from "@jahia/javascript-modules-library";
 import styles from "./detail.module.css";
+import PublishToggle from "./PublishToggle.client";
+
+interface PublishLabels {
+  publish: string;
+  unpublish: string;
+  publishing: string;
+  publishedState: string;
+  draftState: string;
+  error: string;
+}
+
+/** Owner-only publish control for this version (omitted for non-owners). */
+interface VersionPublishControl {
+  path: string;
+  workspace: "EDIT" | "LIVE";
+  labels: PublishLabels;
+}
 
 export interface VersionCardProps {
   versionNumber: string;
   published: boolean;
   changeLogHtml: string;
   downloadUrl: string | null;
+  publishControl?: VersionPublishControl | null;
 }
 
 /** Presentational card for one module/package version (changelog is sanitized richtext). */
-export function VersionCard({ versionNumber, published, changeLogHtml, downloadUrl }: Readonly<VersionCardProps>): JSX.Element {
+export function VersionCard({
+  versionNumber,
+  published,
+  changeLogHtml,
+  downloadUrl,
+  publishControl,
+}: Readonly<VersionCardProps>): JSX.Element {
   return (
-    <div className={styles.version}>
+    <div className={styles.version} data-forge-version="">
       <div className={styles.versionHead}>
         <span className={styles.versionNumber}>{versionNumber}</span>
-        {!published && <span className={styles.draft}>draft</span>}
+        {publishControl ? (
+          <Island
+            component={PublishToggle}
+            props={{
+              path: publishControl.path,
+              published,
+              workspace: publishControl.workspace,
+              scope: "version",
+              labels: publishControl.labels,
+            }}
+          />
+        ) : (
+          !published && <span className={styles.draft}>draft</span>
+        )}
         {downloadUrl && (
           <a className={styles.download} href={downloadUrl}>
             Download
