@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import clsx from "clsx";
 import styles from "./editor.module.css";
-import { gqlRequest } from "~/lib/graphql";
+import { gqlRequest, gqlUpload } from "~/lib/graphql";
 
 export interface IconLabels {
   label: string;
@@ -71,18 +71,18 @@ const deleteNodeMutation = (ws: "EDIT" | "LIVE") => /* GraphQL */ `
 `;
 
 /**
- * Jahia uploads a binary through plain GraphQL: `jcr:data` is set with
- * `type: BINARY` and a base64 string value (NOT a multipart Upload). This means
- * the icon upload runs over gqlRequest (fetch to /modules/graphql, not CSRF-gated)
- * just like every other owner edit — no `.do` action, no multipart.
+ * Jahia reads a BINARY property value from a multipart request part, so the file
+ * is uploaded with a GraphQL multipart request (gqlUpload): `$file` is mapped to
+ * the uploaded part and passed to `setValue(type: BINARY)`. A base64 JSON value
+ * fails with "Cannot read parts". /modules/graphql is not CSRF-gated.
  */
 const addFileMutation = (ws: "EDIT" | "LIVE") => /* GraphQL */ `
-  mutation AddIconFile($iconId: String!, $name: String!, $data: String!, $mime: String!) {
+  mutation AddIconFile($iconId: String!, $name: String!, $file: String!, $mime: String!) {
     jcr(workspace: ${ws}) {
       mutateNode(pathOrId: $iconId) {
         addChild(name: $name, primaryNodeType: "jnt:file") {
           addChild(name: "jcr:content", primaryNodeType: "jnt:resource") {
-            data: mutateProperty(name: "jcr:data") { setValue(type: BINARY, value: $data) }
+            data: mutateProperty(name: "jcr:data") { setValue(type: BINARY, value: $file) }
             mime: mutateProperty(name: "jcr:mimeType") { setValue(value: $mime) }
           }
         }
@@ -103,20 +103,6 @@ interface FindIconResult {
 
 interface AddFolderResult {
   jcr?: { mutateNode?: { addChild?: { uuid?: string } } };
-}
-
-/** Read a File as a bare base64 string (strip the `data:<mime>;base64,` prefix). */
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      const result = String(reader.result);
-      const comma = result.indexOf(",");
-      resolve(comma >= 0 ? result.slice(comma + 1) : result);
-    });
-    reader.addEventListener("error", () => reject(new Error("Could not read file")));
-    reader.readAsDataURL(file);
-  });
 }
 
 /** JCR-safe child name derived from the picked file name. */
@@ -166,8 +152,6 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
     if (!file) return;
     setStatus("uploading");
     try {
-      const base64 = await fileToBase64(file);
-
       const found = await gqlRequest<FindIconResult>(findIconQuery(workspace), { path });
       const iconNode = found.jcr?.nodeByPath?.children?.nodes?.[0];
 
@@ -187,12 +171,11 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
         iconId = uuid;
       }
 
-      await gqlRequest(addFileMutation(workspace), {
-        iconId,
-        name: safeFileName(file.name),
-        data: base64,
-        mime: file.type,
-      });
+      await gqlUpload(
+        addFileMutation(workspace),
+        { iconId, name: safeFileName(file.name), mime: file.type },
+        file,
+      );
 
       setStatus("uploaded");
       setMessage(labels.uploaded);
