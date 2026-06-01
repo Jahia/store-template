@@ -12,7 +12,7 @@ See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
 
 - Packaging: a Jahia JS module shipped as a `.tgz` (not a JAR). `mvn package`
   shells out to npm; the build artifact is `dist/package.tgz`.
-- Runtime data (modules, categories, reviews) lives in the JCR and is mostly
+- Runtime data (modules, categories, versions) lives in the JCR and is mostly
   produced by the sibling **`privateappstore`** Java module. This repo is the
   *presentation + authoring UI*; `privateappstore` is the *backend/contract*.
 
@@ -56,20 +56,23 @@ store-developer/admin can use it.
 
 - **Owner-only authoring** (edit own module metadata, manage screenshots) uses
   generic JCR GraphQL mutations via `gqlRequest`; JCR ACLs enforce permissions.
-- **Any-user actions** (e.g. submitting a review on a module you don't own)
-  CANNOT use GraphQL. They go to a Jahia **Action** in `privateappstore`
-  (`SubmitReview`), invoked at `…/<module>.SubmitReview.do`.
+- **Write actions that need an in-workspace Java side** (e.g. uploading a module
+  JAR, which runs a Maven deploy then creates the nodes) CANNOT use GraphQL. They
+  go to a Jahia **Action** in `privateappstore` (`createEntryFromJar`), invoked at
+  `…/modules-repository.createEntryFromJar.do`.
 - **CSRF**: Jahia's OWASP CSRFGuard injects `/modules/CsrfServlet`, which patches
-  **XMLHttpRequest only — not `fetch`**. Action POSTs (the `.do` URLs) must use
-  `XMLHttpRequest`, or they are rejected "Required Token is missing". See
-  `ReviewForm.client.tsx#postForm`.
+  **XMLHttpRequest only — not `fetch`, and not plain full-page `<form>` posts**.
+  Action POSTs (the `.do` URLs) must use `XMLHttpRequest`, or they are rejected
+  ("Required Token is missing" / "Request Token does not match Page Token"). See
+  `FileUpload/FileUpload.client.tsx#postMultipart`. (Plain `gqlRequest`/`fetch` to
+  `/modules/graphql` is fine — that endpoint is not CSRF-gated.)
 
 ## Directory map
 
 ```
 src/
   components/
-    forge/        module/package cards, detail, reviews, screenshots (Lightbox),
+    forge/        module/package cards, detail, screenshots (Lightbox),
                   rich-text editor, versions, store filter
     chrome/       site header (nav, search, login island), footer, layout
     ForgeModulesList/, ForgeMyModulesList/, FileUpload/   server views
@@ -95,10 +98,9 @@ dist/             build output (client islands, server bundle, package.tgz)
   #   [{"installBundle":["js:file:/tmp/store-template.tgz"],"autoStart":true}]
   ```
 - **E2E** lives in `../privateappstore/tests` (Cypress, `baseUrl` localhost:8080).
-  `npx cypress run`. The suite (19 specs) must stay green. Selectors that code
-  changes must preserve: `[data-star]` (rating), `[data-review-ready]` /
-  `[data-review-done]`, `[data-editor-ready]`, `[data-filter-ready]`,
-  `[role="tab"]` (admin), `#forge-url`/`#forge-id`/`#forge-user`.
+  `npx cypress run`. The suite must stay green. Selectors that code changes must
+  preserve: `[data-editor-ready]`, `[data-filter-ready]`, `[data-upload-ready]`,
+  `[data-forge-card]`, `[role="tab"]` (admin), `#forge-url`/`#forge-id`/`#forge-user`.
 
 ## SonarQube
 

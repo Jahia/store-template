@@ -14,12 +14,14 @@
   Browser-only libs (e.g. DOMPurify) must be `await import(...)`-ed inside a
   handler/effect. No Apollo, no Moonstone (see AGENTS.md for why).
 - **Authoring features hit the GraphQL permission wall.** Owner-only edits use
-  `gqlRequest` (JCR ACLs); any-user actions (reviews) use the `privateappstore`
-  Action over **XMLHttpRequest** (CSRF), never `fetch`.
-- **Preserve E2E selectors** when refactoring markup: `[data-star]`,
-  `[data-review-ready]`/`[data-review-done]`, `[data-editor-ready]`,
-  `[data-filter-ready]`, `[role="tab"]`. The Cypress suite in
-  `../privateappstore/tests` must stay green (`npx cypress run`).
+  `gqlRequest` (JCR ACLs). Write actions with a Java side (e.g. the module-JAR
+  upload, `createEntryFromJar`) use the `privateappstore` Action over
+  **XMLHttpRequest** (CSRF patches XHR, not `fetch`/plain `<form>` posts).
+  `gqlRequest`/`fetch` to `/modules/graphql` is fine — not CSRF-gated.
+- **Preserve E2E selectors** when refactoring markup: `[data-editor-ready]`,
+  `[data-filter-ready]`, `[data-upload-ready]`, `[data-forge-card]`,
+  `[role="tab"]`. The Cypress suite in `../privateappstore/tests` must stay green
+  (`npx cypress run`).
 
 ## SonarQube
 

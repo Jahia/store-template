@@ -25,7 +25,7 @@ interface FileUploadFormProps {
  * per-page OWASP-CSRFTOKEN header. The guard monkey-patches XHR (not fetch, and
  * not plain full-page <form> posts), so a normal form submit fails intermittently
  * with "Request Token does not match Page Token". XHR is the project-wide pattern
- * for `.do` actions (mirrors ReviewForm).
+ * for `.do` actions.
  *
  * Do NOT set Content-Type — the browser must add the multipart boundary itself.
  */
@@ -76,7 +76,7 @@ export default function FileUploadForm({ actionUrl, backUrl, accept, labels }: R
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [message, setMessage] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
-  // Hydration-ready signal (mirrors ReviewForm/ModuleEditor): SSR omits it, set
+  // Hydration-ready signal (mirrors ModuleEditor): SSR omits it, set
   // after mount so tests can wait until the submit handler is attached.
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
