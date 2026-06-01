@@ -8,7 +8,7 @@ import styles from "~/components/forge/forge.module.css";
 /**
  * The logged-in user's own modules/packages (published or not), queried by
  * `jcr:createdBy`, rendered as cards. Replaces forgeMyModulesList.v2.jsp's
- * createdBy query. (The JAR upload control is authoring — Phase 3.)
+ * createdBy query. (The JAR upload control is authoring - Phase 3.)
  */
 jahiaComponent(
   {

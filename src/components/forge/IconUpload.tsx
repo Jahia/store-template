@@ -19,7 +19,7 @@ export interface IconLabels {
 interface IconUploadProps {
   /** JCR path of the module node that owns the `icon` folder. */
   path: string;
-  /** GraphQL workspace to mutate — matches the workspace the page is rendered in. */
+  /** GraphQL workspace to mutate - matches the workspace the page is rendered in. */
   workspace: "EDIT" | "LIVE";
   /** Current icon URL (server-rendered), or null when none is set yet. */
   iconUrl: string | null;
@@ -31,7 +31,7 @@ const MAX_BYTES = 2 * 1024 * 1024;
 
 type Status = "idle" | "uploading" | "uploaded" | "error";
 
-/** `ws` is a server-computed enum ("EDIT" | "LIVE"), never user input — safe to interpolate. */
+/** `ws` is a server-computed enum ("EDIT" | "LIVE"), never user input - safe to interpolate. */
 const findIconQuery = (ws: "EDIT" | "LIVE") => /* GraphQL */ `
   query FindIcon($path: String!) {
     jcr(workspace: ${ws}) {
@@ -115,7 +115,7 @@ function safeFileName(name: string): string {
  * In-site module icon upload (owner-only; rendered inside the ModuleEditor, which
  * the server gates on jcr:write). The icon is the first jnt:file inside the
  * module's `icon` folder, so an upload: ensures that folder exists, removes any
- * existing files, then adds the new one. Workspace-aware — live-authored modules
+ * existing files, then adds the new one. Workspace-aware - live-authored modules
  * live in LIVE, where an EDIT write would not find them.
  */
 export default function IconUpload({ path, workspace, iconUrl, labels }: Readonly<IconUploadProps>) {

@@ -33,7 +33,7 @@ const titleCase = (value: string): string =>
 /**
  * Metadata controls for the General tab: the module's status (choicelist),
  * categories (multi-select against the site's category tree) and free-text tags.
- * All three were previously not editable in-site. Controlled — ModuleEditor owns
+ * All three were previously not editable in-site. Controlled - ModuleEditor owns
  * the state and persists changes.
  */
 export default function MetadataFields({

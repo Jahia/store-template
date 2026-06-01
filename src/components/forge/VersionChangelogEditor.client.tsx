@@ -22,7 +22,7 @@ export interface ChangelogLabels {
 interface VersionChangelogEditorProps {
   /** JCR path of the version node. */
   path: string;
-  /** GraphQL workspace to mutate — matches the workspace the page is rendered in. */
+  /** GraphQL workspace to mutate - matches the workspace the page is rendered in. */
   workspace: "EDIT" | "LIVE";
   language: string;
   /** Current changelog HTML (server-rendered, sanitized). */

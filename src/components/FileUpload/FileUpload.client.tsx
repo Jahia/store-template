@@ -27,7 +27,7 @@ interface FileUploadFormProps {
  * with "Request Token does not match Page Token". XHR is the project-wide pattern
  * for `.do` actions.
  *
- * Do NOT set Content-Type — the browser must add the multipart boundary itself.
+ * Do NOT set Content-Type - the browser must add the multipart boundary itself.
  */
 function postMultipart(url: string, data: FormData): Promise<{ status: number; body: string }> {
   return new Promise((resolve, reject) => {
@@ -43,7 +43,7 @@ function postMultipart(url: string, data: FormData): Promise<{ status: number; b
 
 /**
  * Narrow the action's JSON. createEntryFromJar reports FAILURES as HTTP 200 with
- * `{error}` (errorResult uses SC_OK), and SUCCESS as `{successRedirectUrl}` — so a
+ * `{error}` (errorResult uses SC_OK), and SUCCESS as `{successRedirectUrl}` - so a
  * 2xx status alone does not mean success. Check `error` first.
  */
 function parseResult(body: string): { error?: string; successRedirectUrl?: string } {
@@ -58,7 +58,7 @@ function parseResult(body: string): { error?: string; successRedirectUrl?: strin
       return out;
     }
   } catch {
-    // non-JSON body — treat as opaque
+    // non-JSON body - treat as opaque
   }
   return {};
 }
@@ -96,7 +96,7 @@ export default function FileUploadForm({ actionUrl, backUrl, accept, labels }: R
       const res = await postMultipart(actionUrl, data);
       const result = parseResult(res.body);
       if (result.error) {
-        // Failures arrive as HTTP 200 with {error} — surface them, don't redirect.
+        // Failures arrive as HTTP 200 with {error} - surface them, don't redirect.
         setStatus("error");
         setMessage(result.error);
         return;

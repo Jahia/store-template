@@ -3,7 +3,7 @@ import clsx from "clsx";
 import styles from "./lightbox.module.css";
 
 /**
- * Screenshots gallery with a click-to-zoom lightbox — the React replacement for
+ * Screenshots gallery with a click-to-zoom lightbox - the React replacement for
  * the legacy photoswipe/lity view. SSR-safe: thumbnails render on the server;
  * the overlay opens on click (client state). Receives image URLs as props.
  */

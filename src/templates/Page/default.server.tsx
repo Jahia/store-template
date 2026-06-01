@@ -4,7 +4,7 @@ import { Layout } from "~/templates/Layout";
 /**
  * Default page template for jnt:page.
  *
- * Phase 0 skeleton — renders the document shell with a single editable `main`
+ * Phase 0 skeleton - renders the document shell with a single editable `main`
  * area so any page on a store-template site renders through the JS engine.
  * Real page templates (home, search, module detail, edit) are ported in later
  * phases. Store administration lives in the Jahia site administration (jContent).

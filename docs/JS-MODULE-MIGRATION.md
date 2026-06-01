@@ -1,17 +1,17 @@
-# store-template → Jahia JavaScript Module — Migration Plan
+# store-template → Jahia JavaScript Module - Migration Plan
 
-Status: **COMPLETE (2026-05-31)** — Phases 0–5 done; `store-template` is a pure Jahia JavaScript
+Status: **COMPLETE (2026-05-31)** - Phases 0–5 done; `store-template` is a pure Jahia JavaScript
 module (no JSP). Full E2E **75/75** across 19 specs against the JS stack. The two deferred
 enhancements are now **DONE** (2026-05-31): in-site review **submission** (a `SubmitReview` Jahia
 action, CSRF-safe XHR, cross-owner elevation) and **rich-text editing** (a contenteditable editor
-+ DOMPurify sanitization). See the "Deferred enhancements — delivered" section near the end and
++ DOMPurify sanitization). See the "Deferred enhancements - delivered" section near the end and
 [SECURITY-CSP.md](./SECURITY-CSP.md) for the production CSP spec.
 Target: convert `store-template` from a JSP/Bootstrap3 OSGi template set into a Jahia
 **JavaScript Module** (SSR React via `@jahia/javascript-modules-engine`), modelled on
 `luxe-jahia-demo`.
 
 A primary near-term driver: render the Private App Store **admin screens (Forge settings,
-Categories, Roles) directly inside the website** again — which falls out naturally once the
+Categories, Roles) directly inside the website** again - which falls out naturally once the
 module is React, because JS modules render admin-style screens as ordinary in-site views
 with server-side permission checks (they do not register Jahia `adminRoute`s).
 
@@ -38,14 +38,14 @@ Difficulty profile of the 48 views (from inventory): **TRIVIAL 8 / MEDIUM 32 / H
 
 ---
 
-## 0bis. Engine spike — RESULT: **GO** (2026-05-31)
+## 0bis. Engine spike - RESULT: **GO** (2026-05-31)
 
 Ran against the live stack (`jahia-ee-dev:8-SNAPSHOT`, license 8.2.0.6) before scaffolding.
 
 - **The dev image already ships the engine** (`javascript-modules-engine v1.3.0-SNAPSHOT`, bundle
   [127]). JS modules are a first-class runtime on this build.
 - Installed **engine 1.2.0** via provisioning API (`mvn:org.jahia.modules/javascript-modules-engine/1.2.0`,
-  autoStart) — module manager hot-swapped 1.3.0-SNAPSHOT → 1.2.0; reached **ACTIVE**, registered 24
+  autoStart) - module manager hot-swapped 1.3.0-SNAPSHOT → 1.2.0; reached **ACTIVE**, registered 24
   views, "Operation successful". We standardize on **1.2.0** (matches `[1.1,2)` + library 1.2.0).
 - **Toolchain validated**: a minimal module (`@jahia/vite-plugin` 1.2.0 + Vite 8 + React 19 on
   Node 22) built `dist/server/index.js` with the `jahiaComponent()` registrations compiled to SSR.
@@ -56,7 +56,7 @@ Ran against the live stack (`jahia-ee-dev:8-SNAPSHOT`, license 8.2.0.6) before s
 - **Not exercised**: an HTTP GET of a rendered page (needs a content site; GraphQL `jcr` is locked
   for basic-auth here). Deferred to Phase 0/1, where a site exists naturally. GraalVM component
   registration is the conclusive SSR proof.
-- **Dev-loop note**: local `npm pack` + `js:file:` install works with no Maven/Nexus round-trip —
+- **Dev-loop note**: local `npm pack` + `js:file:` install works with no Maven/Nexus round-trip -
   fast iteration for Phase 0+.
 
 ---
@@ -83,7 +83,7 @@ store-template/                      (becomes a JS module; stays its own git rep
 1. **Server vs client data**: server views read JCR directly via the engine library; only
    interactive islands hit `/modules/graphql`. (No Apollo in server code, no Next.js.)
 2. **`ForgeFunctions` (version sort/latest/prev/next)**: reimplement in TypeScript, server-side,
-   over direct JCR — trivial logic, removes the JSP tag-lib dependency.
+   over direct JCR - trivial logic, removes the JSP tag-lib dependency.
 3. **Java actions `DeleteScreenshot` / `ReorderScreenshots`**: store-template becomes pure JS, so
    move this server logic to **GraphQL mutations in the `privateappstore` Java module** (it already
    hosts GraphQL extensions and the IDOR-prevention checks belong server-side). Islands call them.
@@ -103,7 +103,7 @@ store-template/                      (becomes a JS module; stays its own git rep
 - `module-dependencies`: `default, javascript-modules-engine=[1.1,2), privateappstore, search`
   (drop bootstrap3/jquery/font-awesome once views no longer use them).
 - Pin/confirm an engine build compatible with our Jahia (`required-version`); our stack is
-  8.2 EE-dev (license 8.2.0.6); luxe targets 8.2.1.0 — verify at Phase 0.
+  8.2 EE-dev (license 8.2.0.6); luxe targets 8.2.1.0 - verify at Phase 0.
 
 ---
 
@@ -112,15 +112,15 @@ store-template/                      (becomes a JS module; stays its own git rep
 Phases are incremental and shippable; JSP and JS views **coexist** during the migration, so the
 site keeps working after every phase. Effort numbers are rough order-of-magnitude, not commitments.
 
-### Phase 0 — Toolchain & skeleton (prove the pipeline) — **DONE** (2026-05-31)
+### Phase 0 - Toolchain & skeleton (prove the pipeline) - **DONE** (2026-05-31)
 - ✅ New branch `SECURITY-571-js-module-migration`.
 - ✅ Added `package.json` (jahia block + scripts), `vite.config.js`, `tsconfig.json`, `.yarnrc.yml`,
   `.gitignore` entries; JS source under `src/` (legacy JSP under `src/main` left untouched until
-  cutover — they don't collide; Vite only globs `*.server.tsx`/`*.client.tsx`).
+  cutover - they don't collide; Vite only globs `*.server.tsx`/`*.client.tsx`).
 - ✅ Engine↔Jahia compatibility proven by the 0bis spike (engine 1.2.0 ACTIVE; image pre-ships it).
 - ✅ Base `Layout` + `Page/default.server.tsx` (`jnt:page` default template) build via Vite →
   `dist/server/index.js`; packaged (`npm pack`) and deployed via `js:file:`.
-- ✅ **Exit criterion met — HTTP page render**: created a `phase0` site (templateSet `store-template`)
+- ✅ **Exit criterion met - HTTP page render**: created a `phase0` site (templateSet `store-template`)
   + a `jnt:page` home, rendered `/cms/render/default/en/sites/phase0/home.html` → our SSR output
   `<body><main><h1 data-store-template="js">Phase 0 Home</h1></main></body>` (jcr:title → prop →
   GraalVM SSR → HTTP). The whole pipeline works on the live stack.
@@ -130,11 +130,11 @@ site keeps working after every phase. Effort numbers are rough order-of-magnitud
 
 > Dev-loop proven here: `npx vite build` → `npm pack --pack-destination build` →
 > `docker cp` the tgz → install via provisioning `installBundle: ["js:file:/tmp/…tgz"]`. Run
-> server-side Groovy via `executeScript: "file:/abs.groovy"` (JSON body — avoids the container
+> server-side Groovy via `executeScript: "file:/abs.groovy"` (JSON body - avoids the container
 > curl's multipart quirk) and have scripts write to a file (`println` doesn't reach Docker logs).
 
-### Phase 1 — Site chrome + ADMIN vertical slice (delivers the original ask)
-**Admin slice — DONE (2026-05-31).** The three admin screens render in-site.
+### Phase 1 - Site chrome + ADMIN vertical slice (delivers the original ask)
+**Admin slice - DONE (2026-05-31).** The three admin screens render in-site.
 - ✅ `src/templates/Page/site-admin.server.tsx`: `jnt:page` template `site-admin`, resolves
   siteKey + locale, checks `siteAdminForgeSettings`, mounts one `<Island>`.
 - ✅ `src/admin/`: ported `ForgeSettings`, `CategorySettings`, `ManageRoles` from privateappstore
@@ -149,21 +149,21 @@ site keeps working after every phase. Effort numbers are rough order-of-magnitud
 - ✅ Verified on the `phase0` site: `/sites/phase0/admin.html` → HTTP 200, three `role="tab"`
   buttons (i18n labels SSR'd), `<jsm-island>` with `{siteKey, language}`, active-tab `Loading…`.
 
-**Site chrome — DONE (2026-05-31).**
+**Site chrome - DONE (2026-05-31).**
 - ✅ Full `Layout` (`src/templates/Layout.tsx` + `Layout.module.css`): `<head>` SEO + loads the
   module's single `style.css` via `<AddResources>` (this also fixed the admin island being unstyled).
 - ✅ `src/styles/global.css`: design tokens + base (intentional, not Bootstrap defaults).
 - ✅ `src/components/chrome/`: `Header.tsx` (brand, nav from the home page's child pages, module
   search box, login island), `Footer.tsx` (Jahia copyright + legal/social links, ported from the
-  JSP), `Login.client.tsx` (login/logout island — posts username/password to the current page so
+  JSP), `Login.client.tsx` (login/logout island - posts username/password to the current page so
   Jahia's auth valve logs in; logout via `URLGenerator.getLogout()`).
 - ✅ Two islands per page (Login + AdminApp) hydrate independently.
 
-**Browser E2E — DONE.** `privateappstore/tests/cypress/e2e/15-inSiteAdmin.cy.ts` (guarded; **5/5
+**Browser E2E - DONE.** `privateappstore/tests/cypress/e2e/15-inSiteAdmin.cy.ts` (guarded; **5/5
 pass**): chrome present, admin tabs hydrate, tab switching, and a Forge-settings save round-trips
 through `/modules/graphql` under the browser session.
 
-**i18n (en/fr) — DONE (2026-05-31).**
+**i18n (en/fr) - DONE (2026-05-31).**
 - ✅ Admin screens: `src/admin/locales/{en,fr}.json` (privateappstore namespace) wired into
   `getAdminI18n(language)`; language comes from `currentResource.getLocale().getLanguage()`.
 - ✅ Chrome: `settings/locales/{en,fr}.json` (engine i18n) used via `useTranslation()` in
@@ -173,28 +173,28 @@ through `/modules/graphql` under the browser session.
   ("Administration du store", "Connexion", "Rechercher des modules") **and** French admin tabs
   ("App Store privé", "Catégories App Store", "Rôles App Store").
 
-**Phase 1 — COMPLETE.** Remaining items belong to later phases: the header search resolves once
+**Phase 1 - COMPLETE.** Remaining items belong to later phases: the header search resolves once
 Phase 2 builds the `search-results` page/view.
 - **Exit criteria**: an authorised user manages forge settings, categories, and roles from a page
-  **inside the store website**, with full site chrome and en/fr i18n — ✅ achieved & browser-verified.
+  **inside the store website**, with full site chrome and en/fr i18n - ✅ achieved & browser-verified.
 
-### Phase 2 — Storefront read views — IN PROGRESS
+### Phase 2 - Storefront read views - IN PROGRESS
 
-**Slice 2a — cards + list + detail — DONE (2026-05-31).**
+**Slice 2a - cards + list + detail - DONE (2026-05-31).**
 - ✅ `src/components/forge/`: `forgeCard.ts` (excerpt/icon helpers), `ForgeEntryCard.tsx` (card UI),
-  `versions.ts` (newest-first version sort + download URL — replaces Java `ForgeFunctions`),
+  `versions.ts` (newest-first version sort + download URL - replaces Java `ForgeFunctions`),
   `ForgeEntryDetail.tsx` (detail UI), `forge.module.css` + `detail.module.css`.
 - ✅ Views: `jnt:forgeModule`/`jnt:forgePackage` **`default` view** = card; **`default` template** =
-  full detail page (same `default` name, keyed apart by view-vs-template — no `jmix:mainResource`
+  full detail page (same `default` name, keyed apart by view-vs-template - no `jmix:mainResource`
   needed). `jnt:forgeModulesList` **`default` view** = responsive grid querying `jmix:forgeElement`
   WHERE `published = true` under the start node (defaults to `…/contents/modules-repository`).
 - ✅ Verified on a seeded site + E2E `privateappstore/tests/cypress/e2e/16-storefront.cy.ts` (2/2):
   grid lists published modules and hides unpublished ones; detail page shows title/description,
   versions newest-first, changelog, download links, status/supported badges.
 
-**Slice 2b — filtering + search — DONE (2026-05-31).**
+**Slice 2b - filtering + search - DONE (2026-05-31).**
 - ✅ `src/components/forge/StoreFilter.client.tsx` (+ `store-filter.module.css`): instant client-side
-  filter (text + status facets) over the SSR'd cards — the React replacement for isotope/select2.
+  filter (text + status facets) over the SSR'd cards - the React replacement for isotope/select2.
   Cards carry `data-forge-card`/`data-status`/`data-title`; the island toggles `[hidden]` and syncs
   the URL (`src_terms`, `status`). SSR-safe (constant initial state; URL read in an effect → no
   hydration mismatch). The header search now navigates to the list page and seeds this filter.
@@ -202,33 +202,33 @@ Phase 2 builds the `search-results` page/view.
 - Gotchas recorded: a `clientOnly` island still hydrates its placeholder → mismatch (use SSR-safe
   state instead); `[hidden]` needs `.card[hidden]{display:none}` to beat `.card{display:flex}`.
 
-**Slice 2c — versions / video / my-modules / lightbox — DONE (2026-05-31).**
+**Slice 2c - versions / video / my-modules / lightbox - DONE (2026-05-31).**
 - ✅ `VersionViews.server.tsx` + `VersionCard.tsx`: `default` view for `jnt:forgeModuleVersion` /
   `jnt:forgePackageVersion`; the detail now renders versions via `<Render view="default">` over
   `sortedVersionNodes()` (newest-first). Shared `nodeProps.ts` (`str`/`bool`).
 - ✅ `Videostreaming/default.server.tsx`: `jnt:videostreaming` → YouTube/Vimeo `<iframe>` from
   `provider`+`identifier`; the detail renders the module's `video` child.
 - ✅ `ForgeMyModulesList/default.server.tsx`: the logged-in user's own modules (by `jcr:createdBy`,
-  no published filter — owners see their drafts).
+  no published filter - owners see their drafts).
 - ✅ `Lightbox.client.tsx`: screenshots gallery with click-to-zoom overlay (SSR thumbnails + client
-  overlay state) — replaces photoswipe/lity.
+  overlay state) - replaces photoswipe/lity.
 - ✅ E2E (`16-storefront.cy.ts`, now 5/5): detail shows version + YouTube embed + download;
   My-modules lists the user's modules incl. drafts. Full set 15+16 = **10/10**.
 
-**Phase 2 read views — COMPLETE.** Browse → filter/search → detail → versions/video/screenshots →
+**Phase 2 read views - COMPLETE.** Browse → filter/search → detail → versions/video/screenshots →
 download, plus my-modules, all run on JS views. Retiring the corresponding JSP views happens at
 cutover (Phase 5).
-- **Exit criteria**: browsing/search/detail run on JS views — ✅ achieved & browser-verified.
+- **Exit criteria**: browsing/search/detail run on JS views - ✅ achieved & browser-verified.
 
-### Phase 3 — Authoring / interactive views — IN PROGRESS
+### Phase 3 - Authoring / interactive views - IN PROGRESS
 
-**Java-actions decision — RESOLVED:** most authoring uses the dxm-provider's **generic `jcr`
+**Java-actions decision - RESOLVED:** most authoring uses the dxm-provider's **generic `jcr`
 GraphQL mutations** (`mutateNode→mutateProperty→setValue`, `addNode`, `delete`, reorder) over a
 session-authenticated `fetch` (`src/lib/graphql.ts`); JCR ACLs enforce permissions. So the two
 store-template Java actions (DeleteScreenshot/ReorderScreenshots) are **dropped, not relocated**.
 Only the JAR upload keeps the existing `createEntryFromJar` Java action (it runs a Maven deploy).
 
-**Slice 3a — module metadata editing — DONE (2026-05-31).**
+**Slice 3a - module metadata editing - DONE (2026-05-31).**
 - ✅ `ModuleEditor.client.tsx` (+ `editor.module.css`): in-site editor for jcr:title / description /
   howToInstall / FAQ / license / author* / codeRepository, saving each changed field via the jcr
   `setValue` mutation. Gated server-side by `node.hasPermission("jcr:write")` in `ForgeEntryDetail`.
@@ -239,16 +239,16 @@ Only the JAR upload keeps the existing `createEntryFromJar` Java action (it runs
 - Island lessons codified: wait on a `data-*-ready` hydration marker before clicking; avoid async
   `location.reload()` in favour of a deterministic success state (also stabilised the StoreFilter).
 
-**Slice 3b — screenshot management — DONE (2026-05-31).**
+**Slice 3b - screenshot management - DONE (2026-05-31).**
 - ✅ `ScreenshotManager.client.tsx` (+ `screenshots.module.css`): owner-facing reorder (↑/↓) + delete
   of a module's screenshots via the generic jcr mutations (`reorderChildren` / `delete`), optimistic
   UI reverting on error. The direct replacement for the dropped DeleteScreenshot / ReorderScreenshots
-  Java actions — gated purely by JCR ACLs. The detail shows the manager to owners (jcr:write) and the
+  Java actions - gated purely by JCR ACLs. The detail shows the manager to owners (jcr:write) and the
   read-only Lightbox to everyone else.
 - ✅ E2E `17-authoring.cy.ts` (3/3): upload two screenshots → reorder persists (verified via reload)
   → delete persists. Full set 15+16+17 = **13/13**.
 
-**Slice 3c — JAR upload + reviews display — DONE (2026-05-31).**
+**Slice 3c - JAR upload + reviews display - DONE (2026-05-31).**
 - ✅ `FileUpload/default.server.tsx` (+ `upload.module.css`): the `jnt:fileUpload` view renders a
   multipart form posting to `…modules-repository.createEntryFromJar.do` (file + redirectURL +
   successRedirectUrl), gated on login. The existing Java action handles JAR parsing + Maven deploy +
@@ -258,33 +258,33 @@ Only the JAR upload keeps the existing `createEntryFromJar` Java action (it runs
 - ✅ E2E `17-authoring.cy.ts` (5/5): the upload form is wired to `createEntryFromJar.do`; a seeded
   review renders with its rating/title/content. Full set 15+16+17 = **15/15**.
 
-**Phase 3 — COMPLETE** (owner authoring + JAR upload + reviews display all on JS views). The two
-items deferred at the time are now delivered — see "Deferred enhancements — delivered" below:
-- **Review submission** — a `SubmitReview` Jahia action (privilege elevation via
+**Phase 3 - COMPLETE** (owner authoring + JAR upload + reviews display all on JS views). The two
+items deferred at the time are now delivered - see "Deferred enhancements - delivered" below:
+- **Review submission** - a `SubmitReview` Jahia action (privilege elevation via
   `doExecuteWithSystemSessionAsUser`), reached by the form island over CSRF-safe XHR.
-- **Rich-text editing** — a contenteditable `RichTextEditor` + DOMPurify sanitization on save.
+- **Rich-text editing** - a contenteditable `RichTextEditor` + DOMPurify sanitization on save.
 - JSP edit views are retired at cutover (Phase 5).
-- **Exit criteria**: authoring flows run on JS views — ✅ achieved (bar the two deferred items).
+- **Exit criteria**: authoring flows run on JS views - ✅ achieved (bar the two deferred items).
 
-### Phase 4 — Page templates & prepackaged site — DONE (2026-05-31)
+### Phase 4 - Page templates & prepackaged site - DONE (2026-05-31)
 - ✅ Page templates are React `componentType:"template"` registrations: a generic `jnt:page` `default`
   (Layout + `Area "main"`), the `jnt:page` `site-admin` template, and the `jnt:forgeModule` /
   `jnt:forgePackage` `default` content templates (detail pages). The legacy fixed JSP templates
   (store-home/my-modules/etc.) collapse into the generic template + seeded area content.
 - ✅ `settings/import.xml`: the template set's initial content, imported into every site created with
-  store-template — a home page (`Area "main"` → a `forgeModulesList`), `home/my-modules` (JAR upload
+  store-template - a home page (`Area "main"` → a `forgeModulesList`), `home/my-modules` (JAR upload
   + the user's modules), `home/administration` (the admin island via the `site-admin` template), and
   `contents/modules-repository`. So `SiteCreationInfo`/`createSite` yields a complete working store
   with no manual seeding (previously the JS module had no import.xml, so sites came up bare).
 - ✅ E2E `18-prepackaged.cy.ts` (3/3): a fresh site (no seeding) renders the home store, the
   My-modules + Administration sub-pages, and a module dropped into the imported modules-repository
   shows on home. Specs 16/17 were refactored to rely on this prepackaged structure (no more manual
-  page creation — which had caused a duplicate modules-list). Full set 15+16+17+18 = **18/18**.
-- **Exit criteria**: a fresh site provisions entirely on JS templates — ✅ achieved & browser-verified.
+  page creation - which had caused a duplicate modules-list). Full set 15+16+17+18 = **18/18**.
+- **Exit criteria**: a fresh site provisions entirely on JS templates - ✅ achieved & browser-verified.
 
-### Phase 5 — Cutover & cleanup — CORE DONE (2026-05-31)
+### Phase 5 - Cutover & cleanup - CORE DONE (2026-05-31)
 
-**Module cutover — DONE & verified.**
+**Module cutover - DONE & verified.**
 - ✅ `pom.xml`: packaging `bundle` → `pom`; dropped the maven-bundle-plugin + jahia-modules parent
   (OSGi-jar machinery) and `jahia-depends` (deps now in `package.json`'s `jahia` block). The build
   runs the JS pipeline via `exec-maven-plugin` (`npm ci` + `npm run build`) and attaches
@@ -292,7 +292,7 @@ items deferred at the time are now delivered — see "Deferred enhancements — 
   `store-template-3.1.8-SNAPSHOT.tgz`** (verified).
 - ✅ Removed the entire legacy `src/main` (284 files, ~4.4 MB): JSP views, the 3 Java classes
   (DeleteScreenshot/ReorderScreenshots → jcr mutations; ForgeFunctions → `versions.ts`), the legacy
-  CND (jnt:storeFilter/Footer/Title/Link — unused by the JS module), CSS/LESS/jQuery, `repository.xml`.
+  CND (jnt:storeFilter/Footer/Title/Link - unused by the JS module), CSS/LESS/jQuery, `repository.xml`.
 - ✅ Package manager standardized on **npm** (`package-lock.json`; dropped `yarn.lock`/`.yarnrc.yml`).
 - ✅ Contracts preserved: `moduleList.json` is rendered by **privateappstore** (a JSP/Java module,
   untouched); all the JS module's content types come from privateappstore + core.
@@ -301,7 +301,7 @@ items deferred at the time are now delivered — see "Deferred enhancements — 
 - ✅ Runtime provisioning: `privateappstore/tests/assets/provisioning.yml` now installs
   `javascript-modules-engine` (so the store-template tgz deploys on any image).
 
-**CI harness — DONE.**
+**CI harness - DONE.**
 - ✅ `privateappstore/tests/ci.build.sh` now copies `../../store-template/target/*-SNAPSHOT.tgz`
   (instead of the old `.jar`); `@jahia/cypress` `env.provision` already installs `*-SNAPSHOT.tgz`
   JS modules after the `.jar` modules + the engine (which `provisioning.yml` installs).
@@ -310,7 +310,7 @@ items deferred at the time are now delivered — see "Deferred enhancements — 
   Running the full suite against the JS store-template stack → **71/71 across all 18 specs**
   (01–14 legacy + 15–18 new), green.
 
-**Perf / a11y — DONE; CSP — speced (deployment-level).**
+**Perf / a11y - DONE; CSP - speced (deployment-level).**
 - ✅ Perf: total client island payload ~14 KB gzipped (incl. the new review island ~1.3 KB and the
   editor island ~2.5 KB); DOMPurify is a lazy ~9.6 KB-gz chunk loaded only on save. React/i18next
   externalized to the engine's shared libs via the importmap. Well under the web/perf budgets.
@@ -320,15 +320,15 @@ items deferred at the time are now delivered — see "Deferred enhancements — 
   [SECURITY-CSP.md](./SECURITY-CSP.md) (the one open item is a per-request nonce on the engine's inline
   importmap; enforcement is reverse-proxy/Jahia config, not a module concern).
 
-**Exit criteria — MET**: no JSP in store-template ✅; ships as a JS module (`mvn package` → tgz) ✅;
+**Exit criteria - MET**: no JSP in store-template ✅; ships as a JS module (`mvn package` → tgz) ✅;
 full E2E green (75/75 across 19 specs) ✅; CI harness installs the tgz ✅.
 
-## Deferred enhancements — delivered (2026-05-31)
+## Deferred enhancements - delivered (2026-05-31)
 
 All three originally-deferred items are now implemented and verified end-to-end against the running
 stack (`19-reviewsAndRichtext.cy.ts`, 4/4; full suite 75/75):
 
-- **Review submission** — `SubmitReview` Jahia action in `privateappstore`
+- **Review submission** - `SubmitReview` Jahia action in `privateappstore`
   (`org.jahia.modules.forge.actions.SubmitReview`). Any authenticated user can review any
   module/package: the write runs under `doExecuteWithSystemSessionAsUser` (ACL-bypass + correct
   `jcr:createdBy`), one review per user, aggregate `jmix:rating` maintained, review created in the
@@ -337,11 +337,11 @@ stack (`19-reviewsAndRichtext.cy.ts`, 4/4; full suite 75/75):
   GraphQL endpoint is permission-gated and unreachable by ordinary users._ This also surfaced and
   fixed a migration regression: `_dsannotations` had been narrowed to the `graphql` package,
   silently un-registering every `@Component(service=Action.class)` (incl. the kept
-  `CreateEntryFromJar` upload) — restored by also scanning the `actions` package.
-- **Rich-text editing** — a dependency-free contenteditable `RichTextEditor` (bold/italic/headings/
+  `CreateEntryFromJar` upload) - restored by also scanning the `actions` package.
+- **Rich-text editing** - a dependency-free contenteditable `RichTextEditor` (bold/italic/headings/
   lists/link/clear) for the richtext metadata fields; HTML sanitized with **DOMPurify**
   (dynamically imported client-side, so it never enters the GraalVM SSR bundle) before persisting.
-- **CSP** — speced in [SECURITY-CSP.md](./SECURITY-CSP.md) (DOMPurify is the implemented
+- **CSP** - speced in [SECURITY-CSP.md](./SECURITY-CSP.md) (DOMPurify is the implemented
   sanitization half; CSP enforcement is deployment config).
 
 ---
@@ -350,13 +350,13 @@ stack (`19-reviewsAndRichtext.cy.ts`, 4/4; full suite 75/75):
 - `…/contents/modules-repository.moduleList.json` catalog renderer + version filtering.
 - `…/{module}/{version}/file.jar.download` artifact download.
 - Module detail page URLs; `*.do` action endpoints still referenced by remote consumers.
-- `privateappstore` content types (`jnt:forgeModule`, `jnt:forgeModuleVersion`, …) — unchanged;
+- `privateappstore` content types (`jnt:forgeModule`, `jnt:forgeModuleVersion`, …) - unchanged;
   store-template only provides *views* for them.
 
 ## 4. Top risks
-1. Detail views + lists/filtering + edit forms (the HARD bucket) — the bulk of effort.
+1. Detail views + lists/filtering + edit forms (the HARD bucket) - the bulk of effort.
 2. E2E rework where assertions depend on Bootstrap3 markup.
-3. ~~Engine ↔ Jahia version compatibility~~ — **RESOLVED** by the 0bis spike (engine 1.2.0 ACTIVE;
+3. ~~Engine ↔ Jahia version compatibility~~ - **RESOLVED** by the 0bis spike (engine 1.2.0 ACTIVE;
    image pre-ships the engine). Standardized on engine 1.2.0.
 4. Java-actions relocation (Phase 3) touching the privateappstore module.
 

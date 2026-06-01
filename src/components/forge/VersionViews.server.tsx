@@ -19,7 +19,7 @@ const VERSION_CHANGELOG_LABELS = {
   saving: "Saving…",
   cancel: "Cancel",
   saved: "Saved",
-  error: "Save failed — check your permissions and try again.",
+  error: "Save failed - check your permissions and try again.",
   ariaLabel: "Changelog",
 };
 
@@ -29,7 +29,7 @@ const VERSION_DELETE_LABELS = {
   confirm: "Delete",
   cancel: "Cancel",
   deleting: "Deleting…",
-  error: "Could not remove the version — check your permissions and try again.",
+  error: "Could not remove the version - check your permissions and try again.",
 };
 
 const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrapper }) => {

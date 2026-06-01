@@ -24,7 +24,7 @@
          package.json's "jahia" block. No OSGi bundle / jahia-modules parent any more. -->
     <packaging>pom</packaging>
     <name>Jahia Store Template</name>
-    <description>Jahia Store Template — JavaScript module (SSR React via javascript-modules-engine).</description>
+    <description>Jahia Store Template - JavaScript module (SSR React via javascript-modules-engine).</description>
     <scm>
         <connection>scm:git:git@github.com:Jahia/store-template.git</connection>
         <url>scm:git:git@github.com:Jahia/store-template</url>

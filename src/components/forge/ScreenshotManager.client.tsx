@@ -29,7 +29,7 @@ const REORDER = /* GraphQL */ `
  * Owner-facing screenshot manager: reorder (↑/↓) and delete the module's
  * screenshots via the generic jcr mutations (delete / reorderChildren), gated
  * by JCR ACLs. This replaces the legacy DeleteScreenshot / ReorderScreenshots
- * Java actions — no custom Java. Optimistic UI, reverting on error.
+ * Java actions - no custom Java. Optimistic UI, reverting on error.
  */
 export default function ScreenshotManager({ path, items }: Readonly<ScreenshotManagerProps>) {
   const [list, setList] = useState<Item[]>(items);
@@ -77,7 +77,7 @@ export default function ScreenshotManager({ path, items }: Readonly<ScreenshotMa
     <div className={styles.manager} data-screenshots-ready={ready ? "true" : undefined}>
       {error && (
         <div className={styles.error} role="alert">
-          Could not update screenshots — check your permissions.
+          Could not update screenshots - check your permissions.
         </div>
       )}
       <ul className={styles.thumbs}>

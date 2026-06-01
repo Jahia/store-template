@@ -11,12 +11,12 @@ export interface ForgeEntryCardProps {
   reviewed?: boolean;
   /** Developer/author shown on the card foot. */
   author?: string;
-  /** Category display names — drives the storefront's category facet filter. */
+  /** Category display names - drives the storefront's category facet filter. */
   categories?: string[];
 }
 
 /**
- * Presentational card for a forge module/package in a list. Pure props — the
+ * Presentational card for a forge module/package in a list. Pure props - the
  * jnt:forgeModule / jnt:forgePackage `default` views compute the data and pass
  * it in. `data-categories` (pipe-joined) lets the StoreFilter island filter by
  * the sidebar category facets without re-querying the JCR.

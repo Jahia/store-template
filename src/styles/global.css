@@ -1,4 +1,4 @@
-/* Store design tokens + base. Global (non-module) CSS — bundled into the
+/* Store design tokens + base. Global (non-module) CSS - bundled into the
    module's single style.css and loaded once via <AddResources> in Layout.
 
    Palette aligned with store.jahia.com: a confident Jahia blue on a light,
@@ -12,7 +12,7 @@
   --color-text: #1a2233;
   --color-text-muted: #45506a; /* AAA: ≈7.9:1 on white */
   --color-border: #d9e0ea;
-  --color-accent: #0e4ea8; /* Jahia blue — AAA both ways */
+  --color-accent: #0e4ea8; /* Jahia blue - AAA both ways */
   --color-accent-hover: #0a3d85;
   --color-accent-soft: #e8f1fc; /* tinted surface for facets/badges */
   --color-navy: #14243f; /* headings / sidebar */
@@ -87,7 +87,7 @@ h3 {
 
 /* ---------------------------------------------------------------------------
    Shared button system. Plain global classes (not CSS-module-scoped) so every
-   island — publish toggle, module editor, login, downloads — renders the SAME
+   island - publish toggle, module editor, login, downloads - renders the SAME
    button, regardless of which CSS module owns the surrounding markup. This is
    what keeps "Unpublish module" and "Edit module" visually identical/aligned.
 --------------------------------------------------------------------------- */

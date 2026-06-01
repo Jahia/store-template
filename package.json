@@ -3,7 +3,7 @@
   "version": "3.1.8-SNAPSHOT",
   "license": "Apache-2.0",
   "type": "module",
-  "description": "Jahia Store Template — JavaScript module (SSR React via javascript-modules-engine).",
+  "description": "Jahia Store Template - JavaScript module (SSR React via javascript-modules-engine).",
   "files": [
     "dist",
     "settings",

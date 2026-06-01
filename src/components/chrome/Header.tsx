@@ -20,8 +20,8 @@ const STORE_ROLE_PERMISSION = "jahiaForgeUploadModule";
 
 /**
  * Identifiers of nav pages that host the developer-only "My modules" list
- * (jnt:forgeMyModulesList). Detected semantically — by content type, not by a
- * hard-coded page name — so renaming the page keeps it gated. These pages are
+ * (jnt:forgeMyModulesList). Detected semantically - by content type, not by a
+ * hard-coded page name - so renaming the page keeps it gated. These pages are
  * hidden from the nav unless the visitor is a Store administrator/developer.
  */
 function myModulesPageIds(home: JCRNodeWrapper): Set<string> {
@@ -45,7 +45,7 @@ function myModulesPageIds(home: JCRNodeWrapper): Set<string> {
       if (owner) ids.add(owner.getIdentifier());
     }
   } catch {
-    // No query support / no such content — nothing to gate.
+    // No query support / no such content - nothing to gate.
   }
   return ids;
 }
@@ -63,7 +63,7 @@ function siteLogoUrl(site: JCRNodeWrapper): string | null {
       return node ? buildNodeUrl(node) : null;
     }
   } catch {
-    // Dangling / unpublished reference — fall back to the text brand.
+    // Dangling / unpublished reference - fall back to the text brand.
   }
   return null;
 }

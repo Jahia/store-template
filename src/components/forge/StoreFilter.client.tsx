@@ -25,7 +25,7 @@ function paramSet(raw: string | null, allowed: string[]): Set<string> {
 }
 
 /**
- * Storefront sidebar filter — the store.jahia.com layout: a left rail of
+ * Storefront sidebar filter - the store.jahia.com layout: a left rail of
  * Categories and Status facets (multi-select) plus a text search, filtering the
  * SSR'd module cards instantly. The cards are static server-rendered HTML
  * carrying `data-forge-card` / `data-status` / `data-title` / `data-categories`;

@@ -22,11 +22,11 @@
  * import `ckeditor5.css` (that side-effect lives in the remote's JahiaClassicEditor
  * module, used only inside jContent). On the live delivery page the editor would
  * therefore mount completely unstyled. We ship the matching CKEditor 5 stylesheet
- * (vendored from `ckeditor5@47.6.2` — the version the richtext-ckeditor5 remote is
+ * (vendored from `ckeditor5@47.6.2` - the version the richtext-ckeditor5 remote is
  * built against) and inject it as a <style> only when an editor first loads, so
  * anonymous storefront visitors never download it. The stylesheet is pulled via a
  * dynamic `?raw` import (its own chunk), keeping it out of both the main client
- * bundle and the SSR bundle — the same on-demand pattern as DOMPurify.
+ * bundle and the SSR bundle - the same on-demand pattern as DOMPurify.
  */
 
 /** The CKEditor 5 namespace (`export * from "ckeditor5"`): editor class + plugins. */
@@ -68,7 +68,7 @@ const STYLE_MARKER = "data-ckeditor5-styles";
 async function injectEditorStyles(): Promise<void> {
   if (document.querySelector(`style[${STYLE_MARKER}]`)) return;
   const { default: css } = await import("./vendor/ckeditor5.css?raw");
-  // Re-check after the await — another field may have injected it meanwhile.
+  // Re-check after the await - another field may have injected it meanwhile.
   if (document.querySelector(`style[${STYLE_MARKER}]`)) return;
   const style = document.createElement("style");
   style.setAttribute(STYLE_MARKER, "");
@@ -121,7 +121,7 @@ export function loadCKEditor(): Promise<CKEditorNamespace> {
     globals.appShell ??= {};
     globals.appShell.remotes ??= {};
 
-    // Style the editor (the remote's `.` entry ships no CSS — see header note).
+    // Style the editor (the remote's `.` entry ships no CSS - see header note).
     await injectEditorStyles();
 
     await injectRemoteScript();

@@ -1,4 +1,4 @@
-# AGENTS.md — store-template
+# AGENTS.md - store-template
 
 Guidance for AI agents (and humans) working in this repo. Read this before editing.
 
@@ -12,7 +12,7 @@ See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
 
 > **Store administration** (Forge settings / Categories / Roles) lives in the
 > **Jahia site administration (jContent)**, provided by the `privateappstore`
-> module's React app — it is NOT in-site here (an earlier in-site admin was
+> module's React app - it is NOT in-site here (an earlier in-site admin was
 > removed). The chrome reads site branding (logo + footer) from the
 > `jmix:forgeSettings` properties set there.
 
@@ -25,9 +25,9 @@ See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
 ## Architecture
 
 - **Two Vite build environments** (`@jahia/vite-plugin`):
-  - **client** — files matching `**/*.client.{jsx,tsx}` are hydration *islands*,
+  - **client** - files matching `**/*.client.{jsx,tsx}` are hydration *islands*,
     emitted to `dist/client/…`. They are SSR-rendered first, then hydrated.
-  - **ssr** — `**/*.server.*` plus everything they import is bundled into
+  - **ssr** - `**/*.server.*` plus everything they import is bundled into
     `dist/server/index.js`. `ssr.noExternal: true`, so **every imported dep is
     inlined into the SSR bundle**.
 - **Islands**: wrap a `.client.tsx` component in `<Island component={X} props={…} />`
@@ -50,14 +50,14 @@ See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
 1. **No Moonstone / heavy React UI libs.** The engine runs React 19; Moonstone
    pulls React 18 → conflict. UI here is plain HTML + CSS Modules.
 2. **No Apollo Client.** Its SSR build imports `node:module`, which GraalVM
-   rejects. Use `fetch` — see `src/lib/graphql.ts` (`gqlRequest`).
+   rejects. Use `fetch` - see `src/lib/graphql.ts` (`gqlRequest`).
 3. **GraalVM rejects optional-call `?.()` on Java host objects.** Call methods on
    `JCRNodeWrapper` etc. directly; guard with `if`/`hasProperty` instead.
 4. **Keep heavy browser-only deps out of the SSR bundle.** DOMPurify is loaded
    with a dynamic `await import("dompurify")` so it becomes its own lazy chunk
    (`dist/server/purify.es-*.js`) and never enters `index.js`. If you add a
    browser-only lib used only in a handler/effect, import it the same way.
-5. `manualPureFunctions: ["useEffect"]` strips effects from the SSR render — do
+5. `manualPureFunctions: ["useEffect"]` strips effects from the SSR render - do
    not rely on an effect running server-side.
 
 ## The GraphQL permission wall (critical for authoring features)
@@ -73,11 +73,11 @@ store-developer/admin can use it.
   go to a Jahia **Action** in `privateappstore` (`createEntryFromJar`), invoked at
   `…/modules-repository.createEntryFromJar.do`.
 - **CSRF**: Jahia's OWASP CSRFGuard injects `/modules/CsrfServlet`, which patches
-  **XMLHttpRequest only — not `fetch`, and not plain full-page `<form>` posts**.
+  **XMLHttpRequest only - not `fetch`, and not plain full-page `<form>` posts**.
   Action POSTs (the `.do` URLs) must use `XMLHttpRequest`, or they are rejected
   ("Required Token is missing" / "Request Token does not match Page Token"). See
   `FileUpload/FileUpload.client.tsx#postMultipart`. (Plain `gqlRequest`/`fetch` to
-  `/modules/graphql` is fine — that endpoint is not CSRF-gated.)
+  `/modules/graphql` is fine - that endpoint is not CSRF-gated.)
 
 ## Directory map
 
@@ -120,7 +120,7 @@ dist/             build output (client islands, server bundle, package.tgz)
 ## SonarQube
 
 - Project key: **`org.jahia.modules.javascript:store-template`**.
-- Scan needs **JDK 17** — the bare pom resolves the latest `sonar-maven-plugin`
+- Scan needs **JDK 17** - the bare pom resolves the latest `sonar-maven-plugin`
   (Java-17 bytecode); the host default is Java 11, which fails with
   `UnsupportedClassVersionError`. Run with `JAVA_HOME` pointing at a JDK 17:
   ```
@@ -139,7 +139,7 @@ dist/             build output (client islands, server bundle, package.tgz)
   `/modules/richtext-ckeditor5/javascript/apps/remoteEntry.js`, then
   `container.init({})` + `get(".")` to reach `ClassicEditor` (verified to work on
   the live delivery page, where jContent's app-shell is absent). Keeping CKEditor
-  out of store-template's bundle is deliberate — inlining a real editor into the
+  out of store-template's bundle is deliberate - inlining a real editor into the
   SSR bundle is the failure mode that ruled out Apollo. Output is still
   DOMPurify-sanitized on save (defense-in-depth). If the remote can't load,
   `CKEditorField` degrades to a textarea. (The old dependency-free `execCommand`
@@ -148,11 +148,11 @@ dist/             build output (client islands, server bundle, package.tgz)
 ## Accessibility invariants (target: WCAG 2.2 Level AAA)
 
 This module targets **WCAG 2.2 Level AAA** for everything it controls (structure,
-color, focus, keyboard). The invariants below are what keep it there — don't
+color, focus, keyboard). The invariants below are what keep it there - don't
 regress them. Verified against an axe-core / EqualWeb audit.
 
 - **`Layout` owns the one and only `<main>` landmark.** Page templates
-  (`templates/Page/*.server.tsx`) supply *content* as `Layout` children — they
+  (`templates/Page/*.server.tsx`) supply *content* as `Layout` children - they
   must NOT render their own `<main>`, or you get a nested/duplicate `main`
   landmark (axe flags three best-practice violations at once).
 - **Muted/secondary text must use `var(--color-text-muted)`**, never a hardcoded

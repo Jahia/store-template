@@ -15,7 +15,7 @@ interface DetailTabsProps {
 /**
  * Tab controller for the module detail page. The panels are server-rendered
  * siblings (each carrying `data-detail-panel="<id>"` + `role="tabpanel"`); this
- * island only renders the tablist and toggles panel visibility — the same
+ * island only renders the tablist and toggles panel visibility - the same
  * island-enhances-SSR pattern as StoreFilter. SSR renders every panel except the
  * first as `hidden`, so the active panel already matches on hydration (no flash)
  * and, with JS disabled, the first panel (Overview) is still readable.

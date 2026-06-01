@@ -12,7 +12,7 @@ import { Footer } from "~/components/chrome/Footer";
 export const Layout = ({ title, children }: { title?: string; children: ReactNode }): JSX.Element => {
   const { renderContext } = useServerContext();
   const siteTitle = renderContext.getSite().getTitle();
-  const pageTitle = title ? `${title} — ${siteTitle}` : siteTitle || "Jahia Store";
+  const pageTitle = title ? `${title} - ${siteTitle}` : siteTitle || "Jahia Store";
 
   return (
     <html lang="en">

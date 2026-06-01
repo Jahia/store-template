@@ -35,7 +35,7 @@ export function forgeIconUrl(node: JCRNodeWrapper): string | null {
  * (`j:defaultCategory`, a multi-valued weakreference from jmix:categorized).
  * Resolving a weakreference can dangle, so each lookup is guarded. Used both for
  * the card's `data-categories` (client filtering) and for the storefront's
- * category facet list — kept here so both compute it identically.
+ * category facet list - kept here so both compute it identically.
  */
 export function forgeCategoryNames(node: JCRNodeWrapper): string[] {
   if (!node.hasProperty("j:defaultCategory")) return [];
@@ -46,11 +46,11 @@ export function forgeCategoryNames(node: JCRNodeWrapper): string[] {
       try {
         names.push(session.getNodeByIdentifier(value.getString()).getDisplayableName());
       } catch {
-        // Dangling reference — skip.
+        // Dangling reference - skip.
       }
     }
   } catch {
-    // Not a multi-valued property in this content — ignore.
+    // Not a multi-valued property in this content - ignore.
   }
   return names;
 }

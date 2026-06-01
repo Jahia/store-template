@@ -13,7 +13,7 @@ interface CKEditorFieldProps {
 
 /**
  * Plugins (by name) and toolbar for the module store's richtext fields. We do NOT
- * import ckeditor5 — the classes are pulled from the runtime-loaded federated
+ * import ckeditor5 - the classes are pulled from the runtime-loaded federated
  * namespace, so nothing CKEditor lands in store-template's own bundle. `Essentials`
  * brings undo/redo, typing and clipboard support.
  */
@@ -46,13 +46,13 @@ type EditorState = "loading" | "ready" | "failed";
 
 /**
  * Rich-text editor backed by CKEditor 5 from the deployed `richtext-ckeditor5`
- * module (loaded at runtime — see loadCKEditor). Replaces the previous
+ * module (loaded at runtime - see loadCKEditor). Replaces the previous
  * dependency-free execCommand editor so the store reuses the organisation's
  * standard editor build.
  *
  * Output HTML is still sanitized with DOMPurify before it is persisted (see the
  * islands that own the save). If the remote cannot be loaded the field degrades
- * to a plain textarea so editing — and accessibility — never breaks.
+ * to a plain textarea so editing - and accessibility - never breaks.
  */
 export default function CKEditorField({ id, value, ariaLabel, onChange }: Readonly<CKEditorFieldProps>) {
   const holderRef = useRef<HTMLDivElement>(null);

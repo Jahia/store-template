@@ -14,7 +14,7 @@ export interface VersionDeleteLabels {
 interface VersionDeleteButtonProps {
   /** JCR path of the version node to delete. */
   path: string;
-  /** GraphQL workspace to mutate — matches the workspace the page is rendered in. */
+  /** GraphQL workspace to mutate - matches the workspace the page is rendered in. */
   workspace: "EDIT" | "LIVE";
   /** Version label, for the confirm prompt's accessible name. */
   versionNumber: string;
@@ -24,7 +24,7 @@ interface VersionDeleteButtonProps {
 /**
  * Delete the version node in the rendered workspace. `ws` is a server-computed
  * enum ("EDIT" | "LIVE"), never user input, so interpolating it is safe. It MUST
- * target the workspace the page is rendered in — forge content uploaded on the
+ * target the workspace the page is rendered in - forge content uploaded on the
  * live site is created directly in LIVE, exactly like PublishToggle.
  */
 const deleteVersionMutation = (ws: "EDIT" | "LIVE") => /* GraphQL */ `
@@ -38,9 +38,9 @@ const deleteVersionMutation = (ws: "EDIT" | "LIVE") => /* GraphQL */ `
 /**
  * Owner-only control to permanently remove a module/package version. Deletion is
  * irreversible, so it requires an explicit inline confirmation before deleting
- * (no native confirm() — it isn't test-friendly and breaks the island style).
+ * (no native confirm() - it isn't test-friendly and breaks the island style).
  * Uses the generic jcr deleteNode mutation via gqlRequest (JCR ACLs apply; owners
- * hold jcr:write) — no custom Java action, mirroring ScreenshotManager's delete.
+ * hold jcr:write) - no custom Java action, mirroring ScreenshotManager's delete.
  * The version list is server-rendered outside this island, so a successful delete
  * reloads the page (like VersionChangelogEditor) rather than mutating sibling DOM.
  */
@@ -62,7 +62,7 @@ export default function VersionDeleteButton({
         deleteVersionMutation(workspace),
         { path },
       );
-      // deleteNode returns false when nothing was removed — surface that rather
+      // deleteNode returns false when nothing was removed - surface that rather
       // than reloading into an unchanged page (which would read as a no-op).
       if (!data?.jcr?.deleteNode) {
         throw new Error("deleteNode returned false");

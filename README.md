@@ -1,6 +1,6 @@
 # store-template
 
-The **Jahia Store Template** — a Jahia 8.2 **JavaScript module** (server-side
+The **Jahia Store Template** - a Jahia 8.2 **JavaScript module** (server-side
 React on the `javascript-modules-engine`) that renders the Private App Store
 website and its in-site administration (Forge settings, Categories, Roles).
 
@@ -38,7 +38,7 @@ cd ../privateappstore/tests && npx cypress run
 
 **Conformance target: WCAG 2.2 Level AAA.**
 
-This applies to everything the template controls — document structure and
+This applies to everything the template controls - document structure and
 landmarks, color and contrast, focus order, keyboard operability, and motion.
 Notably, all text meets the AAA **enhanced contrast** threshold (≥ 7:1), and the
 page exposes exactly one top-level `<main>` landmark.
@@ -48,16 +48,16 @@ sign-language for prerecorded video, 3.1.5 reading level) and therefore rest wit
 the editors who publish into the store, not with this template. The template's
 job is to provide an AAA-capable structure and style system; the
 [accessibility invariants in AGENTS.md](./AGENTS.md) keep it that way across
-changes. The target is currently verified by manual axe-core / EqualWeb audits —
+changes. The target is currently verified by manual axe-core / EqualWeb audits -
 there is no automated gate in the E2E suite yet.
 
 ## Documentation
 
-- [AGENTS.md](./AGENTS.md) — architecture, engine constraints, build/deploy/test,
+- [AGENTS.md](./AGENTS.md) - architecture, engine constraints, build/deploy/test,
   SonarQube setup. **Start here if you (or an AI agent) are modifying this module.**
-- [docs/JS-MODULE-MIGRATION.md](./docs/JS-MODULE-MIGRATION.md) — the JSP → JS
+- [docs/JS-MODULE-MIGRATION.md](./docs/JS-MODULE-MIGRATION.md) - the JSP → JS
   module migration history and design decisions.
-- [docs/SECURITY-CSP.md](./docs/SECURITY-CSP.md) — production Content-Security-Policy
+- [docs/SECURITY-CSP.md](./docs/SECURITY-CSP.md) - production Content-Security-Policy
   guidance.
 
 ## License

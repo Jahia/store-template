@@ -6,7 +6,7 @@
     - a "My modules" page (JAR upload + the user's own modules)
     - a modules-repository folder where uploaded modules are created
   Store administration (Settings / Categories / Roles) lives in the Jahia site
-  administration (jContent), provided by the privateappstore module — not in-site.
+  administration (jContent), provided by the privateappstore module - not in-site.
 -->
 <content xmlns:j="http://www.jahia.org/jahia/1.0"
          xmlns:jcr="http://www.jcp.org/jcr/1.0"

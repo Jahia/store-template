@@ -50,7 +50,7 @@ const EDITOR_LABELS = {
   saving: "Saving…",
   cancel: "Cancel",
   saved: "Saved",
-  error: "Save failed — check your permissions and try again.",
+  error: "Save failed - check your permissions and try again.",
   title: "Title",
   description: "Description",
   howToInstall: "How to install",
@@ -71,9 +71,9 @@ const EDITOR_LABELS = {
     upload: "Upload icon",
     uploading: "Uploading…",
     uploaded: "Icon uploaded",
-    error: "Icon upload failed — check your permissions and try again.",
+    error: "Icon upload failed - check your permissions and try again.",
     current: "Current icon",
-    none: "—",
+    none: "-",
     tooLarge: "Image is too large (max 2 MB).",
     invalidType: "Please choose an image file.",
   },
@@ -91,16 +91,16 @@ const STATUS_OPTIONS = ["community", "labs", "prereleased", "supported", "legacy
 
 /**
  * Labels for the owner-only "upload a new version" form on the detail page. Posts
- * to the same createEntryFromJar action as the my-modules upload — the action
+ * to the same createEntryFromJar action as the my-modules upload - the action
  * upserts (matches the module by groupId+name in the package) and appends the
- * version — so the only thing missing was an entry point on the module's own page.
+ * version - so the only thing missing was an entry point on the module's own page.
  */
 const ADD_VERSION_LABELS = {
   fileLabel: "New version package (.jar / .war)",
   submit: "Upload new version",
   submitting: "Uploading…",
   pickFile: "Please choose a module package first.",
-  error: "Upload failed — please try again.",
+  error: "Upload failed - please try again.",
 };
 
 /**
@@ -158,7 +158,7 @@ function isHttpUrl(url: string): boolean {
  * Defense-in-depth against stored XSS: the editor sanitizes with DOMPurify on save
  * and a strict CSP is the backstop (see docs/SECURITY-CSP.md). Content written
  * outside the editor (legacy JSP authoring, direct JCR/GraphQL writes) is NOT
- * sanitized here — enable Jahia's server-side richtext HTML filtering for the store
+ * sanitized here - enable Jahia's server-side richtext HTML filtering for the store
  * site to cover those paths.
  */
 export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): JSX.Element {

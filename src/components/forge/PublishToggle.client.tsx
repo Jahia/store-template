@@ -17,9 +17,9 @@ interface PublishToggleProps {
   path: string;
   /** Current published state (server-rendered). */
   published: boolean;
-  /** GraphQL workspace to mutate — matches the workspace the page is rendered in. */
+  /** GraphQL workspace to mutate - matches the workspace the page is rendered in. */
   workspace: "EDIT" | "LIVE";
-  /** "module" | "version" — drives the data attribute and ARIA label only. */
+  /** "module" | "version" - drives the data attribute and ARIA label only. */
   scope: string;
   labels: PublishLabels;
 }
@@ -46,13 +46,13 @@ const setPublishedMutation = (ws: "EDIT" | "LIVE") => /* GraphQL */ `
 /**
  * Owner control to publish / unpublish a forge module or version. Flips the
  * `published` flag (which gates storefront visibility) via the generic jcr
- * setValue mutation — JCR ACLs apply, owners have jcr:write. Uses gqlRequest
+ * setValue mutation - JCR ACLs apply, owners have jcr:write. Uses gqlRequest
  * (fetch to /modules/graphql, which is NOT CSRF-gated), exactly like the metadata
  * editor; it is not an XHR `.do` action.
  *
  * Note: this is a direct flag toggle and intentionally bypasses the legacy
  * PublishModule action's `isPublishable` completeness gate (which also requires a
- * category there is no UI to assign) — the owner controls publication directly.
+ * category there is no UI to assign) - the owner controls publication directly.
  */
 export default function PublishToggle({
   path,

@@ -17,7 +17,7 @@ interface TagInputProps {
 
 /**
  * Free-text tag editor (chips) for the module's `j:tagList` (a multi-valued
- * string property — no tag-node creation needed). Enter or comma commits the
+ * string property - no tag-node creation needed). Enter or comma commits the
  * typed text; Backspace on an empty input removes the last chip. Duplicates and
  * blanks are ignored.
  */

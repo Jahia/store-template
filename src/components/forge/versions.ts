@@ -21,7 +21,7 @@ export function compareVersionsDesc(a: string, b: string): number {
  * Download URL for a version. If a jnt:file is attached (JS modules / packages),
  * link to that genuine artifact. Otherwise (JAR modules deployed to the site's
  * Maven repo) build the MavenProxy URL from the module coordinates instead of a
- * stored absolute URL — a root-relative `/modules/mavenproxy/…` so the browser
+ * stored absolute URL - a root-relative `/modules/mavenproxy/…` so the browser
  * resolves it against whatever scheme/host/port the storefront is served on.
  * Mirrors the catalog moduleList.jsp generation.
  */

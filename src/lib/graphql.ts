@@ -1,5 +1,5 @@
 /**
- * Minimal GraphQL fetch for client islands — posts to Jahia's /modules/graphql
+ * Minimal GraphQL fetch for client islands - posts to Jahia's /modules/graphql
  * with the browser session cookie, so calls run as the logged-in user and JCR
  * ACLs apply. (Apollo is unusable here: its SSR build imports node:module which
  * GraalVM rejects; this fetch only runs client-side anyway.)
@@ -26,7 +26,7 @@ export async function gqlRequest<T = unknown>(
 }
 
 /**
- * GraphQL multipart upload for a single File, using Jahia's OWN convention — NOT
+ * GraphQL multipart upload for a single File, using Jahia's OWN convention - NOT
  * the apollo-upload graphql-multipart-request-spec (`operations`/`map`/`0`), which
  * Jahia does not parse. With that spec the `$file` argument ends up bound to the
  * servlet Part's toString() (e.g. "org.apache.catalina.core.ApplicationPart@…"),
