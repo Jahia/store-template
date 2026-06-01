@@ -1,4 +1,4 @@
-import { jahiaComponent } from "@jahia/javascript-modules-library";
+import { jahiaComponent, useServerContext } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import { VersionCard } from "~/components/forge/VersionCard";
 import { bool, str, jcrWorkspace } from "~/components/forge/nodeProps";
@@ -13,11 +13,24 @@ const VERSION_PUBLISH_LABELS = {
   error: "Could not change the published state.",
 };
 
+const VERSION_CHANGELOG_LABELS = {
+  edit: "Edit changelog",
+  save: "Save",
+  saving: "Saving…",
+  cancel: "Cancel",
+  saved: "Saved",
+  error: "Save failed — check your permissions and try again.",
+  ariaLabel: "Changelog",
+};
+
 const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrapper }) => {
-  // Owners get a publish/unpublish control on each version; everyone else just
-  // sees the published/draft state. The control mutates the same workspace the
-  // page is rendered in (live content is authored directly in LIVE).
+  const { currentResource } = useServerContext();
+  // Owners get publish + changelog controls on each version; everyone else sees
+  // the published/draft state and read-only changelog. The controls mutate the
+  // same workspace the page is rendered in (live content is authored in LIVE).
   const canEdit = currentNode.hasPermission("jcr:write");
+  const workspace = jcrWorkspace(currentNode);
+  const language = currentResource.getLocale().getLanguage();
   return (
     <VersionCard
       versionNumber={str(currentNode, "versionNumber") || currentNode.getName()}
@@ -26,11 +39,12 @@ const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrap
       downloadUrl={versionDownloadUrl(currentNode)}
       publishControl={
         canEdit
-          ? {
-              path: currentNode.getPath(),
-              workspace: jcrWorkspace(currentNode),
-              labels: VERSION_PUBLISH_LABELS,
-            }
+          ? { path: currentNode.getPath(), workspace, labels: VERSION_PUBLISH_LABELS }
+          : null
+      }
+      changelogControl={
+        canEdit
+          ? { path: currentNode.getPath(), workspace, language, labels: VERSION_CHANGELOG_LABELS }
           : null
       }
     />

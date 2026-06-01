@@ -40,6 +40,24 @@ const EDITOR_LABELS = {
   authorEmail: "Author email",
   authorURL: "Author URL",
   codeRepository: "Code repository",
+  tabGeneral: "General",
+  tabDescription: "Description",
+  tabInstall: "Install & FAQ",
+  tabLicense: "License",
+  tabAuthor: "Author & links",
+  tablist: "Module fields",
+  icon: {
+    label: "Icon",
+    choose: "Choose an icon image",
+    upload: "Upload icon",
+    uploading: "Uploading…",
+    uploaded: "Icon uploaded",
+    error: "Icon upload failed — check your permissions and try again.",
+    current: "Current icon",
+    none: "—",
+    tooLarge: "Image is too large (max 2 MB).",
+    invalidType: "Please choose an image file.",
+  },
 };
 
 function screenshotItems(node: JCRNodeWrapper): { name: string; url: string }[] {
@@ -121,7 +139,9 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
             component={ModuleEditor}
             props={{
               path: node.getPath(),
+              workspace,
               language,
+              iconUrl: icon,
               values: {
                 "jcr:title": title,
                 description,

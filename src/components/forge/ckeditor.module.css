@@ -1,0 +1,43 @@
+.wrap {
+  position: relative;
+}
+
+/* Empty holder before CKEditor mounts; the editor replaces it with its UI. */
+.holder {
+  min-height: 8rem;
+}
+
+/* Give the editable surface a comfortable minimum height once CKEditor is up. */
+.wrap :global(.ck-editor__editable_inline) {
+  min-height: 8rem;
+}
+
+/* Match CKEditor's chrome to the store's design tokens. */
+.wrap :global(.ck.ck-editor__main > .ck-editor__editable),
+.wrap :global(.ck.ck-toolbar) {
+  border-color: var(--color-border);
+}
+
+.loading {
+  display: inline-block;
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* Graceful fallback when the CKEditor remote cannot be loaded. */
+.fallback {
+  width: 100%;
+  min-height: 8rem;
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: #fff;
+  resize: vertical;
+}
+.fallback:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(70, 60, 186, 0.16);
+}
