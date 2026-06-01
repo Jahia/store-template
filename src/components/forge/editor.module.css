@@ -1,10 +1,15 @@
+/* No margin: the editor is a flex item in the owner action bar, and a bottom
+   margin would offset its centre, pushing "Edit module" above the Publish badge
+   + Unpublish button. Spacing below the bar comes from the detail's column gap. */
 .editor {
-  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
 }
 /* When the form is open it breaks out of the inline owner action row to span the
    full detail width (so the tabs/fields line up with the rest of the page). */
 .editorOpen {
   flex: 1 1 100%;
+  display: block;
 }
 
 .bar {

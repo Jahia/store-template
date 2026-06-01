@@ -26,13 +26,22 @@ export async function gqlRequest<T = unknown>(
 }
 
 /**
- * GraphQL multipart upload (graphql-multipart-request-spec) for a single File.
- * Jahia's `setValue(type: BINARY)` reads the binary from a multipart request
- * part, so a binary property MUST be uploaded this way — a base64 JSON value
- * fails with "Cannot read parts". The file is mapped to the `file` variable, so
- * the mutation should declare `$file: String!` and pass it to setValue. Like
- * gqlRequest this posts to /modules/graphql with the session cookie and is NOT
- * CSRF-gated. Browser-only (FormData/File).
+ * GraphQL multipart upload for a single File, using Jahia's OWN convention — NOT
+ * the apollo-upload graphql-multipart-request-spec (`operations`/`map`/`0`), which
+ * Jahia does not parse. With that spec the `$file` argument ends up bound to the
+ * servlet Part's toString() (e.g. "org.apache.catalina.core.ApplicationPart@…"),
+ * which is then stored verbatim as the BINARY value → a corrupt image.
+ *
+ * Jahia's GraphQL servlet reads `query` / `variables` as plain multipart form
+ * fields and resolves a `setValue(type: BINARY, value: $file)` whose value is a
+ * string by looking up the request part with that exact name. So: append the File
+ * under a unique part name, set the `file` variable to that same name, and send
+ * `query` + `variables` as form fields. Mirrors @jahia/cypress `uploadFile` (same
+ * `$file: String!` + `setValue(type: BINARY, value: $file)` mutation shape). A
+ * base64 JSON value instead fails with "Cannot read parts".
+ *
+ * Browser-only (FormData/File). Posts to /modules/graphql with the session
+ * cookie and is NOT CSRF-gated.
  */
 export async function gqlUpload<T = unknown>(
   query: string,
@@ -40,10 +49,12 @@ export async function gqlUpload<T = unknown>(
   file: File,
   gqlUrl: string = "/modules/graphql",
 ): Promise<T> {
+  // Unique part name that the BINARY setValue resolves its stream from.
+  const partName = `file_${Math.random().toString(36).slice(2)}`;
   const form = new FormData();
-  form.append("operations", JSON.stringify({ query, variables: { ...variables, file: null } }));
-  form.append("map", JSON.stringify({ "0": ["variables.file"] }));
-  form.append("0", file, file.name);
+  form.append("query", query);
+  form.append("variables", JSON.stringify({ ...variables, file: partName }));
+  form.append(partName, file, file.name);
   // No Content-Type header: the browser sets the multipart boundary.
   const res = await fetch(gqlUrl, {
     method: "POST",
