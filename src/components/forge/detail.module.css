@@ -2,7 +2,18 @@
   max-width: 820px;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
+}
+
+/* A tab's panel: stacks its (sub-)sections. Hidden panels (DetailTabs toggles the
+   `hidden` attribute) collapse out of the flex flow. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+.panel[hidden] {
+  display: none;
 }
 
 .ownerBar {

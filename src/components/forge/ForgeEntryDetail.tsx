@@ -15,6 +15,24 @@ import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
 import ScreenshotManager from "./ScreenshotManager.client";
 import PublishToggle from "./PublishToggle.client";
+import DetailTabs from "./DetailTabs.client";
+
+interface TabDef {
+  id: string;
+  label: string;
+}
+
+/** Common props for a server-rendered tabpanel that DetailTabs toggles. */
+function panelProps(id: string, defaultTab: string) {
+  return {
+    id: `detail-panel-${id}`,
+    role: "tabpanel" as const,
+    "aria-labelledby": `detail-tab-${id}`,
+    "data-detail-panel": id,
+    // SSR hides all but the first panel so the active panel matches on hydration.
+    hidden: id !== defaultTab,
+  };
+}
 
 const PUBLISH_LABELS = {
   publish: "Publish module",
@@ -166,8 +184,23 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const latestVersionNumber = versions[0] ? str(versions[0], "versionNumber") : "";
   const latestDownloadUrl = versions[0] ? versionDownloadUrl(versions[0]) : null;
 
+  // The detail sections are grouped into tabs (DetailTabs island) for easier
+  // browsing. Only include a tab when it has content; the first one is the SSR
+  // default. Overview = description/video/screenshots; Installation = how-to + FAQ.
+  const hasOverview = Boolean(description || videoNode || shots.length);
+  const hasInstall = Boolean(howToInstall || faq);
+  const hasLicense = Boolean(license);
+  const tabs: TabDef[] = [
+    ...(hasOverview ? [{ id: "overview", label: "Overview" }] : []),
+    { id: "information", label: "Information" },
+    { id: "versions", label: "Versions" },
+    ...(hasInstall ? [{ id: "install", label: "Installation" }] : []),
+    ...(hasLicense ? [{ id: "license", label: "License" }] : []),
+  ];
+  const defaultTab = tabs[0].id;
+
   return (
-    <article className={styles.detail}>
+    <article className={styles.detail} data-detail="">
       <header className={styles.head}>
         <div className={styles.headIcon}>
           {icon ? (
@@ -231,8 +264,33 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
         </div>
       )}
 
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Information</h2>
+      <Island component={DetailTabs} props={{ tabs, ariaLabel: "Module sections" }} />
+
+      {hasOverview && (
+        <div {...panelProps("overview", defaultTab)} className={styles.panel}>
+          {description && (
+            <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: description }} />
+          )}
+          {videoNode && (
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Video</h2>
+              <Render node={videoNode} view="default" readOnly />
+            </section>
+          )}
+          {shots.length > 0 && (
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Screenshots</h2>
+              {canEdit ? (
+                <Island component={ScreenshotManager} props={{ path: screenshotsPath, items: shots }} />
+              ) : (
+                <Island component={Lightbox} props={{ images: shots.map((s) => s.url) }} />
+              )}
+            </section>
+          )}
+        </div>
+      )}
+
+      <div {...panelProps("information", defaultTab)} className={styles.panel}>
         <dl className={styles.meta}>
           <dt>Module ID</dt>
           <dd>{moduleId}</dd>
@@ -311,35 +369,9 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
             </>
           )}
         </dl>
-      </section>
+      </div>
 
-      {description && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Description</h2>
-          <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: description }} />
-        </section>
-      )}
-
-      {videoNode && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Video</h2>
-          <Render node={videoNode} view="default" readOnly />
-        </section>
-      )}
-
-      {shots.length > 0 && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Screenshots</h2>
-          {canEdit ? (
-            <Island component={ScreenshotManager} props={{ path: screenshotsPath, items: shots }} />
-          ) : (
-            <Island component={Lightbox} props={{ images: shots.map((s) => s.url) }} />
-          )}
-        </section>
-      )}
-
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Versions</h2>
+      <div {...panelProps("versions", defaultTab)} className={styles.panel}>
         {versions.length === 0 ? (
           <p className={styles.muted}>No versions published yet.</p>
         ) : (
@@ -349,27 +381,29 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
             ))}
           </div>
         )}
-      </section>
+      </div>
 
-      {howToInstall && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>How to install</h2>
-          <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: howToInstall }} />
-        </section>
+      {hasInstall && (
+        <div {...panelProps("install", defaultTab)} className={styles.panel}>
+          {howToInstall && (
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>How to install</h2>
+              <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: howToInstall }} />
+            </section>
+          )}
+          {faq && (
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>FAQ</h2>
+              <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: faq }} />
+            </section>
+          )}
+        </div>
       )}
 
-      {faq && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>FAQ</h2>
-          <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: faq }} />
-        </section>
-      )}
-
-      {license && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>License</h2>
+      {hasLicense && (
+        <div {...panelProps("license", defaultTab)} className={styles.panel}>
           <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: license }} />
-        </section>
+        </div>
       )}
     </article>
   );
