@@ -3,6 +3,8 @@
     "menu_entry": "App Store privé",
     "title": "Paramètres de l'App Store privé",
     "url": "URL de la forge",
+    "url.placeholder": "https://nexus.example.com/repository/maven-releases/",
+    "url.hint": "URL complète d'un dépôt Maven déployable — incluez le chemin du dépôt (p. ex. /repository/maven-releases/), pas seulement l'hôte.",
     "id": "Identifiant de la forge",
     "user": "Utilisateur",
     "password": "Mot de passe",

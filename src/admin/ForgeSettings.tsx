@@ -121,9 +121,10 @@ export function ForgeSettings({ siteKey }: Readonly<{ siteKey: string }>) {
           <input
             id="forge-url"
             value={url}
-            placeholder="https://store.jahia.com"
+            placeholder={t("label.url.placeholder")}
             onChange={(e) => setUrl(e.target.value)}
           />
+          <div className={styles.hint}>{t("label.url.hint")}</div>
         </div>
 
         <div className={styles.field}>
