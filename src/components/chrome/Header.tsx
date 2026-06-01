@@ -18,14 +18,27 @@ import Login from "./Login.client";
  */
 const STORE_ROLE_PERMISSION = "jahiaForgeUploadModule";
 
+/** Conventional node name of the "My modules" page in the store-template seed. */
+const MY_MODULES_PAGE_NAME = "my-modules";
+
 /**
  * Identifiers of nav pages that host the developer-only "My modules" list
- * (jnt:forgeMyModulesList). Detected semantically - by content type, not by a
- * hard-coded page name - so renaming the page keeps it gated. These pages are
- * hidden from the nav unless the visitor is a Store administrator/developer.
+ * (jnt:forgeMyModulesList). These are hidden from the nav unless the visitor is a
+ * Store administrator/developer.
+ *
+ * The gate must FAIL CLOSED: detection runs with the visitor's own session, so an
+ * anonymous (or under-privileged) visitor may be able to see the page node (it is
+ * in the nav) yet NOT its `mine` list content (unpublished, or content-level ACL).
+ * The old purely-semantic query then returned nothing and the entry leaked. So we
+ * combine two signals, taking the union:
+ *   1. semantic, by content type (rename-safe — wins whenever the list is visible);
+ *   2. the conventional page name (always readable, since the page is in the nav)
+ *      as a safety net that keeps the gate closed when the list is invisible.
  */
-function myModulesPageIds(home: JCRNodeWrapper): Set<string> {
+function myModulesPageIds(home: JCRNodeWrapper, childPages: JCRNodeWrapper[]): Set<string> {
   const ids = new Set<string>();
+
+  // 1. Semantic detection: any page whose subtree holds a jnt:forgeMyModulesList.
   try {
     const lists = getNodesByJCRQuery(
       home.getSession(),
@@ -45,8 +58,16 @@ function myModulesPageIds(home: JCRNodeWrapper): Set<string> {
       if (owner) ids.add(owner.getIdentifier());
     }
   } catch {
-    // No query support / no such content - nothing to gate.
+    // No query support / list not visible to this visitor - the name net below
+    // still keeps the default seed page gated.
   }
+
+  // 2. Safety net: the conventional seed page name. Closes the gate even when the
+  // list content is unpublished / ACL-hidden for the current visitor.
+  for (const page of childPages) {
+    if (page.getName() === MY_MODULES_PAGE_NAME) ids.add(page.getIdentifier());
+  }
+
   return ids;
 }
 
@@ -87,12 +108,12 @@ export function Header(): JSX.Element {
   // "My modules" is for module owners only: shown when signed in AND the user
   // holds a Store administrator/developer role (jahiaForgeUploadModule).
   const canManageStore = isLoggedIn && site.hasPermission(STORE_ROLE_PERMISSION);
-  const restrictedPages = home && !canManageStore ? myModulesPageIds(home) : new Set<string>();
-  const navPages = home
-    ? getChildNodes(home, 50).filter(
-        (n) => n.isNodeType("jnt:page") && !restrictedPages.has(n.getIdentifier()),
-      )
+  const childPages = home
+    ? getChildNodes(home, 50).filter((n) => n.isNodeType("jnt:page"))
     : [];
+  const restrictedPages =
+    home && !canManageStore ? myModulesPageIds(home, childPages) : new Set<string>();
+  const navPages = childPages.filter((n) => !restrictedPages.has(n.getIdentifier()));
 
   // Search navigates to the home modules list; its StoreFilter island reads
   // ?src_terms and filters the grid.
