@@ -38,6 +38,15 @@
   box-shadow: var(--shadow-sm);
 }
 
+/* Configured store logo (Store administration → Settings). Height-constrained so
+   wordmark logos of varying width sit cleanly in the header. */
+.logo {
+  height: 36px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
 .nav {
   display: flex;
   gap: 0.25rem;

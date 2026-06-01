@@ -5,9 +5,28 @@ import {
   Island,
   useServerContext,
 } from "@jahia/javascript-modules-library";
+import type { JCRNodeWrapper } from "org.jahia.services.content";
 import { useTranslation } from "react-i18next";
 import styles from "./Header.module.css";
 import Login from "./Login.client";
+
+/**
+ * URL of the configured store logo (the `forgeSettingsLogo` weakreference on the
+ * site node, set in Store administration → Settings), or null. Resolving a
+ * weakreference can throw if it dangles or the target is not in this workspace,
+ * so we fall back to the text brand on any failure.
+ */
+function siteLogoUrl(site: JCRNodeWrapper): string | null {
+  try {
+    if (site.hasProperty("forgeSettingsLogo")) {
+      const node = site.getProperty("forgeSettingsLogo").getNode();
+      return node ? buildNodeUrl(node) : null;
+    }
+  } catch {
+    // Dangling / unpublished reference — fall back to the text brand.
+  }
+  return null;
+}
 
 /**
  * Store site header: brand, primary navigation (the home page's child pages),
@@ -22,6 +41,7 @@ export function Header(): JSX.Element {
   const siteTitle = site.getTitle();
 
   const homeUrl = home ? buildNodeUrl(home) : buildNodeUrl(site);
+  const logoUrl = siteLogoUrl(site);
   const navPages = home
     ? getChildNodes(home, 50).filter((n) => n.isNodeType("jnt:page"))
     : [];
@@ -42,8 +62,14 @@ export function Header(): JSX.Element {
     <header className={styles.header}>
       <div className={styles.inner}>
         <a className={styles.brand} href={homeUrl}>
-          <span className={styles.brandMark} aria-hidden="true" />
-          {siteTitle || "Jahia Store"}
+          {logoUrl ? (
+            <img className={styles.logo} src={logoUrl} alt={siteTitle || "Store"} height="36" />
+          ) : (
+            <>
+              <span className={styles.brandMark} aria-hidden="true" />
+              {siteTitle || "Jahia Store"}
+            </>
+          )}
         </a>
 
         <nav className={styles.nav} aria-label="Main navigation">
