@@ -8,9 +8,9 @@ import {
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import clsx from "clsx";
 import styles from "./detail.module.css";
-import { forgeCategoryNames, forgeIconUrl } from "./forgeCard";
+import { forgeAuthor, forgeCategoryNames, forgeIconUrl } from "./forgeCard";
 import { str, bool, strValues, jcrWorkspace } from "./nodeProps";
-import { sortedVersionNodes } from "./versions";
+import { sortedVersionNodes, versionDownloadUrl } from "./versions";
 import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
 import ScreenshotManager from "./ScreenshotManager.client";
@@ -89,6 +89,21 @@ function siteCategoryOptions(site: JCRNodeWrapper): { uuid: string; name: string
   }
 }
 
+/** Displayable name of a version's required Jahia version (weakreference), or "". */
+function requiredJahiaVersion(version: JCRNodeWrapper | undefined): string {
+  if (!version) return "";
+  try {
+    if (version.hasProperty("requiredVersion")) {
+      const ref = version.getProperty("requiredVersion").getNode() as unknown as JCRNodeWrapper;
+      // The required-version nodes are named "version-8.1.6.2"; show just "8.1.6.2".
+      return ref ? ref.getDisplayableName().replace(/^version-/, "") : "";
+    }
+  } catch {
+    // Dangling reference.
+  }
+  return "";
+}
+
 function screenshotItems(node: JCRNodeWrapper): { name: string; url: string }[] {
   if (!node.hasNode("screenshots")) return [];
   return getChildNodes(node.getNode("screenshots"), 20, 0, (n) => n.isNodeType("jnt:file")).map(
@@ -132,12 +147,24 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const published = bool(node, "published");
   const workspace = jcrWorkspace(node);
 
-  // Metadata (editable by owners; shown to everyone in Details).
+  // Metadata (editable by owners; shown to everyone in the Information panel).
   const categoryOptions = siteCategoryOptions(renderContext.getSite());
   const categoryValue = strValues(node, "j:defaultCategory");
   const categoryNames = forgeCategoryNames(node);
   const tags = strValues(node, "j:tagList");
-  const hasDetails = Boolean(license || codeRepository || categoryNames.length || tags.length);
+  const howToInstall = str(node, "howToInstall");
+  const faq = str(node, "FAQ");
+  const moduleId = node.getName();
+  const groupId = str(node, "groupId");
+  const author = forgeAuthor(node);
+  const authorURL = str(node, "authorURL");
+  const updated = node.hasProperty("jcr:lastModified")
+    ? node.getProperty("jcr:lastModified").getString().slice(0, 10)
+    : "";
+  const requiresJahia = requiredJahiaVersion(versions[0]);
+  // Prominent download for the newest version (mirrors store.jahia.com's title CTA).
+  const latestVersionNumber = versions[0] ? str(versions[0], "versionNumber") : "";
+  const latestDownloadUrl = versions[0] ? versionDownloadUrl(versions[0]) : null;
 
   return (
     <article className={styles.detail}>
@@ -151,7 +178,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
             </span>
           )}
         </div>
-        <div>
+        <div className={styles.headMain}>
           <h1 className={styles.title}>{title}</h1>
           <div className={styles.badges}>
             {status && (
@@ -162,6 +189,11 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
             {supported && <span className={clsx(styles.badge, styles.supported)}>Supported by Jahia</span>}
             {reviewed && <span className={clsx(styles.badge, styles.reviewed)}>Reviewed by Jahia</span>}
           </div>
+          {latestDownloadUrl && (
+            <a className={styles.headDownload} href={latestDownloadUrl} data-latest-download="">
+              Download{latestVersionNumber ? ` ${latestVersionNumber}` : ""}
+            </a>
+          )}
         </div>
       </header>
 
@@ -199,8 +231,91 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
         </div>
       )}
 
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Information</h2>
+        <dl className={styles.meta}>
+          <dt>Module ID</dt>
+          <dd>{moduleId}</dd>
+          {groupId && (
+            <>
+              <dt>Group ID</dt>
+              <dd>{groupId}</dd>
+            </>
+          )}
+          {status && (
+            <>
+              <dt>Status</dt>
+              <dd className={styles.metaStatus}>{status}</dd>
+            </>
+          )}
+          {categoryNames.length > 0 && (
+            <>
+              <dt>Category</dt>
+              <dd>{categoryNames.join(", ")}</dd>
+            </>
+          )}
+          {author && (
+            <>
+              <dt>Author</dt>
+              <dd>{author}</dd>
+            </>
+          )}
+          {isHttpUrl(authorURL) && (
+            <>
+              <dt>Developer website</dt>
+              <dd>
+                <a href={authorURL} rel="noopener noreferrer nofollow" target="_blank">
+                  {authorURL}
+                </a>
+              </dd>
+            </>
+          )}
+          {requiresJahia && (
+            <>
+              <dt>Requires Jahia</dt>
+              <dd>{requiresJahia}</dd>
+            </>
+          )}
+          {updated && (
+            <>
+              <dt>Updated</dt>
+              <dd>{updated}</dd>
+            </>
+          )}
+          {codeRepository && (
+            <>
+              <dt>Source</dt>
+              <dd>
+                {isHttpUrl(codeRepository) ? (
+                  <a href={codeRepository} rel="noopener noreferrer nofollow" target="_blank">
+                    {codeRepository}
+                  </a>
+                ) : (
+                  codeRepository
+                )}
+              </dd>
+            </>
+          )}
+          {tags.length > 0 && (
+            <>
+              <dt>Tags</dt>
+              <dd>
+                <ul className={styles.tagList} data-tag-list="">
+                  {tags.map((tag) => (
+                    <li key={tag} className={styles.tag}>
+                      {tag}
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </>
+          )}
+        </dl>
+      </section>
+
       {description && (
         <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Description</h2>
           <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: description }} />
         </section>
       )}
@@ -236,56 +351,26 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
         )}
       </section>
 
-      {hasDetails && (
+      {howToInstall && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Details</h2>
-          <dl className={styles.meta}>
-            {categoryNames.length > 0 && (
-              <>
-                <dt>Category</dt>
-                <dd>{categoryNames.join(", ")}</dd>
-              </>
-            )}
-            {codeRepository && (
-              <>
-                <dt>Source</dt>
-                <dd>
-                  {isHttpUrl(codeRepository) ? (
-                    <a href={codeRepository} rel="noopener noreferrer nofollow" target="_blank">
-                      {codeRepository}
-                    </a>
-                  ) : (
-                    codeRepository
-                  )}
-                </dd>
-              </>
-            )}
-            {license && (
-              <>
-                <dt>License</dt>
-                <dd>
-                  <span className={styles.richtext} dangerouslySetInnerHTML={{ __html: license }} />
-                </dd>
-              </>
-            )}
-            {tags.length > 0 && (
-              <>
-                <dt>Tags</dt>
-                <dd>
-                  <ul className={styles.tagList} data-tag-list="">
-                    {tags.map((tag) => (
-                      <li key={tag} className={styles.tag}>
-                        {tag}
-                      </li>
-                    ))}
-                  </ul>
-                </dd>
-              </>
-            )}
-          </dl>
+          <h2 className={styles.sectionTitle}>How to install</h2>
+          <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: howToInstall }} />
         </section>
       )}
 
+      {faq && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>FAQ</h2>
+          <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: faq }} />
+        </section>
+      )}
+
+      {license && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>License</h2>
+          <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: license }} />
+        </section>
+      )}
     </article>
   );
 }

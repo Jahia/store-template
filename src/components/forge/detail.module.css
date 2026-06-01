@@ -34,10 +34,31 @@
   font-size: 2rem;
 }
 
+.headMain {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
 .title {
-  margin: 0 0 0.5rem;
+  margin: 0;
   font-size: 2rem;
   font-weight: 750;
+}
+
+.headDownload {
+  margin-top: 0.3rem;
+  font-weight: 650;
+  font-size: 0.95rem;
+  padding: 0.5rem 1.3rem;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: #fff;
+}
+.headDownload:hover {
+  background: var(--color-accent-hover);
+  text-decoration: none;
 }
 
 .badges {
@@ -187,6 +208,9 @@
 .meta dd {
   margin: 0;
   word-break: break-word;
+}
+.metaStatus {
+  text-transform: capitalize;
 }
 
 .tagList {
