@@ -1,7 +1,10 @@
-import { useServerContext } from "@jahia/javascript-modules-library";
+import { buildNodeUrl, useServerContext } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import { useTranslation } from "react-i18next";
 import styles from "./Footer.module.css";
+
+/** Relative path (under the site) of the content folder the modules feed is bound to. */
+const MODULES_REPOSITORY = "contents/modules-repository";
 
 // Defaults (Jahia's own) used when a site has not configured the footer in
 // Store administration → Settings. A configured value always overrides these.
@@ -25,6 +28,36 @@ function prop(site: JCRNodeWrapper, name: string): string {
 }
 
 /**
+ * Public LIVE URL of the modules RSS feed (`…/modules-repository.moduleList.rss`),
+ * or null when the site has no modules repository. Forced to live mode: the feed
+ * lists published versions and is served from the live workspace. Returns the
+ * canonical render URL (the `/feed.xml` SEO rewrite is an alias of this); the
+ * `.html` → `.moduleList.rss` swap mirrors how action URLs are built elsewhere.
+ */
+function feedUrl(site: JCRNodeWrapper): string | null {
+  try {
+    if (!site.hasNode(MODULES_REPOSITORY)) return null;
+    const repo = site.getNode(MODULES_REPOSITORY) as unknown as JCRNodeWrapper;
+    return `${buildNodeUrl(repo, { mode: "live" }).replace(/\.html$/, "")}.moduleList.rss`;
+  } catch {
+    return null;
+  }
+}
+
+/** Standard RSS glyph (dot + two broadcast arcs). Decorative; the link carries the name. */
+function RssIcon(): JSX.Element {
+  return (
+    <svg className={styles.rssIcon} viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+      <circle cx="6.18" cy="17.82" r="2.18" fill="currentColor" />
+      <path
+        fill="currentColor"
+        d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zM4 10.1v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"
+      />
+    </svg>
+  );
+}
+
+/**
  * Store footer: copyright + legal and social links. Content is read from the
  * site's forge settings (Store administration → Settings); each value falls back
  * to the Jahia default when the site has not configured it.
@@ -35,6 +68,7 @@ export function Footer(): JSX.Element {
   const site = renderContext.getSite();
 
   const copyright = prop(site, "forgeSettingsCopyright") || t("footer.copyright");
+  const rssUrl = feedUrl(site);
   const legal = [
     { href: prop(site, "forgeSettingsPrivacyUrl") || DEFAULTS.privacy, key: "footer.privacy" },
     { href: prop(site, "forgeSettingsTermsUrl") || DEFAULTS.terms, key: "footer.terms" },
@@ -65,6 +99,12 @@ export function Footer(): JSX.Element {
             </a>
           ))}
         </nav>
+        {rssUrl && (
+          <a className={styles.feed} href={rssUrl} aria-label={t("footer.rss")} title={t("footer.rss")}>
+            <RssIcon />
+            <span className={styles.feedLabel}>RSS</span>
+          </a>
+        )}
       </div>
     </footer>
   );
