@@ -6,7 +6,6 @@ interface LoginLabels {
   signOut: string;
   username: string;
   password: string;
-  rememberMe: string;
 }
 
 interface LoginProps {
@@ -87,9 +86,6 @@ export default function Login({
             autoComplete="current-password"
             required
           />
-          <label className={styles.remember}>
-            <input type="checkbox" name="useCookie" value="on" /> {labels.rememberMe}
-          </label>
           <button type="submit" className={styles.submit}>
             {labels.signIn}
           </button>

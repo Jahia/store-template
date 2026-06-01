@@ -72,14 +72,6 @@
   box-shadow: var(--ring);
 }
 
-.remember {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-weight: 500 !important;
-  color: var(--color-text-muted);
-}
-
 .submit {
   margin-top: 0.35rem;
   font: inherit;

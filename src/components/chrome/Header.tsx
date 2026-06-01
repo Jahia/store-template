@@ -153,7 +153,6 @@ export function Header(): JSX.Element {
               signOut: t("chrome.login.signOut"),
               username: t("chrome.login.username"),
               password: t("chrome.login.password"),
-              rememberMe: t("chrome.login.rememberMe"),
             },
           }}
         />

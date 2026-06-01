@@ -11,8 +11,7 @@
       "signIn": "Connexion",
       "signOut": "Déconnexion",
       "username": "Nom d'utilisateur",
-      "password": "Mot de passe",
-      "rememberMe": "Se souvenir de moi"
+      "password": "Mot de passe"
     }
   },
   "footer": {

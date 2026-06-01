@@ -11,8 +11,7 @@
       "signIn": "Log in",
       "signOut": "Log out",
       "username": "Username",
-      "password": "Password",
-      "rememberMe": "Remember me"
+      "password": "Password"
     }
   },
   "footer": {
