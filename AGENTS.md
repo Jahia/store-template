@@ -100,7 +100,9 @@ dist/             build output (client islands, server bundle, package.tgz)
 - **E2E** lives in `../privateappstore/tests` (Cypress, `baseUrl` localhost:8080).
   `npx cypress run`. The suite must stay green. Selectors that code changes must
   preserve: `[data-editor-ready]`, `[data-filter-ready]`, `[data-upload-ready]`,
-  `[data-forge-card]`, `[role="tab"]` (admin), `#forge-url`/`#forge-id`/`#forge-user`.
+  `[data-forge-card]`, `[role="tab"]`/`[role="tabpanel"]` (admin + module editor),
+  `[data-ckeditor-state]`, `[data-icon-input]`/`[data-icon-status]`,
+  `[data-changelog-ready]`, `#forge-url`/`#forge-id`/`#forge-user`.
 
 ## SonarQube
 
@@ -117,11 +119,18 @@ dist/             build output (client islands, server bundle, package.tgz)
   `replaceAll`, `S6847`/`S1082`/`S6842` non-interactive elements with handlers)
   fails the gate. Maintainability smells (`S6759`, `S7764`, `S6582`, `S6819`) do
   not move the gate but should be kept clean.
-- **Known accepted exception**: `RichTextEditor.tsx` uses the deprecated
-  `document.execCommand` (`S1874`). It is the only dependency-free way to drive a
-  contenteditable surface; a real editor library would be inlined into the SSR
-  bundle (the failure mode that ruled out Apollo). Do not "fix" it by adding a
-  dependency.
+- **Richtext editing uses CKEditor 5 from the deployed `richtext-ckeditor5`
+  module**, loaded at runtime (`loadCKEditor.ts` → `CKEditorField.tsx`), NOT
+  bundled. That module exposes CKEditor as a webpack Module Federation remote;
+  `loadCKEditor` stubs `window.appShell.remotes`, injects
+  `/modules/richtext-ckeditor5/javascript/apps/remoteEntry.js`, then
+  `container.init({})` + `get(".")` to reach `ClassicEditor` (verified to work on
+  the live delivery page, where jContent's app-shell is absent). Keeping CKEditor
+  out of store-template's bundle is deliberate — inlining a real editor into the
+  SSR bundle is the failure mode that ruled out Apollo. Output is still
+  DOMPurify-sanitized on save (defense-in-depth). If the remote can't load,
+  `CKEditorField` degrades to a textarea. (The old dependency-free `execCommand`
+  `RichTextEditor` / `S1874` exception is gone.)
 
 ## Accessibility invariants (target: WCAG 2.2 Level AAA)
 

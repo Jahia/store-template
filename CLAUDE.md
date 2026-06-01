@@ -20,8 +20,9 @@
   `gqlRequest`/`fetch` to `/modules/graphql` is fine — not CSRF-gated.
 - **Preserve E2E selectors** when refactoring markup: `[data-editor-ready]`,
   `[data-filter-ready]`, `[data-upload-ready]`, `[data-forge-card]`,
-  `[role="tab"]`. The Cypress suite in `../privateappstore/tests` must stay green
-  (`npx cypress run`).
+  `[role="tab"]`/`[role="tabpanel"]`, `[data-ckeditor-state]`,
+  `[data-icon-input]`/`[data-icon-status]`, `[data-changelog-ready]`. The Cypress
+  suite in `../privateappstore/tests` must stay green (`npx cypress run`).
 
 ## SonarQube
 
@@ -29,8 +30,9 @@
 - **Scan with JDK 17** (`JAVA_HOME=…graalvm-jdk-17.* mvn clean install sonar:sonar
   -Dsonar.sources=src`) — Java 11 fails the modern scanner with
   `UnsupportedClassVersionError`.
-- `RichTextEditor`'s `document.execCommand` (S1874) is an **accepted** exception
-  (dependency-free contenteditable); don't "fix" it by adding a library.
+- Richtext fields use **CKEditor 5 from the deployed `richtext-ckeditor5` module**
+  (federated remote, loaded at runtime by `loadCKEditor.ts`) — never bundled into
+  store-template. Don't add a CKEditor/editor dependency to `package.json`.
 
 ## Standing repo rules
 
