@@ -26,6 +26,7 @@
       "search": "Filtrer",
       "placeholder": "Filtrer les modules…",
       "status": "Statut",
+      "categories": "Catégories",
       "all": "Tous",
       "unit": "modules",
       "none": "Aucun module ne correspond à vos filtres."

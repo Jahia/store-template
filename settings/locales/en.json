@@ -26,6 +26,7 @@
       "search": "Filter",
       "placeholder": "Filter modules…",
       "status": "Status",
+      "categories": "Categories",
       "all": "All",
       "unit": "modules",
       "none": "No modules match your filters."

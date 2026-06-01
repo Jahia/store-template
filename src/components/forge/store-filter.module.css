@@ -1,33 +1,44 @@
-.filter {
+/* Storefront facet rail (store.jahia.com layout): search + Categories + Status. */
+
+.sidebar {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  position: sticky;
+  top: calc(var(--header-h) + 1rem);
+}
+
+@media (max-width: 800px) {
+  .sidebar {
+    position: static;
+    gap: 1rem;
+  }
 }
 
 .search {
   font: inherit;
   font-size: 0.92rem;
-  padding: 0.5rem 0.9rem;
+  padding: 0.55rem 0.9rem;
   border: 1px solid var(--color-border);
   border-radius: 999px;
-  background: var(--color-surface);
-  min-width: 220px;
-  flex: 0 1 320px;
+  background: var(--color-bg);
+  width: 100%;
   transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease);
 }
 .search:focus-visible {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(70, 60, 186, 0.16);
-  background: #fff;
+  box-shadow: var(--ring);
 }
 
 .facets {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
+  flex-direction: column;
+  gap: 0.5rem;
   /* Reset the default <fieldset> chrome (border/padding/margin/min-width). */
   margin: 0;
   padding: 0;
@@ -35,37 +46,52 @@
   min-inline-size: 0;
 }
 
-.facet {
-  font: inherit;
-  font-size: 0.82rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0.32rem 0.8rem;
-  border-radius: 999px;
-  border: 1px solid var(--color-border);
-  background: var(--color-bg);
+.legend {
+  padding: 0;
+  margin-bottom: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--color-text-muted);
-  text-transform: capitalize;
-  transition: all 150ms var(--ease);
+}
+
+.facet {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 0.15rem 0;
+}
+.facet input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--color-accent);
+  cursor: pointer;
 }
 .facet:hover {
-  border-color: #c7c1ee;
-  color: var(--color-text);
+  color: var(--color-accent);
 }
-.facetActive {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: #fff;
+.facet input:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: 4px;
+}
+.facetStatus {
+  text-transform: capitalize;
 }
 
 .count {
+  margin: 0;
   font-size: 0.85rem;
+  font-weight: 600;
   color: var(--color-text-muted);
-  margin-left: auto;
 }
 
 .none {
-  flex-basis: 100%;
   margin: 0;
+  font-size: 0.85rem;
   color: var(--color-text-muted);
 }

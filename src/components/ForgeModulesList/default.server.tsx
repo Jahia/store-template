@@ -7,6 +7,7 @@ import {
 import { useTranslation } from "react-i18next";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import styles from "~/components/forge/forge.module.css";
+import { forgeCategoryNames } from "~/components/forge/forgeCard";
 import StoreFilter from "~/components/forge/StoreFilter.client";
 
 interface ForgeModulesListProps {
@@ -53,18 +54,24 @@ jahiaComponent(
       ),
     ].sort((a, b) => a.localeCompare(b));
 
+    // Facet list: every category any listed entry is filed under.
+    const categories = [...new Set(entries.flatMap((e) => forgeCategoryNames(e)))].sort((a, b) =>
+      a.localeCompare(b),
+    );
+
     const labels = {
       search: t("store.filter.search"),
       placeholder: t("store.filter.placeholder"),
       status: t("store.filter.status"),
+      categories: t("store.filter.categories"),
       all: t("store.filter.all"),
       unit: t("store.filter.unit"),
       none: t("store.filter.none"),
     };
 
     return (
-      <div data-forge-list="">
-        <Island component={StoreFilter} props={{ statuses, labels }} />
+      <div className={styles.layout} data-forge-list="">
+        <Island component={StoreFilter} props={{ statuses, categories, labels }} />
         <div className={styles.grid}>
           {entries.map((node) => (
             <Render key={node.getIdentifier()} node={node} view="default" readOnly />

@@ -29,3 +29,37 @@ export function forgeIconUrl(node: JCRNodeWrapper): string | null {
   const files = getChildNodes(folder, 1, 0, (n) => n.isNodeType("jnt:file"));
   return files.length > 0 ? buildNodeUrl(files[0]) : null;
 }
+
+/**
+ * Displayable names of the categories a forge entry is filed under
+ * (`j:defaultCategory`, a multi-valued weakreference from jmix:categorized).
+ * Resolving a weakreference can dangle, so each lookup is guarded. Used both for
+ * the card's `data-categories` (client filtering) and for the storefront's
+ * category facet list — kept here so both compute it identically.
+ */
+export function forgeCategoryNames(node: JCRNodeWrapper): string[] {
+  if (!node.hasProperty("j:defaultCategory")) return [];
+  const session = node.getSession();
+  const names: string[] = [];
+  try {
+    for (const value of node.getProperty("j:defaultCategory").getValues()) {
+      try {
+        names.push(session.getNodeByIdentifier(value.getString()).getDisplayableName());
+      } catch {
+        // Dangling reference — skip.
+      }
+    }
+  } catch {
+    // Not a multi-valued property in this content — ignore.
+  }
+  return names;
+}
+
+/** Author shown on a card: the module's developer (its creator), or "". */
+export function forgeAuthor(node: JCRNodeWrapper): string {
+  try {
+    return node.getPropertyAsString("jcr:createdBy") || "";
+  } catch {
+    return "";
+  }
+}

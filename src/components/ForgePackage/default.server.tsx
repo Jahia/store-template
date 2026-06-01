@@ -1,6 +1,6 @@
 import { buildNodeUrl, jahiaComponent } from "@jahia/javascript-modules-library";
 import { ForgeEntryCard } from "~/components/forge/ForgeEntryCard";
-import { excerpt, forgeIconUrl } from "~/components/forge/forgeCard";
+import { excerpt, forgeAuthor, forgeCategoryNames, forgeIconUrl } from "~/components/forge/forgeCard";
 
 interface ForgeEntryProps {
   "jcr:title"?: string;
@@ -31,6 +31,8 @@ jahiaComponent(
       status={status}
       supported={Boolean(supportedByJahia)}
       reviewed={Boolean(reviewedByJahia)}
+      author={forgeAuthor(currentNode)}
+      categories={forgeCategoryNames(currentNode)}
     />
   ),
 );

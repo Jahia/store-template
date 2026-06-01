@@ -1,9 +1,24 @@
-/* Forge storefront: module/package cards + list grid. */
+/* Forge storefront: store.jahia.com layout — a left facet rail + a card grid. */
+
+.layout {
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+/* Below tablet the facet rail stacks above the grid. */
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.1rem;
 }
 
 .empty {
@@ -14,7 +29,7 @@
 .card {
   display: flex;
   gap: 1rem;
-  padding: 1.25rem;
+  padding: 1.15rem 1.25rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-bg);
@@ -27,7 +42,7 @@
   text-decoration: none;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: #d4d0f0;
+  border-color: var(--color-accent);
 }
 /* The [hidden] attribute (set by the filter island) needs higher specificity
    than `.card { display: flex }` to actually hide the card. */
@@ -36,29 +51,31 @@
 }
 
 .cardIcon {
-  flex: 0 0 56px;
+  flex: 0 0 64px;
 }
 .cardIcon img {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
   border-radius: 12px;
+  background: var(--color-surface);
 }
 
 .iconPlaceholder {
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--color-accent), #5544c4);
+  background: linear-gradient(135deg, var(--color-accent), #2f7bd6);
   color: #fff;
   font-weight: 750;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
 }
 
 .cardBody {
   min-width: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -68,6 +85,7 @@
   margin: 0;
   font-size: 1.05rem;
   font-weight: 650;
+  color: var(--color-navy);
 }
 
 .cardExcerpt {
@@ -75,17 +93,25 @@
   font-size: 0.88rem;
   color: var(--color-text-muted);
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.cardFoot {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .badges {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
-  margin-top: auto;
-  padding-top: 0.3rem;
 }
 
 .badge {
@@ -104,6 +130,22 @@
   color: #0d4a2b; /* AAA: 9.25:1 on the badge background */
 }
 .reviewed {
-  background: #e8ecfd;
-  color: #2c39a8;
+  background: var(--color-accent-soft);
+  color: #0c3f87; /* AAA on the soft-blue badge */
+}
+
+.author {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  max-width: 14ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.authorIcon {
+  flex: 0 0 auto;
+  color: var(--color-accent);
 }
