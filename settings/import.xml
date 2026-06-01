@@ -45,6 +45,11 @@
 
             <contents jcr:primaryType="jnt:contentFolder">
                 <modules-repository jcr:primaryType="jnt:contentFolder"/>
+                <!-- Required by the createEntryFromJar action: it reads
+                     <site>/contents/modules-required-versions and auto-creates the
+                     per-Jahia-version child node on upload. Without this folder the
+                     action fails with PathNotFoundException. -->
+                <modules-required-versions jcr:primaryType="jnt:contentFolder"/>
             </contents>
         </store-template>
     </modules>

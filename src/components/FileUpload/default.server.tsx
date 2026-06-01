@@ -1,15 +1,29 @@
-import { buildNodeUrl, jahiaComponent } from "@jahia/javascript-modules-library";
+import { buildNodeUrl, Island, jahiaComponent } from "@jahia/javascript-modules-library";
 import styles from "~/components/forge/upload.module.css";
+import FileUploadForm from "./FileUpload.client";
+
+/** Translated labels, computed server-side and passed into the island (survives hydration). */
+const UPLOAD_LABELS = {
+  fileLabel: "Module package (.jar / .war)",
+  submit: "Upload module",
+  submitting: "Uploading…",
+  pickFile: "Please choose a module package first.",
+  error: "Upload failed — please try again.",
+};
 
 /**
  * Module JAR upload form (jnt:fileUpload).
  *
- * A plain multipart form posting to the privateappstore `createEntryFromJar`
+ * The actual upload posts (multipart) to the privateappstore `createEntryFromJar`
  * action on modules-repository — the one piece of authoring that stays a Java
- * action (it parses the JAR's package.json, runs a Maven deploy to the
- * configured forge, then creates the jnt:forgeModule + version nodes). The
- * action enforces the upload permission server-side; we only gate the form on
- * being logged in.
+ * action (it parses the JAR's package.json, runs a Maven deploy to the configured
+ * forge, then creates the jnt:forgeModule + version nodes). The action enforces the
+ * upload permission server-side; we only gate the form on being logged in and on
+ * the repository existing in the rendered workspace.
+ *
+ * The form itself is a client island ({@link FileUploadForm}): a plain <form> POST
+ * is rejected by Jahia's CsrfGuard ("Request Token does not match Page Token"), so
+ * the submit must go through XMLHttpRequest — the same reason reviews post via XHR.
  */
 jahiaComponent(
   { nodeType: "jnt:fileUpload", name: "default", displayName: "Module upload", componentType: "view" },
@@ -27,17 +41,10 @@ jahiaComponent(
     const back = buildNodeUrl(mainNode);
 
     return (
-      <form className={styles.upload} method="POST" action={actionUrl} encType="multipart/form-data">
-        <div className={styles.field}>
-          <label htmlFor="module-jar">Module package (.jar / .war)</label>
-          <input id="module-jar" type="file" name="file" accept=".jar,.war" required />
-        </div>
-        <input type="hidden" name="redirectURL" value={back} />
-        <input type="hidden" name="successRedirectUrl" value={back} />
-        <button type="submit" className={styles.btn}>
-          Upload module
-        </button>
-      </form>
+      <Island
+        component={FileUploadForm}
+        props={{ actionUrl, backUrl: back, accept: ".jar,.war", labels: UPLOAD_LABELS }}
+      />
     );
   },
 );
