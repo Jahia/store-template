@@ -12,8 +12,10 @@ interface LoginLabels {
 interface LoginProps {
   isLoggedIn: boolean;
   username: string;
-  /** Current page URL — Jahia's auth valve logs in on any POST carrying username+password. */
+  /** Jahia's /cms/login servlet endpoint (form login). */
   loginUrl: string;
+  /** Page to return to after a successful login (the `redirect` param). */
+  loginRedirect: string;
   logoutUrl: string;
   /** Translated labels, computed server-side (engine i18n) and passed in so they
       survive island hydration regardless of which keys SSR happened to collect. */
@@ -22,10 +24,20 @@ interface LoginProps {
 
 /**
  * Header login island. Logged out: a sign-in button toggling a compact form
- * that posts to the current page (Jahia authenticates and reloads). Logged in:
- * the username and a logout link.
+ * that posts to Jahia's /cms/login servlet (which authenticates and redirects
+ * back to the current page). Logged in: the username and a logout link.
+ *
+ * /cms/login is not CSRF-gated, so a plain form POST works (unlike action `.do`
+ * POSTs, which need XHR for the CSRF token).
  */
-export default function Login({ isLoggedIn, username, loginUrl, logoutUrl, labels }: Readonly<LoginProps>) {
+export default function Login({
+  isLoggedIn,
+  username,
+  loginUrl,
+  loginRedirect,
+  logoutUrl,
+  labels,
+}: Readonly<LoginProps>) {
   const [open, setOpen] = useState(false);
 
   if (isLoggedIn) {
@@ -59,6 +71,8 @@ export default function Login({ isLoggedIn, username, loginUrl, logoutUrl, label
           action={loginUrl}
           aria-label={labels.signIn}
         >
+          {/* Where Jahia sends the browser after a successful login. */}
+          <input type="hidden" name="redirect" value={loginRedirect} />
           <label htmlFor="login-username">{labels.username}</label>
           <input id="login-username" name="username" autoComplete="username" required />
           <label htmlFor="login-password">{labels.password}</label>

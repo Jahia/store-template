@@ -55,7 +55,10 @@ export function Header(): JSX.Element {
   if (isLoggedIn) {
     username = renderContext.getUser().getName();
   }
-  const loginUrl = buildNodeUrl(mainNode);
+  // Jahia's form login is the /cms/login servlet (NOT a POST to the page, which
+  // returns 401). It authenticates username+password and redirects to `redirect`.
+  const loginUrl = buildEndpointUrl(renderContext.getURLGenerator().getLogin());
+  const loginRedirect = buildNodeUrl(mainNode);
   const logoutUrl = buildEndpointUrl(renderContext.getURLGenerator().getLogout());
 
   return (
@@ -96,6 +99,7 @@ export function Header(): JSX.Element {
             isLoggedIn,
             username,
             loginUrl,
+            loginRedirect,
             logoutUrl,
             labels: {
               signIn: t("chrome.login.signIn"),
