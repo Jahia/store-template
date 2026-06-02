@@ -19,12 +19,13 @@ import { FilterXSS, getDefaultWhiteList } from "xss";
  * data:) are removed by the library's `safeAttrValue`.
  */
 
-// Start from the library's safe default allowlist and extend it with the few
-// attributes CKEditor emits that the default omits (class for styling hooks,
-// rel/target on links, alignment/figure structure).
+// Start from the library's safe default allowlist and narrow/extend it to the
+// CKEditor 5 output set.
 const whiteList = {
   ...getDefaultWhiteList(),
-  a: ["href", "title", "target", "rel"],
+  // Links open in the same tab: no `target` (so no reverse-tabnabbing) and no `rel`.
+  // The library's safeAttrValue still strips javascript:/data:/vbscript: from href.
+  a: ["href", "title"],
   p: ["class"],
   span: ["class"],
   figure: ["class"],
@@ -33,7 +34,14 @@ const whiteList = {
   td: ["colspan", "rowspan"],
   th: ["colspan", "rowspan", "scope"],
   table: ["class"],
+  // blockquote without `cite`: the library does not scheme-filter `cite`, and CKEditor
+  // never emits it.
+  blockquote: [],
 };
+// Drop tags whose URL attributes the library does not scheme-filter (poster/src) and
+// that CKEditor 5 basic richtext never produces.
+delete (whiteList as Record<string, unknown>).video;
+delete (whiteList as Record<string, unknown>).audio;
 
 const filter = new FilterXSS({
   whiteList,
@@ -41,13 +49,6 @@ const filter = new FilterXSS({
   // CONTENT of dangerous container tags so no script/style text survives.
   stripIgnoreTag: true,
   stripIgnoreTagBody: ["script", "style"],
-  // Defang external links: force noopener/noreferrer on anchors that open links.
-  onTagAttr: (tag, name, value) => {
-    if (tag === "a" && name === "target") {
-      return 'target="_blank"';
-    }
-    return undefined;
-  },
 });
 
 /**
