@@ -6,7 +6,6 @@ interface Labels {
   placeholder: string;
   status: string;
   categories: string;
-  all: string;
   unit: string;
   none: string;
 }

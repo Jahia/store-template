@@ -26,7 +26,8 @@ interface IconUploadProps {
   labels: IconLabels;
 }
 
-/** Icons are small; cap the upload so a base64 payload stays reasonable in a JSON POST. */
+/** Icons are small; cap the upload so the multipart part stays reasonable (the file
+    is sent as a GraphQL multipart request part via gqlUpload, not a base64 JSON value). */
 const MAX_BYTES = 2 * 1024 * 1024;
 
 type Status = "idle" | "uploading" | "uploaded" | "error";
