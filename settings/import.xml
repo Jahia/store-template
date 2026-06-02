@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Initial content imported into sites created with the store-template template set.
+  Initial content imported into sites created with the jahia-store-template template set.
   Gives a fresh store a working structure entirely on the JS templates:
     - a home page rendering the published-modules grid (Area "main")
     - a "My modules" page (JAR upload + the user's own modules)
     - a modules-repository folder where uploaded modules are created
   Store administration (Settings / Categories / Roles) lives in the Jahia site
-  administration (jContent), provided by the privateappstore module - not in-site.
+  administration (jContent), provided by the jahia-store module - not in-site.
 -->
 <content xmlns:j="http://www.jahia.org/jahia/1.0"
          xmlns:jcr="http://www.jcp.org/jcr/1.0"
          xmlns:jnt="http://www.jahia.org/jahia/nt/1.0">
     <modules jcr:primaryType="jnt:modules">
-        <store-template>
+        <jahia-store-template>
             <home j:isHomePage="true"
                   j:templateName="default"
                   jcr:primaryType="jnt:page"
@@ -45,6 +45,6 @@
                      action fails with PathNotFoundException. -->
                 <modules-required-versions jcr:primaryType="jnt:contentFolder"/>
             </contents>
-        </store-template>
+        </jahia-store-template>
     </modules>
 </content>

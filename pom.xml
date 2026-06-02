@@ -16,8 +16,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jahia.modules.javascript</groupId>
-    <artifactId>store-template</artifactId>
-    <version>3.1.8-SNAPSHOT</version>
+    <artifactId>jahia-store-template</artifactId>
+    <version>5.0.0-SNAPSHOT</version>
     <!-- JavaScript module: the deployable artifact is dist/package.tgz, produced by the
          npm build (Vite + @jahia/vite-plugin) and attached below. The Jahia module
          metadata (module-type, dependencies, static-resources, server entry) lives in
