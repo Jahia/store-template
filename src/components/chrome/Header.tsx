@@ -8,6 +8,7 @@ import {
 } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import { useTranslation } from "react-i18next";
+import { forgeBranding } from "~/components/forge/forgeBranding";
 import styles from "./Header.module.css";
 import Login from "./Login.client";
 import MobileNav from "./MobileNav.client";
@@ -73,21 +74,21 @@ function myModulesPageIds(home: JCRNodeWrapper, childPages: JCRNodeWrapper[]): S
 }
 
 /**
- * URL of the configured store logo (the `forgeSettingsLogo` weakreference on the
- * site node, set in Store administration → Settings), or null. Resolving a
- * weakreference can throw if it dangles or the target is not in this workspace,
- * so we fall back to the text brand on any failure.
+ * URL of the configured store logo. The logo is stored as a JCR path string in the
+ * site's forge settings (per-site OSGi config, read via the ForgeSettingsService
+ * bridge); we resolve that path in the current (live) session and build its URL.
+ * Falls back to the text brand if unset, dangling, or unpublished in this workspace.
  */
 function siteLogoUrl(site: JCRNodeWrapper): string | null {
   try {
-    if (site.hasProperty("forgeSettingsLogo")) {
-      const node = site.getProperty("forgeSettingsLogo").getNode();
-      return node ? buildNodeUrl(node) : null;
-    }
+    const { logoPath } = forgeBranding(site.getResolveSite().getSiteKey());
+    if (!logoPath) return null;
+    const node = site.getSession().getNode(logoPath);
+    return node ? buildNodeUrl(node) : null;
   } catch {
-    // Dangling / unpublished reference - fall back to the text brand.
+    // Unset / dangling / unpublished reference - fall back to the text brand.
+    return null;
   }
-  return null;
 }
 
 /**

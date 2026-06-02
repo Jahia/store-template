@@ -1,6 +1,7 @@
 import { buildNodeUrl, useServerContext } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import { useTranslation } from "react-i18next";
+import { forgeBranding } from "~/components/forge/forgeBranding";
 import styles from "./Footer.module.css";
 
 /** Relative path (under the site) of the content folder the modules feed is bound to. */
@@ -17,21 +18,6 @@ const DEFAULTS = {
   twitter: "https://twitter.com/Jahia",
   youtube: "http://www.youtube.com/jahiacms",
 };
-
-/**
- * Read a string property off the site node, tolerating any access failure.
- *
- * NB: these `forgeSettings*` property names are the read counterpart of
- * jahia-store's ForgeSettingsReader / ForgeSettingsMutationExtension. That
- * Java class is the authority for the mapping; keep these names in sync with it.
- */
-function prop(site: JCRNodeWrapper, name: string): string {
-  try {
-    return site.hasProperty(name) ? site.getProperty(name).getString() : "";
-  } catch {
-    return "";
-  }
-}
 
 /**
  * Footer hrefs come from site-admin-configured settings. Only render an http(s)
@@ -82,18 +68,19 @@ export function Footer(): JSX.Element {
   const { renderContext } = useServerContext();
   const site = renderContext.getSite();
 
-  const copyright = prop(site, "forgeSettingsCopyright") || t("footer.copyright");
+  const branding = forgeBranding(site.getSiteKey());
+  const copyright = branding.copyright || t("footer.copyright");
   const rssUrl = feedUrl(site);
   const legal = [
-    { href: safeHref(prop(site, "forgeSettingsPrivacyUrl"), DEFAULTS.privacy), key: "footer.privacy" },
-    { href: safeHref(prop(site, "forgeSettingsTermsUrl"), DEFAULTS.terms), key: "footer.terms" },
-    { href: safeHref(prop(site, "forgeSettingsCookiesUrl"), DEFAULTS.cookies), key: "footer.cookies" },
+    { href: safeHref(branding.privacyUrl, DEFAULTS.privacy), key: "footer.privacy" },
+    { href: safeHref(branding.termsUrl, DEFAULTS.terms), key: "footer.terms" },
+    { href: safeHref(branding.cookiesUrl, DEFAULTS.cookies), key: "footer.cookies" },
   ];
   const social = [
-    { href: safeHref(prop(site, "forgeSettingsFacebookUrl"), DEFAULTS.facebook), label: "Facebook" },
-    { href: safeHref(prop(site, "forgeSettingsLinkedinUrl"), DEFAULTS.linkedin), label: "LinkedIn" },
-    { href: safeHref(prop(site, "forgeSettingsTwitterUrl"), DEFAULTS.twitter), label: "Twitter" },
-    { href: safeHref(prop(site, "forgeSettingsYoutubeUrl"), DEFAULTS.youtube), label: "YouTube" },
+    { href: safeHref(branding.facebookUrl, DEFAULTS.facebook), label: "Facebook" },
+    { href: safeHref(branding.linkedinUrl, DEFAULTS.linkedin), label: "LinkedIn" },
+    { href: safeHref(branding.twitterUrl, DEFAULTS.twitter), label: "Twitter" },
+    { href: safeHref(branding.youtubeUrl, DEFAULTS.youtube), label: "YouTube" },
   ];
 
   return (
