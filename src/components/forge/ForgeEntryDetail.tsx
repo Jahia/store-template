@@ -6,6 +6,7 @@ import {
   useServerContext,
 } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
+import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import styles from "./detail.module.css";
 import { forgeAuthor, forgeCategoryNames, forgeIconUrl } from "./forgeCard";
@@ -36,73 +37,8 @@ function panelProps(id: string, defaultTab: string) {
   };
 }
 
-const PUBLISH_LABELS = {
-  publish: "Publish module",
-  unpublish: "Unpublish module",
-  publishing: "Saving…",
-  publishedState: "Published",
-  draftState: "Draft",
-  error: "Could not change the published state.",
-};
-
-const EDITOR_LABELS = {
-  edit: "Edit module",
-  save: "Save",
-  saving: "Saving…",
-  cancel: "Cancel",
-  saved: "Saved",
-  error: "Save failed - check your permissions and try again.",
-  title: "Title",
-  description: "Description",
-  howToInstall: "How to install",
-  faq: "FAQ",
-  license: "License",
-  authorEmail: "Author email",
-  authorURL: "Author URL",
-  codeRepository: "Code repository",
-  tabGeneral: "General",
-  tabDescription: "Description",
-  tabInstall: "Install & FAQ",
-  tabLicense: "License",
-  tabAuthor: "Author & links",
-  tablist: "Module fields",
-  icon: {
-    label: "Icon",
-    choose: "Choose an icon image",
-    upload: "Upload icon",
-    uploading: "Uploading…",
-    uploaded: "Icon uploaded",
-    error: "Icon upload failed - check your permissions and try again.",
-    current: "Current icon",
-    none: "-",
-    tooLarge: "Image is too large (max 2 MB).",
-    invalidType: "Please choose an image file.",
-  },
-  metadata: {
-    status: "Status",
-    category: "Category",
-    noCategories: "No categories are configured for this store yet.",
-    tags: "Tags",
-    tag: { add: "Add tag", remove: "Remove tag", placeholder: "Add a tag…" },
-  },
-};
-
 /** Allowed module status values (jmix:forgeElement `status` choicelist). */
 const STATUS_OPTIONS = ["community", "labs", "prereleased", "supported", "legacy"];
-
-/**
- * Labels for the owner-only "upload a new version" form on the detail page. Posts
- * to the same createEntryFromJar action as the my-modules upload - the action
- * upserts (matches the module by groupId+name in the package) and appends the
- * version - so the only thing missing was an entry point on the module's own page.
- */
-const ADD_VERSION_LABELS = {
-  fileLabel: "New version package (.jar / .war)",
-  submit: "Upload new version",
-  submitting: "Uploading…",
-  pickFile: "Please choose a module package first.",
-  error: "Upload failed - please try again.",
-};
 
 /**
  * Categories a developer can file a module under: the children of the site's
@@ -164,7 +100,92 @@ function isHttpUrl(url: string): boolean {
  *   3. a strict CSP is the backstop (see docs/SECURITY-CSP.md).
  */
 export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): JSX.Element {
+  const { t } = useTranslation();
   const { currentResource, renderContext } = useServerContext();
+
+  // Labels for the owner islands are built server-side from t() and passed in as
+  // props (the client islands never import react-i18next - they survive hydration
+  // regardless of which keys SSR happened to collect).
+  const PUBLISH_LABELS = {
+    publish: t("publish.module.publish"),
+    unpublish: t("publish.module.unpublish"),
+    publishing: t("publish.publishing"),
+    publishedState: t("publish.publishedState"),
+    draftState: t("publish.draftState"),
+    error: t("publish.module.error"),
+  };
+
+  const EDITOR_LABELS = {
+    edit: t("editor.edit"),
+    save: t("editor.save"),
+    saving: t("editor.saving"),
+    cancel: t("editor.cancel"),
+    saved: t("editor.saved"),
+    error: t("editor.error"),
+    title: t("editor.title"),
+    description: t("editor.description"),
+    howToInstall: t("editor.howToInstall"),
+    faq: t("editor.faq"),
+    license: t("editor.license"),
+    authorEmail: t("editor.authorEmail"),
+    authorURL: t("editor.authorURL"),
+    codeRepository: t("editor.codeRepository"),
+    tabGeneral: t("editor.tabGeneral"),
+    tabDescription: t("editor.tabDescription"),
+    tabInstall: t("editor.tabInstall"),
+    tabLicense: t("editor.tabLicense"),
+    tabAuthor: t("editor.tabAuthor"),
+    tablist: t("editor.tablist"),
+    loading: t("editor.loading"),
+    icon: {
+      label: t("editor.icon.label"),
+      choose: t("editor.icon.choose"),
+      upload: t("editor.icon.upload"),
+      uploading: t("editor.icon.uploading"),
+      uploaded: t("editor.icon.uploaded"),
+      error: t("editor.icon.error"),
+      current: t("editor.icon.current"),
+      none: t("editor.icon.none"),
+      tooLarge: t("editor.icon.tooLarge"),
+      invalidType: t("editor.icon.invalidType"),
+    },
+    metadata: {
+      status: t("editor.metadata.status"),
+      category: t("editor.metadata.category"),
+      noCategories: t("editor.metadata.noCategories"),
+      tags: t("editor.metadata.tags"),
+      tag: {
+        add: t("editor.metadata.tag.add"),
+        remove: t("editor.metadata.tag.remove"),
+        placeholder: t("editor.metadata.tag.placeholder"),
+      },
+    },
+  };
+
+  // Labels for the owner-only "upload a new version" form on the detail page. Posts
+  // to the same createEntryFromJar action as the my-modules upload - the action
+  // upserts (matches the module by groupId+name in the package) and appends the
+  // version - so the only thing missing was an entry point on the module's own page.
+  const ADD_VERSION_LABELS = {
+    fileLabel: t("addVersion.fileLabel"),
+    submit: t("addVersion.submit"),
+    submitting: t("addVersion.submitting"),
+    pickFile: t("addVersion.pickFile"),
+    error: t("addVersion.error"),
+  };
+
+  // Labels for the owner screenshot manager island (passed in as props).
+  const SCREENSHOT_LABELS = {
+    empty: t("screenshots.empty"),
+    moveUp: t("screenshots.moveUp"),
+    moveDown: t("screenshots.moveDown"),
+    delete: t("screenshots.delete"),
+    confirmPrompt: t("screenshots.confirmPrompt"),
+    confirm: t("screenshots.confirm"),
+    cancel: t("screenshots.cancel"),
+    error: t("screenshots.error"),
+  };
+
   const title = str(node, "jcr:title") || node.getName();
   // Richtext fields are sanitized server-side before they reach the DOM (covers
   // direct GraphQL/JCR writes that bypass the editor — SECURITY-571 B2).
@@ -221,11 +242,11 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const hasInstall = Boolean(howToInstall || faq);
   const hasLicense = Boolean(license);
   const tabs: TabDef[] = [
-    ...(hasOverview ? [{ id: "overview", label: "Overview" }] : []),
-    { id: "information", label: "Information" },
-    { id: "versions", label: "Versions" },
-    ...(hasInstall ? [{ id: "install", label: "Installation" }] : []),
-    ...(hasLicense ? [{ id: "license", label: "License" }] : []),
+    ...(hasOverview ? [{ id: "overview", label: t("detail.tabs.overview") }] : []),
+    { id: "information", label: t("detail.tabs.information") },
+    { id: "versions", label: t("detail.tabs.versions") },
+    ...(hasInstall ? [{ id: "install", label: t("detail.tabs.install") }] : []),
+    ...(hasLicense ? [{ id: "license", label: t("detail.tabs.license") }] : []),
   ];
   const defaultTab = tabs[0].id;
 
@@ -249,12 +270,18 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
                 {status}
               </span>
             )}
-            {supported && <span className={clsx(styles.badge, styles.supported)}>Supported by Jahia</span>}
-            {reviewed && <span className={clsx(styles.badge, styles.reviewed)}>Reviewed by Jahia</span>}
+            {supported && (
+              <span className={clsx(styles.badge, styles.supported)}>{t("detail.badge.supported")}</span>
+            )}
+            {reviewed && (
+              <span className={clsx(styles.badge, styles.reviewed)}>{t("detail.badge.reviewed")}</span>
+            )}
           </div>
           {latestDownloadUrl && (
             <a className={styles.headDownload} href={latestDownloadUrl} data-latest-download="">
-              Download{latestVersionNumber ? ` ${latestVersionNumber}` : ""}
+              {latestVersionNumber
+                ? t("detail.downloadVersion", { version: latestVersionNumber })
+                : t("detail.download")}
             </a>
           )}
         </div>
@@ -294,7 +321,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
         </div>
       )}
 
-      <Island component={DetailTabs} props={{ tabs, ariaLabel: "Module sections" }} />
+      <Island component={DetailTabs} props={{ tabs, ariaLabel: t("detail.tabs.ariaLabel") }} />
 
       {hasOverview && (
         <div {...panelProps("overview", defaultTab)} className={styles.panel}>
@@ -303,15 +330,18 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
           )}
           {videoNode && (
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>Video</h2>
+              <h2 className={styles.sectionTitle}>{t("detail.sections.video")}</h2>
               <Render node={videoNode} view="default" readOnly />
             </section>
           )}
           {shots.length > 0 && (
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>Screenshots</h2>
+              <h2 className={styles.sectionTitle}>{t("detail.sections.screenshots")}</h2>
               {canEdit ? (
-                <Island component={ScreenshotManager} props={{ path: screenshotsPath, items: shots }} />
+                <Island
+                  component={ScreenshotManager}
+                  props={{ path: screenshotsPath, items: shots, labels: SCREENSHOT_LABELS }}
+                />
               ) : (
                 <Island component={Lightbox} props={{ images: shots.map((s) => s.url) }} />
               )}
@@ -322,35 +352,35 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
 
       <div {...panelProps("information", defaultTab)} className={styles.panel}>
         <dl className={styles.meta}>
-          <dt>Module ID</dt>
+          <dt>{t("detail.meta.moduleId")}</dt>
           <dd>{moduleId}</dd>
           {groupId && (
             <>
-              <dt>Group ID</dt>
+              <dt>{t("detail.meta.groupId")}</dt>
               <dd>{groupId}</dd>
             </>
           )}
           {status && (
             <>
-              <dt>Status</dt>
+              <dt>{t("detail.meta.status")}</dt>
               <dd className={styles.metaStatus}>{status}</dd>
             </>
           )}
           {categoryNames.length > 0 && (
             <>
-              <dt>Category</dt>
+              <dt>{t("detail.meta.category")}</dt>
               <dd>{categoryNames.join(", ")}</dd>
             </>
           )}
           {author && (
             <>
-              <dt>Author</dt>
+              <dt>{t("detail.meta.author")}</dt>
               <dd>{author}</dd>
             </>
           )}
           {isHttpUrl(authorURL) && (
             <>
-              <dt>Developer website</dt>
+              <dt>{t("detail.meta.developerWebsite")}</dt>
               <dd>
                 <a href={authorURL} rel="noopener noreferrer nofollow" target="_blank">
                   {authorURL}
@@ -360,19 +390,19 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
           )}
           {requiresJahia && (
             <>
-              <dt>Requires Jahia</dt>
+              <dt>{t("detail.meta.requiresJahia")}</dt>
               <dd>{requiresJahia}</dd>
             </>
           )}
           {updated && (
             <>
-              <dt>Updated</dt>
+              <dt>{t("detail.meta.updated")}</dt>
               <dd>{updated}</dd>
             </>
           )}
           {codeRepository && (
             <>
-              <dt>Source</dt>
+              <dt>{t("detail.meta.source")}</dt>
               <dd>
                 {isHttpUrl(codeRepository) ? (
                   <a href={codeRepository} rel="noopener noreferrer nofollow" target="_blank">
@@ -386,7 +416,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
           )}
           {tags.length > 0 && (
             <>
-              <dt>Tags</dt>
+              <dt>{t("detail.meta.tags")}</dt>
               <dd>
                 <ul className={styles.tagList} data-tag-list="">
                   {tags.map((tag) => (
@@ -403,7 +433,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
 
       <div {...panelProps("versions", defaultTab)} className={styles.panel}>
         {versions.length === 0 ? (
-          <p className={styles.muted}>No versions published yet.</p>
+          <p className={styles.muted}>{t("detail.versions.none")}</p>
         ) : (
           <div className={styles.versions}>
             {versions.map((v) => (
@@ -413,11 +443,8 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
         )}
         {uploadActionUrl && (
           <section className={styles.section} data-add-version="">
-            <h2 className={styles.sectionTitle}>Upload a new version</h2>
-            <p className={styles.muted}>
-              Upload a .jar or .war whose module name and group ID match this module to add it as a
-              new version.
-            </p>
+            <h2 className={styles.sectionTitle}>{t("detail.versions.uploadTitle")}</h2>
+            <p className={styles.muted}>{t("detail.versions.uploadHelp")}</p>
             <Island
               component={FileUploadForm}
               props={{
@@ -435,13 +462,13 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
         <div {...panelProps("install", defaultTab)} className={styles.panel}>
           {howToInstall && (
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>How to install</h2>
+              <h2 className={styles.sectionTitle}>{t("detail.sections.howToInstall")}</h2>
               <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: howToInstall }} />
             </section>
           )}
           {faq && (
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>FAQ</h2>
+              <h2 className={styles.sectionTitle}>{t("detail.sections.faq")}</h2>
               <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: faq }} />
             </section>
           )}

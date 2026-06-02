@@ -40,6 +40,10 @@ export interface VersionCardProps {
   published: boolean;
   changeLogHtml: string;
   downloadUrl: string | null;
+  /** Translated "Download" link label (computed server-side). */
+  downloadLabel: string;
+  /** Translated "draft" badge label, shown to non-owners on unpublished versions. */
+  draftLabel: string;
   publishControl?: VersionPublishControl | null;
   changelogControl?: VersionChangelogControl | null;
   deleteControl?: VersionDeleteControl | null;
@@ -51,6 +55,8 @@ export function VersionCard({
   published,
   changeLogHtml,
   downloadUrl,
+  downloadLabel,
+  draftLabel,
   publishControl,
   changelogControl,
   deleteControl,
@@ -71,11 +77,11 @@ export function VersionCard({
             }}
           />
         ) : (
-          !published && <span className={styles.draft}>draft</span>
+          !published && <span className={styles.draft}>{draftLabel}</span>
         )}
         {downloadUrl && (
           <a className={styles.download} href={downloadUrl}>
-            Download
+            {downloadLabel}
           </a>
         )}
         {deleteControl && (

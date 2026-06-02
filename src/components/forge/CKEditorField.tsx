@@ -7,6 +7,8 @@ interface CKEditorFieldProps {
   /** Initial HTML to seed the editor (stored, server-sanitized value). */
   value: string;
   ariaLabel: string;
+  /** Translated "Loading editor…" label, passed from the server parent's labels. */
+  loadingLabel: string;
   /** Called with the current HTML on every edit. */
   onChange: (html: string) => void;
 }
@@ -54,7 +56,13 @@ type EditorState = "loading" | "ready" | "failed";
  * islands that own the save). If the remote cannot be loaded the field degrades
  * to a plain textarea so editing - and accessibility - never breaks.
  */
-export default function CKEditorField({ id, value, ariaLabel, onChange }: Readonly<CKEditorFieldProps>) {
+export default function CKEditorField({
+  id,
+  value,
+  ariaLabel,
+  loadingLabel,
+  onChange,
+}: Readonly<CKEditorFieldProps>) {
   const holderRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<CKEditorInstance | null>(null);
   // Keep the latest onChange without re-running the mount-only effect.
@@ -114,7 +122,7 @@ export default function CKEditorField({ id, value, ariaLabel, onChange }: Readon
     <div className={styles.wrap} data-ckeditor-state={state}>
       {/* ClassicEditor replaces this element with its toolbar + editable on mount. */}
       <div id={id} ref={holderRef} className={styles.holder} aria-label={ariaLabel} />
-      {state === "loading" && <span className={styles.loading}>Loading editor…</span>}
+      {state === "loading" && <span className={styles.loading}>{loadingLabel}</span>}
     </div>
   );
 }

@@ -13,6 +13,10 @@ export interface ForgeEntryCardProps {
   author?: string;
   /** Category display names - drives the storefront's category facet filter. */
   categories?: string[];
+  /** Translated "Supported" badge label (computed server-side). */
+  supportedLabel: string;
+  /** Translated "Reviewed" badge label (computed server-side). */
+  reviewedLabel: string;
 }
 
 /**
@@ -31,6 +35,8 @@ export function ForgeEntryCard({
   reviewed,
   author,
   categories = [],
+  supportedLabel,
+  reviewedLabel,
 }: Readonly<ForgeEntryCardProps>): JSX.Element {
   return (
     <a
@@ -61,8 +67,8 @@ export function ForgeEntryCard({
                 {status}
               </span>
             )}
-            {supported && <span className={clsx(styles.badge, styles.supported)}>Supported</span>}
-            {reviewed && <span className={clsx(styles.badge, styles.reviewed)}>Reviewed</span>}
+            {supported && <span className={clsx(styles.badge, styles.supported)}>{supportedLabel}</span>}
+            {reviewed && <span className={clsx(styles.badge, styles.reviewed)}>{reviewedLabel}</span>}
           </div>
           {author && (
             <span className={styles.author}>

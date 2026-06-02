@@ -1,15 +1,7 @@
 import { buildNodeUrl, Island, jahiaComponent } from "@jahia/javascript-modules-library";
+import { useTranslation } from "react-i18next";
 import styles from "~/components/forge/upload.module.css";
 import FileUploadForm from "./FileUpload.client";
-
-/** Translated labels, computed server-side and passed into the island (survives hydration). */
-const UPLOAD_LABELS = {
-  fileLabel: "Module package (.jar / .war)",
-  submit: "Upload module",
-  submitting: "Uploading…",
-  pickFile: "Please choose a module package first.",
-  error: "Upload failed - please try again.",
-};
 
 /**
  * Module JAR upload form (jnt:fileUpload).
@@ -28,22 +20,32 @@ const UPLOAD_LABELS = {
 jahiaComponent(
   { nodeType: "jnt:fileUpload", name: "default", displayName: "Module upload", componentType: "view" },
   (_props: object, { renderContext, mainNode, jcrSession }) => {
+    const { t } = useTranslation();
     if (!renderContext.isLoggedIn()) {
-      return <p className={styles.note}>Please log in to submit a module.</p>;
+      return <p className={styles.note}>{t("upload.signInPrompt")}</p>;
     }
 
     const repoPath = `${renderContext.getSite().getPath()}/contents/modules-repository`;
     if (!jcrSession.nodeExists(repoPath)) {
-      return <p className={styles.note}>The module repository is not available on this site.</p>;
+      return <p className={styles.note}>{t("upload.repoUnavailable")}</p>;
     }
 
     const actionUrl = `${buildNodeUrl(jcrSession.getNode(repoPath)).replace(/\.html$/, "")}.createEntryFromJar.do`;
     const back = buildNodeUrl(mainNode);
 
+    // Labels are built server-side and passed into the island (survive hydration).
+    const labels = {
+      fileLabel: t("upload.fileLabel"),
+      submit: t("upload.submit"),
+      submitting: t("upload.submitting"),
+      pickFile: t("upload.pickFile"),
+      error: t("upload.error"),
+    };
+
     return (
       <Island
         component={FileUploadForm}
-        props={{ actionUrl, backUrl: back, accept: ".jar,.war", labels: UPLOAD_LABELS }}
+        props={{ actionUrl, backUrl: back, accept: ".jar,.war", labels }}
       />
     );
   },

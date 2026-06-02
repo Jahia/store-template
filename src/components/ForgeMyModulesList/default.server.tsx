@@ -3,6 +3,7 @@ import {
   jahiaComponent,
   Render,
 } from "@jahia/javascript-modules-library";
+import { useTranslation } from "react-i18next";
 import styles from "~/components/forge/forge.module.css";
 
 /**
@@ -18,19 +19,16 @@ jahiaComponent(
     componentType: "view",
   },
   (_props: object, { currentNode, renderContext }) => {
+    const { t } = useTranslation();
     if (!renderContext.isLoggedIn()) {
-      return <div className={styles.empty}>Please log in to see your modules.</div>;
+      return <div className={styles.empty}>{t("myModules.signInPrompt")}</div>;
     }
 
     const site = renderContext.getSite();
     // Developer-only area: same gate as the My-modules nav entry. A logged-in
     // user without a Store administrator/developer role has no modules to manage.
     if (!site.hasPermission("jahiaForgeUploadModule")) {
-      return (
-        <div className={styles.empty}>
-          You need the Store developer or Store administrator role to submit modules.
-        </div>
-      );
+      return <div className={styles.empty}>{t("myModules.rolePrompt")}</div>;
     }
 
     const basePath = `${site.getPath()}/contents/modules-repository`;
@@ -44,7 +42,7 @@ jahiaComponent(
     const entries = getNodesByJCRQuery(currentNode.getSession(), query, 100);
 
     if (entries.length === 0) {
-      return <div className={styles.empty}>You have not submitted any modules yet.</div>;
+      return <div className={styles.empty}>{t("myModules.empty")}</div>;
     }
 
     return (

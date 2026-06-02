@@ -1,4 +1,5 @@
 import { buildNodeUrl, jahiaComponent } from "@jahia/javascript-modules-library";
+import { useTranslation } from "react-i18next";
 import { ForgeEntryCard } from "~/components/forge/ForgeEntryCard";
 import { excerpt, forgeAuthor, forgeCategoryNames, forgeIconUrl } from "~/components/forge/forgeCard";
 
@@ -22,17 +23,22 @@ jahiaComponent(
   (
     { "jcr:title": title, description, status, supportedByJahia, reviewedByJahia }: ForgeEntryProps,
     { currentNode },
-  ) => (
-    <ForgeEntryCard
-      title={title || currentNode.getName()}
-      excerpt={excerpt(description || "")}
-      iconUrl={forgeIconUrl(currentNode)}
-      detailUrl={buildNodeUrl(currentNode)}
-      status={status}
-      supported={Boolean(supportedByJahia)}
-      reviewed={Boolean(reviewedByJahia)}
-      author={forgeAuthor(currentNode)}
-      categories={forgeCategoryNames(currentNode)}
-    />
-  ),
+  ) => {
+    const { t } = useTranslation();
+    return (
+      <ForgeEntryCard
+        title={title || currentNode.getName()}
+        excerpt={excerpt(description || "")}
+        iconUrl={forgeIconUrl(currentNode)}
+        detailUrl={buildNodeUrl(currentNode)}
+        status={status}
+        supported={Boolean(supportedByJahia)}
+        reviewed={Boolean(reviewedByJahia)}
+        author={forgeAuthor(currentNode)}
+        categories={forgeCategoryNames(currentNode)}
+        supportedLabel={t("card.supported")}
+        reviewedLabel={t("card.reviewed")}
+      />
+    );
+  },
 );

@@ -17,6 +17,7 @@ export interface ChangelogLabels {
   saved: string;
   error: string;
   ariaLabel: string;
+  loading: string;
 }
 
 interface VersionChangelogEditorProps {
@@ -104,7 +105,13 @@ export default function VersionChangelogEditor({
               {labels.error}
             </div>
           )}
-          <CKEditorField id={fieldId} value={draft ?? ""} ariaLabel={labels.ariaLabel} onChange={setDraft} />
+          <CKEditorField
+            id={fieldId}
+            value={draft ?? ""}
+            ariaLabel={labels.ariaLabel}
+            loadingLabel={labels.loading}
+            onChange={setDraft}
+          />
           <div className={styles.actions}>
             <button
               type="button"
