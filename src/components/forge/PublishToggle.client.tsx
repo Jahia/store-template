@@ -80,6 +80,14 @@ export default function PublishToggle({
     }
   };
 
+  // De-nested for clarity (avoids a nested ternary in the JSX below).
+  let buttonLabel = labels.publish;
+  if (status === "saving") {
+    buttonLabel = labels.publishing;
+  } else if (pub) {
+    buttonLabel = labels.unpublish;
+  }
+
   return (
     <span
       className={styles.wrap}
@@ -97,7 +105,7 @@ export default function PublishToggle({
         aria-label={`${pub ? labels.unpublish : labels.publish} (${scope})`}
         onClick={toggle}
       >
-        {status === "saving" ? labels.publishing : pub ? labels.unpublish : labels.publish}
+        {buttonLabel}
       </button>
       {status === "error" && (
         <span className={styles.error} role="alert">

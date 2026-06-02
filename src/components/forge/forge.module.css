@@ -67,7 +67,7 @@
   width: 64px;
   height: 64px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--color-accent), #2f7bd6);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
   color: #fff;
   font-weight: 750;
   font-size: 1.5rem;

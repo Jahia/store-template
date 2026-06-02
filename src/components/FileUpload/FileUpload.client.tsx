@@ -102,7 +102,7 @@ export default function FileUploadForm({ actionUrl, backUrl, accept, labels }: R
         return;
       }
       if (res.status >= 200 && res.status < 300) {
-        window.location.assign(result.successRedirectUrl || backUrl);
+        globalThis.location.assign(result.successRedirectUrl || backUrl);
         return;
       }
       setStatus("error");

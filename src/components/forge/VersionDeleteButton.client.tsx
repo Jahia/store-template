@@ -67,7 +67,7 @@ export default function VersionDeleteButton({
       if (!data?.jcr?.deleteNode) {
         throw new Error("deleteNode returned false");
       }
-      window.location.reload();
+      globalThis.location.reload();
     } catch {
       setStatus("error");
     }
@@ -79,24 +79,11 @@ export default function VersionDeleteButton({
       data-version-delete-scope="version"
       data-version-delete-ready={ready ? "true" : undefined}
     >
-      {!confirming ? (
-        <button
-          type="button"
-          className="store-btn store-btn--ghost store-btn--sm"
-          onClick={() => {
-            setStatus("idle");
-            setConfirming(true);
-          }}
-        >
-          {labels.remove}
-        </button>
-      ) : (
-        <span
-          className={styles.wrap}
-          role="group"
-          aria-label={`${labels.confirmPrompt} (${versionNumber})`}
-        >
-          <span>{labels.confirmPrompt}</span>
+      {confirming ? (
+        <span className={styles.wrap}>
+          <span>
+            {labels.confirmPrompt} ({versionNumber})
+          </span>
           <button
             type="button"
             className="store-btn store-btn--danger store-btn--sm"
@@ -117,6 +104,17 @@ export default function VersionDeleteButton({
             {labels.cancel}
           </button>
         </span>
+      ) : (
+        <button
+          type="button"
+          className="store-btn store-btn--ghost store-btn--sm"
+          onClick={() => {
+            setStatus("idle");
+            setConfirming(true);
+          }}
+        >
+          {labels.remove}
+        </button>
       )}
       {status === "error" && (
         <span className={styles.error} role="alert">

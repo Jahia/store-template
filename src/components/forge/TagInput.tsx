@@ -41,7 +41,8 @@ export default function TagInput({ id, tags, ariaLabel, labels, onChange }: Read
       e.preventDefault();
       addTag(text);
     } else if (e.key === "Backspace" && text === "" && tags.length > 0) {
-      removeTag(tags[tags.length - 1]);
+      const last = tags.at(-1);
+      if (last !== undefined) removeTag(last);
     }
   };
 

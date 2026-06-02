@@ -69,7 +69,7 @@ export default function VersionChangelogEditor({
       await gqlRequest(setChangeLogMutation(workspace), { path, value: clean, language });
       // The changelog is server-rendered outside this island; reload so the saved
       // value shows immediately rather than after a manual refresh.
-      window.location.reload();
+      globalThis.location.reload();
     } catch {
       setStatus("error");
     }

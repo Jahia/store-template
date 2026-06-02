@@ -115,7 +115,7 @@ export function loadCKEditor(): Promise<CKEditorNamespace> {
   const pending = (async (): Promise<CKEditorNamespace> => {
     // The remote assigns itself into appShell.remotes.<key>; stub the object graph
     // so the assignment does not throw on the live delivery page.
-    const globals = window as unknown as {
+    const globals = globalThis as unknown as {
       appShell?: { remotes?: Record<string, FederationContainer> };
     };
     globals.appShell ??= {};

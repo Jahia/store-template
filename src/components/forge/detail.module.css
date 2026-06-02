@@ -39,7 +39,7 @@
 .headIconPlaceholder {
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, var(--color-accent), #2f7bd6);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
   color: #fff;
   font-weight: 750;
   font-size: 2rem;
