@@ -343,7 +343,18 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
                   props={{ path: screenshotsPath, items: shots, labels: SCREENSHOT_LABELS }}
                 />
               ) : (
-                <Island component={Lightbox} props={{ images: shots.map((s) => s.url) }} />
+                <Island
+                  component={Lightbox}
+                  props={{
+                    images: shots.map((s) => s.url),
+                    labels: {
+                      open: t("lightbox.open"),
+                      close: t("lightbox.close"),
+                      previous: t("lightbox.previous"),
+                      next: t("lightbox.next"),
+                    },
+                  }}
+                />
               )}
             </section>
           )}

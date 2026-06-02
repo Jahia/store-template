@@ -1,7 +1,4 @@
 {
-  "site": {
-    "title": "Jahia Store"
-  },
   "chrome": {
     "search": {
       "placeholder": "Search modules…",
@@ -26,7 +23,9 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Use",
     "cookies": "Cookie Policy",
-    "rss": "RSS feed of new modules"
+    "rss": "RSS feed of new modules",
+    "legalNav": "Legal",
+    "socialNav": "Social media"
   },
   "store": {
     "filter": {
@@ -198,5 +197,11 @@
     "confirm": "Delete",
     "cancel": "Cancel",
     "error": "Could not update screenshots - check your permissions."
+  },
+  "lightbox": {
+    "open": "Open screenshot",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next"
   }
 }

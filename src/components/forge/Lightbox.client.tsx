@@ -2,12 +2,23 @@ import { useState } from "react";
 import clsx from "clsx";
 import styles from "./lightbox.module.css";
 
+export interface LightboxLabels {
+  open: string;
+  close: string;
+  previous: string;
+  next: string;
+}
+
 /**
  * Screenshots gallery with a click-to-zoom lightbox - the React replacement for
  * the legacy photoswipe/lity view. SSR-safe: thumbnails render on the server;
- * the overlay opens on click (client state). Receives image URLs as props.
+ * the overlay opens on click (client state). Receives image URLs + translated
+ * control labels as props (the island never imports i18next).
  */
-export default function Lightbox({ images }: Readonly<{ images: string[] }>) {
+export default function Lightbox({
+  images,
+  labels,
+}: Readonly<{ images: string[]; labels: LightboxLabels }>) {
   const [open, setOpen] = useState<number | null>(null);
 
   if (images.length === 0) return null;
@@ -21,7 +32,7 @@ export default function Lightbox({ images }: Readonly<{ images: string[] }>) {
             type="button"
             className={styles.thumbBtn}
             onClick={() => setOpen(i)}
-            aria-label="Open screenshot"
+            aria-label={labels.open}
           >
             <img className={styles.thumb} src={src} alt="" loading="lazy" />
           </button>
@@ -33,9 +44,9 @@ export default function Lightbox({ images }: Readonly<{ images: string[] }>) {
             type="button"
             className={styles.backdrop}
             onClick={() => setOpen(null)}
-            aria-label="Close"
+            aria-label={labels.close}
           />
-          <button type="button" className={styles.close} onClick={() => setOpen(null)} aria-label="Close">
+          <button type="button" className={styles.close} onClick={() => setOpen(null)} aria-label={labels.close}>
             ×
           </button>
           {open > 0 && (
@@ -43,7 +54,7 @@ export default function Lightbox({ images }: Readonly<{ images: string[] }>) {
               type="button"
               className={clsx(styles.nav, styles.prev)}
               onClick={() => setOpen(open - 1)}
-              aria-label="Previous"
+              aria-label={labels.previous}
             >
               ‹
             </button>
@@ -54,7 +65,7 @@ export default function Lightbox({ images }: Readonly<{ images: string[] }>) {
               type="button"
               className={clsx(styles.nav, styles.next)}
               onClick={() => setOpen(open + 1)}
-              aria-label="Next"
+              aria-label={labels.next}
             >
               ›
             </button>

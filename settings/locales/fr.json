@@ -1,7 +1,4 @@
 {
-  "site": {
-    "title": "Jahia Store"
-  },
   "chrome": {
     "search": {
       "placeholder": "Rechercher des modules…",
@@ -26,7 +23,9 @@
     "privacy": "Politique de confidentialité",
     "terms": "Conditions d'utilisation",
     "cookies": "Politique relative aux cookies",
-    "rss": "Flux RSS des nouveaux modules"
+    "rss": "Flux RSS des nouveaux modules",
+    "legalNav": "Mentions légales",
+    "socialNav": "Réseaux sociaux"
   },
   "store": {
     "filter": {
@@ -198,5 +197,11 @@
     "confirm": "Supprimer",
     "cancel": "Annuler",
     "error": "Impossible de mettre à jour les captures d'écran - vérifiez vos autorisations."
+  },
+  "lightbox": {
+    "open": "Ouvrir la capture d'écran",
+    "close": "Fermer",
+    "previous": "Précédent",
+    "next": "Suivant"
   }
 }

@@ -100,14 +100,14 @@ export function Footer(): JSX.Element {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <p className={styles.copy}>{copyright}</p>
-        <nav className={styles.links} aria-label="Legal">
+        <nav className={styles.links} aria-label={t("footer.legalNav")}>
           {legal.map((l) => (
             <a key={l.key} href={l.href}>
               {t(l.key)}
             </a>
           ))}
         </nav>
-        <nav className={styles.social} aria-label="Social media">
+        <nav className={styles.social} aria-label={t("footer.socialNav")}>
           {social.map((s) => (
             <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer">
               {s.label}
