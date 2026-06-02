@@ -43,8 +43,19 @@ jahiaComponent(
     const entries = getNodesByJCRQuery(currentNode.getSession(), query, limit);
 
     if (entries.length === 0) {
-      return <div className={styles.empty}>No published modules yet.</div>;
+      return <div className={styles.empty}>{t("modulesList.empty")}</div>;
     }
+
+    // The grid renders at most `limit` cards. Surface the truncation so it is not
+    // silent: count the total matching entries (bounded so an unbounded query never
+    // runs) and show "Showing N of M" when the total exceeds what is rendered (the
+    // StoreFilter only sees the rendered cards).
+    const COUNT_CAP = 2000;
+    const totalQuery =
+      `SELECT e.[jcr:uuid] FROM [jmix:forgeElement] AS e ` +
+      `WHERE ISDESCENDANTNODE(e, '${basePath}') AND e.[published] = true`;
+    const total = getNodesByJCRQuery(currentNode.getSession(), totalQuery, COUNT_CAP).length;
+    const truncated = total > entries.length;
 
     const statuses = [
       ...new Set(
@@ -64,7 +75,6 @@ jahiaComponent(
       placeholder: t("store.filter.placeholder"),
       status: t("store.filter.status"),
       categories: t("store.filter.categories"),
-      all: t("store.filter.all"),
       unit: t("store.filter.unit"),
       none: t("store.filter.none"),
     };
@@ -72,10 +82,17 @@ jahiaComponent(
     return (
       <div className={styles.layout} data-forge-list="">
         <Island component={StoreFilter} props={{ statuses, categories, labels }} />
-        <div className={styles.grid}>
-          {entries.map((node) => (
-            <Render key={node.getIdentifier()} node={node} view="default" readOnly />
-          ))}
+        <div className={styles.gridArea}>
+          {truncated && (
+            <p className={styles.truncated} data-list-truncated="">
+              {t("modulesList.showingCount", { shown: entries.length, total })}
+            </p>
+          )}
+          <div className={styles.grid}>
+            {entries.map((node) => (
+              <Render key={node.getIdentifier()} node={node} view="default" readOnly />
+            ))}
+          </div>
         </div>
       </div>
     );
