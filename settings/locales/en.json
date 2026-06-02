@@ -16,7 +16,8 @@
     },
     "nav": {
       "label": "Main navigation"
-    }
+    },
+    "skipToMain": "Skip to main content"
   },
   "footer": {
     "copyright": "© 2002–2026 All Rights Reserved by Jahia Solutions Group SA",

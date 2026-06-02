@@ -16,7 +16,7 @@ const DEFAULTS = {
   facebook: "https://www.facebook.com/JahiaSolutions",
   linkedin: "https://www.linkedin.com/company/jahia-solutions",
   twitter: "https://twitter.com/Jahia",
-  youtube: "http://www.youtube.com/jahiacms",
+  youtube: "https://www.youtube.com/jahiacms",
 };
 
 /**

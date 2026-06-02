@@ -88,7 +88,10 @@ jahiaComponent(
     // ---- build the (filtered) query ----
     let where = `ISDESCENDANTNODE(e, '${sql(basePath)}') AND e.[published] = true`;
     if (term) {
-      where += ` AND LOWER(e.[jcr:title]) LIKE '%${sql(term.toLowerCase())}%'`;
+      // Strip LIKE wildcards (% _) and the escape char so a literal term (e.g. "%") can't
+      // widen the scan to the whole catalogue (enumeration / CPU); we only want a substring match.
+      const likeTerm = sql(term.toLowerCase()).replace(/[%_\\]/g, "");
+      where += ` AND LOWER(e.[jcr:title]) LIKE '%${likeTerm}%'`;
     }
     if (statuses.length > 0) {
       where += ` AND (${statuses.map((s) => `e.[status] = '${sql(s)}'`).join(" OR ")})`;
@@ -148,7 +151,7 @@ jahiaComponent(
             {STATUSES.map((s) => (
               <label key={s} className={filterStyles.facet}>
                 <input type="checkbox" name="status" value={s} defaultChecked={statuses.includes(s)} />
-                <span>{s}</span>
+                <span className={filterStyles.facetStatus}>{s}</span>
               </label>
             ))}
           </fieldset>
@@ -168,7 +171,7 @@ jahiaComponent(
               ))}
             </fieldset>
           )}
-          <button type="submit" className={`store-btn ${filterStyles.apply}`}>
+          <button type="submit" className={`store-btn store-btn--primary ${filterStyles.apply}`}>
             {labels.apply}
           </button>
         </form>
@@ -193,7 +196,7 @@ jahiaComponent(
               {totalPages > 1 && (
                 <nav className={styles.pagination} aria-label={t("modulesList.pagination")} data-forge-pagination="">
                   {page > 1 && (
-                    <a className="store-btn" href={pageHref(page - 1)} rel="prev" data-page-prev="">
+                    <a className="store-btn store-btn--ghost" href={pageHref(page - 1)} rel="prev" data-page-prev="">
                       {t("modulesList.previous")}
                     </a>
                   )}
@@ -201,7 +204,7 @@ jahiaComponent(
                     {t("modulesList.pageOf", { page, pages: totalPages })}
                   </span>
                   {page < totalPages && (
-                    <a className="store-btn" href={pageHref(page + 1)} rel="next" data-page-next="">
+                    <a className="store-btn store-btn--ghost" href={pageHref(page + 1)} rel="next" data-page-next="">
                       {t("modulesList.next")}
                     </a>
                   )}

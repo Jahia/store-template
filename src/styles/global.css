@@ -51,6 +51,27 @@
   border: 0;
 }
 
+/* A `.sr-only` element that becomes visible on keyboard focus — used by the
+   skip-to-main-content link so it appears only when a keyboard user tabs to it. */
+.sr-only--focusable:focus,
+.sr-only--focusable:focus-visible {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 1000;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.6rem 1rem;
+  overflow: visible;
+  clip: auto;
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+}
+
 html,
 body {
   margin: 0;
