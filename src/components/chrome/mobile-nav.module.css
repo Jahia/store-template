@@ -1,0 +1,116 @@
+/* Mobile disclosure for the primary nav + search. Hidden on wide viewports
+   (the desktop .nav/.search in Header.module.css own those there); shown only
+   at the same ≤720px breakpoint where the desktop chrome is hidden. */
+.mobileNav {
+  display: none;
+  position: relative;
+  margin-left: auto;
+}
+
+@media (max-width: 720px) {
+  .mobileNav {
+    display: block;
+  }
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  cursor: pointer;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  transition: border-color 150ms var(--ease), background 150ms var(--ease);
+}
+.toggle:hover {
+  border-color: var(--color-accent);
+}
+.toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 18px;
+}
+.bars span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: currentColor;
+  border-radius: 2px;
+}
+
+.panel {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  right: 0;
+  width: min(86vw, 320px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  z-index: 60;
+}
+.panel[hidden] {
+  display: none;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.navLink {
+  display: block;
+  color: var(--color-text);
+  font-weight: 550;
+  font-size: 0.95rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 7px;
+  transition: color 150ms var(--ease), background 150ms var(--ease);
+}
+.navLink:hover {
+  color: var(--color-accent);
+  background: var(--color-surface-2);
+  text-decoration: none;
+}
+.navLink:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.search {
+  margin: 0;
+}
+
+.searchInput {
+  width: 100%;
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease);
+}
+.searchInput:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: var(--ring);
+  background: #fff;
+}

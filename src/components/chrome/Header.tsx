@@ -10,6 +10,7 @@ import type { JCRNodeWrapper } from "org.jahia.services.content";
 import { useTranslation } from "react-i18next";
 import styles from "./Header.module.css";
 import Login from "./Login.client";
+import MobileNav from "./MobileNav.client";
 
 /**
  * Permission granted only by the "Store administrator" and "Store developer"
@@ -114,6 +115,9 @@ export function Header(): JSX.Element {
   const restrictedPages =
     home && !canManageStore ? myModulesPageIds(home, childPages) : new Set<string>();
   const navPages = childPages.filter((n) => !restrictedPages.has(n.getIdentifier()));
+  // Serializable nav links for the mobile disclosure island (same pages as the
+  // desktop nav; the island only renders ≤720px where the desktop nav is hidden).
+  const navLinks = navPages.map((p) => ({ href: buildNodeUrl(p), label: p.getDisplayableName() }));
 
   // Search navigates to the home modules list; its StoreFilter island reads
   // ?src_terms and filters the grid.
@@ -143,7 +147,7 @@ export function Header(): JSX.Element {
           )}
         </a>
 
-        <nav className={styles.nav} aria-label="Main navigation">
+        <nav className={styles.nav} aria-label={t("chrome.nav.label")}>
           {navPages.map((p) => (
             <a key={p.getIdentifier()} className={styles.navLink} href={buildNodeUrl(p)}>
               {p.getDisplayableName()}
@@ -174,6 +178,21 @@ export function Header(): JSX.Element {
               signOut: t("chrome.login.signOut"),
               username: t("chrome.login.username"),
               password: t("chrome.login.password"),
+            },
+          }}
+        />
+
+        <Island
+          component={MobileNav}
+          props={{
+            links: navLinks,
+            searchAction: searchUrl,
+            labels: {
+              open: t("chrome.menu.open"),
+              close: t("chrome.menu.close"),
+              nav: t("chrome.nav.label"),
+              searchPlaceholder: t("chrome.search.placeholder"),
+              searchLabel: t("chrome.search.label"),
             },
           }}
         />
