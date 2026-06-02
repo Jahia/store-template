@@ -12,7 +12,8 @@
   padding: 0.6rem 0.85rem;
   border-radius: 8px;
   background: #fdecef;
-  color: #a50f35;
+  /* AAA: the shared danger token (#a00f33) clears 7:1 on this pink surface. */
+  color: var(--color-danger);
   font-size: 0.9rem;
 }
 
