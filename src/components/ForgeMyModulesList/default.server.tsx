@@ -32,6 +32,10 @@ jahiaComponent(
     }
 
     const basePath = `${site.getPath()}/contents/modules-repository`;
+    // SECURITY: any value interpolated into this JCR-SQL2 statement MUST be escaped.
+    // `basePath` is server-derived (trusted); `username` is doubled-single-quote escaped
+    // — the standard JCR-SQL2 string-literal escape. Keep this escape on any value added
+    // to the query in future (there is no parameterized-query helper here).
     const username = renderContext.getUser().getName().replaceAll("'", "''");
 
     const query =
