@@ -20,12 +20,24 @@ const DEFAULTS = {
 };
 
 /**
- * Footer hrefs come from site-admin-configured settings. Only render an http(s)
- * URL as a link target; anything else (a stored javascript:/data: URL) falls back
- * to the Jahia default so the footer can never become an XSS vector (SECURITY-571).
+ * Footer hrefs come from site-admin-configured settings (Store administration →
+ * Settings). A configured value is honoured whenever it is safe to render as a link;
+ * only an empty value or a script-bearing scheme (javascript:/data:/vbscript:/file:)
+ * falls back to the Jahia default, so the footer can never become an XSS vector
+ * (SECURITY-571). A scheme-less value (e.g. "acme.com/privacy" — the common case when an
+ * admin omits "https://") is treated as an external https URL rather than silently dropped.
  */
-function safeHref(url: string, fallback: string): string {
-  return /^https?:\/\//i.test(url.trim()) ? url : fallback;
+function safeHref(url: string | null | undefined, fallback: string): string {
+  const value = (url ?? "").trim();
+  if (!value) return fallback;
+  // Browsers strip whitespace (tab/newline/CR) from a URL before resolving its scheme, so
+  // probe a whitespace-collapsed copy against the deny-list — defeats "java\tscript:" tricks.
+  const probe = value.replace(/\s+/g, "").toLowerCase();
+  if (/^(?:javascript|data|vbscript|file):/.test(probe)) return fallback;
+  if (/^https?:\/\//i.test(value)) return value; // already an absolute http(s) URL
+  if (value.startsWith("//")) return `https:${value}`; // protocol-relative → https
+  if (value.startsWith("/")) return value; // same-origin path
+  return `https://${value}`; // bare host/path → external https
 }
 
 /**
