@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./login.module.css";
 
 interface LoginLabels {
@@ -28,6 +28,11 @@ interface LoginProps {
  *
  * /cms/login is not CSRF-gated, so a plain form POST works (unlike action `.do`
  * POSTs, which need XHR for the CSRF token).
+ *
+ * The sign-in trigger is a proper disclosure (aria-expanded + aria-controls, no
+ * aria-haspopup="dialog" since the revealed element is an inline form, not a
+ * modal): opening moves focus to the username field, and Escape closes the panel
+ * and returns focus to the trigger so it stays keyboard-operable.
  */
 export default function Login({
   isLoggedIn,
@@ -38,6 +43,26 @@ export default function Login({
   labels,
 }: Readonly<LoginProps>) {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const usernameRef = useRef<HTMLInputElement>(null);
+
+  // On open, move focus into the panel (username field).
+  useEffect(() => {
+    if (open) usernameRef.current?.focus();
+  }, [open]);
+
+  // Escape closes the disclosure and returns focus to the trigger.
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   if (isLoggedIn) {
     return (
@@ -59,16 +84,18 @@ export default function Login({
   return (
     <div className={styles.login}>
       <button
+        ref={triggerRef}
         type="button"
         className={styles.loginBtn}
         aria-expanded={open}
-        aria-haspopup="dialog"
+        aria-controls="login-panel"
         onClick={() => setOpen((v) => !v)}
       >
         {labels.signIn}
       </button>
       {open && (
         <form
+          id="login-panel"
           className={styles.panel}
           method="post"
           action={loginUrl}
@@ -77,7 +104,7 @@ export default function Login({
           {/* Where Jahia sends the browser after a successful login. */}
           <input type="hidden" name="redirect" value={loginRedirect} />
           <label htmlFor="login-username">{labels.username}</label>
-          <input id="login-username" name="username" autoComplete="username" required />
+          <input ref={usernameRef} id="login-username" name="username" autoComplete="username" required />
           <label htmlFor="login-password">{labels.password}</label>
           <input
             id="login-password"
