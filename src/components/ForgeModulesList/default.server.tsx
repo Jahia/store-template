@@ -1,26 +1,46 @@
 import {
+  getChildNodes,
   getNodesByJCRQuery,
-  Island,
   jahiaComponent,
   Render,
 } from "@jahia/javascript-modules-library";
 import { useTranslation } from "react-i18next";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import styles from "~/components/forge/forge.module.css";
-import { forgeCategoryNames } from "~/components/forge/forgeCard";
-import StoreFilter from "~/components/forge/StoreFilter.client";
+import filterStyles from "~/components/forge/store-filter.module.css";
+import { forgeRootCategoryUuid } from "~/components/forge/forgeBranding";
 
 interface ForgeModulesListProps {
   startNode?: JCRNodeWrapper;
   nbOfModulePerPage?: number;
 }
 
+/** jmix:forgeElement status choicelist (definitions.cnd) — the fixed status facet options. */
+const STATUSES = ["community", "labs", "prereleased", "supported", "legacy"];
+const DEFAULT_PAGE_SIZE = 12;
+/** Bound the total-count query so an unbounded catalogue can never run away. */
+const COUNT_CAP = 5000;
+
+/** Escape a value for safe inclusion in a JCR-SQL2 string literal. */
+const sql = (v: string): string => v.replaceAll("'", "''");
+
+/** Read a repeated request parameter as a string array (GraalJS-safe over a Java String[]). */
+function multiParam(values: string[] | null | undefined): string[] {
+  if (!values) return [];
+  const out: string[] = [];
+  for (let i = 0; i < values.length; i++) out.push(String(values[i]));
+  return out;
+}
+
 /**
- * Storefront list: a responsive grid of published forge modules & packages with
- * an instant client-side filter (status facets + text), replacing the legacy
- * isotope/select2 UI. The cards are server-rendered (SEO); the StoreFilter
- * island filters them client-side and syncs the URL, so the header search
- * (`?src_terms=`) seeds the filter.
+ * Storefront list: a responsive grid of published forge modules & packages.
+ *
+ * Filtering (status / category facets + text) and pagination are SERVER-SIDE: the JCR query is
+ * constrained and offset/limited per page, so the facets search the WHOLE catalogue rather than
+ * one page, and arbitrarily large catalogues stay reachable. State lives in the URL
+ * (`src_terms`, `status`, `category`, `page`) via a plain GET form + page links, so the view is
+ * shareable/SEO-friendly and seeds from the header search (`src_terms`). The fragment is rendered
+ * fresh (`cache.expiration: 0`) so those parameters are always honoured.
  */
 jahiaComponent(
   {
@@ -28,71 +48,167 @@ jahiaComponent(
     name: "default",
     displayName: "Modules list",
     componentType: "view",
+    // Vary by the filter/page query params: render fresh instead of serving a cached page 1.
+    properties: { "cache.expiration": "0" },
   },
   ({ startNode, nbOfModulePerPage }: ForgeModulesListProps, { currentNode, renderContext }) => {
     const { t } = useTranslation();
     const site = renderContext.getSite();
+    const session = currentNode.getSession();
+    const request = renderContext.getRequest();
     const basePath = startNode ? startNode.getPath() : `${site.getPath()}/contents/modules-repository`;
-    const limit = nbOfModulePerPage && nbOfModulePerPage > 0 ? Number(nbOfModulePerPage) : 60;
+    const pageSize =
+      nbOfModulePerPage && nbOfModulePerPage > 0 ? Number(nbOfModulePerPage) : DEFAULT_PAGE_SIZE;
 
-    const query =
-      `SELECT * FROM [jmix:forgeElement] AS e ` +
-      `WHERE ISDESCENDANTNODE(e, '${basePath}') AND e.[published] = true ` +
-      `ORDER BY e.[jcr:title] ASC`;
+    // ---- current filter state (from the URL) ----
+    const term = (request.getParameter("src_terms") || "").trim();
+    const statuses = multiParam(request.getParameterValues("status")).filter((s) =>
+      STATUSES.includes(s),
+    );
+    const selectedCategories = multiParam(request.getParameterValues("category"));
+    let page = parseInt(request.getParameter("page") || "1", 10);
+    if (!Number.isFinite(page) || page < 1) page = 1;
 
-    const entries = getNodesByJCRQuery(currentNode.getSession(), query, limit);
+    // ---- category facet options (the site's root-category children) ----
+    const rootUuid = forgeRootCategoryUuid(site.getSiteKey());
+    const categoryOptions: { uuid: string; name: string }[] = [];
+    if (rootUuid) {
+      try {
+        const root = session.getNodeByIdentifier(rootUuid);
+        for (const c of getChildNodes(root, 200, 0, (n) => n.isNodeType("jnt:category"))) {
+          categoryOptions.push({ uuid: c.getIdentifier(), name: c.getDisplayableName() });
+        }
+      } catch {
+        // root category missing / not readable - no category facet.
+      }
+    }
+    const allowedCategoryUuids = new Set(categoryOptions.map((c) => c.uuid));
+    const categories = selectedCategories.filter((u) => allowedCategoryUuids.has(u));
 
-    if (entries.length === 0) {
-      return <div className={styles.empty}>{t("modulesList.empty")}</div>;
+    // ---- build the (filtered) query ----
+    let where = `ISDESCENDANTNODE(e, '${sql(basePath)}') AND e.[published] = true`;
+    if (term) {
+      where += ` AND LOWER(e.[jcr:title]) LIKE '%${sql(term.toLowerCase())}%'`;
+    }
+    if (statuses.length > 0) {
+      where += ` AND (${statuses.map((s) => `e.[status] = '${sql(s)}'`).join(" OR ")})`;
+    }
+    if (categories.length > 0) {
+      where += ` AND (${categories.map((u) => `e.[j:defaultCategory] = '${sql(u)}'`).join(" OR ")})`;
     }
 
-    // The grid renders at most `limit` cards. Surface the truncation so it is not
-    // silent: count the total matching entries (bounded so an unbounded query never
-    // runs) and show "Showing N of M" when the total exceeds what is rendered (the
-    // StoreFilter only sees the rendered cards).
-    const COUNT_CAP = 2000;
-    const totalQuery =
-      `SELECT e.[jcr:uuid] FROM [jmix:forgeElement] AS e ` +
-      `WHERE ISDESCENDANTNODE(e, '${basePath}') AND e.[published] = true`;
-    const total = getNodesByJCRQuery(currentNode.getSession(), totalQuery, COUNT_CAP).length;
-    const truncated = total > entries.length;
+    const total = getNodesByJCRQuery(
+      session,
+      `SELECT e.[jcr:uuid] FROM [jmix:forgeElement] AS e WHERE ${where}`,
+      COUNT_CAP,
+    ).length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    if (page > totalPages) page = totalPages;
 
-    const statuses = [
-      ...new Set(
-        entries
-          .map((e) => (e.hasProperty("status") ? e.getProperty("status").getString() : ""))
-          .filter(Boolean),
-      ),
-    ].sort((a, b) => a.localeCompare(b));
-
-    // Facet list: every category any listed entry is filed under.
-    const categories = [...new Set(entries.flatMap((e) => forgeCategoryNames(e)))].sort((a, b) =>
-      a.localeCompare(b),
+    const entries = getNodesByJCRQuery(
+      session,
+      `SELECT * FROM [jmix:forgeElement] AS e WHERE ${where} ORDER BY e.[jcr:title] ASC`,
+      pageSize,
+      (page - 1) * pageSize,
     );
+
+    // ---- URL helpers (relative query strings; reuse the current page path). Built by hand
+    // rather than with URLSearchParams, which is not available in the GraalJS SSR runtime. ----
+    const pageHref = (n: number): string => {
+      const parts: string[] = [];
+      if (term) parts.push(`src_terms=${encodeURIComponent(term)}`);
+      for (const s of statuses) parts.push(`status=${encodeURIComponent(s)}`);
+      for (const c of categories) parts.push(`category=${encodeURIComponent(c)}`);
+      parts.push(`page=${n}`);
+      return `?${parts.join("&")}`;
+    };
 
     const labels = {
       search: t("store.filter.search"),
       placeholder: t("store.filter.placeholder"),
       status: t("store.filter.status"),
       categories: t("store.filter.categories"),
-      unit: t("store.filter.unit"),
-      none: t("store.filter.none"),
+      apply: t("store.filter.apply"),
     };
 
     return (
       <div className={styles.layout} data-forge-list="">
-        <Island component={StoreFilter} props={{ statuses, categories, labels }} />
-        <div className={styles.gridArea}>
-          {truncated && (
-            <p className={styles.truncated} data-list-truncated="">
-              {t("modulesList.showingCount", { shown: entries.length, total })}
-            </p>
-          )}
-          <div className={styles.grid}>
-            {entries.map((node) => (
-              <Render key={node.getIdentifier()} node={node} view="default" readOnly />
+        {/* A plain <div> (not <aside>): a complementary landmark nested in <main> trips axe. */}
+        <form className={filterStyles.sidebar} method="get" data-forge-filter="">
+          <input
+            className={filterStyles.search}
+            type="search"
+            name="src_terms"
+            defaultValue={term}
+            placeholder={labels.placeholder}
+            aria-label={labels.search}
+          />
+          <fieldset className={filterStyles.facets}>
+            <legend className={filterStyles.legend}>{labels.status}</legend>
+            {STATUSES.map((s) => (
+              <label key={s} className={filterStyles.facet}>
+                <input type="checkbox" name="status" value={s} defaultChecked={statuses.includes(s)} />
+                <span>{s}</span>
+              </label>
             ))}
-          </div>
+          </fieldset>
+          {categoryOptions.length > 0 && (
+            <fieldset className={filterStyles.facets}>
+              <legend className={filterStyles.legend}>{labels.categories}</legend>
+              {categoryOptions.map((c) => (
+                <label key={c.uuid} className={filterStyles.facet}>
+                  <input
+                    type="checkbox"
+                    name="category"
+                    value={c.uuid}
+                    defaultChecked={categories.includes(c.uuid)}
+                  />
+                  <span>{c.name}</span>
+                </label>
+              ))}
+            </fieldset>
+          )}
+          <button type="submit" className={`store-btn ${filterStyles.apply}`}>
+            {labels.apply}
+          </button>
+        </form>
+
+        <div className={styles.gridArea}>
+          {total === 0 ? (
+            <div className={styles.empty}>
+              {term || statuses.length || categories.length
+                ? t("store.filter.none")
+                : t("modulesList.empty")}
+            </div>
+          ) : (
+            <>
+              <p className={styles.truncated} data-list-count="">
+                {t("modulesList.showingCount", { shown: entries.length, total })}
+              </p>
+              <div className={styles.grid}>
+                {entries.map((node) => (
+                  <Render key={node.getIdentifier()} node={node} view="default" readOnly />
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <nav className={styles.pagination} aria-label={t("modulesList.pagination")} data-forge-pagination="">
+                  {page > 1 && (
+                    <a className="store-btn" href={pageHref(page - 1)} rel="prev" data-page-prev="">
+                      {t("modulesList.previous")}
+                    </a>
+                  )}
+                  <span className={styles.pageInfo} data-page-info="">
+                    {t("modulesList.pageOf", { page, pages: totalPages })}
+                  </span>
+                  {page < totalPages && (
+                    <a className="store-btn" href={pageHref(page + 1)} rel="next" data-page-next="">
+                      {t("modulesList.next")}
+                    </a>
+                  )}
+                </nav>
+              )}
+            </>
+          )}
         </div>
       </div>
     );

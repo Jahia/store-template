@@ -95,3 +95,9 @@
   font-size: 0.85rem;
   color: var(--color-text-muted);
 }
+
+/* "Apply filters" submit button for the server-side GET filter form. */
+.apply {
+  margin-top: 0.25rem;
+  width: 100%;
+}

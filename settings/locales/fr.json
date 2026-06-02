@@ -34,12 +34,17 @@
       "status": "Statut",
       "categories": "Catégories",
       "unit": "modules",
+      "apply": "Appliquer les filtres",
       "none": "Aucun module ne correspond à vos filtres."
     }
   },
   "modulesList": {
     "empty": "Aucun module publié pour le moment.",
-    "showingCount": "Affichage de {{shown}} module(s) sur {{total}}"
+    "showingCount": "Affichage de {{shown}} module(s) sur {{total}}",
+    "pagination": "Pages de la liste des modules",
+    "pageOf": "Page {{page}} sur {{pages}}",
+    "previous": "Précédent",
+    "next": "Suivant"
   },
   "myModules": {
     "signInPrompt": "Veuillez vous connecter pour voir vos modules.",

@@ -41,6 +41,20 @@
   padding: 2rem 0;
 }
 
+/* Server-side pagination controls below the grid. */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.pageInfo {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
 .card {
   display: flex;
   gap: 1rem;

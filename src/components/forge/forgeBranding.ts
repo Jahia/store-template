@@ -37,6 +37,21 @@ const EMPTY: ForgeBranding = {
 
 const str = (v: unknown): string => (v === null || v === undefined ? "" : String(v));
 
+/**
+ * The site's configured root-category UUID (stored in the same per-site config), or "".
+ * Used by the storefront to enumerate the category facet options for server-side filtering.
+ */
+export function forgeRootCategoryUuid(siteKey: string): string {
+  try {
+    const service = server.osgi.getService(SERVICE);
+    if (!service) return "";
+    const s = service.get(siteKey);
+    return s ? str(s.getRootCategoryUuid()) : "";
+  } catch {
+    return "";
+  }
+}
+
 /** Public forge branding for a site, or all-empty when unset / the service is unavailable. */
 export function forgeBranding(siteKey: string): ForgeBranding {
   try {
