@@ -18,13 +18,28 @@ const DEFAULTS = {
   youtube: "http://www.youtube.com/jahiacms",
 };
 
-/** Read a string property off the site node, tolerating any access failure. */
+/**
+ * Read a string property off the site node, tolerating any access failure.
+ *
+ * NB: these `forgeSettings*` property names are the read counterpart of
+ * privateappstore's ForgeSettingsReader / ForgeSettingsMutationExtension. That
+ * Java class is the authority for the mapping; keep these names in sync with it.
+ */
 function prop(site: JCRNodeWrapper, name: string): string {
   try {
     return site.hasProperty(name) ? site.getProperty(name).getString() : "";
   } catch {
     return "";
   }
+}
+
+/**
+ * Footer hrefs come from site-admin-configured settings. Only render an http(s)
+ * URL as a link target; anything else (a stored javascript:/data: URL) falls back
+ * to the Jahia default so the footer can never become an XSS vector (SECURITY-571).
+ */
+function safeHref(url: string, fallback: string): string {
+  return /^https?:\/\//i.test(url.trim()) ? url : fallback;
 }
 
 /**
@@ -70,15 +85,15 @@ export function Footer(): JSX.Element {
   const copyright = prop(site, "forgeSettingsCopyright") || t("footer.copyright");
   const rssUrl = feedUrl(site);
   const legal = [
-    { href: prop(site, "forgeSettingsPrivacyUrl") || DEFAULTS.privacy, key: "footer.privacy" },
-    { href: prop(site, "forgeSettingsTermsUrl") || DEFAULTS.terms, key: "footer.terms" },
-    { href: prop(site, "forgeSettingsCookiesUrl") || DEFAULTS.cookies, key: "footer.cookies" },
+    { href: safeHref(prop(site, "forgeSettingsPrivacyUrl"), DEFAULTS.privacy), key: "footer.privacy" },
+    { href: safeHref(prop(site, "forgeSettingsTermsUrl"), DEFAULTS.terms), key: "footer.terms" },
+    { href: safeHref(prop(site, "forgeSettingsCookiesUrl"), DEFAULTS.cookies), key: "footer.cookies" },
   ];
   const social = [
-    { href: prop(site, "forgeSettingsFacebookUrl") || DEFAULTS.facebook, label: "Facebook" },
-    { href: prop(site, "forgeSettingsLinkedinUrl") || DEFAULTS.linkedin, label: "LinkedIn" },
-    { href: prop(site, "forgeSettingsTwitterUrl") || DEFAULTS.twitter, label: "Twitter" },
-    { href: prop(site, "forgeSettingsYoutubeUrl") || DEFAULTS.youtube, label: "YouTube" },
+    { href: safeHref(prop(site, "forgeSettingsFacebookUrl"), DEFAULTS.facebook), label: "Facebook" },
+    { href: safeHref(prop(site, "forgeSettingsLinkedinUrl"), DEFAULTS.linkedin), label: "LinkedIn" },
+    { href: safeHref(prop(site, "forgeSettingsTwitterUrl"), DEFAULTS.twitter), label: "Twitter" },
+    { href: safeHref(prop(site, "forgeSettingsYoutubeUrl"), DEFAULTS.youtube), label: "YouTube" },
   ];
 
   return (
