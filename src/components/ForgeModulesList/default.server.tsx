@@ -27,9 +27,32 @@ const sql = (v: string): string => v.replaceAll("'", "''");
 /** Read a repeated request parameter as a string array (GraalJS-safe over a Java String[]). */
 function multiParam(values: string[] | null | undefined): string[] {
   if (!values) return [];
-  const out: string[] = [];
-  for (let i = 0; i < values.length; i++) out.push(String(values[i]));
-  return out;
+  // `values` is a Java String[] (array-like) bridged into GraalJS; copy it to a JS array.
+  return Array.from(values, (v) => String(v));
+}
+
+/**
+ * Build the JCR-SQL2 WHERE clause for the published forge elements under `basePath`, narrowed
+ * by the optional text / status / category filters. Each clause is assembled into an
+ * intermediate variable (no nested template literals) and every interpolated value is escaped.
+ */
+function buildWhere(basePath: string, term: string, statuses: string[], categories: string[]): string {
+  const clauses = [`ISDESCENDANTNODE(e, '${sql(basePath)}')`, "e.[published] = true"];
+  if (term) {
+    // Strip LIKE wildcards (% _) and the escape char so a literal term (e.g. "%") can't widen
+    // the scan to the whole catalogue (enumeration / CPU); we only want a substring match.
+    const likeTerm = sql(term.toLowerCase()).replaceAll(/[%_\\]/g, "");
+    clauses.push(`LOWER(e.[jcr:title]) LIKE '%${likeTerm}%'`);
+  }
+  if (statuses.length > 0) {
+    const statusOr = statuses.map((s) => `e.[status] = '${sql(s)}'`).join(" OR ");
+    clauses.push(`(${statusOr})`);
+  }
+  if (categories.length > 0) {
+    const categoryOr = categories.map((u) => `e.[j:defaultCategory] = '${sql(u)}'`).join(" OR ");
+    clauses.push(`(${categoryOr})`);
+  }
+  return clauses.join(" AND ");
 }
 
 /**
@@ -66,7 +89,7 @@ jahiaComponent(
       STATUSES.includes(s),
     );
     const selectedCategories = multiParam(request.getParameterValues("category"));
-    let page = parseInt(request.getParameter("page") || "1", 10);
+    let page = Number.parseInt(request.getParameter("page") || "1", 10);
     if (!Number.isFinite(page) || page < 1) page = 1;
 
     // ---- category facet options (the site's root-category children) ----
@@ -86,19 +109,7 @@ jahiaComponent(
     const categories = selectedCategories.filter((u) => allowedCategoryUuids.has(u));
 
     // ---- build the (filtered) query ----
-    let where = `ISDESCENDANTNODE(e, '${sql(basePath)}') AND e.[published] = true`;
-    if (term) {
-      // Strip LIKE wildcards (% _) and the escape char so a literal term (e.g. "%") can't
-      // widen the scan to the whole catalogue (enumeration / CPU); we only want a substring match.
-      const likeTerm = sql(term.toLowerCase()).replace(/[%_\\]/g, "");
-      where += ` AND LOWER(e.[jcr:title]) LIKE '%${likeTerm}%'`;
-    }
-    if (statuses.length > 0) {
-      where += ` AND (${statuses.map((s) => `e.[status] = '${sql(s)}'`).join(" OR ")})`;
-    }
-    if (categories.length > 0) {
-      where += ` AND (${categories.map((u) => `e.[j:defaultCategory] = '${sql(u)}'`).join(" OR ")})`;
-    }
+    const where = buildWhere(basePath, term, statuses, categories);
 
     const total = getNodesByJCRQuery(
       session,

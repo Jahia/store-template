@@ -35,7 +35,8 @@ const EMPTY: ForgeBranding = {
   youtubeUrl: "",
 };
 
-const str = (v: unknown): string => (v === null || v === undefined ? "" : String(v));
+// The OSGi service getters return Java String (-> JS string) or null; normalise null/undefined to "".
+const str = (v: string | null | undefined): string => v ?? "";
 
 /**
  * The site's configured root-category UUID (stored in the same per-site config), or "".

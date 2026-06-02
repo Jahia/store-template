@@ -32,7 +32,7 @@ function safeHref(url: string | null | undefined, fallback: string): string {
   if (!value) return fallback;
   // Browsers strip whitespace (tab/newline/CR) from a URL before resolving its scheme, so
   // probe a whitespace-collapsed copy against the deny-list — defeats "java\tscript:" tricks.
-  const probe = value.replace(/\s+/g, "").toLowerCase();
+  const probe = value.replaceAll(/\s+/g, "").toLowerCase();
   if (/^(?:javascript|data|vbscript|file):/.test(probe)) return fallback;
   if (/^https?:\/\//i.test(value)) return value; // already an absolute http(s) URL
   if (value.startsWith("//")) return `https:${value}`; // protocol-relative → https
