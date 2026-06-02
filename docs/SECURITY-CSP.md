@@ -1,7 +1,7 @@
 # Production Content-Security-Policy & security headers
 
-> Scope: the `store-template` JavaScript module (SSR React via `javascript-modules-engine`)
-> together with `privateappstore`. CSP and the related response headers are a **deployment
+> Scope: the `jahia-store-template` JavaScript module (SSR React via `javascript-modules-engine`)
+> together with `jahia-store`. CSP and the related response headers are a **deployment
 > concern** - they are emitted by the front door (reverse proxy or Jahia response-header
 > configuration), not by a template module - so this file is the authoritative spec for what
 > the policy must allow and how to roll it out. It is tailored to what the engine actually
@@ -32,10 +32,10 @@ A store page rendered by the engine contains, in `<head>`:
 | `<script type="module" src="/modules/javascript-modules-engine/javascript/index.js">` | self | `script-src 'self'` |
 | `<script type="text/javascript" src="/modules/CsrfServlet?tag=…">` (CSRF guard) | self | `script-src 'self'` |
 | `<link rel="modulepreload" href="/modules/.../shared-libs/*.js">` (React, i18next, …) | self | `script-src 'self'` |
-| island chunks `/modules/store-template/dist/client/**/*.js` + the dynamic `dist/assets/purify.es-*.js` | self | `script-src 'self'` |
+| island chunks `/modules/jahia-store-template/dist/client/**/*.js` + the dynamic `dist/assets/purify.es-*.js` | self | `script-src 'self'` |
 | **`<script type="importmap">…</script>`** (React externalization map) | **inline** | needs a nonce - see below |
 | `<script type="application/json" id="jahia-data-ctx|ck">`, `data-i18n-store`, `<jsm-island>` props | inline **data** | not executed → not subject to `script-src` in compliant browsers |
-| `<link rel="stylesheet" href="/modules/store-template/dist/assets/style.css">` | self | `style-src 'self'` |
+| `<link rel="stylesheet" href="/modules/jahia-store-template/dist/assets/style.css">` | self | `style-src 'self'` |
 | `<iframe src="https://www.youtube.com/embed/…">` / `https://player.vimeo.com/video/…` (video views) | external | **`frame-src` must allow these** |
 
 Runtime network calls made by the islands (all same-origin):

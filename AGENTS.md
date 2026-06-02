@@ -1,17 +1,17 @@
-# AGENTS.md - store-template
+# AGENTS.md - jahia-store-template
 
 Guidance for AI agents (and humans) working in this repo. Read this before editing.
 
 ## What this is
 
-`store-template` is the **Jahia 8.2 JavaScript module** that renders the Private
+`jahia-store-template` is the **Jahia 8.2 JavaScript module** that renders the Private
 App Store website (storefront + module detail/authoring + JAR upload). It was
 migrated from a legacy JSP/Bootstrap-3 template set to a **server-side React**
 module running on the `javascript-modules-engine` (GraalVM SSR + Vite).
 See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
 
 > **Store administration** (Forge settings / Categories / Roles) lives in the
-> **Jahia site administration (jContent)**, provided by the `privateappstore`
+> **Jahia site administration (jContent)**, provided by the `jahia-store`
 > module's React app - it is NOT in-site here (an earlier in-site admin was
 > removed). The chrome reads site branding (logo + footer) from the
 > `jmix:forgeSettings` properties set there.
@@ -19,8 +19,8 @@ See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
 - Packaging: a Jahia JS module shipped as a `.tgz` (not a JAR). `mvn package`
   shells out to npm; the build artifact is `dist/package.tgz`.
 - Runtime data (modules, categories, versions) lives in the JCR and is mostly
-  produced by the sibling **`privateappstore`** Java module. This repo is the
-  *presentation + authoring UI*; `privateappstore` is the *backend/contract*.
+  produced by the sibling **`jahia-store`** Java module. This repo is the
+  *presentation + authoring UI*; `jahia-store` is the *backend/contract*.
 
 ## Architecture
 
@@ -43,7 +43,7 @@ See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
   are read in the page's render workspace, so **publish the site** to push branding
   to LIVE (manual publication is the expected flow).
 - **Page templates** are React components with `componentType: "template"`.
-  `settings/import.xml` seeds a working store on every store-template site.
+  `settings/import.xml` seeds a working store on every jahia-store-template site.
 
 ## Hard engine constraints (do not relearn these the hard way)
 
@@ -70,7 +70,7 @@ store-developer/admin can use it.
   generic JCR GraphQL mutations via `gqlRequest`; JCR ACLs enforce permissions.
 - **Write actions that need an in-workspace Java side** (e.g. uploading a module
   JAR, which runs a Maven deploy then creates the nodes) CANNOT use GraphQL. They
-  go to a Jahia **Action** in `privateappstore` (`createEntryFromJar`), invoked at
+  go to a Jahia **Action** in `jahia-store` (`createEntryFromJar`), invoked at
   `…/modules-repository.createEntryFromJar.do`.
 - **CSRF**: Jahia's OWASP CSRFGuard injects `/modules/CsrfServlet`, which patches
   **XMLHttpRequest only - not `fetch`, and not plain full-page `<form>` posts**.
@@ -105,10 +105,10 @@ dist/             build output (client islands, server bundle, package.tgz)
   install via the provisioning API; a **same-version tgz must be uninstalled
   first** (it clashes otherwise):
   ```
-  docker cp dist/package.tgz jahia:/tmp/store-template.tgz
+  docker cp dist/package.tgz jahia:/tmp/jahia-store-template.tgz
   # POST /modules/api/provisioning  (basic auth):
-  #   [{"uninstallBundle":"org.jahia.modules.javascript/store-template/3.1.8.SNAPSHOT"}]
-  #   [{"installBundle":["js:file:/tmp/store-template.tgz"],"autoStart":true}]
+  #   [{"uninstallBundle":"org.jahia.modules.javascript/jahia-store-template/5.0.0.SNAPSHOT"}]
+  #   [{"installBundle":["js:file:/tmp/jahia-store-template.tgz"],"autoStart":true}]
   ```
 - **E2E** lives in `../privateappstore/tests` (Cypress, `baseUrl` localhost:8080).
   `npx cypress run`. The suite must stay green. Selectors that code changes must
@@ -119,7 +119,7 @@ dist/             build output (client islands, server bundle, package.tgz)
 
 ## SonarQube
 
-- Project key: **`org.jahia.modules.javascript:store-template`**.
+- Project key: **`org.jahia.modules.javascript:jahia-store-template`**.
 - Scan needs **JDK 17** - the bare pom resolves the latest `sonar-maven-plugin`
   (Java-17 bytecode); the host default is Java 11, which fails with
   `UnsupportedClassVersionError`. Run with `JAVA_HOME` pointing at a JDK 17:
@@ -139,7 +139,7 @@ dist/             build output (client islands, server bundle, package.tgz)
   `/modules/richtext-ckeditor5/javascript/apps/remoteEntry.js`, then
   `container.init({})` + `get(".")` to reach `ClassicEditor` (verified to work on
   the live delivery page, where jContent's app-shell is absent). Keeping CKEditor
-  out of store-template's bundle is deliberate - inlining a real editor into the
+  out of jahia-store-template's bundle is deliberate - inlining a real editor into the
   SSR bundle is the failure mode that ruled out Apollo. Output is still
   DOMPurify-sanitized on save (defense-in-depth). If the remote can't load,
   `CKEditorField` degrades to a textarea. (The old dependency-free `execCommand`
@@ -167,4 +167,4 @@ regress them. Verified against an axe-core / EqualWeb audit.
   server views in `*.server.tsx`.
 - Keep files focused (< ~400 lines). Immutable updates. Handle errors explicitly
   (no swallowed catches; no `console.*` in production code).
-- **Do not break the `moduleList.json` contract** consumed by `privateappstore`.
+- **Do not break the `moduleList.json` contract** consumed by `jahia-store`.

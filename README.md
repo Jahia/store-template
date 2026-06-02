@@ -1,10 +1,10 @@
-# store-template
+# jahia-store-template
 
 The **Jahia Store Template** - a Jahia 8.2 **JavaScript module** (server-side
 React on the `javascript-modules-engine`) that renders the Private App Store
 website and its in-site administration (Forge settings, Categories, Roles).
 
-It is the presentation and authoring layer for the **`privateappstore`** Java
+It is the presentation and authoring layer for the **`jahia-store`** Java
 module, which owns the backend logic and the JCR content model.
 
 ## Tech stack
@@ -22,7 +22,7 @@ npm run build          # vite build + npm pack -> dist/package.tgz
 ```
 
 Deploy the built `dist/package.tgz` into a running Jahia via the provisioning
-API (install `js:file:/…/store-template.tgz`; uninstall the same SNAPSHOT version
+API (install `js:file:/…/jahia-store-template.tgz`; uninstall the same SNAPSHOT version
 first). See [AGENTS.md](./AGENTS.md) for the exact commands.
 
 ## Tests
