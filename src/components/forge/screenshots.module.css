@@ -69,3 +69,28 @@
 .delete:hover:not(:disabled) {
   background: #fdecef !important;
 }
+
+/* Inline confirm step for an irreversible screenshot delete (mirrors the
+   version delete control). */
+.confirm {
+  margin-left: auto;
+  display: inline-flex;
+  gap: 0.3rem;
+}
+.confirm button {
+  width: auto;
+  padding: 0 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.confirmDelete {
+  background: var(--color-danger) !important;
+  color: #fff;
+  border-color: var(--color-danger) !important;
+}
+.confirmDelete:hover:not(:disabled) {
+  background: var(--color-danger-hover) !important;
+}
+.confirmCancel {
+  color: var(--color-text);
+}
