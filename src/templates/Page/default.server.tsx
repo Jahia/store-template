@@ -4,10 +4,13 @@ import { Layout } from "~/templates/Layout";
 /**
  * Default page template for jnt:page.
  *
- * Phase 0 skeleton - renders the document shell with a single editable `main`
- * area so any page on a jahia-store-template site renders through the JS engine.
- * Real page templates (home, search, module detail, edit) are ported in later
- * phases. Store administration lives in the Jahia site administration (jContent).
+ * Renders the document shell (via Layout) with a single editable `main` area, so any page
+ * on a jahia-store-template site renders through the JS engine. The page-title <h1> is
+ * visually hidden: the storefront chrome and the content views carry the visible headings
+ * (matching store.jahia.com, which shows no standalone page title), but a single level-1
+ * heading must stay in the DOM for assistive tech and the WCAG-AAA gate (axe
+ * `page-has-heading-one`). Store administration lives in the Jahia site administration
+ * (jContent).
  */
 jahiaComponent(
   {
@@ -19,7 +22,7 @@ jahiaComponent(
   ({ "jcr:title": title }: { "jcr:title"?: string }, { currentNode }) => (
     // Layout supplies the single <main> landmark; this template only fills it.
     <Layout title={title}>
-      <h1 data-jahia-store-template="js">{title ?? currentNode.getName()}</h1>
+      <h1 className="sr-only">{title ?? currentNode.getName()}</h1>
       <Area name="main" />
     </Layout>
   ),
