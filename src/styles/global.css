@@ -146,3 +146,29 @@ h3 {
   padding: 0.35rem 0.75rem;
   font-size: 0.85rem;
 }
+
+/* ---------------------------------------------------------------------------
+   Reduced motion. Honour the OS "reduce motion" setting (WCAG 2.3.3): collapse
+   animations/transitions to a near-instant duration, disable smooth scrolling,
+   and neutralize the decorative card hover lift so nothing slides under users
+   who asked for less motion.
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  /* Card hover lifts via translateY; keep it static under reduced motion. */
+  a[data-forge-card]:hover {
+    transform: none !important;
+  }
+}

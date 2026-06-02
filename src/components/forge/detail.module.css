@@ -71,6 +71,10 @@
   background: var(--color-accent-hover);
   text-decoration: none;
 }
+.headDownload:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
 
 .badges {
   display: flex;
@@ -200,6 +204,10 @@
 .download:hover {
   background: var(--color-accent-hover);
   text-decoration: none;
+}
+.download:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
 }
 .changelog {
   margin-top: 0.6rem;
