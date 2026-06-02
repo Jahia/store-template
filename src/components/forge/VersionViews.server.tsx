@@ -2,6 +2,7 @@ import { jahiaComponent, useServerContext } from "@jahia/javascript-modules-libr
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import { VersionCard } from "~/components/forge/VersionCard";
 import { bool, str, jcrWorkspace } from "~/components/forge/nodeProps";
+import { sanitizeHtml } from "~/components/forge/sanitizeHtml";
 import { versionDownloadUrl } from "~/components/forge/versions";
 
 const VERSION_PUBLISH_LABELS = {
@@ -44,7 +45,7 @@ const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrap
     <VersionCard
       versionNumber={str(currentNode, "versionNumber") || currentNode.getName()}
       published={bool(currentNode, "published")}
-      changeLogHtml={str(currentNode, "changeLog")}
+      changeLogHtml={sanitizeHtml(str(currentNode, "changeLog"))}
       downloadUrl={versionDownloadUrl(currentNode)}
       publishControl={
         canEdit

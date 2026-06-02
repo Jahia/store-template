@@ -10,6 +10,7 @@ import clsx from "clsx";
 import styles from "./detail.module.css";
 import { forgeAuthor, forgeCategoryNames, forgeIconUrl } from "./forgeCard";
 import { str, bool, strValues, jcrWorkspace } from "./nodeProps";
+import { sanitizeHtml } from "./sanitizeHtml";
 import { sortedVersionNodes, versionDownloadUrl } from "./versions";
 import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
@@ -154,18 +155,21 @@ function isHttpUrl(url: string): boolean {
  * (lightbox), versions (rendered via their `default` view), metadata and an
  * in-site editor (owners).
  *
- * Richtext fields (description, license) are rendered with dangerouslySetInnerHTML.
- * Defense-in-depth against stored XSS: the editor sanitizes with DOMPurify on save
- * and a strict CSP is the backstop (see docs/SECURITY-CSP.md). Content written
- * outside the editor (legacy JSP authoring, direct JCR/GraphQL writes) is NOT
- * sanitized here - enable Jahia's server-side richtext HTML filtering for the store
- * site to cover those paths.
+ * Richtext fields (description, license, howToInstall, FAQ) are rendered with
+ * dangerouslySetInnerHTML. Defense-in-depth against stored XSS, in layers:
+ *   1. every richtext value is sanitized server-side at render via sanitizeHtml()
+ *      - this is the only layer that covers ALL write paths, including direct
+ *      JCR/GraphQL writes that bypass the editor (SECURITY-571 B2);
+ *   2. the in-site editor also sanitizes with DOMPurify on save;
+ *   3. a strict CSP is the backstop (see docs/SECURITY-CSP.md).
  */
 export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): JSX.Element {
   const { currentResource, renderContext } = useServerContext();
   const title = str(node, "jcr:title") || node.getName();
-  const description = str(node, "description");
-  const license = str(node, "license");
+  // Richtext fields are sanitized server-side before they reach the DOM (covers
+  // direct GraphQL/JCR writes that bypass the editor — SECURITY-571 B2).
+  const description = sanitizeHtml(str(node, "description"));
+  const license = sanitizeHtml(str(node, "license"));
   const codeRepository = str(node, "codeRepository");
   const status = str(node, "status");
   const supported = bool(node, "supportedByJahia");
@@ -196,8 +200,8 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const categoryValue = strValues(node, "j:defaultCategory");
   const categoryNames = forgeCategoryNames(node);
   const tags = strValues(node, "j:tagList");
-  const howToInstall = str(node, "howToInstall");
-  const faq = str(node, "FAQ");
+  const howToInstall = sanitizeHtml(str(node, "howToInstall"));
+  const faq = sanitizeHtml(str(node, "FAQ"));
   const moduleId = node.getName();
   const groupId = str(node, "groupId");
   const author = forgeAuthor(node);
@@ -272,8 +276,8 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
               values: {
                 "jcr:title": title,
                 description,
-                howToInstall: str(node, "howToInstall"),
-                FAQ: str(node, "FAQ"),
+                howToInstall,
+                FAQ: faq,
                 license,
                 authorEmail: str(node, "authorEmail"),
                 authorURL: str(node, "authorURL"),
