@@ -28,7 +28,7 @@ const sql = (v: string): string => v.replaceAll("'", "''");
 function multiParam(values: string[] | null | undefined): string[] {
   if (!values) return [];
   // `values` is a Java String[] (array-like) bridged into GraalJS; copy it to a JS array.
-  return Array.from(values, (v) => String(v));
+  return Array.from(values, String);
 }
 
 /**
