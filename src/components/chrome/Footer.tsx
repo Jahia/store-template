@@ -22,7 +22,7 @@ const DEFAULTS = {
  * Read a string property off the site node, tolerating any access failure.
  *
  * NB: these `forgeSettings*` property names are the read counterpart of
- * privateappstore's ForgeSettingsReader / ForgeSettingsMutationExtension. That
+ * jahia-store's ForgeSettingsReader / ForgeSettingsMutationExtension. That
  * Java class is the authority for the mapping; keep these names in sync with it.
  */
 function prop(site: JCRNodeWrapper, name: string): string {

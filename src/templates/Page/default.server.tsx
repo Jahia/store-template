@@ -5,7 +5,7 @@ import { Layout } from "~/templates/Layout";
  * Default page template for jnt:page.
  *
  * Phase 0 skeleton - renders the document shell with a single editable `main`
- * area so any page on a store-template site renders through the JS engine.
+ * area so any page on a jahia-store-template site renders through the JS engine.
  * Real page templates (home, search, module detail, edit) are ported in later
  * phases. Store administration lives in the Jahia site administration (jContent).
  */
@@ -19,7 +19,7 @@ jahiaComponent(
   ({ "jcr:title": title }: { "jcr:title"?: string }, { currentNode }) => (
     // Layout supplies the single <main> landmark; this template only fills it.
     <Layout title={title}>
-      <h1 data-store-template="js">{title ?? currentNode.getName()}</h1>
+      <h1 data-jahia-store-template="js">{title ?? currentNode.getName()}</h1>
       <Area name="main" />
     </Layout>
   ),

@@ -1,6 +1,6 @@
 /**
  * Loads CKEditor 5 from the deployed `richtext-ckeditor5` Jahia module instead of
- * bundling it into store-template. That module ships a webpack Module Federation
+ * bundling it into jahia-store-template. That module ships a webpack Module Federation
  * remote whose `.` entry is `export * from "ckeditor5"`; we bootstrap that
  * container by hand on the live delivery page (where jContent's app-shell, which
  * normally wires up federation, is absent).

@@ -6,7 +6,7 @@ import FileUploadForm from "./FileUpload.client";
 /**
  * Module JAR upload form (jnt:fileUpload).
  *
- * The actual upload posts (multipart) to the privateappstore `createEntryFromJar`
+ * The actual upload posts (multipart) to the jahia-store `createEntryFromJar`
  * action on modules-repository - the one piece of authoring that stays a Java
  * action (it parses the JAR's package.json, runs a Maven deploy to the configured
  * forge, then creates the jnt:forgeModule + version nodes). The action enforces the

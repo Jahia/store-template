@@ -14,12 +14,12 @@ import MobileNav from "./MobileNav.client";
 
 /**
  * Permission granted only by the "Store administrator" and "Store developer"
- * site roles (see privateappstore roles.xml). We use it as the faithful proxy
+ * site roles (see jahia-store roles.xml). We use it as the faithful proxy
  * for "this user may manage their own modules", gating the My-modules nav entry.
  */
 const STORE_ROLE_PERMISSION = "jahiaForgeUploadModule";
 
-/** Conventional node name of the "My modules" page in the store-template seed. */
+/** Conventional node name of the "My modules" page in the jahia-store-template seed. */
 const MY_MODULES_PAGE_NAME = "my-modules";
 
 /**

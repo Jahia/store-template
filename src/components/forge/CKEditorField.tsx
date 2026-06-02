@@ -16,7 +16,7 @@ interface CKEditorFieldProps {
 /**
  * Plugins (by name) and toolbar for the module store's richtext fields. We do NOT
  * import ckeditor5 - the classes are pulled from the runtime-loaded federated
- * namespace, so nothing CKEditor lands in store-template's own bundle. `Essentials`
+ * namespace, so nothing CKEditor lands in jahia-store-template's own bundle. `Essentials`
  * brings undo/redo, typing and clipboard support.
  */
 const PLUGIN_NAMES = [
