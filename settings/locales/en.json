@@ -8,7 +8,9 @@
       "signIn": "Log in",
       "signOut": "Log out",
       "username": "Username",
-      "password": "Password"
+      "password": "Password",
+      "invalidCredentials": "Invalid username or password.",
+      "accountLocked": "This account is locked. Contact an administrator."
     },
     "menu": {
       "open": "Open menu",

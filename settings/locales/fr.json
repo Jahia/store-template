@@ -8,7 +8,9 @@
       "signIn": "Connexion",
       "signOut": "Déconnexion",
       "username": "Nom d'utilisateur",
-      "password": "Mot de passe"
+      "password": "Mot de passe",
+      "invalidCredentials": "Nom d'utilisateur ou mot de passe incorrect.",
+      "accountLocked": "Ce compte est verrouillé. Contactez un administrateur."
     },
     "menu": {
       "open": "Ouvrir le menu",

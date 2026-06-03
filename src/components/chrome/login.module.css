@@ -58,6 +58,17 @@
   font-weight: 600;
 }
 
+/* Inline credentials error (Jahia's ?loginError=… after a failed sign-in). */
+.error {
+  margin: 0 0 0.2rem;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.82rem;
+  color: var(--color-danger);
+  background: #fdeaef; /* tint of --color-danger; text clears AAA on it */
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius);
+}
+
 .panel input[type="text"],
 .panel input[name="username"],
 .panel input[type="password"] {
