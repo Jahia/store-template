@@ -134,7 +134,7 @@ export function Footer(): JSX.Element {
             </a>
           ))}
         </nav>
-        <nav className={styles.social} aria-label={t("footer.socialNav")}>
+        <nav className={styles.social} aria-label={t("footer.followNav")}>
           {social.map((s) => (
             <a
               key={s.label}
@@ -147,18 +147,18 @@ export function Footer(): JSX.Element {
               <SocialIcon name={s.label} />
             </a>
           ))}
+          {rssUrl && (
+            <a
+              className={styles.socialLink}
+              href={rssUrl}
+              aria-label={t("footer.rss")}
+              title={t("footer.rss")}
+              data-rss-feed=""
+            >
+              <RssIcon />
+            </a>
+          )}
         </nav>
-        {rssUrl && (
-          <a
-            className={styles.socialLink}
-            href={rssUrl}
-            aria-label={t("footer.rss")}
-            title={t("footer.rss")}
-            data-rss-feed=""
-          >
-            <RssIcon />
-          </a>
-        )}
       </div>
     </footer>
   );
