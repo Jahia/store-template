@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface VersionsDialogProps {
   /** Trigger button label (e.g. "Versions (3)"), computed server-side. */
@@ -19,11 +19,14 @@ interface VersionsDialogProps {
 export default function VersionsDialog({ buttonLabel }: Readonly<VersionsDialogProps>): JSX.Element {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDialogElement | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const root = buttonRef.current?.closest("[data-detail]");
     const dialog = root?.querySelector<HTMLDialogElement>("[data-versions-dialog]") ?? null;
     dialogRef.current = dialog;
+    // Signal hydration so tests (and users) only trigger the popup once it's wired.
+    setReady(true);
     if (!dialog) return;
     // Close when the click lands on the dialog element itself (the backdrop area),
     // not on its content. Escape + the close button are handled natively.
@@ -46,6 +49,7 @@ export default function VersionsDialog({ buttonLabel }: Readonly<VersionsDialogP
       className="store-btn store-btn--ghost"
       onClick={open}
       data-versions-open=""
+      data-versions-ready={ready ? "true" : undefined}
     >
       {buttonLabel}
     </button>
