@@ -41,17 +41,21 @@ function safeHref(url: string | null | undefined, fallback: string): string {
 }
 
 /**
- * Public LIVE URL of the modules RSS feed (`…/modules-repository.moduleList.rss`),
- * or null when the site has no modules repository. Forced to live mode: the feed
- * lists published versions and is served from the live workspace. Returns the
- * canonical render URL (the `/feed.xml` SEO rewrite is an alias of this); the
- * `.html` → `.moduleList.rss` swap mirrors how action URLs are built elsewhere.
+ * Public LIVE URL of the modules RSS feed, or null when the site has no modules
+ * repository. Links to the clean `/feed` alias rather than the internal
+ * `…/contents/modules-repository.moduleList.rss`: the SEO rewrite (privateappstore
+ * `seo-urlrewrite-store.xml`) maps `<site live URL>/feed` (and `/feed.xml`) onto that
+ * render URL. We take the modules-repository's live URL, strip its `/contents/…` node
+ * path to get the site's live render base, and append `/feed` — so Jahia's server-name
+ * vanity still resolves it to `<host>/feed` for the visitor. Forced to live mode: the
+ * feed lists published versions and is served from the live workspace.
  */
 function feedUrl(site: JCRNodeWrapper): string | null {
   try {
     if (!site.hasNode(MODULES_REPOSITORY)) return null;
     const repo = site.getNode(MODULES_REPOSITORY) as unknown as JCRNodeWrapper;
-    return `${buildNodeUrl(repo, { mode: "live" }).replace(/\.html$/, "")}.moduleList.rss`;
+    const siteBase = buildNodeUrl(repo, { mode: "live" }).replace(/\/contents\/.*$/, "");
+    return `${siteBase}/feed`;
   } catch {
     return null;
   }
@@ -114,7 +118,13 @@ export function Footer(): JSX.Element {
           ))}
         </nav>
         {rssUrl && (
-          <a className={styles.feed} href={rssUrl} aria-label={t("footer.rss")} title={t("footer.rss")}>
+          <a
+            className={styles.feed}
+            href={rssUrl}
+            aria-label={t("footer.rss")}
+            title={t("footer.rss")}
+            data-rss-feed=""
+          >
             <RssIcon />
             <span className={styles.feedLabel}>RSS</span>
           </a>
