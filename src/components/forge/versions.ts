@@ -41,6 +41,24 @@ export function versionDownloadUrl(version: JCRNodeWrapper): string | null {
   return `/modules/mavenproxy/${site}/${groupPath}/${name}/${versionNumber}/${name}-${versionNumber}.jar`;
 }
 
+/**
+ * Displayable Jahia version a module/package version requires (the `requiredVersion`
+ * weakreference), without the "version-" node-name prefix, or "" when unset/dangling.
+ */
+export function requiredJahiaVersion(version: JCRNodeWrapper | undefined): string {
+  if (!version) return "";
+  try {
+    if (version.hasProperty("requiredVersion")) {
+      const ref = version.getProperty("requiredVersion").getNode() as unknown as JCRNodeWrapper;
+      // The required-version nodes are named "version-8.1.6.2"; show just "8.1.6.2".
+      return ref ? ref.getDisplayableName().replace(/^version-/, "") : "";
+    }
+  } catch {
+    // Dangling reference.
+  }
+  return "";
+}
+
 /** Version child nodes of a module/package, sorted newest-first (replaces ForgeFunctions.sortByVersion). */
 export function sortedVersionNodes(node: JCRNodeWrapper): JCRNodeWrapper[] {
   const versions = getChildNodes(

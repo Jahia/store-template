@@ -2,9 +2,9 @@ import { jahiaComponent, useServerContext } from "@jahia/javascript-modules-libr
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import { useTranslation } from "react-i18next";
 import { VersionCard } from "~/components/forge/VersionCard";
-import { bool, str, jcrWorkspace } from "~/components/forge/nodeProps";
+import { bool, str, jcrWorkspace, isoDay } from "~/components/forge/nodeProps";
 import { sanitizeHtml } from "~/components/forge/sanitizeHtml";
-import { versionDownloadUrl } from "~/components/forge/versions";
+import { requiredJahiaVersion, versionDownloadUrl } from "~/components/forge/versions";
 
 const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrapper }) => {
   const { t } = useTranslation();
@@ -55,6 +55,10 @@ const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrap
       downloadUrl={versionDownloadUrl(currentNode)}
       downloadLabel={t("version.download")}
       draftLabel={t("version.draft")}
+      requiresJahia={requiredJahiaVersion(currentNode)}
+      requiresJahiaLabel={t("detail.meta.requiresJahia")}
+      updated={isoDay(currentNode, "jcr:lastModified")}
+      updatedLabel={t("detail.meta.updated")}
       publishControl={
         canEdit
           ? { path: currentNode.getPath(), workspace, labels: VERSION_PUBLISH_LABELS }

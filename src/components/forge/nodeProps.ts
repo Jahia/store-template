@@ -10,6 +10,11 @@ export function bool(node: JCRNodeWrapper, name: string): boolean {
   return node.hasProperty(name) && node.getProperty(name).getBoolean();
 }
 
+/** A date property (e.g. jcr:lastModified) as an ISO day "YYYY-MM-DD", or "". */
+export function isoDay(node: JCRNodeWrapper, name: string): string {
+  return node.hasProperty(name) ? node.getProperty(name).getString().slice(0, 10) : "";
+}
+
 /** Read a multi-valued property as a string[] (each value's string form), or []. */
 export function strValues(node: JCRNodeWrapper, name: string): string[] {
   if (!node.hasProperty(name)) return [];

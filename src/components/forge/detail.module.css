@@ -214,6 +214,20 @@
   font-size: 0.9rem;
   color: var(--color-text-muted);
 }
+.versionFooter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+.versionFooter strong {
+  font-weight: 650;
+  color: var(--color-text);
+}
 
 .meta {
   display: grid;

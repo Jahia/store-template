@@ -44,6 +44,14 @@ export interface VersionCardProps {
   downloadLabel: string;
   /** Translated "draft" badge label, shown to non-owners on unpublished versions. */
   draftLabel: string;
+  /** Jahia version this release requires (e.g. "8.1.6.2"), or "" to omit. */
+  requiresJahia: string;
+  /** Translated "Requires Jahia" label. */
+  requiresJahiaLabel: string;
+  /** Release date as "YYYY-MM-DD", or "" to omit. */
+  updated: string;
+  /** Translated "Updated" label. */
+  updatedLabel: string;
   publishControl?: VersionPublishControl | null;
   changelogControl?: VersionChangelogControl | null;
   deleteControl?: VersionDeleteControl | null;
@@ -57,6 +65,10 @@ export function VersionCard({
   downloadUrl,
   downloadLabel,
   draftLabel,
+  requiresJahia,
+  requiresJahiaLabel,
+  updated,
+  updatedLabel,
   publishControl,
   changelogControl,
   deleteControl,
@@ -110,6 +122,20 @@ export function VersionCard({
             labels: changelogControl.labels,
           }}
         />
+      )}
+      {(requiresJahia || updated) && (
+        <footer className={styles.versionFooter}>
+          {requiresJahia && (
+            <span>
+              <strong>{requiresJahiaLabel}</strong> {requiresJahia}
+            </span>
+          )}
+          {updated && (
+            <span>
+              <strong>{updatedLabel}</strong> {updated}
+            </span>
+          )}
+        </footer>
       )}
     </div>
   );

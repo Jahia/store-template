@@ -10,9 +10,9 @@ import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import styles from "./detail.module.css";
 import { forgeAuthor, forgeCategoryNames, forgeIconUrl } from "./forgeCard";
-import { str, bool, strValues, jcrWorkspace } from "./nodeProps";
+import { str, bool, strValues, jcrWorkspace, isoDay } from "./nodeProps";
 import { sanitizeHtml } from "./sanitizeHtml";
-import { sortedVersionNodes, versionDownloadUrl } from "./versions";
+import { requiredJahiaVersion, sortedVersionNodes, versionDownloadUrl } from "./versions";
 import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
 import ScreenshotManager from "./ScreenshotManager.client";
@@ -57,21 +57,6 @@ function siteCategoryOptions(site: JCRNodeWrapper): { uuid: string; name: string
   } catch {
     return [];
   }
-}
-
-/** Displayable name of a version's required Jahia version (weakreference), or "". */
-function requiredJahiaVersion(version: JCRNodeWrapper | undefined): string {
-  if (!version) return "";
-  try {
-    if (version.hasProperty("requiredVersion")) {
-      const ref = version.getProperty("requiredVersion").getNode() as unknown as JCRNodeWrapper;
-      // The required-version nodes are named "version-8.1.6.2"; show just "8.1.6.2".
-      return ref ? ref.getDisplayableName().replace(/^version-/, "") : "";
-    }
-  } catch {
-    // Dangling reference.
-  }
-  return "";
 }
 
 function screenshotItems(node: JCRNodeWrapper): { name: string; url: string }[] {
@@ -227,9 +212,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const groupId = str(node, "groupId");
   const author = forgeAuthor(node);
   const authorURL = str(node, "authorURL");
-  const updated = node.hasProperty("jcr:lastModified")
-    ? node.getProperty("jcr:lastModified").getString().slice(0, 10)
-    : "";
+  const updated = isoDay(node, "jcr:lastModified");
   const requiresJahia = requiredJahiaVersion(versions[0]);
   // Prominent download for the newest version (mirrors store.jahia.com's title CTA).
   const latestVersionNumber = versions[0] ? str(versions[0], "versionNumber") : "";
