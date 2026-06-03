@@ -19,6 +19,9 @@
     "nav": {
       "label": "Main navigation"
     },
+    "language": {
+      "label": "Language"
+    },
     "skipToMain": "Skip to main content"
   },
   "footer": {
