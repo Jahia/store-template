@@ -61,15 +61,13 @@ function feedUrl(site: JCRNodeWrapper): string | null {
   }
 }
 
-/** Standard RSS glyph (dot + two broadcast arcs). Decorative; the link carries the name. */
+/** Standard RSS glyph (dot + two broadcast arcs). Decorative (currentColor, sized to match the
+ * social icons); the link carries the name via its aria-label. */
 function RssIcon(): JSX.Element {
   return (
-    <svg className={styles.rssIcon} viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
-      <circle cx="6.18" cy="17.82" r="2.18" fill="currentColor" />
-      <path
-        fill="currentColor"
-        d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zM4 10.1v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"
-      />
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false" fill="currentColor">
+      <circle cx="6.18" cy="17.82" r="2.18" />
+      <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zM4 10.1v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z" />
     </svg>
   );
 }
@@ -152,14 +150,13 @@ export function Footer(): JSX.Element {
         </nav>
         {rssUrl && (
           <a
-            className={styles.feed}
+            className={styles.socialLink}
             href={rssUrl}
             aria-label={t("footer.rss")}
             title={t("footer.rss")}
             data-rss-feed=""
           >
             <RssIcon />
-            <span className={styles.feedLabel}>RSS</span>
           </a>
         )}
       </div>
