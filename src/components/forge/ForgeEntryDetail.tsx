@@ -18,6 +18,7 @@ import ModuleEditor from "./ModuleEditor.client";
 import ScreenshotManager from "./ScreenshotManager.client";
 import PublishToggle from "./PublishToggle.client";
 import DetailTabs from "./DetailTabs.client";
+import VersionsDialog from "./VersionsDialog.client";
 import FileUploadForm from "~/components/FileUpload/FileUpload.client";
 
 interface TabDef {
@@ -224,13 +225,14 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const hasOverview = Boolean(description || videoNode || shots.length);
   const hasInstall = Boolean(howToInstall || faq);
   const hasLicense = Boolean(license);
+  // Versions are no longer a tab — they open in a popup (VersionsDialog) from the header.
   const tabs: TabDef[] = [
     ...(hasOverview ? [{ id: "overview", label: t("detail.tabs.overview") }] : []),
-    { id: "versions", label: t("detail.tabs.versions") },
     ...(hasInstall ? [{ id: "install", label: t("detail.tabs.install") }] : []),
     ...(hasLicense ? [{ id: "license", label: t("detail.tabs.license") }] : []),
   ];
-  const defaultTab = tabs[0].id;
+  // May be empty (a module with only versions) — guard the tablist + default panel.
+  const defaultTab = tabs[0]?.id ?? "";
 
   return (
     <article className={styles.detail} data-detail="">
@@ -259,12 +261,21 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
               <span className={clsx(styles.badge, styles.reviewed)}>{t("detail.badge.reviewed")}</span>
             )}
           </div>
+        </div>
+        {/* Top-right corner: the latest-version download CTA + the "Versions" popup trigger. */}
+        <div className={styles.headActions}>
           {latestDownloadUrl && (
             <a className={styles.headDownload} href={latestDownloadUrl} data-latest-download="">
               {latestVersionNumber
                 ? t("detail.downloadVersion", { version: latestVersionNumber })
                 : t("detail.download")}
             </a>
+          )}
+          {versions.length > 0 && (
+            <Island
+              component={VersionsDialog}
+              props={{ buttonLabel: t("detail.versions.open", { count: versions.length }) }}
+            />
           )}
         </div>
       </header>
@@ -390,7 +401,9 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
         </div>
 
         <div className={styles.main}>
-          <Island component={DetailTabs} props={{ tabs, ariaLabel: t("detail.tabs.ariaLabel") }} />
+          {tabs.length > 0 && (
+            <Island component={DetailTabs} props={{ tabs, ariaLabel: t("detail.tabs.ariaLabel") }} />
+          )}
 
       {hasOverview && (
         <div {...panelProps("overview", defaultTab)} className={styles.panel}>
@@ -430,33 +443,6 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
         </div>
       )}
 
-      <div {...panelProps("versions", defaultTab)} className={styles.panel}>
-        {versions.length === 0 ? (
-          <p className={styles.muted}>{t("detail.versions.none")}</p>
-        ) : (
-          <div className={styles.versions}>
-            {versions.map((v) => (
-              <Render key={v.getIdentifier()} node={v} view="default" readOnly />
-            ))}
-          </div>
-        )}
-        {uploadActionUrl && (
-          <section className={styles.section} data-add-version="">
-            <h2 className={styles.sectionTitle}>{t("detail.versions.uploadTitle")}</h2>
-            <p className={styles.muted}>{t("detail.versions.uploadHelp")}</p>
-            <Island
-              component={FileUploadForm}
-              props={{
-                actionUrl: uploadActionUrl,
-                backUrl: buildNodeUrl(node),
-                accept: ".jar,.war",
-                labels: ADD_VERSION_LABELS,
-              }}
-            />
-          </section>
-        )}
-      </div>
-
       {hasInstall && (
         <div {...panelProps("install", defaultTab)} className={styles.panel}>
           {howToInstall && (
@@ -481,6 +467,52 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
       )}
         </div>
       </div>
+
+      {/* Versions popup, opened by the header "Versions" button (VersionsDialog island). A native
+          <dialog> gives a focus trap, Escape-to-close and an inert backdrop for free; its content
+          (Jahia version views + the owner upload form) is server-rendered. */}
+      <dialog
+        className={styles.versionsDialog}
+        data-versions-dialog=""
+        aria-labelledby="versions-dialog-title"
+      >
+        <div className={styles.dialogHead}>
+          <h2 id="versions-dialog-title" className={styles.dialogTitle}>
+            {t("detail.tabs.versions")}
+          </h2>
+          <form method="dialog">
+            <button type="submit" className={styles.dialogClose} aria-label={t("detail.versions.close")}>
+              <span aria-hidden="true">×</span>
+            </button>
+          </form>
+        </div>
+        <div className={styles.dialogBody}>
+          {versions.length === 0 ? (
+            <p className={styles.muted}>{t("detail.versions.none")}</p>
+          ) : (
+            <div className={styles.versions}>
+              {versions.map((v) => (
+                <Render key={v.getIdentifier()} node={v} view="default" readOnly />
+              ))}
+            </div>
+          )}
+          {uploadActionUrl && (
+            <section className={styles.section} data-add-version="">
+              <h3 className={styles.sectionTitle}>{t("detail.versions.uploadTitle")}</h3>
+              <p className={styles.muted}>{t("detail.versions.uploadHelp")}</p>
+              <Island
+                component={FileUploadForm}
+                props={{
+                  actionUrl: uploadActionUrl,
+                  backUrl: buildNodeUrl(node),
+                  accept: ".jar,.war",
+                  labels: ADD_VERSION_LABELS,
+                }}
+              />
+            </section>
+          )}
+        </div>
+      </dialog>
     </article>
   );
 }

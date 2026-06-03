@@ -95,6 +95,8 @@
     "download": "Download",
     "downloadVersion": "Download {{version}}",
     "versions": {
+      "open": "Versions ({{count}})",
+      "close": "Close",
       "none": "No versions published yet.",
       "uploadTitle": "Upload a new version",
       "uploadHelp": "Upload a .jar or .war whose module name and group ID match this module to add it as a new version."
