@@ -48,8 +48,15 @@ export default function Login({
 }: Readonly<LoginProps>) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const usernameRef = useRef<HTMLInputElement>(null);
+
+  // Signal hydration: the sign-in trigger is server-rendered, so a click before the
+  // onClick is wired wouldn't open the panel. Tests wait for data-login-ready.
+  useEffect(() => {
+    setReady(true);
+  }, []);
 
   // After a failed login, Jahia's /cms/login servlet redirects back here with
   // ?loginError=<reason> (bad_password / unknown_user / account_locked) instead of
@@ -113,6 +120,7 @@ export default function Login({
         className={styles.loginBtn}
         aria-expanded={open}
         aria-controls="login-panel"
+        data-login-ready={ready ? "true" : undefined}
         onClick={() => setOpen((v) => !v)}
       >
         {labels.signIn}
