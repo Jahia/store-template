@@ -1,8 +1,68 @@
 .detail {
-  max-width: 820px;
+  max-width: 1100px;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+/* Two-column body: the persistent "Information" rail (left) + the tabbed content (right).
+   The header and owner bar stay full-width above it. */
+.body {
+  display: grid;
+  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+/* Always-visible info rail; sticks below the header while the content scrolls. */
+.sidebar {
+  position: sticky;
+  top: calc(var(--header-h) + 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.sidebarTitle {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+/* Label-over-value layout reads better than the two-column dl in a narrow rail. */
+.sidebar .meta {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.sidebar .meta dt {
+  margin-top: 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+}
+.sidebar .meta dt:first-of-type {
+  margin-top: 0;
+}
+.sidebar .meta dd {
+  margin: 0.1rem 0 0;
+}
+@media (max-width: 820px) {
+  .body {
+    grid-template-columns: 1fr;
+  }
+  /* Stacked on small screens: the rail sits above the content, no longer sticky. */
+  .sidebar {
+    position: static;
+  }
 }
 
 /* A tab's panel: stacks its (sub-)sections. Hidden panels (DetailTabs toggles the
