@@ -40,7 +40,28 @@
 }
 
 .social {
-  gap: 0.25rem 0.85rem;
+  gap: 0.25rem 0.5rem;
+}
+
+/* Social brand icons: square tap targets (≥24×24 for the target-size rule), muted →
+   accent on hover, with a subtle surface so the hit area reads as a button. */
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+}
+.socialLink:hover {
+  color: var(--color-accent);
+  background: var(--color-surface-2);
+  text-decoration: none;
+}
+.socialLink:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
 }
 
 /* RSS feed: a small pill so the feed is discoverable next to the social links. */
