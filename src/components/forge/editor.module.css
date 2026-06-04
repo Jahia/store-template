@@ -1,0 +1,298 @@
+/* No margin: the editor is a flex item in the owner action bar, and a bottom
+   margin would offset its centre, pushing "Edit module" above the Publish badge
+   + Unpublish button. Spacing below the bar comes from the detail's column gap. */
+.editor {
+  display: flex;
+  align-items: center;
+}
+/* When the form is open it breaks out of the inline owner action row to span the
+   full detail width (so the tabs/fields line up with the rest of the page). */
+.editorOpen {
+  flex: 1 1 100%;
+  display: block;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.saved {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #15633a;
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.field label,
+.fieldLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.field input,
+.field textarea,
+.select {
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: #fff;
+  resize: vertical;
+}
+.select {
+  max-width: 16rem;
+  cursor: pointer;
+}
+.field input:focus-visible,
+.field textarea:focus-visible,
+.select:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: var(--ring);
+}
+
+.muted {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* Category multi-select */
+.checkGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.check input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+.check input:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: 4px;
+}
+
+/* Tag chips */
+.tagInput {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.4rem;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: #fff;
+}
+.tagChips {
+  display: contents;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.tagChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.15rem 0.2rem 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--color-accent-soft);
+  color: #0c3f87; /* AAA on the soft-blue chip */
+}
+.tagRemove {
+  display: inline-grid;
+  place-items: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.tagRemove:hover {
+  background: rgba(12, 63, 135, 0.15);
+}
+.tagField {
+  flex: 1;
+  min-width: 8rem;
+  border: 0;
+  outline: none;
+  font: inherit;
+  padding: 0.2rem;
+  background: transparent;
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* Buttons used by IconUpload + the per-version changelog editor (the storefront
+   owner action bar uses the shared global .store-btn system instead). */
+.btn {
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.55rem 1.1rem;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  transition: background 150ms var(--ease);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+.primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+.secondary {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.error {
+  padding: 0.7rem 0.9rem;
+  border-radius: 8px;
+  background: #fdecef;
+  color: #a00f33;
+  font-size: 0.9rem;
+}
+
+/* Tabs (module editor) */
+.tablist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.tab {
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  /* Keep the active underline from shifting layout on selection. */
+  margin-bottom: -1px;
+  transition: color 120ms var(--ease), background 120ms var(--ease);
+}
+.tab:hover {
+  color: var(--color-text);
+  background: var(--color-surface-2);
+}
+.tab:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+.tabActive {
+  color: var(--color-accent);
+  background: #fff;
+  border-color: var(--color-border);
+  border-bottom: 1px solid #fff;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+/* Icon upload (General tab) */
+.icon {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.iconRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.iconPreview img,
+.iconNone {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  object-fit: contain;
+  border: 1px solid var(--color-border);
+}
+.iconNone {
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+  background: var(--color-surface-2);
+}
+.iconControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Per-version changelog editor */
+.changelogEditor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+.changelogForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1 1 100%;
+}
+.linkBtn {
+  background: transparent;
+  color: var(--color-accent);
+  border-color: transparent;
+  padding: 0.3rem 0.5rem;
+}
+.linkBtn:hover:not(:disabled) {
+  background: var(--color-surface-2);
+}

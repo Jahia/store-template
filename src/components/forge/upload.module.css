@@ -1,0 +1,52 @@
+.upload {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1.5rem;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.note {
+  color: var(--color-text-muted);
+}
+
+.btn {
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--color-accent);
+  color: #fff;
+  transition: background 150ms var(--ease);
+}
+.btn:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  align-self: stretch;
+  padding: 0.6rem 0.85rem;
+  border-radius: 8px;
+  background: #fdecef;
+  color: #92052b; /* AAA: 8.08:1 on the error background */
+  font-size: 0.9rem;
+}

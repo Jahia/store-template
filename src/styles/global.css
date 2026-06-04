@@ -1,0 +1,195 @@
+/* Store design tokens + base. Global (non-module) CSS - bundled into the
+   module's single style.css and loaded once via <AddResources> in Layout.
+
+   Palette aligned with store.jahia.com: a confident Jahia blue on a light,
+   corporate surface. The accent (#0e4ea8) clears WCAG AAA (≈7.9:1) BOTH as
+   text-on-white (links) and as a button fill (white-on-accent), so the
+   automated AAA contrast gate (axe color-contrast-enhanced) stays green. */
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f7f9fc;
+  --color-surface-2: #eef2f8;
+  --color-text: #1a2233;
+  --color-text-muted: #45506a; /* AAA: ≈7.9:1 on white */
+  --color-border: #d9e0ea;
+  --color-accent: #0e4ea8; /* Jahia blue - AAA both ways */
+  --color-accent-hover: #0a3d85;
+  --color-accent-soft: #e8f1fc; /* tinted surface for facets/badges */
+  --color-navy: #14243f; /* headings / sidebar */
+  --color-danger: #a00f33; /* AAA: ≈8.1:1 on white (and white-on-danger ≈8.0:1) */
+  --color-danger-hover: #850c2a;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+
+  --radius: 8px;
+  --radius-lg: 12px;
+  --space: 1rem;
+  --container: 1200px;
+  --header-h: 64px;
+  --shadow-sm: 0 1px 2px rgba(20, 30, 50, 0.06);
+  --shadow-md: 0 8px 24px rgba(20, 30, 50, 0.1);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ring: 0 0 0 3px rgba(14, 78, 168, 0.28); /* accent focus ring */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Visually-hidden but available to assistive tech (e.g. a fieldset legend whose
+   visible label is rendered separately). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* A `.sr-only` element that becomes visible on keyboard focus — used by the
+   skip-to-main-content link so it appears only when a keyboard user tabs to it. */
+.sr-only--focusable:focus,
+.sr-only--focusable:focus-visible {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 1000;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.6rem 1rem;
+  overflow: visible;
+  clip: auto;
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.01em;
+  color: var(--color-navy);
+}
+
+/* ---------------------------------------------------------------------------
+   Shared button system. Plain global classes (not CSS-module-scoped) so every
+   island - publish toggle, module editor, login, downloads - renders the SAME
+   button, regardless of which CSS module owns the surrounding markup. This is
+   what keeps "Unpublish module" and "Edit module" visually identical/aligned.
+--------------------------------------------------------------------------- */
+.store-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.15;
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: background 150ms var(--ease), border-color 150ms var(--ease),
+    color 150ms var(--ease);
+}
+.store-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+.store-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.store-btn--primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+.store-btn--primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  text-decoration: none;
+}
+.store-btn--ghost {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.store-btn--ghost:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  text-decoration: none;
+}
+.store-btn--danger {
+  background: var(--color-danger);
+  color: #fff;
+}
+.store-btn--danger:hover:not(:disabled) {
+  background: var(--color-danger-hover);
+  text-decoration: none;
+}
+.store-btn--sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion. Honour the OS "reduce motion" setting (WCAG 2.3.3): collapse
+   animations/transitions to a near-instant duration, disable smooth scrolling,
+   and neutralize the decorative card hover lift so nothing slides under users
+   who asked for less motion.
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  /* Card hover lifts via translateY; keep it static under reduced motion. */
+  a[data-forge-card]:hover {
+    transform: none !important;
+  }
+}

@@ -9,56 +9,22 @@
 
         Copyright (C) 2002-2016 Jahia Solutions Group SA. All rights reserved.
 
-        THIS FILE IS AVAILABLE UNDER TWO DIFFERENT LICENSES:
-        1/GPL OR 2/JSEL
-
-        1/ GPL
-        ==================================================================================
-
-        IF YOU DECIDE TO CHOOSE THE GPL LICENSE, YOU MUST COMPLY WITH THE FOLLOWING TERMS:
-
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-        GNU General Public License for more details.
-
-        You should have received a copy of the GNU General Public License
-        along with this program. If not, see <http://www.gnu.org/licenses />.
-
-
-        2/ JSEL - Commercial and Supported Versions of the program
-        ===================================================================================
-
-        IF YOU DECIDE TO CHOOSE THE JSEL LICENSE, YOU MUST COMPLY WITH THE FOLLOWING TERMS:
-
-        Alternatively, commercial and supported versions of the program - also known as
-        Enterprise Distributions - must be used in accordance with the terms and conditions
-        contained in a separate written agreement between you and Jahia Solutions Group SA.
-
-        If you are unsure which license is appropriate for your use,
-        please contact the sales department at sales@jahia.com.
+        THIS FILE IS AVAILABLE UNDER TWO DIFFERENT LICENSES: 1/GPL OR 2/JSEL
+        See the store-template git history for the full dual-license text.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.jahia.modules</groupId>
-        <artifactId>jahia-modules</artifactId>
-        <version>8.0.0.0</version>
-    </parent>
-    <artifactId>store-template</artifactId>
-    <groupId>org.jahia.community.modules</groupId>
-    <version>3.1.8-SNAPSHOT</version>
-    <packaging>bundle</packaging>
+    <groupId>org.jahia.modules.javascript</groupId>
+    <artifactId>jahia-store-template</artifactId>
+    <version>5.0.0-SNAPSHOT</version>
+    <!-- JavaScript module: the deployable artifact is dist/package.tgz, produced by the
+         npm build (Vite + @jahia/vite-plugin) and attached below. The Jahia module
+         metadata (module-type, dependencies, static-resources, server entry) lives in
+         package.json's "jahia" block. No OSGi bundle / jahia-modules parent any more. -->
+    <packaging>pom</packaging>
     <name>Jahia Store Template</name>
-    <description>This is the custom profile module (Jahia Store Template) for running on a Digital Experience Manager
-        server.
-    </description>
+    <description>Jahia Store Template - JavaScript module (SSR React via javascript-modules-engine).</description>
     <scm>
         <connection>scm:git:git@github.com:Jahia/store-template.git</connection>
         <url>scm:git:git@github.com:Jahia/store-template</url>
@@ -75,46 +41,87 @@
             <url>https://devtools.jahia.com/nexus/content/repositories/jahia-enterprise-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-    <properties>
-        <jahia-depends>font-awesome,jquery,bootstrap3-core,bootstrap3-components,privateappstore,search,skins,full-read-only-notifier
-        </jahia-depends>
-        <jahia.plugin.version>6.10</jahia.plugin.version>
-    </properties>
-    <repositories>
-        <repository>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>jahia-public</id>
-            <name>Jahia Public Repository</name>
-            <url>https://devtools.jahia.com/nexus/content/groups/public</url>
-        </repository>
-    </repositories>
     <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
+            <!-- Run the JS build (npm ci + vite + pack -> dist/package.tgz). -->
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Jahia-Module-Type>templatesSet</Jahia-Module-Type>
-                        <Require-Capability>
-                            osgi.extender;filter:="(osgi.extender=org.jahia.bundles.blueprint.extender.config)"
-                        </Require-Capability>
-                        <Import-Package>
-                            org.jahia.services.search,
-                            ${jahia.plugin.projectPackageImport},
-                            *
-                        </Import-Package>
-                        <Jahia-Static-Resources>/css,/icon,/fonts,/images,/img,/javascript,/templates,/swf
-                        </Jahia-Static-Resources>
-                    </instructions>
-                </configuration>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>npm-ci</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>ci</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm-build</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>run</argument>
+                                <argument>build</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Attach dist/package.tgz as the deployable Maven artifact (type tgz). -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-tgz-artifact</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>dist/package.tgz</file>
+                                    <type>tgz</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Also copy it to target/ so CIs that look there pick it up. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-dist-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy file="dist/package.tgz"
+                                      tofile="${project.build.directory}/${project.build.finalName}.tgz"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

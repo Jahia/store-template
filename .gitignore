@@ -7,3 +7,12 @@
 target/
 /pom.xml.releaseBackup
 /release.properties
+
+# JS module (Vite / javascript-modules-engine)
+node_modules/
+/dist/
+/build/
+.yarn/*
+!.yarn/releases
+*.tgz
+.vite/

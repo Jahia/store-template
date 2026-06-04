@@ -1,0 +1,28 @@
+.wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+}
+.live {
+  background: #e7f6ec;
+  color: #0d4a2b; /* AAA: 9.25:1 on the badge background */
+}
+.draft {
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+}
+
+.error {
+  font-size: 0.85rem;
+  color: #92052b; /* AAA: 8.08:1 on the page background */
+}

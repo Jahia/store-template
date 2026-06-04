@@ -1,0 +1,82 @@
+.footer {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  margin-top: auto;
+}
+
+.inner {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 1.75rem var(--space);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.copy {
+  margin: 0;
+  flex: 1 1 auto;
+}
+
+.links,
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+
+.links a,
+.social a {
+  color: var(--color-text-muted);
+  font-weight: 550;
+}
+.links a:hover,
+.social a:hover {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.social {
+  gap: 0.25rem 0.85rem;
+}
+
+/* RSS feed: a small pill so the feed is discoverable next to the social links. */
+.feed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  transition: color 150ms var(--ease), border-color 150ms var(--ease),
+    background 150ms var(--ease);
+}
+
+.feed:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: var(--color-surface-2);
+  text-decoration: none;
+}
+
+.feed:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Canonical RSS orange on the glyph only (decorative); the "RSS" text carries the name. */
+.rssIcon {
+  flex: none;
+  color: #e8590c;
+}
+
+.feedLabel {
+  line-height: 1;
+}

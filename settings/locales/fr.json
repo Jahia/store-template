@@ -1,0 +1,215 @@
+{
+  "chrome": {
+    "search": {
+      "placeholder": "Rechercher des modules…",
+      "label": "Rechercher des modules"
+    },
+    "login": {
+      "signIn": "Connexion",
+      "signOut": "Déconnexion",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe"
+    },
+    "menu": {
+      "open": "Ouvrir le menu",
+      "close": "Fermer le menu"
+    },
+    "nav": {
+      "label": "Navigation principale"
+    },
+    "skipToMain": "Aller au contenu principal"
+  },
+  "footer": {
+    "copyright": "© 2002–2026 Tous droits réservés par Jahia Solutions Group SA",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "cookies": "Politique relative aux cookies",
+    "rss": "Flux RSS des nouveaux modules",
+    "legalNav": "Mentions légales",
+    "socialNav": "Réseaux sociaux"
+  },
+  "store": {
+    "filter": {
+      "search": "Filtrer",
+      "placeholder": "Filtrer les modules…",
+      "status": "Statut",
+      "categories": "Catégories",
+      "unit": "modules",
+      "apply": "Appliquer les filtres",
+      "none": "Aucun module ne correspond à vos filtres."
+    }
+  },
+  "modulesList": {
+    "empty": "Aucun module publié pour le moment.",
+    "showingCount": "Affichage de {{shown}} module(s) sur {{total}}",
+    "pagination": "Pages de la liste des modules",
+    "pageOf": "Page {{page}} sur {{pages}}",
+    "previous": "Précédent",
+    "next": "Suivant"
+  },
+  "myModules": {
+    "signInPrompt": "Veuillez vous connecter pour voir vos modules.",
+    "rolePrompt": "Vous devez disposer du rôle Développeur ou Administrateur du Store pour soumettre des modules.",
+    "empty": "Vous n'avez encore soumis aucun module."
+  },
+  "upload": {
+    "signInPrompt": "Veuillez vous connecter pour soumettre un module.",
+    "repoUnavailable": "Le dépôt de modules n'est pas disponible sur ce site.",
+    "fileLabel": "Paquet du module (.jar / .war)",
+    "submit": "Téléverser le module",
+    "submitting": "Téléversement…",
+    "pickFile": "Veuillez d'abord choisir un paquet de module.",
+    "error": "Échec du téléversement - veuillez réessayer."
+  },
+  "detail": {
+    "tabs": {
+      "overview": "Aperçu",
+      "information": "Informations",
+      "versions": "Versions",
+      "install": "Installation",
+      "license": "Licence",
+      "ariaLabel": "Sections du module"
+    },
+    "sections": {
+      "video": "Vidéo",
+      "screenshots": "Captures d'écran",
+      "howToInstall": "Comment installer",
+      "faq": "FAQ"
+    },
+    "meta": {
+      "moduleId": "Identifiant du module",
+      "groupId": "Identifiant de groupe",
+      "status": "Statut",
+      "category": "Catégorie",
+      "author": "Auteur",
+      "developerWebsite": "Site web du développeur",
+      "requiresJahia": "Nécessite Jahia",
+      "updated": "Mis à jour",
+      "source": "Source",
+      "tags": "Étiquettes"
+    },
+    "badge": {
+      "supported": "Pris en charge par Jahia",
+      "reviewed": "Examiné par Jahia"
+    },
+    "download": "Télécharger",
+    "downloadVersion": "Télécharger {{version}}",
+    "versions": {
+      "open": "Versions ({{count}})",
+      "close": "Fermer",
+      "none": "Aucune version publiée pour le moment.",
+      "uploadTitle": "Téléverser une nouvelle version",
+      "uploadHelp": "Téléversez un .jar ou .war dont le nom de module et l'identifiant de groupe correspondent à ce module pour l'ajouter comme nouvelle version."
+    }
+  },
+  "publish": {
+    "module": {
+      "publish": "Publier le module",
+      "unpublish": "Dépublier le module",
+      "error": "Impossible de modifier l'état de publication."
+    },
+    "version": {
+      "publish": "Publier la version",
+      "unpublish": "Dépublier la version",
+      "error": "Impossible de modifier l'état de publication."
+    },
+    "publishing": "Enregistrement…",
+    "publishedState": "Publié",
+    "draftState": "Brouillon"
+  },
+  "editor": {
+    "edit": "Modifier le module",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler",
+    "saved": "Enregistré",
+    "error": "Échec de l'enregistrement - vérifiez vos autorisations et réessayez.",
+    "title": "Titre",
+    "description": "Description",
+    "howToInstall": "Comment installer",
+    "faq": "FAQ",
+    "license": "Licence",
+    "authorEmail": "Courriel de l'auteur",
+    "authorURL": "URL de l'auteur",
+    "codeRepository": "Dépôt de code",
+    "tabGeneral": "Général",
+    "tabDescription": "Description",
+    "tabInstall": "Installation et FAQ",
+    "tabLicense": "Licence",
+    "tabAuthor": "Auteur et liens",
+    "tablist": "Champs du module",
+    "loading": "Chargement de l'éditeur…",
+    "icon": {
+      "label": "Icône",
+      "choose": "Choisir une image d'icône",
+      "upload": "Téléverser l'icône",
+      "uploading": "Téléversement…",
+      "uploaded": "Icône téléversée",
+      "error": "Échec du téléversement de l'icône - vérifiez vos autorisations et réessayez.",
+      "current": "Icône actuelle",
+      "none": "-",
+      "tooLarge": "L'image est trop volumineuse (max. 2 Mo).",
+      "invalidType": "Veuillez choisir un fichier image."
+    },
+    "metadata": {
+      "status": "Statut",
+      "category": "Catégorie",
+      "noCategories": "Aucune catégorie n'est encore configurée pour ce store.",
+      "tags": "Étiquettes",
+      "tag": {
+        "add": "Ajouter une étiquette",
+        "remove": "Supprimer l'étiquette",
+        "placeholder": "Ajouter une étiquette…"
+      }
+    }
+  },
+  "addVersion": {
+    "fileLabel": "Paquet de la nouvelle version (.jar / .war)",
+    "submit": "Téléverser la nouvelle version",
+    "submitting": "Téléversement…",
+    "pickFile": "Veuillez d'abord choisir un paquet de module.",
+    "error": "Échec du téléversement - veuillez réessayer."
+  },
+  "version": {
+    "download": "Télécharger",
+    "draft": "brouillon",
+    "changelog": {
+      "edit": "Modifier le journal des modifications",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "cancel": "Annuler",
+      "saved": "Enregistré",
+      "error": "Échec de l'enregistrement - vérifiez vos autorisations et réessayez.",
+      "ariaLabel": "Journal des modifications",
+      "loading": "Chargement de l'éditeur…"
+    },
+    "delete": {
+      "remove": "Supprimer la version",
+      "confirmPrompt": "Supprimer cette version ?",
+      "confirm": "Supprimer",
+      "cancel": "Annuler",
+      "deleting": "Suppression…",
+      "error": "Impossible de supprimer la version - vérifiez vos autorisations et réessayez."
+    }
+  },
+  "card": {
+    "supported": "Pris en charge",
+    "reviewed": "Examiné"
+  },
+  "screenshots": {
+    "empty": "Aucune capture d'écran.",
+    "moveUp": "Déplacer vers le haut",
+    "moveDown": "Déplacer vers le bas",
+    "delete": "Supprimer la capture d'écran",
+    "confirmPrompt": "Supprimer cette capture d'écran ?",
+    "confirm": "Supprimer",
+    "cancel": "Annuler",
+    "error": "Impossible de mettre à jour les captures d'écran - vérifiez vos autorisations."
+  },
+  "lightbox": {
+    "open": "Ouvrir la capture d'écran",
+    "close": "Fermer",
+    "previous": "Précédent",
+    "next": "Suivant"
+  }
+}

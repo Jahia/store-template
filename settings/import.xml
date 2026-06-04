@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Initial content imported into sites created with the jahia-store-template template set.
+  Gives a fresh store a working structure entirely on the JS templates:
+    - a home page rendering the published-modules grid (Area "main")
+    - a "My modules" page (JAR upload + the user's own modules)
+    - a modules-repository folder where uploaded modules are created
+  Store administration (Settings / Categories / Roles) lives in the Jahia site
+  administration (jContent), provided by the jahia-store module - not in-site.
+-->
+<content xmlns:j="http://www.jahia.org/jahia/1.0"
+         xmlns:jcr="http://www.jcp.org/jcr/1.0"
+         xmlns:jnt="http://www.jahia.org/jahia/nt/1.0">
+    <modules jcr:primaryType="jnt:modules">
+        <jahia-store-template>
+            <home j:isHomePage="true"
+                  j:templateName="default"
+                  jcr:primaryType="jnt:page"
+                  jcr:mixinTypes="jmix:keywords">
+                <j:translation_en jcr:language="en"
+                                  jcr:primaryType="jnt:translation"
+                                  jcr:mixinTypes="mix:title"
+                                  jcr:title="Store"/>
+                <main jcr:primaryType="jnt:contentList">
+                    <store-modules jcr:primaryType="jnt:forgeModulesList"/>
+                </main>
+
+                <my-modules j:templateName="default" jcr:primaryType="jnt:page">
+                    <j:translation_en jcr:language="en"
+                                      jcr:primaryType="jnt:translation"
+                                      jcr:mixinTypes="mix:title"
+                                      jcr:title="My modules"/>
+                    <main jcr:primaryType="jnt:contentList">
+                        <upload jcr:primaryType="jnt:fileUpload"/>
+                        <mine jcr:primaryType="jnt:forgeMyModulesList"/>
+                    </main>
+                </my-modules>
+            </home>
+
+            <contents jcr:primaryType="jnt:contentFolder">
+                <modules-repository jcr:primaryType="jnt:contentFolder"/>
+                <!-- Required by the createEntryFromJar action: it reads
+                     <site>/contents/modules-required-versions and auto-creates the
+                     per-Jahia-version child node on upload. Without this folder the
+                     action fails with PathNotFoundException. -->
+                <modules-required-versions jcr:primaryType="jnt:contentFolder"/>
+            </contents>
+        </jahia-store-template>
+    </modules>
+</content>

@@ -1,0 +1,215 @@
+{
+  "chrome": {
+    "search": {
+      "placeholder": "Search modules…",
+      "label": "Search modules"
+    },
+    "login": {
+      "signIn": "Log in",
+      "signOut": "Log out",
+      "username": "Username",
+      "password": "Password"
+    },
+    "menu": {
+      "open": "Open menu",
+      "close": "Close menu"
+    },
+    "nav": {
+      "label": "Main navigation"
+    },
+    "skipToMain": "Skip to main content"
+  },
+  "footer": {
+    "copyright": "© 2002–2026 All Rights Reserved by Jahia Solutions Group SA",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "cookies": "Cookie Policy",
+    "rss": "RSS feed of new modules",
+    "legalNav": "Legal",
+    "socialNav": "Social media"
+  },
+  "store": {
+    "filter": {
+      "search": "Filter",
+      "placeholder": "Filter modules…",
+      "status": "Status",
+      "categories": "Categories",
+      "unit": "modules",
+      "apply": "Apply filters",
+      "none": "No modules match your filters."
+    }
+  },
+  "modulesList": {
+    "empty": "No published modules yet.",
+    "showingCount": "Showing {{shown}} of {{total}} modules",
+    "pagination": "Module list pages",
+    "pageOf": "Page {{page}} of {{pages}}",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "myModules": {
+    "signInPrompt": "Please log in to see your modules.",
+    "rolePrompt": "You need the Store developer or Store administrator role to submit modules.",
+    "empty": "You have not submitted any modules yet."
+  },
+  "upload": {
+    "signInPrompt": "Please log in to submit a module.",
+    "repoUnavailable": "The module repository is not available on this site.",
+    "fileLabel": "Module package (.jar / .war)",
+    "submit": "Upload module",
+    "submitting": "Uploading…",
+    "pickFile": "Please choose a module package first.",
+    "error": "Upload failed - please try again."
+  },
+  "detail": {
+    "tabs": {
+      "overview": "Overview",
+      "information": "Information",
+      "versions": "Versions",
+      "install": "Installation",
+      "license": "License",
+      "ariaLabel": "Module sections"
+    },
+    "sections": {
+      "video": "Video",
+      "screenshots": "Screenshots",
+      "howToInstall": "How to install",
+      "faq": "FAQ"
+    },
+    "meta": {
+      "moduleId": "Module ID",
+      "groupId": "Group ID",
+      "status": "Status",
+      "category": "Category",
+      "author": "Author",
+      "developerWebsite": "Developer website",
+      "requiresJahia": "Requires Jahia",
+      "updated": "Updated",
+      "source": "Source",
+      "tags": "Tags"
+    },
+    "badge": {
+      "supported": "Supported by Jahia",
+      "reviewed": "Reviewed by Jahia"
+    },
+    "download": "Download",
+    "downloadVersion": "Download {{version}}",
+    "versions": {
+      "open": "Versions ({{count}})",
+      "close": "Close",
+      "none": "No versions published yet.",
+      "uploadTitle": "Upload a new version",
+      "uploadHelp": "Upload a .jar or .war whose module name and group ID match this module to add it as a new version."
+    }
+  },
+  "publish": {
+    "module": {
+      "publish": "Publish module",
+      "unpublish": "Unpublish module",
+      "error": "Could not change the published state."
+    },
+    "version": {
+      "publish": "Publish version",
+      "unpublish": "Unpublish version",
+      "error": "Could not change the published state."
+    },
+    "publishing": "Saving…",
+    "publishedState": "Published",
+    "draftState": "Draft"
+  },
+  "editor": {
+    "edit": "Edit module",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "saved": "Saved",
+    "error": "Save failed - check your permissions and try again.",
+    "title": "Title",
+    "description": "Description",
+    "howToInstall": "How to install",
+    "faq": "FAQ",
+    "license": "License",
+    "authorEmail": "Author email",
+    "authorURL": "Author URL",
+    "codeRepository": "Code repository",
+    "tabGeneral": "General",
+    "tabDescription": "Description",
+    "tabInstall": "Install & FAQ",
+    "tabLicense": "License",
+    "tabAuthor": "Author & links",
+    "tablist": "Module fields",
+    "loading": "Loading editor…",
+    "icon": {
+      "label": "Icon",
+      "choose": "Choose an icon image",
+      "upload": "Upload icon",
+      "uploading": "Uploading…",
+      "uploaded": "Icon uploaded",
+      "error": "Icon upload failed - check your permissions and try again.",
+      "current": "Current icon",
+      "none": "-",
+      "tooLarge": "Image is too large (max 2 MB).",
+      "invalidType": "Please choose an image file."
+    },
+    "metadata": {
+      "status": "Status",
+      "category": "Category",
+      "noCategories": "No categories are configured for this store yet.",
+      "tags": "Tags",
+      "tag": {
+        "add": "Add tag",
+        "remove": "Remove tag",
+        "placeholder": "Add a tag…"
+      }
+    }
+  },
+  "addVersion": {
+    "fileLabel": "New version package (.jar / .war)",
+    "submit": "Upload new version",
+    "submitting": "Uploading…",
+    "pickFile": "Please choose a module package first.",
+    "error": "Upload failed - please try again."
+  },
+  "version": {
+    "download": "Download",
+    "draft": "draft",
+    "changelog": {
+      "edit": "Edit changelog",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "saved": "Saved",
+      "error": "Save failed - check your permissions and try again.",
+      "ariaLabel": "Changelog",
+      "loading": "Loading editor…"
+    },
+    "delete": {
+      "remove": "Remove version",
+      "confirmPrompt": "Delete this version?",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "deleting": "Deleting…",
+      "error": "Could not remove the version - check your permissions and try again."
+    }
+  },
+  "card": {
+    "supported": "Supported",
+    "reviewed": "Reviewed"
+  },
+  "screenshots": {
+    "empty": "No screenshots.",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "delete": "Delete screenshot",
+    "confirmPrompt": "Delete this screenshot?",
+    "confirm": "Delete",
+    "cancel": "Cancel",
+    "error": "Could not update screenshots - check your permissions."
+  },
+  "lightbox": {
+    "open": "Open screenshot",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next"
+  }
+}
