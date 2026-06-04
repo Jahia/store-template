@@ -40,43 +40,28 @@
 }
 
 .social {
-  gap: 0.25rem 0.85rem;
+  gap: 0.25rem 0.5rem;
 }
 
-/* RSS feed: a small pill so the feed is discoverable next to the social links. */
-.feed {
+/* Social brand icons: square tap targets (≥24×24 for the target-size rule), muted →
+   accent on hover, with a subtle surface so the hit area reads as a button. */
+.socialLink {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.7rem;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius);
   color: var(--color-text-muted);
-  font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 0.02em;
-  transition: color 150ms var(--ease), border-color 150ms var(--ease),
-    background 150ms var(--ease);
 }
-
-.feed:hover {
+.socialLink:hover {
   color: var(--color-accent);
-  border-color: var(--color-accent);
   background: var(--color-surface-2);
   text-decoration: none;
 }
-
-.feed:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+.socialLink:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
 }
 
-/* Canonical RSS orange on the glyph only (decorative); the "RSS" text carries the name. */
-.rssIcon {
-  flex: none;
-  color: #e8590c;
-}
-
-.feedLabel {
-  line-height: 1;
-}
+/* The RSS feed link reuses .socialLink (icon-only, same square tap target as the socials). */

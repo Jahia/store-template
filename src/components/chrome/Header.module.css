@@ -89,6 +89,38 @@
   background: #fff;
 }
 
+/* Language switcher: compact code links (EN / FR) beside the login control. The 2rem
+   min-height keeps each link a ≥24px tap target (target-size rule). */
+.langSelector {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+.langLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0 0.5rem;
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+}
+.langLink:hover {
+  color: var(--color-accent);
+  background: var(--color-surface-2);
+  text-decoration: none;
+}
+.langLink:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+.langLink[aria-current="true"] {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
 @media (max-width: 720px) {
   .nav,
   .search {

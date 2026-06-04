@@ -6,6 +6,10 @@ interface LoginLabels {
   signOut: string;
   username: string;
   password: string;
+  /** Shown when Jahia rejects the credentials (bad password / unknown user). */
+  invalidCredentials: string;
+  /** Shown when the account is locked. */
+  accountLocked: string;
 }
 
 interface LoginProps {
@@ -43,8 +47,35 @@ export default function Login({
   labels,
 }: Readonly<LoginProps>) {
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const usernameRef = useRef<HTMLInputElement>(null);
+
+  // Signal hydration: the sign-in trigger is server-rendered, so a click before the
+  // onClick is wired wouldn't open the panel. Tests wait for data-login-ready.
+  useEffect(() => {
+    setReady(true);
+  }, []);
+
+  // After a failed login, Jahia's /cms/login servlet redirects back here with
+  // ?loginError=<reason> (bad_password / unknown_user / account_locked) instead of
+  // leaving the user on the bare /cms/login page. Surface it as an inline message and
+  // reopen the form, then strip the param so a refresh doesn't re-show the error.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const reason = params.get("loginError");
+    if (!reason) return;
+    setError(reason === "account_locked" ? labels.accountLocked : labels.invalidCredentials);
+    setOpen(true);
+    params.delete("loginError");
+    const query = params.toString();
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname + (query ? `?${query}` : "") + window.location.hash,
+    );
+  }, [labels.accountLocked, labels.invalidCredentials]);
 
   // On open, move focus into the panel (username field).
   useEffect(() => {
@@ -89,6 +120,7 @@ export default function Login({
         className={styles.loginBtn}
         aria-expanded={open}
         aria-controls="login-panel"
+        data-login-ready={ready ? "true" : undefined}
         onClick={() => setOpen((v) => !v)}
       >
         {labels.signIn}
@@ -103,6 +135,13 @@ export default function Login({
         >
           {/* Where Jahia sends the browser after a successful login. */}
           <input type="hidden" name="redirect" value={loginRedirect} />
+          {/* On failure Jahia redirects here with ?loginError=<reason> (surfaced above). */}
+          <input type="hidden" name="failureRedirect" value={loginRedirect} />
+          {error && (
+            <p className={styles.error} role="alert">
+              {error}
+            </p>
+          )}
           <label htmlFor="login-username">{labels.username}</label>
           <input ref={usernameRef} id="login-username" name="username" autoComplete="username" required />
           <label htmlFor="login-password">{labels.password}</label>

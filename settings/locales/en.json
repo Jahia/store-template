@@ -8,7 +8,9 @@
       "signIn": "Log in",
       "signOut": "Log out",
       "username": "Username",
-      "password": "Password"
+      "password": "Password",
+      "invalidCredentials": "Invalid username or password.",
+      "accountLocked": "This account is locked. Contact an administrator."
     },
     "menu": {
       "open": "Open menu",
@@ -16,6 +18,9 @@
     },
     "nav": {
       "label": "Main navigation"
+    },
+    "language": {
+      "label": "Language"
     },
     "skipToMain": "Skip to main content"
   },
@@ -26,7 +31,7 @@
     "cookies": "Cookie Policy",
     "rss": "RSS feed of new modules",
     "legalNav": "Legal",
-    "socialNav": "Social media"
+    "followNav": "Follow us"
   },
   "store": {
     "filter": {

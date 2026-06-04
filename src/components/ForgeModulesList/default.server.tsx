@@ -45,7 +45,9 @@ function buildWhere(basePath: string, term: string, statuses: string[], categori
     clauses.push(`LOWER(e.[jcr:title]) LIKE '%${likeTerm}%'`);
   }
   if (statuses.length > 0) {
-    const statusOr = statuses.map((s) => `e.[status] = '${sql(s)}'`).join(" OR ");
+    // Match case-insensitively: the facet submits the lowercase choicelist key, but migrated
+    // data may store the status with different casing (e.g. "Community" vs "community").
+    const statusOr = statuses.map((s) => `LOWER(e.[status]) = '${sql(s.toLowerCase())}'`).join(" OR ");
     clauses.push(`(${statusOr})`);
   }
   if (categories.length > 0) {

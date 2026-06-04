@@ -98,10 +98,15 @@ function siteLogoUrl(site: JCRNodeWrapper): string | null {
  */
 export function Header(): JSX.Element {
   const { t } = useTranslation();
-  const { renderContext, mainNode } = useServerContext();
+  const { renderContext, mainNode, currentResource } = useServerContext();
   const site = renderContext.getSite();
   const home = site.getHome();
   const siteTitle = site.getTitle();
+
+  // Language switcher: the site's configured languages (sorted for a stable order),
+  // each linking the current page/content in that language. Hidden for a single-language site.
+  const languages = Array.from(site.getLanguages(), String).sort();
+  const currentLang = currentResource.getLocale().getLanguage();
 
   const homeUrl = home ? buildNodeUrl(home) : buildNodeUrl(site);
   const logoUrl = siteLogoUrl(site);
@@ -166,6 +171,22 @@ export function Header(): JSX.Element {
           />
         </form>
 
+        {languages.length > 1 && (
+          <nav className={styles.langSelector} aria-label={t("chrome.language.label")}>
+            {languages.map((lang) => (
+              <a
+                key={lang}
+                className={styles.langLink}
+                href={buildNodeUrl(mainNode, { language: lang })}
+                hrefLang={lang}
+                aria-current={lang === currentLang ? "true" : undefined}
+              >
+                {lang.toUpperCase()}
+              </a>
+            ))}
+          </nav>
+        )}
+
         <Island
           component={Login}
           props={{
@@ -179,6 +200,8 @@ export function Header(): JSX.Element {
               signOut: t("chrome.login.signOut"),
               username: t("chrome.login.username"),
               password: t("chrome.login.password"),
+              invalidCredentials: t("chrome.login.invalidCredentials"),
+              accountLocked: t("chrome.login.accountLocked"),
             },
           }}
         />
