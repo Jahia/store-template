@@ -186,7 +186,10 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
     }
   };
 
-  const shown = preview ?? iconUrl;
+  // The preview only ever displays a browser-minted `blob:` object-URL (created by
+  // URL.createObjectURL above); anything else falls back to the server-rendered icon.
+  // The scheme guard makes that invariant explicit (CodeQL js/xss-through-dom).
+  const shown = preview?.startsWith("blob:") ? preview : iconUrl;
 
   return (
     <div className={styles.icon} data-icon-status={status}>
