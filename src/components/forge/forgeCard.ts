@@ -1,14 +1,18 @@
 import { buildNodeUrl, getChildNodes } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 
-/** Strip HTML tags + collapse whitespace from a Jahia richtext value. */
+/**
+ * Strip HTML tags + collapse whitespace from a Jahia richtext value.
+ * `&amp;` is unescaped LAST: doing it first turns `&amp;lt;` into `&lt;` and then
+ * into `<` — a double-unescape (CodeQL js/double-escaping).
+ */
 export function stripHtml(html: string): string {
   return (html || "")
     .replaceAll(/<[^>]*>/g, " ")
     .replaceAll("&nbsp;", " ")
-    .replaceAll("&amp;", "&")
     .replaceAll("&lt;", "<")
     .replaceAll("&gt;", ">")
+    .replaceAll("&amp;", "&")
     .replaceAll(/\s+/g, " ")
     .trim();
 }
