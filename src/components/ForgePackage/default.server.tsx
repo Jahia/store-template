@@ -1,5 +1,4 @@
 import { buildNodeUrl, jahiaComponent } from "@jahia/javascript-modules-library";
-import { useTranslation } from "react-i18next";
 import { ForgeEntryCard } from "~/components/forge/ForgeEntryCard";
 import { excerpt, forgeAuthor, forgeCategoryNames, forgeIconUrl } from "~/components/forge/forgeCard";
 
@@ -7,8 +6,6 @@ interface ForgeEntryProps {
   "jcr:title"?: string;
   description?: string;
   status?: string;
-  supportedByJahia?: boolean;
-  reviewedByJahia?: boolean;
 }
 
 /** Card view of a forge package in a list (same presentation as a module). */
@@ -20,11 +17,7 @@ jahiaComponent(
     componentType: "view",
     properties: { "cache.mainResource": "true" },
   },
-  (
-    { "jcr:title": title, description, status, supportedByJahia, reviewedByJahia }: ForgeEntryProps,
-    { currentNode },
-  ) => {
-    const { t } = useTranslation();
+  ({ "jcr:title": title, description, status }: ForgeEntryProps, { currentNode }) => {
     return (
       <ForgeEntryCard
         title={title || currentNode.getName()}
@@ -32,12 +25,8 @@ jahiaComponent(
         iconUrl={forgeIconUrl(currentNode)}
         detailUrl={buildNodeUrl(currentNode)}
         status={status}
-        supported={Boolean(supportedByJahia)}
-        reviewed={Boolean(reviewedByJahia)}
         author={forgeAuthor(currentNode)}
         categories={forgeCategoryNames(currentNode)}
-        supportedLabel={t("card.supported")}
-        reviewedLabel={t("card.reviewed")}
       />
     );
   },

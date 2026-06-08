@@ -94,10 +94,6 @@
       "source": "Source",
       "tags": "Tags"
     },
-    "badge": {
-      "supported": "Supported by Jahia",
-      "reviewed": "Reviewed by Jahia"
-    },
     "download": "Download",
     "downloadVersion": "Download {{version}}",
     "versions": {
@@ -197,10 +193,6 @@
       "deleting": "Deleting…",
       "error": "Could not remove the version - check your permissions and try again."
     }
-  },
-  "card": {
-    "supported": "Supported",
-    "reviewed": "Reviewed"
   },
   "screenshots": {
     "empty": "No screenshots.",

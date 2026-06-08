@@ -179,8 +179,6 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const license = sanitizeHtml(str(node, "license"));
   const codeRepository = str(node, "codeRepository");
   const status = str(node, "status");
-  const supported = bool(node, "supportedByJahia");
-  const reviewed = bool(node, "reviewedByJahia");
   const icon = forgeIconUrl(node);
   const shots = screenshotItems(node);
   const screenshotsPath = node.hasNode("screenshots") ? node.getNode("screenshots").getPath() : "";
@@ -253,12 +251,6 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
               <span className={clsx(styles.badge, styles.status)} data-status={status}>
                 {status}
               </span>
-            )}
-            {supported && (
-              <span className={clsx(styles.badge, styles.supported)}>{t("detail.badge.supported")}</span>
-            )}
-            {reviewed && (
-              <span className={clsx(styles.badge, styles.reviewed)}>{t("detail.badge.reviewed")}</span>
             )}
           </div>
         </div>
