@@ -77,12 +77,14 @@ function publishedParent(version: JCRNodeWrapper): JCRNodeWrapper | null {
 }
 
 /**
- * The most recently created published versions across the catalogue under `basePath`,
- * newest first, whose owning module/package is itself published. Powers the home
- * "Latest releases" strip. Queries both module and package versions, merges and sorts
- * them by creation date (ISO strings sort chronologically), then keeps the top `limit`.
+ * The most recently released modules/packages across the catalogue under `basePath`,
+ * newest first. Powers the home "Latest releases" panel: it queries the published
+ * version nodes of both types, sorts them by creation date (ISO strings sort
+ * chronologically) and keeps only the newest published version PER owning module — so a
+ * module that cut several releases appears once. Returns those representative version
+ * nodes (the caller derives the module + its latest version/date from each).
  */
-export function latestReleaseVersions(
+export function latestModuleReleases(
   session: JCRSessionWrapper,
   basePath: string,
   limit: number,
@@ -93,13 +95,26 @@ export function latestReleaseVersions(
       session,
       `SELECT * FROM [${type}] AS v WHERE ISDESCENDANTNODE(v, '${escaped}') ` +
         `AND v.[published] = true ORDER BY v.[jcr:created] DESC`,
-      // Over-fetch: some hits belong to unpublished modules and get filtered out below.
-      limit * 4,
+      // Over-fetch: hits get filtered (unpublished module) and collapsed (one per module).
+      limit * 8,
     );
-  return [...fetch("jnt:forgeModuleVersion"), ...fetch("jnt:forgePackageVersion")]
-    .filter((v) => publishedParent(v) !== null)
-    .sort((a, b) => createdIso(b).localeCompare(createdIso(a)))
-    .slice(0, limit);
+  const newestFirst = [
+    ...fetch("jnt:forgeModuleVersion"),
+    ...fetch("jnt:forgePackageVersion"),
+  ].sort((a, b) => createdIso(b).localeCompare(createdIso(a)));
+  // Group per module: keep each module's newest published version, once, up to `limit`.
+  const seenModules = new Set<string>();
+  const releases: JCRNodeWrapper[] = [];
+  for (const version of newestFirst) {
+    const module = publishedParent(version);
+    if (!module) continue;
+    const moduleId = module.getIdentifier();
+    if (seenModules.has(moduleId)) continue;
+    seenModules.add(moduleId);
+    releases.push(version);
+    if (releases.length >= limit) break;
+  }
+  return releases;
 }
 
 /** Version child nodes of a module/package, sorted newest-first (replaces ForgeFunctions.sortByVersion). */

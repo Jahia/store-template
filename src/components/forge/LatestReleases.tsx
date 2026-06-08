@@ -5,17 +5,17 @@ import { isoDay, str } from "./nodeProps";
 import styles from "./forge.module.css";
 
 interface LatestReleasesProps {
-  /** Published version nodes, newest first (from latestReleaseVersions). */
+  /** One representative version node per module, newest first (from latestModuleReleases). */
   versions: JCRNodeWrapper[];
   /** Section heading (translated server-side). */
   heading: string;
 }
 
 /**
- * Home "Latest releases" strip: a compact row of the most recently published
- * module/package versions. Pure presentational — the data is computed by the
- * caller (latestReleaseVersions) and the whole card links to the module detail.
- * Renders nothing when there are no releases.
+ * Home "Latest releases" panel: the most recently released modules, one card per
+ * module (its newest published version + release date). Pure presentational — the
+ * data is computed and grouped per module by the caller (latestModuleReleases) and
+ * the whole card links to the module detail. Renders nothing when there are none.
  */
 export function LatestReleases({ versions, heading }: Readonly<LatestReleasesProps>): JSX.Element | null {
   if (versions.length === 0) return null;

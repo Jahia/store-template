@@ -10,7 +10,7 @@ import styles from "~/components/forge/forge.module.css";
 import filterStyles from "~/components/forge/store-filter.module.css";
 import { FORGE_STATUSES, forgeCategoryOptions } from "~/components/forge/forgeFacets";
 import { LatestReleases } from "~/components/forge/LatestReleases";
-import { latestReleaseVersions } from "~/components/forge/versions";
+import { latestModuleReleases } from "~/components/forge/versions";
 import FilterAutoSubmit from "~/components/forge/FilterAutoSubmit.client";
 
 interface ForgeModulesListProps {
@@ -132,7 +132,7 @@ jahiaComponent(
     // it reads as a home hero, not a fixture that lingers during search/filter/pagination. ----
     const isDefaultView = page === 1 && !term && statuses.length === 0 && categories.length === 0;
     const latest = isDefaultView
-      ? latestReleaseVersions(session, basePath, LATEST_RELEASES_COUNT)
+      ? latestModuleReleases(session, basePath, LATEST_RELEASES_COUNT)
       : [];
 
     // ---- URL helpers (relative query strings; reuse the current page path). Built by hand
