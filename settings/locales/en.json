@@ -35,12 +35,11 @@
   },
   "store": {
     "filter": {
-      "search": "Filter",
-      "placeholder": "Filter modules…",
       "status": "Status",
       "categories": "Categories",
       "unit": "modules",
       "apply": "Apply filters",
+      "autoApplyHint": "Filters are applied automatically when you change a selection.",
       "none": "No modules match your filters."
     }
   },

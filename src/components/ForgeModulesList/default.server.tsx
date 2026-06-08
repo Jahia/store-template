@@ -1,6 +1,7 @@
 import {
   getChildNodes,
   getNodesByJCRQuery,
+  Island,
   jahiaComponent,
   Render,
 } from "@jahia/javascript-modules-library";
@@ -9,6 +10,7 @@ import type { JCRNodeWrapper } from "org.jahia.services.content";
 import styles from "~/components/forge/forge.module.css";
 import filterStyles from "~/components/forge/store-filter.module.css";
 import { forgeRootCategoryUuid } from "~/components/forge/forgeBranding";
+import FilterAutoSubmit from "~/components/forge/FilterAutoSubmit.client";
 
 interface ForgeModulesListProps {
   startNode?: JCRNodeWrapper;
@@ -140,25 +142,19 @@ jahiaComponent(
     };
 
     const labels = {
-      search: t("store.filter.search"),
-      placeholder: t("store.filter.placeholder"),
       status: t("store.filter.status"),
       categories: t("store.filter.categories"),
       apply: t("store.filter.apply"),
+      autoApplyHint: t("store.filter.autoApplyHint"),
     };
 
     return (
       <div className={styles.layout} data-forge-list="">
         {/* A plain <div> (not <aside>): a complementary landmark nested in <main> trips axe. */}
         <form className={filterStyles.sidebar} method="get" data-forge-filter="">
-          <input
-            className={filterStyles.search}
-            type="search"
-            name="src_terms"
-            defaultValue={term}
-            placeholder={labels.placeholder}
-            aria-label={labels.search}
-          />
+          {/* Text search lives in the header's global search — carry the active term so toggling a
+              facet keeps it (a GET form only submits its own fields). */}
+          {term && <input type="hidden" name="src_terms" value={term} />}
           <fieldset className={filterStyles.facets}>
             <legend className={filterStyles.legend}>{labels.status}</legend>
             {STATUSES.map((s) => (
@@ -184,6 +180,10 @@ jahiaComponent(
               ))}
             </fieldset>
           )}
+          {/* Filters apply on change once the island hydrates; announce it (WCAG SC 3.2.2). */}
+          <p className="sr-only">{labels.autoApplyHint}</p>
+          <Island component={FilterAutoSubmit} />
+          {/* No-JS fallback: the island hides this once it flags the form `data-filter-ready`. */}
           <button type="submit" className={`store-btn store-btn--primary ${filterStyles.apply}`}>
             {labels.apply}
           </button>
