@@ -1,5 +1,4 @@
 import {
-  getChildNodes,
   getNodesByJCRQuery,
   Island,
   jahiaComponent,
@@ -9,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import styles from "~/components/forge/forge.module.css";
 import filterStyles from "~/components/forge/store-filter.module.css";
-import { forgeRootCategoryUuid } from "~/components/forge/forgeBranding";
+import { FORGE_STATUSES, forgeCategoryOptions } from "~/components/forge/forgeFacets";
 import FilterAutoSubmit from "~/components/forge/FilterAutoSubmit.client";
 
 interface ForgeModulesListProps {
@@ -17,8 +16,6 @@ interface ForgeModulesListProps {
   nbOfModulePerPage?: number;
 }
 
-/** jmix:forgeElement status choicelist (definitions.cnd) — the fixed status facet options. */
-const STATUSES = ["community", "labs", "prereleased", "supported", "legacy"];
 const DEFAULT_PAGE_SIZE = 12;
 /** Bound the total-count query so an unbounded catalogue can never run away. */
 const COUNT_CAP = 5000;
@@ -41,10 +38,18 @@ function multiParam(values: string[] | null | undefined): string[] {
 function buildWhere(basePath: string, term: string, statuses: string[], categories: string[]): string {
   const clauses = [`ISDESCENDANTNODE(e, '${sql(basePath)}')`, "e.[published] = true"];
   if (term) {
-    // Strip LIKE wildcards (% _) and the escape char so a literal term (e.g. "%") can't widen
-    // the scan to the whole catalogue (enumeration / CPU); we only want a substring match.
+    // Advanced-search scope: match the term across the title, the module id (node name)
+    // and the description. Strip LIKE wildcards (% _) and the escape char so a literal
+    // term (e.g. "%") can't widen the scan to the whole catalogue (enumeration / CPU);
+    // we only want a substring match.
     const likeTerm = sql(term.toLowerCase()).replaceAll(/[%_\\]/g, "");
-    clauses.push(`LOWER(e.[jcr:title]) LIKE '%${likeTerm}%'`);
+    const pattern = `'%${likeTerm}%'`;
+    const textOr = [
+      `LOWER(e.[jcr:title]) LIKE ${pattern}`,
+      `LOWER(LOCALNAME(e)) LIKE ${pattern}`,
+      `LOWER(e.[description]) LIKE ${pattern}`,
+    ].join(" OR ");
+    clauses.push(`(${textOr})`);
   }
   if (statuses.length > 0) {
     // Match case-insensitively: the facet submits the lowercase choicelist key, but migrated
@@ -90,25 +95,14 @@ jahiaComponent(
     // ---- current filter state (from the URL) ----
     const term = (request.getParameter("src_terms") || "").trim();
     const statuses = multiParam(request.getParameterValues("status")).filter((s) =>
-      STATUSES.includes(s),
+      FORGE_STATUSES.includes(s),
     );
     const selectedCategories = multiParam(request.getParameterValues("category"));
     let page = Number.parseInt(request.getParameter("page") || "1", 10);
     if (!Number.isFinite(page) || page < 1) page = 1;
 
     // ---- category facet options (the site's root-category children) ----
-    const rootUuid = forgeRootCategoryUuid(site.getSiteKey());
-    const categoryOptions: { uuid: string; name: string }[] = [];
-    if (rootUuid) {
-      try {
-        const root = session.getNodeByIdentifier(rootUuid);
-        for (const c of getChildNodes(root, 200, 0, (n) => n.isNodeType("jnt:category"))) {
-          categoryOptions.push({ uuid: c.getIdentifier(), name: c.getDisplayableName() });
-        }
-      } catch {
-        // root category missing / not readable - no category facet.
-      }
-    }
+    const categoryOptions = forgeCategoryOptions(site.getSiteKey(), session);
     const allowedCategoryUuids = new Set(categoryOptions.map((c) => c.uuid));
     const categories = selectedCategories.filter((u) => allowedCategoryUuids.has(u));
 
@@ -157,7 +151,7 @@ jahiaComponent(
           {term && <input type="hidden" name="src_terms" value={term} />}
           <fieldset className={filterStyles.facets}>
             <legend className={filterStyles.legend}>{labels.status}</legend>
-            {STATUSES.map((s) => (
+            {FORGE_STATUSES.map((s) => (
               <label key={s} className={filterStyles.facet}>
                 <input type="checkbox" name="status" value={s} defaultChecked={statuses.includes(s)} />
                 <span className={filterStyles.facetStatus}>{s}</span>

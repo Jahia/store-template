@@ -9,6 +9,7 @@ import {
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import { useTranslation } from "react-i18next";
 import { forgeBranding } from "~/components/forge/forgeBranding";
+import { FORGE_STATUSES, forgeCategoryOptions } from "~/components/forge/forgeFacets";
 import styles from "./Header.module.css";
 import Login from "./Login.client";
 import MobileNav from "./MobileNav.client";
@@ -22,6 +23,11 @@ const STORE_ROLE_PERMISSION = "jahiaForgeUploadModule";
 
 /** Conventional node name of the "My modules" page in the jahia-store-template seed. */
 const MY_MODULES_PAGE_NAME = "my-modules";
+
+/** Read a repeated request parameter into a Set (GraalJS-safe over a Java String[]). */
+function paramSet(values: string[] | null | undefined): Set<string> {
+  return new Set(values ? Array.from(values, String) : []);
+}
 
 /**
  * Identifiers of nav pages that host the developer-only "My modules" list
@@ -125,9 +131,15 @@ export function Header(): JSX.Element {
   // desktop nav; the island only renders ≤720px where the desktop nav is hidden).
   const navLinks = navPages.map((p) => ({ href: buildNodeUrl(p), label: p.getDisplayableName() }));
 
-  // Search navigates to the home modules list; its StoreFilter island reads
-  // ?src_terms and filters the grid.
+  // The global search posts to the home modules list (?src_terms + status/category
+  // facets), which filters server-side. The advanced panel reflects the active query
+  // when already on the results page: pre-fill the term and pre-check the facets.
   const searchUrl = homeUrl;
+  const request = renderContext.getRequest();
+  const searchTerm = (request.getParameter("src_terms") || "").trim();
+  const selectedStatuses = paramSet(request.getParameterValues("status"));
+  const selectedCategories = paramSet(request.getParameterValues("category"));
+  const categoryOptions = forgeCategoryOptions(site.getSiteKey(), mainNode.getSession());
 
   let username = "";
   if (isLoggedIn) {
@@ -162,13 +174,67 @@ export function Header(): JSX.Element {
         </nav>
 
         <form className={styles.search} method="get" action={searchUrl} role="search">
-          <input
-            className={styles.searchInput}
-            type="search"
-            name="src_terms"
-            placeholder={t("chrome.search.placeholder")}
-            aria-label={t("chrome.search.label")}
-          />
+          <div className={styles.searchRow}>
+            <input
+              className={styles.searchInput}
+              type="search"
+              name="src_terms"
+              defaultValue={searchTerm}
+              placeholder={t("chrome.search.placeholder")}
+              aria-label={t("chrome.search.label")}
+            />
+            {/* Advanced search: a native <details> disclosure (no JS, keyboard-accessible)
+                revealing status + category facets that post through the same GET pipeline. */}
+            <details className={styles.advanced}>
+              <summary className={styles.advancedToggle} aria-label={t("chrome.search.advanced")}>
+                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+                  <path
+                    d="M3 6l5 5 5-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </summary>
+              <div className={styles.advancedPanel}>
+                <fieldset className={styles.advancedFacets}>
+                  <legend className={styles.advancedLegend}>{t("store.filter.status")}</legend>
+                  {FORGE_STATUSES.map((s) => (
+                    <label key={s} className={styles.advancedFacet}>
+                      <input
+                        type="checkbox"
+                        name="status"
+                        value={s}
+                        defaultChecked={selectedStatuses.has(s)}
+                      />
+                      <span className={styles.advancedStatus}>{s}</span>
+                    </label>
+                  ))}
+                </fieldset>
+                {categoryOptions.length > 0 && (
+                  <fieldset className={styles.advancedFacets}>
+                    <legend className={styles.advancedLegend}>{t("store.filter.categories")}</legend>
+                    {categoryOptions.map((c) => (
+                      <label key={c.uuid} className={styles.advancedFacet}>
+                        <input
+                          type="checkbox"
+                          name="category"
+                          value={c.uuid}
+                          defaultChecked={selectedCategories.has(c.uuid)}
+                        />
+                        <span>{c.name}</span>
+                      </label>
+                    ))}
+                  </fieldset>
+                )}
+                <button type="submit" className="store-btn store-btn--primary">
+                  {t("chrome.search.submit")}
+                </button>
+              </div>
+            </details>
+          </div>
         </form>
 
         {languages.length > 1 && (

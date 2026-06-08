@@ -2,7 +2,9 @@
   "chrome": {
     "search": {
       "placeholder": "Search modules…",
-      "label": "Search modules"
+      "label": "Search modules",
+      "advanced": "Advanced search",
+      "submit": "Search"
     },
     "login": {
       "signIn": "Log in",
