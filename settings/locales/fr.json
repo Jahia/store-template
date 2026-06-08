@@ -64,7 +64,7 @@
   "upload": {
     "signInPrompt": "Veuillez vous connecter pour soumettre un module.",
     "repoUnavailable": "Le dépôt de modules n'est pas disponible sur ce site.",
-    "fileLabel": "Paquet du module (.jar / .war)",
+    "fileLabel": "Paquet du module (.jar)",
     "submit": "Téléverser le module",
     "submitting": "Téléversement…",
     "pickFile": "Veuillez d'abord choisir un paquet de module.",
@@ -104,7 +104,7 @@
       "close": "Fermer",
       "none": "Aucune version publiée pour le moment.",
       "uploadTitle": "Téléverser une nouvelle version",
-      "uploadHelp": "Téléversez un .jar ou .war dont le nom de module et l'identifiant de groupe correspondent à ce module pour l'ajouter comme nouvelle version."
+      "uploadHelp": "Téléversez un .jar dont le nom de module et l'identifiant de groupe correspondent à ce module pour l'ajouter comme nouvelle version."
     }
   },
   "publish": {
@@ -175,7 +175,7 @@
     }
   },
   "addVersion": {
-    "fileLabel": "Paquet de la nouvelle version (.jar / .war)",
+    "fileLabel": "Paquet de la nouvelle version (.jar)",
     "submit": "Téléverser la nouvelle version",
     "submitting": "Téléversement…",
     "pickFile": "Veuillez d'abord choisir un paquet de module.",

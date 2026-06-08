@@ -508,7 +508,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
                 props={{
                   actionUrl: uploadActionUrl,
                   backUrl: buildNodeUrl(node),
-                  accept: ".jar,.war",
+                  accept: ".jar",
                   labels: ADD_VERSION_LABELS,
                 }}
               />

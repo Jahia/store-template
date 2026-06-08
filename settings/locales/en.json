@@ -64,7 +64,7 @@
   "upload": {
     "signInPrompt": "Please log in to submit a module.",
     "repoUnavailable": "The module repository is not available on this site.",
-    "fileLabel": "Module package (.jar / .war)",
+    "fileLabel": "Module package (.jar)",
     "submit": "Upload module",
     "submitting": "Uploading…",
     "pickFile": "Please choose a module package first.",
@@ -104,7 +104,7 @@
       "close": "Close",
       "none": "No versions published yet.",
       "uploadTitle": "Upload a new version",
-      "uploadHelp": "Upload a .jar or .war whose module name and group ID match this module to add it as a new version."
+      "uploadHelp": "Upload a .jar whose module name and group ID match this module to add it as a new version."
     }
   },
   "publish": {
@@ -175,7 +175,7 @@
     }
   },
   "addVersion": {
-    "fileLabel": "New version package (.jar / .war)",
+    "fileLabel": "New version package (.jar)",
     "submit": "Upload new version",
     "submitting": "Uploading…",
     "pickFile": "Please choose a module package first.",
