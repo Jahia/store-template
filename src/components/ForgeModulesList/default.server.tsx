@@ -191,10 +191,13 @@ jahiaComponent(
             {/* Filters apply on change once the island hydrates; announce it (WCAG SC 3.2.2). */}
             <p className="sr-only">{labels.autoApplyHint}</p>
             <Island component={FilterAutoSubmit} />
-            {/* No-JS fallback: the island hides this once it flags the form `data-filter-ready`. */}
-            <button type="submit" className={`store-btn store-btn--primary ${filterStyles.apply}`}>
-              {labels.apply}
-            </button>
+            {/* No-JS fallback: rendered only when scripting is off, so JS users (who get
+                auto-apply on change) never see the button flash in after a reload. */}
+            <noscript>
+              <button type="submit" className={`store-btn store-btn--primary ${filterStyles.apply}`}>
+                {labels.apply}
+              </button>
+            </noscript>
           </form>
 
           {/* "Latest releases" lives under the filter rail, only on the default home view. */}
