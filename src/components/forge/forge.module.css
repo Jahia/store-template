@@ -15,23 +15,37 @@
   }
 }
 
-/* Home "Latest releases" strip — a row of compact recent-version cards above the grid. */
+/* Left column: the filter rail stacked above the "Latest releases" panel. */
+.sidebarColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+/* "Latest releases" panel in the left rail, under the filters — a vertical list of
+   compact recent-version cards, chromed like the filter rail above it. */
 .latest {
-  margin-bottom: 2rem;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
 }
 .latestHeading {
-  margin: 0 0 1rem;
-  font-size: 1.05rem;
+  margin: 0 0 0.85rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 .latestList {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 .latestItem {
   min-width: 0;
