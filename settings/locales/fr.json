@@ -137,6 +137,12 @@
     "authorEmail": "Courriel de l'auteur",
     "authorURL": "URL de l'auteur",
     "codeRepository": "Dépôt de code",
+    "authorDisplay": "Affichage de l'auteur",
+    "authorDisplayOptions": {
+      "username": "Courriel",
+      "fullName": "Prénom et nom",
+      "organisation": "Organisation"
+    },
     "tabGeneral": "Général",
     "tabDescription": "Description",
     "tabInstall": "Installation et FAQ",

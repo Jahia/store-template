@@ -41,6 +41,9 @@ function panelProps(id: string, defaultTab: string) {
 /** Allowed module status values (jmix:forgeElement `status` choicelist). */
 const STATUS_OPTIONS = ["community", "labs", "prereleased", "supported", "legacy"];
 
+/** Allowed author-display modes (jnt:forgeModule/Package `authorNameDisplayedAs` choicelist). */
+const AUTHOR_DISPLAY_OPTIONS = ["username", "fullName", "organisation"];
+
 /**
  * Categories a developer can file a module under: the children of the site's
  * configured root category (Store administration → Categories). Empty if no root
@@ -116,6 +119,12 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
     authorEmail: t("editor.authorEmail"),
     authorURL: t("editor.authorURL"),
     codeRepository: t("editor.codeRepository"),
+    authorDisplay: t("editor.authorDisplay"),
+    authorDisplayOptions: {
+      username: t("editor.authorDisplayOptions.username"),
+      fullName: t("editor.authorDisplayOptions.fullName"),
+      organisation: t("editor.authorDisplayOptions.organisation"),
+    },
     tabGeneral: t("editor.tabGeneral"),
     tabDescription: t("editor.tabDescription"),
     tabInstall: t("editor.tabInstall"),
@@ -297,6 +306,8 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
               },
               status,
               statusOptions: STATUS_OPTIONS,
+              authorDisplay: str(node, "authorNameDisplayedAs") || "username",
+              authorDisplayOptions: AUTHOR_DISPLAY_OPTIONS,
               categoryOptions,
               categoryValue,
               tags,

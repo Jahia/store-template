@@ -137,6 +137,12 @@
     "authorEmail": "Author email",
     "authorURL": "Author URL",
     "codeRepository": "Code repository",
+    "authorDisplay": "Author display",
+    "authorDisplayOptions": {
+      "username": "Email",
+      "fullName": "First and last name",
+      "organisation": "Organization"
+    },
     "tabGeneral": "General",
     "tabDescription": "Description",
     "tabInstall": "Install & FAQ",

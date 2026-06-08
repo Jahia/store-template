@@ -1,4 +1,4 @@
-import { buildNodeUrl, getChildNodes } from "@jahia/javascript-modules-library";
+import { buildNodeUrl, getChildNodes, server } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 
 /**
@@ -59,10 +59,51 @@ export function forgeCategoryNames(node: JCRNodeWrapper): string[] {
   return names;
 }
 
-/** Author shown on a card: the module's developer (its creator), or "". */
+/** A Jahia user-node property of the module's creator (read via the user manager), or "". */
+function authorProfileProperty(node: JCRNodeWrapper, username: string, property: string): string {
+  try {
+    const service = server.osgi.getService("org.jahia.services.usermanager.JahiaUserManagerService");
+    if (!service) return "";
+    const siteKey = node.getResolveSite().getSiteKey();
+    // Site-scoped lookup first (site users), then the global directory.
+    const user = service.lookupUser(username, siteKey) ?? service.lookupUser(username);
+    if (!user) return "";
+    return user.getPropertyAsString(property) || "";
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * Author label shown on a card / detail page: the module's developer (its creator),
+ * rendered according to the per-module `authorNameDisplayedAs` choice.
+ *
+ * The CND choicelist values are fixed (we must not change the CND), so they are
+ * mapped to the three product display modes via the creator's Jahia user profile:
+ *   - "username"     → the user's email (j:email)
+ *   - "fullName"     → first + last name (j:firstName j:lastName)
+ *   - "organisation" → the organization (j:organization)
+ * Any chosen field that is empty/unreadable (e.g. anonymous SSR) falls back to the
+ * username, so a name is always shown.
+ */
 export function forgeAuthor(node: JCRNodeWrapper): string {
   try {
-    return node.getPropertyAsString("jcr:createdBy") || "";
+    const username = node.getPropertyAsString("jcr:createdBy") || "";
+    if (!username) return "";
+    const mode = node.hasProperty("authorNameDisplayedAs")
+      ? node.getProperty("authorNameDisplayedAs").getString()
+      : "username";
+    if (mode === "fullName") {
+      const first = authorProfileProperty(node, username, "j:firstName");
+      const last = authorProfileProperty(node, username, "j:lastName");
+      const full = [first, last].filter(Boolean).join(" ").trim();
+      return full || username;
+    }
+    if (mode === "organisation") {
+      return authorProfileProperty(node, username, "j:organization") || username;
+    }
+    // "username" (default): show the user's email, falling back to the login name.
+    return authorProfileProperty(node, username, "j:email") || username;
   } catch {
     return "";
   }
