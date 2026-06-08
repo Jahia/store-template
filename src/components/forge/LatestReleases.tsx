@@ -34,7 +34,8 @@ export function LatestReleases({ versions, heading }: Readonly<LatestReleasesPro
           const module = version.getParent() as unknown as JCRNodeWrapper;
           const title = str(module, "jcr:title") || module.getName();
           const versionNumber = str(version, "versionNumber") || version.getName();
-          const date = isoDay(version, "jcr:created");
+          // The "updated" date — preserved from migration; jcr:created would be the migration run date.
+          const date = isoDay(version, "jcr:lastModified");
           const iconUrl = forgeIconUrl(module);
           return (
             <li key={version.getIdentifier()} className={styles.latestItem}>
