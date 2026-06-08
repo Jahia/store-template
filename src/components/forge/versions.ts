@@ -1,5 +1,5 @@
-import { buildNodeUrl, getChildNodes } from "@jahia/javascript-modules-library";
-import type { JCRNodeWrapper } from "org.jahia.services.content";
+import { buildNodeUrl, getChildNodes, getNodesByJCRQuery } from "@jahia/javascript-modules-library";
+import type { JCRNodeWrapper, JCRSessionWrapper } from "org.jahia.services.content";
 
 function parseVersion(v: string): number[] {
   return (v || "").split(/\D+/).filter(Boolean).map(Number);
@@ -57,6 +57,49 @@ export function requiredJahiaVersion(version: JCRNodeWrapper | undefined): strin
     // Dangling reference.
   }
   return "";
+}
+
+/** ISO date string of a node's creation (queryable mix:created property), or "". */
+function createdIso(node: JCRNodeWrapper): string {
+  return node.hasProperty("jcr:created") ? node.getProperty("jcr:created").getString() : "";
+}
+
+/** The published parent module/package of a version node, or null when unpublished/unreadable. */
+function publishedParent(version: JCRNodeWrapper): JCRNodeWrapper | null {
+  try {
+    const parent = version.getParent() as unknown as JCRNodeWrapper;
+    const isPublished =
+      parent && parent.hasProperty("published") && parent.getProperty("published").getBoolean();
+    return isPublished ? parent : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The most recently created published versions across the catalogue under `basePath`,
+ * newest first, whose owning module/package is itself published. Powers the home
+ * "Latest releases" strip. Queries both module and package versions, merges and sorts
+ * them by creation date (ISO strings sort chronologically), then keeps the top `limit`.
+ */
+export function latestReleaseVersions(
+  session: JCRSessionWrapper,
+  basePath: string,
+  limit: number,
+): JCRNodeWrapper[] {
+  const escaped = basePath.replaceAll("'", "''");
+  const fetch = (type: string): JCRNodeWrapper[] =>
+    getNodesByJCRQuery(
+      session,
+      `SELECT * FROM [${type}] AS v WHERE ISDESCENDANTNODE(v, '${escaped}') ` +
+        `AND v.[published] = true ORDER BY v.[jcr:created] DESC`,
+      // Over-fetch: some hits belong to unpublished modules and get filtered out below.
+      limit * 4,
+    );
+  return [...fetch("jnt:forgeModuleVersion"), ...fetch("jnt:forgePackageVersion")]
+    .filter((v) => publishedParent(v) !== null)
+    .sort((a, b) => createdIso(b).localeCompare(createdIso(a)))
+    .slice(0, limit);
 }
 
 /** Version child nodes of a module/package, sorted newest-first (replaces ForgeFunctions.sortByVersion). */

@@ -45,6 +45,9 @@
       "none": "No modules match your filters."
     }
   },
+  "latest": {
+    "heading": "Latest releases"
+  },
   "modulesList": {
     "empty": "No published modules yet.",
     "showingCount": "Showing {{shown}} of {{total}} modules",

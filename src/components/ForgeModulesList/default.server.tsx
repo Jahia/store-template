@@ -9,6 +9,8 @@ import type { JCRNodeWrapper } from "org.jahia.services.content";
 import styles from "~/components/forge/forge.module.css";
 import filterStyles from "~/components/forge/store-filter.module.css";
 import { FORGE_STATUSES, forgeCategoryOptions } from "~/components/forge/forgeFacets";
+import { LatestReleases } from "~/components/forge/LatestReleases";
+import { latestReleaseVersions } from "~/components/forge/versions";
 import FilterAutoSubmit from "~/components/forge/FilterAutoSubmit.client";
 
 interface ForgeModulesListProps {
@@ -19,6 +21,8 @@ interface ForgeModulesListProps {
 const DEFAULT_PAGE_SIZE = 12;
 /** Bound the total-count query so an unbounded catalogue can never run away. */
 const COUNT_CAP = 5000;
+/** How many recent releases the home "Latest releases" strip shows. */
+const LATEST_RELEASES_COUNT = 6;
 
 /** Escape a value for safe inclusion in a JCR-SQL2 string literal. */
 const sql = (v: string): string => v.replaceAll("'", "''");
@@ -124,6 +128,13 @@ jahiaComponent(
       (page - 1) * pageSize,
     );
 
+    // ---- "Latest releases" home strip: shown only on the default, unfiltered first page so
+    // it reads as a home hero, not a fixture that lingers during search/filter/pagination. ----
+    const isDefaultView = page === 1 && !term && statuses.length === 0 && categories.length === 0;
+    const latest = isDefaultView
+      ? latestReleaseVersions(session, basePath, LATEST_RELEASES_COUNT)
+      : [];
+
     // ---- URL helpers (relative query strings; reuse the current page path). Built by hand
     // rather than with URLSearchParams, which is not available in the GraalJS SSR runtime. ----
     const pageHref = (n: number): string => {
@@ -140,10 +151,13 @@ jahiaComponent(
       categories: t("store.filter.categories"),
       apply: t("store.filter.apply"),
       autoApplyHint: t("store.filter.autoApplyHint"),
+      latest: t("latest.heading"),
     };
 
     return (
-      <div className={styles.layout} data-forge-list="">
+      <>
+        {isDefaultView && <LatestReleases versions={latest} heading={labels.latest} />}
+        <div className={styles.layout} data-forge-list="">
         {/* A plain <div> (not <aside>): a complementary landmark nested in <main> trips axe. */}
         <form className={filterStyles.sidebar} method="get" data-forge-filter="">
           {/* Text search lives in the header's global search — carry the active term so toggling a
@@ -220,7 +234,8 @@ jahiaComponent(
             </>
           )}
         </div>
-      </div>
+        </div>
+      </>
     );
   },
 );
