@@ -13,6 +13,7 @@ import styles from "./Header.module.css";
 import AdvancedSearchSync from "./AdvancedSearchSync.client";
 import Login from "./Login.client";
 import MobileNav from "./MobileNav.client";
+import NavProgress from "./NavProgress.client";
 
 /**
  * Permission granted only by the "Store administrator" and "Store developer"
@@ -153,6 +154,8 @@ export function Header(): JSX.Element {
 
   return (
     <header className={styles.header}>
+      {/* Loading bar for server-side filter/search/pagination navigations (position:fixed). */}
+      <Island component={NavProgress} />
       <div className={styles.inner}>
         <a className={styles.brand} href={homeUrl}>
           {logoUrl ? (
