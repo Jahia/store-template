@@ -4,9 +4,10 @@ import { useEffect, useRef } from "react";
  * Reconciles the cached header chrome with the live URL (it does NOT vary by query
  * string, so its server-rendered state freezes at the first render). On mount this
  * island reads the location and:
- *   1. reflects ?src_terms into the header search input, so it matches the URL when
- *      already on a filtered results page (status/category faceting lives in the
- *      modules-list left rail, which renders fresh, not in the cached header);
+ *   1. reflects ?src_terms into the header search input AND injects the active
+ *      ?status / ?category as hidden inputs on the search form, so submitting a
+ *      keyword keeps the facet selection (the facet controls live in the modules-list
+ *      left rail, which renders fresh, not in the cached header);
  *   2. carries the current filter/search query onto the language-switcher links
  *      (minus `page`, since switching language starts a fresh context) so switching
  *      language keeps the active filtering/search state;
@@ -23,11 +24,25 @@ export default function AdvancedSearchSync() {
     const search = globalThis.location.search;
     const params = new URLSearchParams(search);
 
-    // 1. Header search input ← URL.
+    // 1. Header search input ← URL, and carry the active facets onto the search form so submitting
+    // a keyword keeps the status/category selection (the GET form only submits its own fields, and
+    // the facet controls live in the modules-list left rail, not here). The header is cached chrome
+    // that does NOT vary by query string, so these must be injected client-side from the live URL
+    // rather than server-rendered (SSR values would freeze and leak the first visitor's filters).
     const form = markerRef.current?.closest<HTMLFormElement>("[role='search']");
     if (form) {
       const termInput = form.querySelector<HTMLInputElement>("input[name='src_terms']");
       if (termInput) termInput.value = params.get("src_terms") ?? "";
+
+      for (const name of ["status", "category"]) {
+        for (const value of params.getAll(name)) {
+          const hidden = document.createElement("input");
+          hidden.type = "hidden";
+          hidden.name = name;
+          hidden.value = value;
+          form.appendChild(hidden);
+        }
+      }
     }
 
     // 2. Language switcher: carry the current filter/search query onto each link so
