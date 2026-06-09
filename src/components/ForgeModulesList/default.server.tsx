@@ -149,12 +149,9 @@ jahiaComponent(
             (page - 1) * pageSize,
           );
 
-    // ---- "Latest releases" home strip: shown only on the default, unfiltered first page so
-    // it reads as a home hero, not a fixture that lingers during search/filter/pagination. ----
-    const isDefaultView = page === 1 && !term && statuses.length === 0 && categories.length === 0;
-    const latest = isDefaultView
-      ? latestModuleReleases(session, basePath, LATEST_RELEASES_COUNT)
-      : [];
+    // ---- "Latest releases" sidebar panel: a persistent left-rail widget (the catalogue's newest
+    // releases), shown regardless of the active filter/search/page so it stays put while filtering. ----
+    const latest = latestModuleReleases(session, basePath, LATEST_RELEASES_COUNT);
 
     // ---- URL helpers (relative query strings; reuse the current page path). Built by hand
     // rather than with URLSearchParams, which is not available in the GraalJS SSR runtime. ----
@@ -221,8 +218,9 @@ jahiaComponent(
             </noscript>
           </form>
 
-          {/* "Latest releases" lives under the filter rail, only on the default home view. */}
-          {isDefaultView && <LatestReleases versions={latest} heading={labels.latest} />}
+          {/* "Latest releases" lives under the filter rail and stays visible while filtering
+              (LatestReleases renders nothing when there are no releases). */}
+          <LatestReleases versions={latest} heading={labels.latest} />
         </div>
 
         <div className={styles.gridArea}>
