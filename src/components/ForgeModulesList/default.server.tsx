@@ -1,17 +1,14 @@
 import {
   getNodesByJCRQuery,
-  Island,
   jahiaComponent,
   Render,
 } from "@jahia/javascript-modules-library";
 import { useTranslation } from "react-i18next";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import styles from "~/components/forge/forge.module.css";
-import filterStyles from "~/components/forge/store-filter.module.css";
 import { FORGE_STATUSES, forgeCategoryOptions } from "~/components/forge/forgeFacets";
 import { LatestReleases } from "~/components/forge/LatestReleases";
 import { latestModuleReleases } from "~/components/forge/versions";
-import FilterAutoSubmit from "~/components/forge/FilterAutoSubmit.client";
 
 interface ForgeModulesListProps {
   startNode?: JCRNodeWrapper;
@@ -165,61 +162,16 @@ jahiaComponent(
     };
 
     const labels = {
-      status: t("store.filter.status"),
-      categories: t("store.filter.categories"),
-      apply: t("store.filter.apply"),
-      autoApplyHint: t("store.filter.autoApplyHint"),
       latest: t("latest.heading"),
     };
 
     return (
       <div className={styles.layout} data-forge-list="">
-        {/* Left column: the filter rail, then the "Latest releases" section beneath it. A plain
-            <div> (not <aside>): a complementary landmark nested in <main> trips axe. */}
+        {/* Left column: the "Latest releases" section. Status/Category filtering now lives in the
+            header advanced-search panel (the home filter rail was removed) and text search is the
+            primary entry point. A plain <div> (not <aside>): a complementary landmark nested in
+            <main> trips axe. */}
         <div className={styles.sidebarColumn}>
-          <form className={filterStyles.sidebar} method="get" data-forge-filter="">
-            {/* Text search lives in the header's global search — carry the active term so toggling
-                a facet keeps it (a GET form only submits its own fields). */}
-            {term && <input type="hidden" name="src_terms" value={term} />}
-            <fieldset className={filterStyles.facets}>
-              <legend className={filterStyles.legend}>{labels.status}</legend>
-              {FORGE_STATUSES.map((s) => (
-                <label key={s} className={filterStyles.facet}>
-                  <input type="checkbox" name="status" value={s} defaultChecked={statuses.includes(s)} />
-                  <span className={filterStyles.facetStatus}>{s}</span>
-                </label>
-              ))}
-            </fieldset>
-            {categoryOptions.length > 0 && (
-              <fieldset className={filterStyles.facets}>
-                <legend className={filterStyles.legend}>{labels.categories}</legend>
-                {categoryOptions.map((c) => (
-                  <label key={c.uuid} className={filterStyles.facet}>
-                    <input
-                      type="checkbox"
-                      name="category"
-                      value={c.uuid}
-                      defaultChecked={categories.includes(c.uuid)}
-                    />
-                    <span>{c.name}</span>
-                  </label>
-                ))}
-              </fieldset>
-            )}
-            {/* Filters apply on change once the island hydrates; announce it (WCAG SC 3.2.2). */}
-            <p className="sr-only">{labels.autoApplyHint}</p>
-            <Island component={FilterAutoSubmit} />
-            {/* No-JS fallback: rendered only when scripting is off, so JS users (who get
-                auto-apply on change) never see the button flash in after a reload. */}
-            <noscript>
-              <button type="submit" className={`store-btn store-btn--primary ${filterStyles.apply}`}>
-                {labels.apply}
-              </button>
-            </noscript>
-          </form>
-
-          {/* "Latest releases" lives under the filter rail and stays visible while filtering
-              (LatestReleases renders nothing when there are no releases). */}
           <LatestReleases versions={latest} heading={labels.latest} />
         </div>
 
