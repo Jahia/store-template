@@ -245,8 +245,21 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   // May be empty (a module with only versions) — guard the tablist + default panel.
   const defaultTab = tabs[0]?.id ?? "";
 
+  // Breadcrumb back to the storefront home/listing (home URL derived like the header brand link).
+  const siteHome = renderContext.getSite().getHome();
+  const homeUrl = siteHome ? buildNodeUrl(siteHome) : buildNodeUrl(renderContext.getSite());
+
   return (
     <article className={styles.detail} data-detail="">
+      <nav className={styles.breadcrumb} aria-label={t("detail.breadcrumb")} data-breadcrumb="">
+        <a className={styles.breadcrumbLink} href={homeUrl} data-back-home="">
+          {t("detail.home")}
+        </a>
+        <span className={styles.breadcrumbSep} aria-hidden="true">/</span>
+        <span className={styles.breadcrumbCurrent} aria-current="page">
+          {title}
+        </span>
+      </nav>
       <header className={styles.head}>
         <div className={styles.headIcon}>
           {icon ? (

@@ -5,6 +5,38 @@
   gap: 1.5rem;
 }
 
+/* Breadcrumb back to the storefront home/listing — the most discoverable way back from a
+   module page. Only "Home" is a link; the current module is plain text (aria-current).
+   AAA: accent link (#0e4ea8 ~7.9:1), muted separator/current (#45506a ~7.2:1), focus ring. */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+.breadcrumbLink {
+  color: var(--color-accent);
+  font-weight: 600;
+  border-radius: var(--radius);
+}
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+.breadcrumbLink:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+.breadcrumbSep {
+  color: var(--color-text-muted);
+}
+.breadcrumbCurrent {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Two-column body: the persistent "Information" rail (left) + the tabbed content (right).
    The header and owner bar stay full-width above it. */
 .body {

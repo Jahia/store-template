@@ -70,6 +70,8 @@
     "error": "Échec du téléversement - veuillez réessayer."
   },
   "detail": {
+    "breadcrumb": "Fil d'Ariane",
+    "home": "Accueil",
     "tabs": {
       "overview": "Aperçu",
       "information": "Informations",

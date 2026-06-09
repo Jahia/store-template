@@ -70,6 +70,8 @@
     "error": "Upload failed - please try again."
   },
   "detail": {
+    "breadcrumb": "Breadcrumb",
+    "home": "Home",
     "tabs": {
       "overview": "Overview",
       "information": "Information",
