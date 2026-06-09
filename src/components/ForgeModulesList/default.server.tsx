@@ -39,7 +39,7 @@ function multiParam(values: string[] | null | undefined): string[] {
  * by the optional text / status / category filters. Each clause is assembled into an
  * intermediate variable (no nested template literals) and every interpolated value is escaped.
  */
-function buildWhere(basePath: string, term: string, statuses: string[], categories: string[]): string {
+function buildWhere(basePath: string, term: string, categories: string[]): string {
   const clauses = [`ISDESCENDANTNODE(e, '${sql(basePath)}')`, "e.[published] = true"];
   if (term) {
     // Advanced-search scope: match the term across the title, the module id (node name)
@@ -55,12 +55,10 @@ function buildWhere(basePath: string, term: string, statuses: string[], categori
     ].join(" OR ");
     clauses.push(`(${textOr})`);
   }
-  if (statuses.length > 0) {
-    // Match case-insensitively: the facet submits the lowercase choicelist key, but migrated
-    // data may store the status with different casing (e.g. "Community" vs "community").
-    const statusOr = statuses.map((s) => `LOWER(e.[status]) = '${sql(s.toLowerCase())}'`).join(" OR ");
-    clauses.push(`(${statusOr})`);
-  }
+  // NB: `status` is intentionally NOT in the WHERE. It is declared `indexed=no` in the CND, so a
+  // JCR-SQL2 constraint on it only resolves in the site's DEFAULT language and returns nothing in
+  // other languages (the FR storefront bug). It is filtered in application code instead (below),
+  // reading the shared property directly — which is language-independent.
   if (categories.length > 0) {
     const categoryOr = categories.map((u) => `e.[j:defaultCategory] = '${sql(u)}'`).join(" OR ");
     clauses.push(`(${categoryOr})`);
@@ -111,22 +109,45 @@ jahiaComponent(
     const categories = selectedCategories.filter((u) => allowedCategoryUuids.has(u));
 
     // ---- build the (filtered) query ----
-    const where = buildWhere(basePath, term, statuses, categories);
+    const where = buildWhere(basePath, term, categories);
+    const statusFilter = new Set(statuses.map((s) => s.toLowerCase()));
 
-    const total = getNodesByJCRQuery(
-      session,
-      `SELECT e.[jcr:uuid] FROM [jmix:forgeElement] AS e WHERE ${where}`,
-      COUNT_CAP,
-    ).length;
+    // `status` is indexed=no (CND) so a JCR-SQL2 constraint on it only resolves in the site's
+    // default language — it returns nothing in other languages (the FR storefront bug). When a
+    // status facet is active, fetch the (status-unfiltered) matching set and filter it in-app on
+    // the shared `status` property (language-independent), then paginate in memory. The common
+    // unfiltered/text/category paths keep efficient server-side pagination.
+    const matched =
+      statusFilter.size > 0
+        ? getNodesByJCRQuery(
+            session,
+            `SELECT * FROM [jmix:forgeElement] AS e WHERE ${where} ORDER BY e.[jcr:title] ASC`,
+            COUNT_CAP,
+          ).filter((n) =>
+            statusFilter.has((n.hasProperty("status") ? n.getProperty("status").getString() : "").toLowerCase()),
+          )
+        : null;
+
+    const total =
+      matched !== null
+        ? matched.length
+        : getNodesByJCRQuery(
+            session,
+            `SELECT e.[jcr:uuid] FROM [jmix:forgeElement] AS e WHERE ${where}`,
+            COUNT_CAP,
+          ).length;
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
     if (page > totalPages) page = totalPages;
 
-    const entries = getNodesByJCRQuery(
-      session,
-      `SELECT * FROM [jmix:forgeElement] AS e WHERE ${where} ORDER BY e.[jcr:title] ASC`,
-      pageSize,
-      (page - 1) * pageSize,
-    );
+    const entries =
+      matched !== null
+        ? matched.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize)
+        : getNodesByJCRQuery(
+            session,
+            `SELECT * FROM [jmix:forgeElement] AS e WHERE ${where} ORDER BY e.[jcr:title] ASC`,
+            pageSize,
+            (page - 1) * pageSize,
+          );
 
     // ---- "Latest releases" home strip: shown only on the default, unfiltered first page so
     // it reads as a home hero, not a fixture that lingers during search/filter/pagination. ----
