@@ -2,9 +2,7 @@
   "chrome": {
     "search": {
       "placeholder": "Rechercher des modules…",
-      "label": "Rechercher des modules",
-      "advanced": "Recherche avancée",
-      "submit": "Rechercher"
+      "label": "Rechercher des modules"
     },
     "login": {
       "signIn": "Connexion",
@@ -43,11 +41,10 @@
       "status": "Statut",
       "categories": "Catégories",
       "unit": "modules",
+      "apply": "Appliquer les filtres",
+      "autoApplyHint": "Les filtres sont appliqués automatiquement lorsque vous modifiez une sélection.",
       "none": "Aucun module ne correspond à vos filtres."
     }
-  },
-  "latest": {
-    "heading": "Dernières versions"
   },
   "modulesList": {
     "empty": "Aucun module publié pour le moment.",

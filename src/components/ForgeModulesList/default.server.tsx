@@ -1,14 +1,16 @@
 import {
   getNodesByJCRQuery,
+  Island,
   jahiaComponent,
   Render,
 } from "@jahia/javascript-modules-library";
 import { useTranslation } from "react-i18next";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import styles from "~/components/forge/forge.module.css";
+import filterStyles from "~/components/forge/store-filter.module.css";
 import { FORGE_STATUSES, forgeCategoryOptions } from "~/components/forge/forgeFacets";
-import { LatestReleases } from "~/components/forge/LatestReleases";
-import { latestModuleReleases } from "~/components/forge/versions";
+import { latestReleaseDates } from "~/components/forge/versions";
+import FilterAutoSubmit from "~/components/forge/FilterAutoSubmit.client";
 
 interface ForgeModulesListProps {
   startNode?: JCRNodeWrapper;
@@ -16,13 +18,15 @@ interface ForgeModulesListProps {
 }
 
 const DEFAULT_PAGE_SIZE = 12;
-/** Bound the total-count query so an unbounded catalogue can never run away. */
+/** Bound the matched-module fetch so an unbounded catalogue can never run away. */
 const COUNT_CAP = 5000;
-/** How many recent releases the home "Latest releases" strip shows. */
-const LATEST_RELEASES_COUNT = 6;
 
 /** Escape a value for safe inclusion in a JCR-SQL2 string literal. */
 const sql = (v: string): string => v.replaceAll("'", "''");
+
+/** A module's display title (jcr:title), falling back to its node name — the ordering tiebreaker. */
+const moduleTitle = (n: JCRNodeWrapper): string =>
+  n.hasProperty("jcr:title") ? n.getProperty("jcr:title").getString() : n.getName();
 
 /** Read a repeated request parameter as a string array (GraalJS-safe over a Java String[]). */
 function multiParam(values: string[] | null | undefined): string[] {
@@ -109,46 +113,37 @@ jahiaComponent(
     const where = buildWhere(basePath, term, categories);
     const statusFilter = new Set(statuses.map((s) => s.toLowerCase()));
 
-    // `status` is indexed=no (CND) so a JCR-SQL2 constraint on it only resolves in the site's
-    // default language — it returns nothing in other languages (the FR storefront bug). When a
-    // status facet is active, fetch the (status-unfiltered) matching set and filter it in-app on
-    // the shared `status` property (language-independent), then paginate in memory. The common
-    // unfiltered/text/category paths keep efficient server-side pagination.
-    const matched =
-      statusFilter.size > 0
-        ? getNodesByJCRQuery(
-            session,
-            `SELECT * FROM [jmix:forgeElement] AS e WHERE ${where} ORDER BY e.[jcr:title] ASC`,
-            COUNT_CAP,
-          ).filter((n) =>
-            statusFilter.has((n.hasProperty("status") ? n.getProperty("status").getString() : "").toLowerCase()),
-          )
-        : null;
+    // Fetch the text/category-matched modules, then refine + order in-app:
+    //   - status: `status` is indexed=no (CND) so a JCR-SQL2 constraint on it only resolves in the
+    //     site's default language and returns nothing in others (the FR storefront bug); we filter
+    //     it on the shared `status` property (language-independent) instead.
+    //   - order: newest release first. A module's release date lives on its child version nodes,
+    //     which JCR-SQL2 can't ORDER BY from the module, so we sort in-app against the
+    //     catalogue-wide release-date map (ties broken by title for a stable, pleasant order).
+    // Sorting must precede pagination, so we page the ordered set in memory.
+    let matched = getNodesByJCRQuery(
+      session,
+      `SELECT * FROM [jmix:forgeElement] AS e WHERE ${where}`,
+      COUNT_CAP,
+    );
+    if (statusFilter.size > 0) {
+      matched = matched.filter((n) =>
+        statusFilter.has((n.hasProperty("status") ? n.getProperty("status").getString() : "").toLowerCase()),
+      );
+    }
 
-    const total =
-      matched === null
-        ? getNodesByJCRQuery(
-            session,
-            `SELECT e.[jcr:uuid] FROM [jmix:forgeElement] AS e WHERE ${where}`,
-            COUNT_CAP,
-          ).length
-        : matched.length;
+    const releaseDates = latestReleaseDates(session, basePath);
+    const ordered = matched
+      .map((node) => ({ node, date: releaseDates.get(node.getIdentifier()) ?? "" }))
+      .sort((a, b) => b.date.localeCompare(a.date) || moduleTitle(a.node).localeCompare(moduleTitle(b.node)));
+
+    const total = ordered.length;
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
     if (page > totalPages) page = totalPages;
 
-    const entries =
-      matched === null
-        ? getNodesByJCRQuery(
-            session,
-            `SELECT * FROM [jmix:forgeElement] AS e WHERE ${where} ORDER BY e.[jcr:title] ASC`,
-            pageSize,
-            (page - 1) * pageSize,
-          )
-        : matched.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
-
-    // ---- "Latest releases" sidebar panel: a persistent left-rail widget (the catalogue's newest
-    // releases), shown regardless of the active filter/search/page so it stays put while filtering. ----
-    const latest = latestModuleReleases(session, basePath, LATEST_RELEASES_COUNT);
+    const entries = ordered
+      .slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize)
+      .map((d) => d.node);
 
     // ---- URL helpers (relative query strings; reuse the current page path). Built by hand
     // rather than with URLSearchParams, which is not available in the GraalJS SSR runtime. ----
@@ -162,17 +157,57 @@ jahiaComponent(
     };
 
     const labels = {
-      latest: t("latest.heading"),
+      status: t("store.filter.status"),
+      categories: t("store.filter.categories"),
+      apply: t("store.filter.apply"),
+      autoApplyHint: t("store.filter.autoApplyHint"),
     };
 
     return (
       <div className={styles.layout} data-forge-list="">
-        {/* Left column: the "Latest releases" section. Status/Category filtering now lives in the
-            header advanced-search panel (the home filter rail was removed) and text search is the
-            primary entry point. A plain <div> (not <aside>): a complementary landmark nested in
-            <main> trips axe. */}
+        {/* Left column: the Status/Category filter rail. A plain <div> (not <aside>): a
+            complementary landmark nested in <main> trips the axe AAA gate. */}
         <div className={styles.sidebarColumn}>
-          <LatestReleases versions={latest} heading={labels.latest} />
+          <form className={filterStyles.sidebar} method="get" data-forge-filter="">
+            {/* Text search lives in the header's global search — carry the active term so toggling
+                a facet keeps it (a GET form only submits its own fields). */}
+            {term && <input type="hidden" name="src_terms" value={term} />}
+            <fieldset className={filterStyles.facets}>
+              <legend className={filterStyles.legend}>{labels.status}</legend>
+              {FORGE_STATUSES.map((s) => (
+                <label key={s} className={filterStyles.facet}>
+                  <input type="checkbox" name="status" value={s} defaultChecked={statuses.includes(s)} />
+                  <span className={filterStyles.facetStatus}>{s}</span>
+                </label>
+              ))}
+            </fieldset>
+            {categoryOptions.length > 0 && (
+              <fieldset className={filterStyles.facets}>
+                <legend className={filterStyles.legend}>{labels.categories}</legend>
+                {categoryOptions.map((c) => (
+                  <label key={c.uuid} className={filterStyles.facet}>
+                    <input
+                      type="checkbox"
+                      name="category"
+                      value={c.uuid}
+                      defaultChecked={categories.includes(c.uuid)}
+                    />
+                    <span>{c.name}</span>
+                  </label>
+                ))}
+              </fieldset>
+            )}
+            {/* Filters apply on change once the island hydrates; announce it (WCAG SC 3.2.2). */}
+            <p className="sr-only">{labels.autoApplyHint}</p>
+            <Island component={FilterAutoSubmit} />
+            {/* No-JS fallback: rendered only when scripting is off, so JS users (who get
+                auto-apply on change) never see the button flash in after a reload. */}
+            <noscript>
+              <button type="submit" className={`store-btn store-btn--primary ${filterStyles.apply}`}>
+                {labels.apply}
+              </button>
+            </noscript>
+          </form>
         </div>
 
         <div className={styles.gridArea}>

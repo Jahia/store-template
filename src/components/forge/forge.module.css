@@ -15,108 +15,12 @@
   }
 }
 
-/* Left column: the filter rail stacked above the "Latest releases" panel. */
+/* Left column: holds the Status/Categories filter rail. */
 .sidebarColumn {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   min-width: 0;
-}
-
-/* "Latest releases" panel in the left rail, under the filters — a vertical list of
-   compact recent-version cards, chromed like the filter rail above it. */
-.latest {
-  padding: 1.25rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-}
-.latestHeading {
-  margin: 0 0 0.85rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-.latestList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-.latestItem {
-  min-width: 0;
-}
-.latestCard {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  height: 100%;
-  padding: 0.7rem 0.85rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  text-decoration: none;
-  color: inherit;
-  transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease),
-    transform 150ms var(--ease);
-}
-.latestCard:hover {
-  border-color: var(--color-accent);
-  box-shadow: var(--ring);
-  transform: translateY(-2px);
-}
-.latestCard:focus-visible {
-  outline: none;
-  box-shadow: var(--ring);
-}
-.latestIcon {
-  flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius);
-  background: var(--color-surface-2);
-  font-weight: 700;
-  color: var(--color-text-muted);
-  overflow: hidden;
-}
-.latestIcon img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-}
-.latestText {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-.latestTitle {
-  font-weight: 600;
-  font-size: 0.92rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.latestMeta {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-}
-.latestVersion {
-  font-weight: 600;
-  color: var(--color-accent);
-}
-.latestDate {
-  font-variant-numeric: tabular-nums;
 }
 
 /* Wraps the card grid (and its truncation notice) in the layout's content column. */

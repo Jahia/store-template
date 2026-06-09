@@ -4,12 +4,13 @@ import { useEffect, useRef } from "react";
  * Reconciles the cached header chrome with the live URL (it does NOT vary by query
  * string, so its server-rendered state freezes at the first render). On mount this
  * island reads the location and:
- *   1. reflects ?src_terms / ?status / ?category into the advanced-search form's
- *      controls, so the panel matches the URL (and the storefront's left rail);
+ *   1. reflects ?src_terms into the header search input, so it matches the URL when
+ *      already on a filtered results page (status/category faceting lives in the
+ *      modules-list left rail, which renders fresh, not in the cached header);
  *   2. carries the current filter/search query onto the language-switcher links
  *      (minus `page`, since switching language starts a fresh context) so switching
  *      language keeps the active filtering/search state;
- *   3. wires the header's <details> disclosures (advanced search, language switcher)
+ *   3. wires the header's <details> disclosures (account menu, language switcher)
  *      for keyboard/pointer dismissal: Escape closes the open one and returns focus
  *      to its <summary>, an outside click closes it, and any disclosure restored
  *      open by bfcache on back-navigation is collapsed so it can't cover the header.
@@ -22,20 +23,11 @@ export default function AdvancedSearchSync() {
     const search = globalThis.location.search;
     const params = new URLSearchParams(search);
 
-    // 1. Advanced-search panel ← URL.
+    // 1. Header search input ← URL.
     const form = markerRef.current?.closest<HTMLFormElement>("[role='search']");
     if (form) {
       const termInput = form.querySelector<HTMLInputElement>("input[name='src_terms']");
       if (termInput) termInput.value = params.get("src_terms") ?? "";
-
-      const checkFromParam = (name: string) => {
-        const selected = new Set(params.getAll(name));
-        for (const box of form.querySelectorAll<HTMLInputElement>(`input[name='${name}']`)) {
-          box.checked = selected.has(box.value);
-        }
-      };
-      checkFromParam("status");
-      checkFromParam("category");
     }
 
     // 2. Language switcher: carry the current filter/search query onto each link so
@@ -57,9 +49,6 @@ export default function AdvancedSearchSync() {
     const header = markerRef.current?.closest("header");
     const disclosures = Array.from(header?.querySelectorAll<HTMLDetailsElement>("details") ?? []);
 
-    // Collapse any disclosure restored open (bfcache) so it never covers the header.
-    for (const d of disclosures) d.open = false;
-
     const closeOpen = (returnFocus: boolean) => {
       for (const d of disclosures) {
         if (!d.open) continue;
@@ -76,11 +65,20 @@ export default function AdvancedSearchSync() {
         if (d.open && !d.contains(target)) d.open = false;
       }
     };
+    // Collapse any disclosure that bfcache restored open on back-navigation so it can't cover the
+    // header. The signal is `pageshow` with persisted=true — NOT mount: useEffect does not re-run
+    // on bfcache restore (the tree stays mounted), and a blanket mount collapse would instead race
+    // with — and slam shut — a menu the user (or a test) just opened before this island hydrated.
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) for (const d of disclosures) d.open = false;
+    };
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("pointerdown", onPointerDown);
+    globalThis.addEventListener("pageshow", onPageShow);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("pointerdown", onPointerDown);
+      globalThis.removeEventListener("pageshow", onPageShow);
     };
   }, []);
 

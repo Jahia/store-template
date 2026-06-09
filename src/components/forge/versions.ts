@@ -59,68 +59,49 @@ export function requiredJahiaVersion(version: JCRNodeWrapper | undefined): strin
   return "";
 }
 
-/**
- * ISO date string of a node's last-modified ("updated") date, or "". We use this rather than
- * jcr:created because content migrated from the legacy store keeps its historical jcr:lastModified
- * (the migration preserves it) but gets a fresh jcr:created at copy time, so jcr:created would sort
- * every migrated release by the migration run date.
- */
-function lastModifiedIso(node: JCRNodeWrapper): string {
-  return node.hasProperty("jcr:lastModified") ? node.getProperty("jcr:lastModified").getString() : "";
-}
-
-/** The published parent module/package of a version node, or null when unpublished/unreadable. */
-function publishedParent(version: JCRNodeWrapper): JCRNodeWrapper | null {
-  try {
-    const parent = version.getParent() as unknown as JCRNodeWrapper;
-    const isPublished =
-      parent && parent.hasProperty("published") && parent.getProperty("published").getBoolean();
-    return isPublished ? parent : null;
-  } catch {
-    return null;
-  }
-}
+/** Bound the catalogue-wide release-date scan so an unbounded version set can never run away. */
+const RELEASE_SCAN_CAP = 20000;
 
 /**
- * The most recently released modules/packages across the catalogue under `basePath`,
- * newest first. Powers the home "Latest releases" panel: it queries the published version
- * nodes of both types, sorts them by their last-modified ("updated") date (ISO strings sort
- * chronologically) and keeps only the newest published version PER owning module — so a
- * module that cut several releases appears once. Returns those representative version nodes
- * (the caller derives the module + its latest version/date from each). Sorting by
- * jcr:lastModified (not jcr:created) honours dates preserved from the legacy-store migration.
+ * Map of module/package identifier → ISO last-modified ("release") date of its newest published
+ * version, across the catalogue under `basePath`. Powers the storefront list's "newest release
+ * first" ordering: a `jmix:forgeElement` has no release date of its own (the date lives on its
+ * child version nodes, which JCR-SQL2 can't ORDER BY from the module), so we make ONE pass over the
+ * published version nodes of both types — two queries — and reduce to the max date per owning
+ * module, rather than an N+1 child lookup per module. ISO date strings sort chronologically as
+ * plain strings. We read jcr:lastModified (not jcr:created) so dates preserved from the
+ * legacy-store migration are honoured (jcr:created would be the migration run date). Modules with
+ * no published version are simply absent from the map (callers treat that as "" = oldest).
  */
-export function latestModuleReleases(
+export function latestReleaseDates(
   session: JCRSessionWrapper,
   basePath: string,
-  limit: number,
-): JCRNodeWrapper[] {
+): Map<string, string> {
   const escaped = basePath.replaceAll("'", "''");
-  const fetch = (type: string): JCRNodeWrapper[] =>
-    getNodesByJCRQuery(
+  const dates = new Map<string, string>();
+  const scan = (type: string): void => {
+    const versions = getNodesByJCRQuery(
       session,
-      `SELECT * FROM [${type}] AS v WHERE ISDESCENDANTNODE(v, '${escaped}') ` +
-        `AND v.[published] = true ORDER BY v.[jcr:lastModified] DESC`,
-      // Over-fetch: hits get filtered (unpublished module) and collapsed (one per module).
-      limit * 8,
+      `SELECT * FROM [${type}] AS v WHERE ISDESCENDANTNODE(v, '${escaped}') AND v.[published] = true`,
+      RELEASE_SCAN_CAP,
     );
-  const newestFirst = [
-    ...fetch("jnt:forgeModuleVersion"),
-    ...fetch("jnt:forgePackageVersion"),
-  ].sort((a, b) => lastModifiedIso(b).localeCompare(lastModifiedIso(a)));
-  // Group per module: keep each module's newest published version, once, up to `limit`.
-  const seenModules = new Set<string>();
-  const releases: JCRNodeWrapper[] = [];
-  for (const version of newestFirst) {
-    const module = publishedParent(version);
-    if (!module) continue;
-    const moduleId = module.getIdentifier();
-    if (seenModules.has(moduleId)) continue;
-    seenModules.add(moduleId);
-    releases.push(version);
-    if (releases.length >= limit) break;
-  }
-  return releases;
+    for (const version of versions) {
+      try {
+        const date = version.hasProperty("jcr:lastModified")
+          ? version.getProperty("jcr:lastModified").getString()
+          : "";
+        if (!date) continue;
+        const moduleId = (version.getParent() as unknown as JCRNodeWrapper).getIdentifier();
+        const current = dates.get(moduleId);
+        if (!current || date > current) dates.set(moduleId, date);
+      } catch {
+        // Unreadable parent / dangling node — skip; that module just sorts as "" (oldest).
+      }
+    }
+  };
+  scan("jnt:forgeModuleVersion");
+  scan("jnt:forgePackageVersion");
+  return dates;
 }
 
 /** Version child nodes of a module/package, sorted newest-first (replaces ForgeFunctions.sortByVersion). */
