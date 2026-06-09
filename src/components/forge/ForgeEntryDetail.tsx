@@ -38,8 +38,15 @@ function panelProps(id: string, defaultTab: string) {
   };
 }
 
-/** Allowed module status values (jmix:forgeElement `status` choicelist). */
-const STATUS_OPTIONS = ["community", "labs", "prereleased", "supported", "legacy"];
+/**
+ * Module status values offered in the editor — a deliberate subset of the
+ * `jmix:forgeElement` `status` choicelist: `prereleased` is intentionally omitted
+ * from the UI (the CND still permits it for existing/migrated data).
+ */
+const STATUS_OPTIONS = ["community", "labs", "supported", "legacy"];
+
+/** Allowed author-display modes (jnt:forgeModule/Package `authorNameDisplayedAs` choicelist). */
+const AUTHOR_DISPLAY_OPTIONS = ["username", "fullName", "organisation"];
 
 /**
  * Categories a developer can file a module under: the children of the site's
@@ -116,6 +123,12 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
     authorEmail: t("editor.authorEmail"),
     authorURL: t("editor.authorURL"),
     codeRepository: t("editor.codeRepository"),
+    authorDisplay: t("editor.authorDisplay"),
+    authorDisplayOptions: {
+      username: t("editor.authorDisplayOptions.username"),
+      fullName: t("editor.authorDisplayOptions.fullName"),
+      organisation: t("editor.authorDisplayOptions.organisation"),
+    },
     tabGeneral: t("editor.tabGeneral"),
     tabDescription: t("editor.tabDescription"),
     tabInstall: t("editor.tabInstall"),
@@ -179,8 +192,6 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const license = sanitizeHtml(str(node, "license"));
   const codeRepository = str(node, "codeRepository");
   const status = str(node, "status");
-  const supported = bool(node, "supportedByJahia");
-  const reviewed = bool(node, "reviewedByJahia");
   const icon = forgeIconUrl(node);
   const shots = screenshotItems(node);
   const screenshotsPath = node.hasNode("screenshots") ? node.getNode("screenshots").getPath() : "";
@@ -254,12 +265,6 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
                 {status}
               </span>
             )}
-            {supported && (
-              <span className={clsx(styles.badge, styles.supported)}>{t("detail.badge.supported")}</span>
-            )}
-            {reviewed && (
-              <span className={clsx(styles.badge, styles.reviewed)}>{t("detail.badge.reviewed")}</span>
-            )}
           </div>
         </div>
         {/* Top-right corner: the latest-version download CTA + the "Versions" popup trigger. */}
@@ -305,6 +310,8 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
               },
               status,
               statusOptions: STATUS_OPTIONS,
+              authorDisplay: str(node, "authorNameDisplayedAs") || "username",
+              authorDisplayOptions: AUTHOR_DISPLAY_OPTIONS,
               categoryOptions,
               categoryValue,
               tags,
@@ -505,7 +512,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
                 props={{
                   actionUrl: uploadActionUrl,
                   backUrl: buildNodeUrl(node),
-                  accept: ".jar,.war",
+                  accept: ".jar",
                   labels: ADD_VERSION_LABELS,
                 }}
               />

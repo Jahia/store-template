@@ -166,14 +166,6 @@
   background: var(--color-surface-2);
   color: var(--color-text-muted);
 }
-.supported {
-  background: #e7f6ec;
-  color: #0d4a2b; /* AAA: 9.25:1 on the badge background */
-}
-.reviewed {
-  background: #e8ecfd;
-  color: #2c39a8;
-}
 
 .section {
   display: flex;

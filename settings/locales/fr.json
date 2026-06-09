@@ -2,7 +2,9 @@
   "chrome": {
     "search": {
       "placeholder": "Rechercher des modules…",
-      "label": "Rechercher des modules"
+      "label": "Rechercher des modules",
+      "advanced": "Recherche avancée",
+      "submit": "Rechercher"
     },
     "login": {
       "signIn": "Connexion",
@@ -20,7 +22,8 @@
       "label": "Navigation principale"
     },
     "language": {
-      "label": "Langue"
+      "label": "Langue",
+      "choose": "Choisir la langue"
     },
     "skipToMain": "Aller au contenu principal"
   },
@@ -35,14 +38,14 @@
   },
   "store": {
     "filter": {
-      "search": "Filtrer",
-      "placeholder": "Filtrer les modules…",
       "status": "Statut",
       "categories": "Catégories",
       "unit": "modules",
-      "apply": "Appliquer les filtres",
       "none": "Aucun module ne correspond à vos filtres."
     }
+  },
+  "latest": {
+    "heading": "Dernières versions"
   },
   "modulesList": {
     "empty": "Aucun module publié pour le moment.",
@@ -60,7 +63,7 @@
   "upload": {
     "signInPrompt": "Veuillez vous connecter pour soumettre un module.",
     "repoUnavailable": "Le dépôt de modules n'est pas disponible sur ce site.",
-    "fileLabel": "Paquet du module (.jar / .war)",
+    "fileLabel": "Paquet du module (.jar)",
     "submit": "Téléverser le module",
     "submitting": "Téléversement…",
     "pickFile": "Veuillez d'abord choisir un paquet de module.",
@@ -93,10 +96,6 @@
       "source": "Source",
       "tags": "Étiquettes"
     },
-    "badge": {
-      "supported": "Pris en charge par Jahia",
-      "reviewed": "Examiné par Jahia"
-    },
     "download": "Télécharger",
     "downloadVersion": "Télécharger {{version}}",
     "versions": {
@@ -104,7 +103,7 @@
       "close": "Fermer",
       "none": "Aucune version publiée pour le moment.",
       "uploadTitle": "Téléverser une nouvelle version",
-      "uploadHelp": "Téléversez un .jar ou .war dont le nom de module et l'identifiant de groupe correspondent à ce module pour l'ajouter comme nouvelle version."
+      "uploadHelp": "Téléversez un .jar dont le nom de module et l'identifiant de groupe correspondent à ce module pour l'ajouter comme nouvelle version."
     }
   },
   "publish": {
@@ -137,6 +136,12 @@
     "authorEmail": "Courriel de l'auteur",
     "authorURL": "URL de l'auteur",
     "codeRepository": "Dépôt de code",
+    "authorDisplay": "Affichage de l'auteur",
+    "authorDisplayOptions": {
+      "username": "Courriel",
+      "fullName": "Prénom et nom",
+      "organisation": "Organisation"
+    },
     "tabGeneral": "Général",
     "tabDescription": "Description",
     "tabInstall": "Installation et FAQ",
@@ -169,7 +174,7 @@
     }
   },
   "addVersion": {
-    "fileLabel": "Paquet de la nouvelle version (.jar / .war)",
+    "fileLabel": "Paquet de la nouvelle version (.jar)",
     "submit": "Téléverser la nouvelle version",
     "submitting": "Téléversement…",
     "pickFile": "Veuillez d'abord choisir un paquet de module.",
@@ -196,10 +201,6 @@
       "deleting": "Suppression…",
       "error": "Impossible de supprimer la version - vérifiez vos autorisations et réessayez."
     }
-  },
-  "card": {
-    "supported": "Pris en charge",
-    "reviewed": "Examiné"
   },
   "screenshots": {
     "empty": "Aucune capture d'écran.",

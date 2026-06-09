@@ -1,5 +1,5 @@
-import { buildNodeUrl, getChildNodes } from "@jahia/javascript-modules-library";
-import type { JCRNodeWrapper } from "org.jahia.services.content";
+import { buildNodeUrl, getChildNodes, getNodesByJCRQuery } from "@jahia/javascript-modules-library";
+import type { JCRNodeWrapper, JCRSessionWrapper } from "org.jahia.services.content";
 
 function parseVersion(v: string): number[] {
   return (v || "").split(/\D+/).filter(Boolean).map(Number);
@@ -57,6 +57,70 @@ export function requiredJahiaVersion(version: JCRNodeWrapper | undefined): strin
     // Dangling reference.
   }
   return "";
+}
+
+/**
+ * ISO date string of a node's last-modified ("updated") date, or "". We use this rather than
+ * jcr:created because content migrated from the legacy store keeps its historical jcr:lastModified
+ * (the migration preserves it) but gets a fresh jcr:created at copy time, so jcr:created would sort
+ * every migrated release by the migration run date.
+ */
+function lastModifiedIso(node: JCRNodeWrapper): string {
+  return node.hasProperty("jcr:lastModified") ? node.getProperty("jcr:lastModified").getString() : "";
+}
+
+/** The published parent module/package of a version node, or null when unpublished/unreadable. */
+function publishedParent(version: JCRNodeWrapper): JCRNodeWrapper | null {
+  try {
+    const parent = version.getParent() as unknown as JCRNodeWrapper;
+    const isPublished =
+      parent && parent.hasProperty("published") && parent.getProperty("published").getBoolean();
+    return isPublished ? parent : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The most recently released modules/packages across the catalogue under `basePath`,
+ * newest first. Powers the home "Latest releases" panel: it queries the published version
+ * nodes of both types, sorts them by their last-modified ("updated") date (ISO strings sort
+ * chronologically) and keeps only the newest published version PER owning module — so a
+ * module that cut several releases appears once. Returns those representative version nodes
+ * (the caller derives the module + its latest version/date from each). Sorting by
+ * jcr:lastModified (not jcr:created) honours dates preserved from the legacy-store migration.
+ */
+export function latestModuleReleases(
+  session: JCRSessionWrapper,
+  basePath: string,
+  limit: number,
+): JCRNodeWrapper[] {
+  const escaped = basePath.replaceAll("'", "''");
+  const fetch = (type: string): JCRNodeWrapper[] =>
+    getNodesByJCRQuery(
+      session,
+      `SELECT * FROM [${type}] AS v WHERE ISDESCENDANTNODE(v, '${escaped}') ` +
+        `AND v.[published] = true ORDER BY v.[jcr:lastModified] DESC`,
+      // Over-fetch: hits get filtered (unpublished module) and collapsed (one per module).
+      limit * 8,
+    );
+  const newestFirst = [
+    ...fetch("jnt:forgeModuleVersion"),
+    ...fetch("jnt:forgePackageVersion"),
+  ].sort((a, b) => lastModifiedIso(b).localeCompare(lastModifiedIso(a)));
+  // Group per module: keep each module's newest published version, once, up to `limit`.
+  const seenModules = new Set<string>();
+  const releases: JCRNodeWrapper[] = [];
+  for (const version of newestFirst) {
+    const module = publishedParent(version);
+    if (!module) continue;
+    const moduleId = module.getIdentifier();
+    if (seenModules.has(moduleId)) continue;
+    seenModules.add(moduleId);
+    releases.push(version);
+    if (releases.length >= limit) break;
+  }
+  return releases;
 }
 
 /** Version child nodes of a module/package, sorted newest-first (replaces ForgeFunctions.sortByVersion). */

@@ -2,7 +2,9 @@
   "chrome": {
     "search": {
       "placeholder": "Search modules…",
-      "label": "Search modules"
+      "label": "Search modules",
+      "advanced": "Advanced search",
+      "submit": "Search"
     },
     "login": {
       "signIn": "Log in",
@@ -20,7 +22,8 @@
       "label": "Main navigation"
     },
     "language": {
-      "label": "Language"
+      "label": "Language",
+      "choose": "Choose language"
     },
     "skipToMain": "Skip to main content"
   },
@@ -35,14 +38,14 @@
   },
   "store": {
     "filter": {
-      "search": "Filter",
-      "placeholder": "Filter modules…",
       "status": "Status",
       "categories": "Categories",
       "unit": "modules",
-      "apply": "Apply filters",
       "none": "No modules match your filters."
     }
+  },
+  "latest": {
+    "heading": "Latest releases"
   },
   "modulesList": {
     "empty": "No published modules yet.",
@@ -60,7 +63,7 @@
   "upload": {
     "signInPrompt": "Please log in to submit a module.",
     "repoUnavailable": "The module repository is not available on this site.",
-    "fileLabel": "Module package (.jar / .war)",
+    "fileLabel": "Module package (.jar)",
     "submit": "Upload module",
     "submitting": "Uploading…",
     "pickFile": "Please choose a module package first.",
@@ -93,10 +96,6 @@
       "source": "Source",
       "tags": "Tags"
     },
-    "badge": {
-      "supported": "Supported by Jahia",
-      "reviewed": "Reviewed by Jahia"
-    },
     "download": "Download",
     "downloadVersion": "Download {{version}}",
     "versions": {
@@ -104,7 +103,7 @@
       "close": "Close",
       "none": "No versions published yet.",
       "uploadTitle": "Upload a new version",
-      "uploadHelp": "Upload a .jar or .war whose module name and group ID match this module to add it as a new version."
+      "uploadHelp": "Upload a .jar whose module name and group ID match this module to add it as a new version."
     }
   },
   "publish": {
@@ -137,6 +136,12 @@
     "authorEmail": "Author email",
     "authorURL": "Author URL",
     "codeRepository": "Code repository",
+    "authorDisplay": "Author display",
+    "authorDisplayOptions": {
+      "username": "Email",
+      "fullName": "First and last name",
+      "organisation": "Organization"
+    },
     "tabGeneral": "General",
     "tabDescription": "Description",
     "tabInstall": "Install & FAQ",
@@ -169,7 +174,7 @@
     }
   },
   "addVersion": {
-    "fileLabel": "New version package (.jar / .war)",
+    "fileLabel": "New version package (.jar)",
     "submit": "Upload new version",
     "submitting": "Uploading…",
     "pickFile": "Please choose a module package first.",
@@ -196,10 +201,6 @@
       "deleting": "Deleting…",
       "error": "Could not remove the version - check your permissions and try again."
     }
-  },
-  "card": {
-    "supported": "Supported",
-    "reviewed": "Reviewed"
   },
   "screenshots": {
     "empty": "No screenshots.",

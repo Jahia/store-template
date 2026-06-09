@@ -1,5 +1,4 @@
 import {
-  getChildNodes,
   getNodesByJCRQuery,
   jahiaComponent,
   Render,
@@ -7,19 +6,20 @@ import {
 import { useTranslation } from "react-i18next";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import styles from "~/components/forge/forge.module.css";
-import filterStyles from "~/components/forge/store-filter.module.css";
-import { forgeRootCategoryUuid } from "~/components/forge/forgeBranding";
+import { FORGE_STATUSES, forgeCategoryOptions } from "~/components/forge/forgeFacets";
+import { LatestReleases } from "~/components/forge/LatestReleases";
+import { latestModuleReleases } from "~/components/forge/versions";
 
 interface ForgeModulesListProps {
   startNode?: JCRNodeWrapper;
   nbOfModulePerPage?: number;
 }
 
-/** jmix:forgeElement status choicelist (definitions.cnd) — the fixed status facet options. */
-const STATUSES = ["community", "labs", "prereleased", "supported", "legacy"];
 const DEFAULT_PAGE_SIZE = 12;
 /** Bound the total-count query so an unbounded catalogue can never run away. */
 const COUNT_CAP = 5000;
+/** How many recent releases the home "Latest releases" strip shows. */
+const LATEST_RELEASES_COUNT = 6;
 
 /** Escape a value for safe inclusion in a JCR-SQL2 string literal. */
 const sql = (v: string): string => v.replaceAll("'", "''");
@@ -36,20 +36,26 @@ function multiParam(values: string[] | null | undefined): string[] {
  * by the optional text / status / category filters. Each clause is assembled into an
  * intermediate variable (no nested template literals) and every interpolated value is escaped.
  */
-function buildWhere(basePath: string, term: string, statuses: string[], categories: string[]): string {
+function buildWhere(basePath: string, term: string, categories: string[]): string {
   const clauses = [`ISDESCENDANTNODE(e, '${sql(basePath)}')`, "e.[published] = true"];
   if (term) {
-    // Strip LIKE wildcards (% _) and the escape char so a literal term (e.g. "%") can't widen
-    // the scan to the whole catalogue (enumeration / CPU); we only want a substring match.
+    // Advanced-search scope: match the term across the title, the module id (node name)
+    // and the description. Strip LIKE wildcards (% _) and the escape char so a literal
+    // term (e.g. "%") can't widen the scan to the whole catalogue (enumeration / CPU);
+    // we only want a substring match.
     const likeTerm = sql(term.toLowerCase()).replaceAll(/[%_\\]/g, "");
-    clauses.push(`LOWER(e.[jcr:title]) LIKE '%${likeTerm}%'`);
+    const pattern = `'%${likeTerm}%'`;
+    const textOr = [
+      `LOWER(e.[jcr:title]) LIKE ${pattern}`,
+      `LOWER(LOCALNAME(e)) LIKE ${pattern}`,
+      `LOWER(e.[description]) LIKE ${pattern}`,
+    ].join(" OR ");
+    clauses.push(`(${textOr})`);
   }
-  if (statuses.length > 0) {
-    // Match case-insensitively: the facet submits the lowercase choicelist key, but migrated
-    // data may store the status with different casing (e.g. "Community" vs "community").
-    const statusOr = statuses.map((s) => `LOWER(e.[status]) = '${sql(s.toLowerCase())}'`).join(" OR ");
-    clauses.push(`(${statusOr})`);
-  }
+  // NB: `status` is intentionally NOT in the WHERE. It is declared `indexed=no` in the CND, so a
+  // JCR-SQL2 constraint on it only resolves in the site's DEFAULT language and returns nothing in
+  // other languages (the FR storefront bug). It is filtered in application code instead (below),
+  // reading the shared property directly — which is language-independent.
   if (categories.length > 0) {
     const categoryOr = categories.map((u) => `e.[j:defaultCategory] = '${sql(u)}'`).join(" OR ");
     clauses.push(`(${categoryOr})`);
@@ -88,45 +94,61 @@ jahiaComponent(
     // ---- current filter state (from the URL) ----
     const term = (request.getParameter("src_terms") || "").trim();
     const statuses = multiParam(request.getParameterValues("status")).filter((s) =>
-      STATUSES.includes(s),
+      FORGE_STATUSES.includes(s),
     );
     const selectedCategories = multiParam(request.getParameterValues("category"));
     let page = Number.parseInt(request.getParameter("page") || "1", 10);
     if (!Number.isFinite(page) || page < 1) page = 1;
 
     // ---- category facet options (the site's root-category children) ----
-    const rootUuid = forgeRootCategoryUuid(site.getSiteKey());
-    const categoryOptions: { uuid: string; name: string }[] = [];
-    if (rootUuid) {
-      try {
-        const root = session.getNodeByIdentifier(rootUuid);
-        for (const c of getChildNodes(root, 200, 0, (n) => n.isNodeType("jnt:category"))) {
-          categoryOptions.push({ uuid: c.getIdentifier(), name: c.getDisplayableName() });
-        }
-      } catch {
-        // root category missing / not readable - no category facet.
-      }
-    }
+    const categoryOptions = forgeCategoryOptions(site.getSiteKey(), session);
     const allowedCategoryUuids = new Set(categoryOptions.map((c) => c.uuid));
     const categories = selectedCategories.filter((u) => allowedCategoryUuids.has(u));
 
     // ---- build the (filtered) query ----
-    const where = buildWhere(basePath, term, statuses, categories);
+    const where = buildWhere(basePath, term, categories);
+    const statusFilter = new Set(statuses.map((s) => s.toLowerCase()));
 
-    const total = getNodesByJCRQuery(
-      session,
-      `SELECT e.[jcr:uuid] FROM [jmix:forgeElement] AS e WHERE ${where}`,
-      COUNT_CAP,
-    ).length;
+    // `status` is indexed=no (CND) so a JCR-SQL2 constraint on it only resolves in the site's
+    // default language — it returns nothing in other languages (the FR storefront bug). When a
+    // status facet is active, fetch the (status-unfiltered) matching set and filter it in-app on
+    // the shared `status` property (language-independent), then paginate in memory. The common
+    // unfiltered/text/category paths keep efficient server-side pagination.
+    const matched =
+      statusFilter.size > 0
+        ? getNodesByJCRQuery(
+            session,
+            `SELECT * FROM [jmix:forgeElement] AS e WHERE ${where} ORDER BY e.[jcr:title] ASC`,
+            COUNT_CAP,
+          ).filter((n) =>
+            statusFilter.has((n.hasProperty("status") ? n.getProperty("status").getString() : "").toLowerCase()),
+          )
+        : null;
+
+    const total =
+      matched === null
+        ? getNodesByJCRQuery(
+            session,
+            `SELECT e.[jcr:uuid] FROM [jmix:forgeElement] AS e WHERE ${where}`,
+            COUNT_CAP,
+          ).length
+        : matched.length;
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
     if (page > totalPages) page = totalPages;
 
-    const entries = getNodesByJCRQuery(
-      session,
-      `SELECT * FROM [jmix:forgeElement] AS e WHERE ${where} ORDER BY e.[jcr:title] ASC`,
-      pageSize,
-      (page - 1) * pageSize,
-    );
+    const entries =
+      matched === null
+        ? getNodesByJCRQuery(
+            session,
+            `SELECT * FROM [jmix:forgeElement] AS e WHERE ${where} ORDER BY e.[jcr:title] ASC`,
+            pageSize,
+            (page - 1) * pageSize,
+          )
+        : matched.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
+
+    // ---- "Latest releases" sidebar panel: a persistent left-rail widget (the catalogue's newest
+    // releases), shown regardless of the active filter/search/page so it stays put while filtering. ----
+    const latest = latestModuleReleases(session, basePath, LATEST_RELEASES_COUNT);
 
     // ---- URL helpers (relative query strings; reuse the current page path). Built by hand
     // rather than with URLSearchParams, which is not available in the GraalJS SSR runtime. ----
@@ -140,54 +162,18 @@ jahiaComponent(
     };
 
     const labels = {
-      search: t("store.filter.search"),
-      placeholder: t("store.filter.placeholder"),
-      status: t("store.filter.status"),
-      categories: t("store.filter.categories"),
-      apply: t("store.filter.apply"),
+      latest: t("latest.heading"),
     };
 
     return (
       <div className={styles.layout} data-forge-list="">
-        {/* A plain <div> (not <aside>): a complementary landmark nested in <main> trips axe. */}
-        <form className={filterStyles.sidebar} method="get" data-forge-filter="">
-          <input
-            className={filterStyles.search}
-            type="search"
-            name="src_terms"
-            defaultValue={term}
-            placeholder={labels.placeholder}
-            aria-label={labels.search}
-          />
-          <fieldset className={filterStyles.facets}>
-            <legend className={filterStyles.legend}>{labels.status}</legend>
-            {STATUSES.map((s) => (
-              <label key={s} className={filterStyles.facet}>
-                <input type="checkbox" name="status" value={s} defaultChecked={statuses.includes(s)} />
-                <span className={filterStyles.facetStatus}>{s}</span>
-              </label>
-            ))}
-          </fieldset>
-          {categoryOptions.length > 0 && (
-            <fieldset className={filterStyles.facets}>
-              <legend className={filterStyles.legend}>{labels.categories}</legend>
-              {categoryOptions.map((c) => (
-                <label key={c.uuid} className={filterStyles.facet}>
-                  <input
-                    type="checkbox"
-                    name="category"
-                    value={c.uuid}
-                    defaultChecked={categories.includes(c.uuid)}
-                  />
-                  <span>{c.name}</span>
-                </label>
-              ))}
-            </fieldset>
-          )}
-          <button type="submit" className={`store-btn store-btn--primary ${filterStyles.apply}`}>
-            {labels.apply}
-          </button>
-        </form>
+        {/* Left column: the "Latest releases" section. Status/Category filtering now lives in the
+            header advanced-search panel (the home filter rail was removed) and text search is the
+            primary entry point. A plain <div> (not <aside>): a complementary landmark nested in
+            <main> trips axe. */}
+        <div className={styles.sidebarColumn}>
+          <LatestReleases versions={latest} heading={labels.latest} />
+        </div>
 
         <div className={styles.gridArea}>
           {total === 0 ? (
@@ -198,7 +184,12 @@ jahiaComponent(
             </div>
           ) : (
             <>
-              <p className={styles.truncated} data-list-count="">
+              <p
+                className={styles.truncated}
+                data-list-count=""
+                aria-live="polite"
+                aria-atomic="true"
+              >
                 {t("modulesList.showingCount", { shown: entries.length, total })}
               </p>
               <div className={styles.grid}>
