@@ -25,6 +25,8 @@
       "label": "Language",
       "choose": "Choose language"
     },
+    "breadcrumb": "Breadcrumb",
+    "home": "Home",
     "skipToMain": "Skip to main content"
   },
   "footer": {

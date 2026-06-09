@@ -119,18 +119,27 @@ export function Header(): JSX.Element {
   const logoUrl = siteLogoUrl(site);
 
   const isLoggedIn = renderContext.isLoggedIn();
-  // "My modules" is for module owners only: shown when signed in AND the user
-  // holds a Store administrator/developer role (jahiaForgeUploadModule).
+  // "My modules" is for module owners only (signed in AND holding a Store
+  // administrator/developer role). It now lives in the account menu, so it is ALWAYS
+  // removed from the main nav and surfaced as a menu item only when permitted.
   const canManageStore = isLoggedIn && site.hasPermission(STORE_ROLE_PERMISSION);
   const childPages = home
     ? getChildNodes(home, 50).filter((n) => n.isNodeType("jnt:page"))
     : [];
-  const restrictedPages =
-    home && !canManageStore ? myModulesPageIds(home, childPages) : new Set<string>();
-  const navPages = childPages.filter((n) => !restrictedPages.has(n.getIdentifier()));
+  const myModulesIds = home ? myModulesPageIds(home, childPages) : new Set<string>();
+  const navPages = childPages.filter((n) => !myModulesIds.has(n.getIdentifier()));
+  const myModulesPage = canManageStore
+    ? (childPages.find((p) => myModulesIds.has(p.getIdentifier())) ?? null)
+    : null;
   // Serializable nav links for the mobile disclosure island (same pages as the
   // desktop nav; the island only renders ≤720px where the desktop nav is hidden).
   const navLinks = navPages.map((p) => ({ href: buildNodeUrl(p), label: p.getDisplayableName() }));
+
+  // Breadcrumb shown in the (sticky) header on a module/package detail page only —
+  // mainNode is the forge entry there. "Home" links to the listing; the current
+  // module name is plain text.
+  const isForgeEntry = mainNode.isNodeType("jmix:forgeElement");
+  const breadcrumbCurrent = isForgeEntry ? mainNode.getDisplayableName() : "";
 
   // The global search posts to the home modules list (?src_terms + status/category
   // facets), which filters server-side. The advanced panel reflects the active query
@@ -165,6 +174,20 @@ export function Header(): JSX.Element {
             </>
           )}
         </a>
+
+        {isForgeEntry && (
+          <nav className={styles.breadcrumb} aria-label={t("chrome.breadcrumb")} data-breadcrumb="">
+            <a className={styles.breadcrumbLink} href={homeUrl} data-back-home="">
+              {t("chrome.home")}
+            </a>
+            <span className={styles.breadcrumbSep} aria-hidden="true">
+              /
+            </span>
+            <span className={styles.breadcrumbCurrent} aria-current="page">
+              {breadcrumbCurrent}
+            </span>
+          </nav>
+        )}
 
         <nav className={styles.nav} aria-label={t("chrome.nav.label")}>
           {navPages.map((p) => (
@@ -277,24 +300,63 @@ export function Header(): JSX.Element {
           </details>
         )}
 
-        <Island
-          component={Login}
-          props={{
-            isLoggedIn,
-            username,
-            loginUrl,
-            loginRedirect,
-            logoutUrl,
-            labels: {
-              signIn: t("chrome.login.signIn"),
-              signOut: t("chrome.login.signOut"),
-              username: t("chrome.login.username"),
-              password: t("chrome.login.password"),
-              invalidCredentials: t("chrome.login.invalidCredentials"),
-              accountLocked: t("chrome.login.accountLocked"),
-            },
-          }}
-        />
+        {isLoggedIn ? (
+          /* Account menu: a native <details> disclosure (dismissed by the
+             AdvancedSearchSync island like the other header disclosures). The summary
+             is the username; the panel holds "My modules" (owners) + Log out. */
+          <details className={styles.account}>
+            <summary className={styles.accountToggle} data-account-toggle="">
+              <span className={styles.accountName} title={username}>
+                {username}
+              </span>
+              <svg
+                className={styles.accountCaret}
+                viewBox="0 0 16 16"
+                width="14"
+                height="14"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M3 6l5 5 5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </summary>
+            <div className={styles.accountMenu}>
+              {myModulesPage && (
+                <a className={styles.accountItem} href={buildNodeUrl(myModulesPage)} data-my-modules="">
+                  {myModulesPage.getDisplayableName()}
+                </a>
+              )}
+              {/* Jahia's logout servlet accepts GET, so a plain form navigates without JS/CSRF. */}
+              <form className={styles.accountLogoutForm} method="get" action={logoutUrl}>
+                <button type="submit" className={styles.accountItem} data-logout="">
+                  {t("chrome.login.signOut")}
+                </button>
+              </form>
+            </div>
+          </details>
+        ) : (
+          <Island
+            component={Login}
+            props={{
+              loginUrl,
+              loginRedirect,
+              labels: {
+                signIn: t("chrome.login.signIn"),
+                username: t("chrome.login.username"),
+                password: t("chrome.login.password"),
+                invalidCredentials: t("chrome.login.invalidCredentials"),
+                accountLocked: t("chrome.login.accountLocked"),
+              },
+            }}
+          />
+        )}
 
         <Island
           component={MobileNav}

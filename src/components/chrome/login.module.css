@@ -1,23 +1,3 @@
-.account {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.user {
-  font-weight: 600;
-  font-size: 0.9rem;
-  max-width: 12ch;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.logoutForm {
-  margin: 0;
-  display: inline-flex;
-}
-
 .login {
   position: relative;
 }
