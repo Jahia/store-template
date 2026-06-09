@@ -252,6 +252,7 @@ export function Header(): JSX.Element {
                 href={buildNodeUrl(mainNode, { language: lang })}
                 hrefLang={lang}
                 aria-current={lang === currentLang ? "true" : undefined}
+                data-lang-switch=""
               >
                 {lang.toUpperCase()}
               </a>
