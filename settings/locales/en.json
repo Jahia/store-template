@@ -25,6 +25,8 @@
       "label": "Language",
       "choose": "Choose language"
     },
+    "breadcrumb": "Breadcrumb",
+    "home": "Home",
     "skipToMain": "Skip to main content"
   },
   "footer": {
@@ -70,8 +72,6 @@
     "error": "Upload failed - please try again."
   },
   "detail": {
-    "breadcrumb": "Breadcrumb",
-    "home": "Home",
     "tabs": {
       "overview": "Overview",
       "information": "Information",

@@ -25,6 +25,8 @@
       "label": "Langue",
       "choose": "Choisir la langue"
     },
+    "breadcrumb": "Fil d'Ariane",
+    "home": "Accueil",
     "skipToMain": "Aller au contenu principal"
   },
   "footer": {
@@ -70,8 +72,6 @@
     "error": "Échec du téléversement - veuillez réessayer."
   },
   "detail": {
-    "breadcrumb": "Fil d'Ariane",
-    "home": "Accueil",
     "tabs": {
       "overview": "Aperçu",
       "information": "Informations",

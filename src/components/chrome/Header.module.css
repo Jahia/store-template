@@ -274,9 +274,140 @@
   font-weight: 700;
 }
 
+/* Breadcrumb shown in the sticky header on detail pages. Only "Home" is a link; the
+   current module is plain text (aria-current). AAA: accent link ~7.9:1, muted
+   separator/current ~7.2:1, focus ring. */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+.breadcrumbLink {
+  color: var(--color-accent);
+  font-weight: 600;
+  border-radius: var(--radius);
+  white-space: nowrap;
+}
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+.breadcrumbLink:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+.breadcrumbSep {
+  color: var(--color-text-muted);
+}
+.breadcrumbCurrent {
+  min-width: 0;
+  max-width: 28ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Account menu: a disclosure (native <details>, dismissed by the AdvancedSearchSync
+   island like the other header disclosures). Summary = username; panel = "My modules"
+   (owners) + Log out. Mirrors the language switcher. */
+.account {
+  position: relative;
+}
+.accountToggle {
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: 16ch;
+  min-height: 2rem;
+  padding: 0 0.6rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  transition: color 150ms var(--ease), background 150ms var(--ease);
+}
+.accountToggle::-webkit-details-marker {
+  display: none;
+}
+.accountToggle::marker {
+  content: "";
+}
+.accountToggle:hover {
+  color: var(--color-accent);
+  background: var(--color-surface-2);
+}
+.accountToggle:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+.account[open] .accountToggle {
+  color: var(--color-accent);
+}
+.accountName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.accountCaret {
+  flex: 0 0 auto;
+  transition: transform 150ms var(--ease);
+}
+.account[open] .accountCaret {
+  transform: rotate(180deg);
+}
+.accountMenu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.4rem);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 11rem;
+  padding: 0.35rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+}
+.accountLogoutForm {
+  margin: 0;
+  display: block;
+}
+.accountItem {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 2rem;
+  padding: 0.4rem 0.6rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: none;
+  font: inherit;
+  font-size: 0.88rem;
+  text-align: left;
+  color: var(--color-text);
+  cursor: pointer;
+  text-decoration: none;
+}
+.accountItem:hover {
+  color: var(--color-accent);
+  background: var(--color-surface-2);
+  text-decoration: none;
+}
+.accountItem:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
 @media (max-width: 720px) {
   .nav,
-  .search {
+  .search,
+  .breadcrumb {
     display: none;
   }
 }
