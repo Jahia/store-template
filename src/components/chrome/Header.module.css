@@ -189,12 +189,65 @@
   text-transform: capitalize;
 }
 
-/* Language switcher: compact code links (EN / FR) beside the login control. The 2rem
-   min-height keeps each link a ≥24px tap target (target-size rule). */
-.langSelector {
-  display: flex;
+/* Language switcher: a globe disclosure (native <details>) that drops the language
+   options. The 2rem min-heights keep the toggle + each link a ≥24px tap target. */
+.langSwitcher {
+  position: relative;
+}
+.langToggle {
+  list-style: none;
+  display: inline-flex;
   align-items: center;
-  gap: 0.1rem;
+  gap: 0.3rem;
+  min-height: 2rem;
+  padding: 0 0.5rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  transition: color 150ms var(--ease), background 150ms var(--ease);
+}
+/* Hide the platform disclosure triangle (Safari uses ::-webkit-details-marker). */
+.langToggle::-webkit-details-marker {
+  display: none;
+}
+.langToggle::marker {
+  content: "";
+}
+.langToggle:hover {
+  color: var(--color-accent);
+  background: var(--color-surface-2);
+}
+.langToggle:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+.langSwitcher[open] .langToggle {
+  color: var(--color-accent);
+}
+.langGlobe {
+  flex: 0 0 auto;
+}
+.langCurrent {
+  line-height: 1;
+}
+
+.langMenu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.4rem);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 4rem;
+  padding: 0.35rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
 }
 .langLink {
   display: inline-flex;

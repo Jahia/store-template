@@ -22,7 +22,8 @@
       "label": "Navigation principale"
     },
     "language": {
-      "label": "Langue"
+      "label": "Langue",
+      "choose": "Choisir la langue"
     },
     "skipToMain": "Aller au contenu principal"
   },

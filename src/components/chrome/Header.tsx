@@ -244,20 +244,37 @@ export function Header(): JSX.Element {
         </form>
 
         {languages.length > 1 && (
-          <nav className={styles.langSelector} aria-label={t("chrome.language.label")}>
-            {languages.map((lang) => (
-              <a
-                key={lang}
-                className={styles.langLink}
-                href={buildNodeUrl(mainNode, { language: lang })}
-                hrefLang={lang}
-                aria-current={lang === currentLang ? "true" : undefined}
-                data-lang-switch=""
+          <details className={styles.langSwitcher}>
+            <summary className={styles.langToggle} aria-label={t("chrome.language.choose")} data-lang-toggle="">
+              <svg
+                className={styles.langGlobe}
+                viewBox="0 0 16 16"
+                width="16"
+                height="16"
+                aria-hidden="true"
+                focusable="false"
               >
-                {lang.toUpperCase()}
-              </a>
-            ))}
-          </nav>
+                <circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.3" />
+                <line x1="1.5" y1="8" x2="14.5" y2="8" stroke="currentColor" strokeWidth="1.3" />
+                <ellipse cx="8" cy="8" rx="3" ry="6.5" fill="none" stroke="currentColor" strokeWidth="1.3" />
+              </svg>
+              <span className={styles.langCurrent}>{currentLang.toUpperCase()}</span>
+            </summary>
+            <nav className={styles.langMenu} aria-label={t("chrome.language.label")}>
+              {languages.map((lang) => (
+                <a
+                  key={lang}
+                  className={styles.langLink}
+                  href={buildNodeUrl(mainNode, { language: lang })}
+                  hrefLang={lang}
+                  aria-current={lang === currentLang ? "true" : undefined}
+                  data-lang-switch=""
+                >
+                  {lang.toUpperCase()}
+                </a>
+              ))}
+            </nav>
+          </details>
         )}
 
         <Island
