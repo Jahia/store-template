@@ -90,9 +90,13 @@ export function forgeAuthor(node: JCRNodeWrapper): string {
   try {
     const username = node.getPropertyAsString("jcr:createdBy") || "";
     if (!username) return "";
-    const mode = node.hasProperty("authorNameDisplayedAs")
-      ? node.getProperty("authorNameDisplayedAs").getString()
-      : "username";
+    // No explicit choice → show the login name only. We must NOT disclose the
+    // profile email by default: that would leak PII (a harvestable address) for
+    // every pre-existing module and for any owner who never opened the selector.
+    // Email is shown only when the owner explicitly opts in (the editor's "Email"
+    // option persists the CND value `username`).
+    if (!node.hasProperty("authorNameDisplayedAs")) return username;
+    const mode = node.getProperty("authorNameDisplayedAs").getString();
     if (mode === "fullName") {
       const first = authorProfileProperty(node, username, "j:firstName");
       const last = authorProfileProperty(node, username, "j:lastName");
@@ -102,7 +106,7 @@ export function forgeAuthor(node: JCRNodeWrapper): string {
     if (mode === "organisation") {
       return authorProfileProperty(node, username, "j:organization") || username;
     }
-    // "username" (default): show the user's email, falling back to the login name.
+    // "username": the owner explicitly chose to show their email; fall back to login name.
     return authorProfileProperty(node, username, "j:email") || username;
   } catch {
     return "";

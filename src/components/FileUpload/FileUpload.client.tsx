@@ -64,7 +64,25 @@ function parseResult(body: string): { error?: string; successRedirectUrl?: strin
 }
 
 /**
- * Module JAR/WAR upload form (jnt:fileUpload), client island.
+ * Only follow a SAME-ORIGIN redirect target from the action's JSON response. The
+ * action is trusted today, but feeding an unvalidated URL to location.assign() is a
+ * latent open-redirect: a root-relative path is accepted (rejecting protocol-relative
+ * `//host` and `/\host`), an absolute URL only if its origin matches; anything else
+ * falls back to the local return URL.
+ */
+function safeRedirect(url: string | undefined, fallback: string): string {
+  if (!url) return fallback;
+  if (/^\/[^/\\]/.test(url)) return url;
+  try {
+    if (new URL(url, globalThis.location.origin).origin === globalThis.location.origin) return url;
+  } catch {
+    // malformed URL — fall back
+  }
+  return fallback;
+}
+
+/**
+ * Module JAR upload form (jnt:fileUpload), client island.
  *
  * Replaces the previous plain-HTML multipart <form>, which posted a full page to
  * the `.do` and broke on CsrfGuard ("Request Token does not match Page Token") and
@@ -102,7 +120,7 @@ export default function FileUploadForm({ actionUrl, backUrl, accept, labels }: R
         return;
       }
       if (res.status >= 200 && res.status < 300) {
-        globalThis.location.assign(result.successRedirectUrl || backUrl);
+        globalThis.location.assign(safeRedirect(result.successRedirectUrl, backUrl));
         return;
       }
       setStatus("error");
