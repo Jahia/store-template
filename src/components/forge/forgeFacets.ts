@@ -22,8 +22,9 @@ export interface ForgeCategoryOption {
 
 /**
  * The site's root-category children — the category facet options for the storefront
- * filter and the header advanced-search panel. Returns [] when no root category is
- * configured or it is unreadable. Kept here so both surfaces compute it identically.
+ * filter rail. Returns [] when no root category is configured or it is unreadable.
+ * Sorted alphabetically by (locale-aware) display name so the facet is easy to scan;
+ * `localeCompare` also satisfies the sort-with-comparator rule (S2871).
  */
 export function forgeCategoryOptions(
   siteKey: string,
@@ -40,5 +41,5 @@ export function forgeCategoryOptions(
   } catch {
     // root category missing / not readable — no category facet.
   }
-  return options;
+  return options.sort((a, b) => a.name.localeCompare(b.name));
 }
