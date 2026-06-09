@@ -63,17 +63,17 @@ export default function Login({
   // leaving the user on the bare /cms/login page. Surface it as an inline message and
   // reopen the form, then strip the param so a refresh doesn't re-show the error.
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(globalThis.location.search);
     const reason = params.get("loginError");
     if (!reason) return;
     setError(reason === "account_locked" ? labels.accountLocked : labels.invalidCredentials);
     setOpen(true);
     params.delete("loginError");
     const query = params.toString();
-    window.history.replaceState(
+    globalThis.history.replaceState(
       null,
       "",
-      window.location.pathname + (query ? `?${query}` : "") + window.location.hash,
+      globalThis.location.pathname + (query ? `?${query}` : "") + globalThis.location.hash,
     );
   }, [labels.accountLocked, labels.invalidCredentials]);
 

@@ -20,15 +20,11 @@ interface LatestReleasesProps {
 export function LatestReleases({ versions, heading }: Readonly<LatestReleasesProps>): JSX.Element | null {
   if (versions.length === 0) return null;
   return (
-    <section
-      className={styles.latest}
-      aria-labelledby="latest-releases-heading"
-      data-latest-releases=""
-    >
-      {/* h2: sits under the page <h1>; the grid's card titles are also h2 (sibling sections). */}
-      <h2 id="latest-releases-heading" className={styles.latestHeading}>
-        {heading}
-      </h2>
+    <section className={styles.latest} aria-label={heading} data-latest-releases="">
+      {/* h2: sits under the page <h1>; the grid's card titles are also h2 (sibling sections).
+          The section is labelled via aria-label (not a hardcoded id) so it stays valid even
+          if more than one list is ever rendered on a page. */}
+      <h2 className={styles.latestHeading}>{heading}</h2>
       <ul className={styles.latestList}>
         {versions.map((version) => {
           const module = version.getParent() as unknown as JCRNodeWrapper;

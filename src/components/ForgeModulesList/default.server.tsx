@@ -129,25 +129,25 @@ jahiaComponent(
         : null;
 
     const total =
-      matched !== null
-        ? matched.length
-        : getNodesByJCRQuery(
+      matched === null
+        ? getNodesByJCRQuery(
             session,
             `SELECT e.[jcr:uuid] FROM [jmix:forgeElement] AS e WHERE ${where}`,
             COUNT_CAP,
-          ).length;
+          ).length
+        : matched.length;
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
     if (page > totalPages) page = totalPages;
 
     const entries =
-      matched !== null
-        ? matched.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize)
-        : getNodesByJCRQuery(
+      matched === null
+        ? getNodesByJCRQuery(
             session,
             `SELECT * FROM [jmix:forgeElement] AS e WHERE ${where} ORDER BY e.[jcr:title] ASC`,
             pageSize,
             (page - 1) * pageSize,
-          );
+          )
+        : matched.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
 
     // ---- "Latest releases" sidebar panel: a persistent left-rail widget (the catalogue's newest
     // releases), shown regardless of the active filter/search/page so it stays put while filtering. ----
@@ -232,7 +232,12 @@ jahiaComponent(
             </div>
           ) : (
             <>
-              <p className={styles.truncated} data-list-count="">
+              <p
+                className={styles.truncated}
+                data-list-count=""
+                aria-live="polite"
+                aria-atomic="true"
+              >
                 {t("modulesList.showingCount", { shown: entries.length, total })}
               </p>
               <div className={styles.grid}>

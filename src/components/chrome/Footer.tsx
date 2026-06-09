@@ -88,7 +88,7 @@ const SOCIAL_ICONS: Record<string, string> = {
 };
 
 /** A social brand icon by platform name; null for an unknown platform. */
-function SocialIcon({ name }: { name: string }): JSX.Element | null {
+function SocialIcon({ name }: Readonly<{ name: string }>): JSX.Element | null {
   const path = SOCIAL_ICONS[name];
   if (!path) return null;
   return (

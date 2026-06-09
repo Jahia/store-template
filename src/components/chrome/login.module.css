@@ -37,6 +37,10 @@
 .loginBtn:hover {
   background: var(--color-accent-hover);
 }
+.loginBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
 
 .panel {
   position: absolute;
@@ -97,4 +101,8 @@
 }
 .submit:hover {
   background: var(--color-accent-hover);
+}
+.submit:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
 }

@@ -112,7 +112,7 @@ export function Header(): JSX.Element {
 
   // Language switcher: the site's configured languages (sorted for a stable order),
   // each linking the current page/content in that language. Hidden for a single-language site.
-  const languages = Array.from(site.getLanguages(), String).sort();
+  const languages = Array.from(site.getLanguages(), String).sort((a, b) => a.localeCompare(b));
   const currentLang = currentResource.getLocale().getLanguage();
 
   const homeUrl = home ? buildNodeUrl(home) : buildNodeUrl(site);
