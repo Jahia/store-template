@@ -2,11 +2,15 @@ import { getChildNodes } from "@jahia/javascript-modules-library";
 import type { JCRSessionWrapper } from "org.jahia.services.content";
 import { forgeRootCategoryUuid } from "./forgeBranding";
 
-/** jmix:forgeElement status choicelist (definitions.cnd) — the fixed status facet options. */
+/**
+ * The status facet options. A deliberate subset of the `jmix:forgeElement` status
+ * choicelist (definitions.cnd): `prereleased` is intentionally omitted from the UI —
+ * the CND still permits it for existing/migrated data, but it is no longer offered as
+ * a filter facet or editor choice.
+ */
 export const FORGE_STATUSES: readonly string[] = [
   "community",
   "labs",
-  "prereleased",
   "supported",
   "legacy",
 ];

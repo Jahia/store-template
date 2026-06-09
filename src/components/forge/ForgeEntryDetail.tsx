@@ -38,8 +38,12 @@ function panelProps(id: string, defaultTab: string) {
   };
 }
 
-/** Allowed module status values (jmix:forgeElement `status` choicelist). */
-const STATUS_OPTIONS = ["community", "labs", "prereleased", "supported", "legacy"];
+/**
+ * Module status values offered in the editor — a deliberate subset of the
+ * `jmix:forgeElement` `status` choicelist: `prereleased` is intentionally omitted
+ * from the UI (the CND still permits it for existing/migrated data).
+ */
+const STATUS_OPTIONS = ["community", "labs", "supported", "legacy"];
 
 /** Allowed author-display modes (jnt:forgeModule/Package `authorNameDisplayedAs` choicelist). */
 const AUTHOR_DISPLAY_OPTIONS = ["username", "fullName", "organisation"];
