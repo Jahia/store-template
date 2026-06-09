@@ -174,12 +174,15 @@ jahiaComponent(
             {term && <input type="hidden" name="src_terms" value={term} />}
             <fieldset className={filterStyles.facets}>
               <legend className={filterStyles.legend}>{labels.status}</legend>
-              {FORGE_STATUSES.map((s) => (
-                <label key={s} className={filterStyles.facet}>
-                  <input type="checkbox" name="status" value={s} defaultChecked={statuses.includes(s)} />
-                  <span className={filterStyles.facetStatus}>{s}</span>
-                </label>
-              ))}
+              {/* Alphabetical so the facet is easy to scan (the constant keeps lifecycle order). */}
+              {[...FORGE_STATUSES]
+                .sort((a, b) => a.localeCompare(b))
+                .map((s) => (
+                  <label key={s} className={filterStyles.facet}>
+                    <input type="checkbox" name="status" value={s} defaultChecked={statuses.includes(s)} />
+                    <span className={filterStyles.facetStatus}>{s}</span>
+                  </label>
+                ))}
             </fieldset>
             {categoryOptions.length > 0 && (
               <fieldset className={filterStyles.facets}>
