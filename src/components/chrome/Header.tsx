@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { forgeBranding } from "~/components/forge/forgeBranding";
 import { FORGE_STATUSES, forgeCategoryOptions } from "~/components/forge/forgeFacets";
 import styles from "./Header.module.css";
+import AdvancedSearchSync from "./AdvancedSearchSync.client";
 import Login from "./Login.client";
 import MobileNav from "./MobileNav.client";
 
@@ -235,6 +236,11 @@ export function Header(): JSX.Element {
               </div>
             </details>
           </div>
+          {/* The header is cached chrome (it doesn't vary by query string), so its
+              server-rendered checked/value state can drift from the live URL. This island
+              reflects ?src_terms/?status/?category back into the panel on load, keeping it
+              in sync with the (fresh) left filter rail. */}
+          <Island component={AdvancedSearchSync} />
         </form>
 
         {languages.length > 1 && (
