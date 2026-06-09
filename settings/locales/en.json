@@ -3,8 +3,7 @@
     "search": {
       "placeholder": "Search modules…",
       "label": "Search modules",
-      "advanced": "Advanced search",
-      "submit": "Search"
+      "loading": "Loading results…"
     },
     "login": {
       "signIn": "Log in",
@@ -43,11 +42,10 @@
       "status": "Status",
       "categories": "Categories",
       "unit": "modules",
+      "apply": "Apply filters",
+      "autoApplyHint": "Filters are applied automatically when you change a selection.",
       "none": "No modules match your filters."
     }
-  },
-  "latest": {
-    "heading": "Latest releases"
   },
   "modulesList": {
     "empty": "No published modules yet.",

@@ -1,0 +1,51 @@
+/* Top navigation-loading bar, shown while a filter/search/pagination GET navigation is in flight.
+   Sits above the sticky header (z-index 50) and its disclosures (60). Compositor-friendly motion
+   only (transform/opacity). */
+.bar {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 3px;
+  z-index: 200;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms var(--ease, ease);
+}
+.bar[data-loading] {
+  opacity: 1;
+}
+.bar[data-loading]::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inline-size: 40%;
+  border-radius: 0 999px 999px 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-accent),
+    var(--color-accent-hover, var(--color-accent))
+  );
+  transform: translateX(-100%);
+  animation: navProgressSlide 1.05s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+@keyframes navProgressSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+/* Reduced motion: a static full-width bar still signals loading, without animation. */
+@media (prefers-reduced-motion: reduce) {
+  .bar[data-loading]::before {
+    inline-size: 100%;
+    transform: none;
+    animation: none;
+    background: var(--color-accent);
+  }
+}
