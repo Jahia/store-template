@@ -30,6 +30,11 @@ interface IconUploadProps {
     is sent as a GraphQL multipart request part via gqlUpload, not a base64 JSON value). */
 const MAX_BYTES = 2 * 1024 * 1024;
 
+/** Raster image types only. SVG is deliberately excluded: image/svg+xml can carry
+    scripts when served inline, and the stored jcr:mimeType drives how Jahia serves
+    the file back. The same list feeds the input's `accept` attribute. */
+const ALLOWED_ICON_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"] as const;
+
 type Status = "idle" | "uploading" | "uploaded" | "error";
 
 /** `ws` is a server-computed enum ("EDIT" | "LIVE"), never user input - safe to interpolate. */
@@ -133,7 +138,7 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
       setFile(null);
       return;
     }
-    if (!next.type.startsWith("image/")) {
+    if (!(ALLOWED_ICON_TYPES as readonly string[]).includes(next.type)) {
       setStatus("error");
       setMessage(labels.invalidType);
       return;
@@ -208,7 +213,7 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
           <input
             ref={inputRef}
             type="file"
-            accept="image/*"
+            accept={ALLOWED_ICON_TYPES.join(",")}
             data-icon-input=""
             aria-label={labels.choose}
             onChange={(e) => pick(e.target.files?.[0] ?? null)}

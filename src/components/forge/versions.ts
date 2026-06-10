@@ -18,12 +18,20 @@ export function compareVersionsDesc(a: string, b: string): number {
 }
 
 /**
+ * One path segment of a MavenProxy URL: Maven-coordinate charset only, and never a bare
+ * "." / ".." that the browser would normalize into a traversal out of /modules/mavenproxy/.
+ * groupId/versionNumber are author-supplied module properties, so they can't be trusted.
+ */
+const SAFE_MAVEN_SEGMENT = /^(?!\.{1,2}$)[A-Za-z0-9._-]+$/;
+
+/**
  * Download URL for a version. If a jnt:file is attached (JS modules / packages),
  * link to that genuine artifact. Otherwise (JAR modules deployed to the site's
  * Maven repo) build the MavenProxy URL from the module coordinates instead of a
  * stored absolute URL - a root-relative `/modules/mavenproxy/…` so the browser
  * resolves it against whatever scheme/host/port the storefront is served on.
- * Mirrors the catalog moduleList.jsp generation.
+ * Mirrors the catalog moduleList.jsp generation. Returns null when any
+ * coordinate fails validation rather than emitting a traversable href.
  */
 export function versionDownloadUrl(version: JCRNodeWrapper): string | null {
   const files = getChildNodes(version, 1, 0, (n) => n.isNodeType("jnt:file"));
@@ -37,7 +45,10 @@ export function versionDownloadUrl(version: JCRNodeWrapper): string | null {
   if (!groupId || !versionNumber) return null;
   const site = module.getResolveSite().getSiteKey();
   const name = module.getName();
-  const groupPath = groupId.replaceAll(".", "/");
+  const groupSegments = groupId.split(".");
+  const segments = [site, ...groupSegments, name, versionNumber];
+  if (!segments.every((segment) => SAFE_MAVEN_SEGMENT.test(segment))) return null;
+  const groupPath = groupSegments.join("/");
   return `/modules/mavenproxy/${site}/${groupPath}/${name}/${versionNumber}/${name}-${versionNumber}.jar`;
 }
 
