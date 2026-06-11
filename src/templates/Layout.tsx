@@ -1,6 +1,12 @@
 import type { ReactNode } from "react";
 import { AddResources, buildModuleFileUrl, useServerContext } from "@jahia/javascript-modules-library";
 import { useTranslation } from "react-i18next";
+// Self-hosted Nunito Sans (variable, weight axis 200-1000, normal). Bundled into
+// the module's single style.css; Vite emits the per-subset woff2 into dist/assets
+// (served via the module's static-resources). font-display:swap + unicode-range
+// mean only the subset a page needs is fetched. The family is wired into
+// --font-sans in global.css; the system stack stays as the swap fallback.
+import "@fontsource-variable/nunito-sans/wght.css";
 import "~/styles/global.css";
 import styles from "./Layout.module.css";
 import { Header } from "~/components/chrome/Header";
