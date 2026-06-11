@@ -6,10 +6,18 @@
    text-on-white (links) and as a button fill (white-on-accent), so the
    automated AAA contrast gate (axe color-contrast-enhanced) stays green. */
 :root {
+  /* Moonstone design tokens. Values copied from @jahia/moonstone
+     (https://jahia.github.io/moonstone/?path=/docs/tokens-colors--docs); the
+     library itself is never bundled into this SSR module (see CLAUDE.md), so the
+     few tokens we reuse are hardcoded here. Only AAA-safe tokens are adopted:
+     Moonstone's base accent (#00a0e3 ≈2.5:1) and gray (#7a7f88 ≈3.6:1) fail the
+     AAA contrast gate (spec 20), so the accent/muted tokens below stay tuned. */
+  --moon-color-gray_dark: #293136; /* body text - AAA ≈13:1 on white */
+
   --color-bg: #ffffff;
   --color-surface: #f7f9fc;
   --color-surface-2: #eef2f8;
-  --color-text: #1a2233;
+  --color-text: var(--moon-color-gray_dark);
   --color-text-muted: #45506a; /* AAA: ≈7.9:1 on white */
   --color-border: #d9e0ea;
   --color-accent: #0e4ea8; /* Jahia blue - AAA both ways */
