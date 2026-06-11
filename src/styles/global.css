@@ -19,8 +19,10 @@
   --color-danger: #a00f33; /* AAA: ≈8.1:1 on white (and white-on-danger ≈8.0:1) */
   --color-danger-hover: #850c2a;
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
+  /* Nunito Sans (self-hosted variable font, imported in Layout.tsx); the system
+     stack is the font-display:swap fallback shown until the woff2 loads. */
+  --font-sans: "Nunito Sans Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
 
   --radius: 8px;
   --radius-lg: 12px;
