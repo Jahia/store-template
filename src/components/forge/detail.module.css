@@ -43,11 +43,11 @@
 }
 .sidebar .meta dt {
   margin-top: 0.7rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  /* Normal case (not all-caps) and the high-contrast text token (gray_dark,
+     ≈13:1 on the surface) so the field labels read clearly. */
+  color: var(--color-text);
 }
 .sidebar .meta dt:first-of-type {
   margin-top: 0;
