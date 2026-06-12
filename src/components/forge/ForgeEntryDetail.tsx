@@ -13,6 +13,7 @@ import { forgeAuthor, forgeCategoryNames, forgeIconUrl } from "./forgeCard";
 import { str, bool, strValues, jcrWorkspace, isoDay } from "./nodeProps";
 import { sanitizeHtml } from "./sanitizeHtml";
 import { requiredJahiaVersion, sortedVersionNodes, versionDownloadUrl } from "./versions";
+import { forgeCategoryOptions } from "./forgeFacets";
 import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
 import PublishToggle from "./PublishToggle.client";
@@ -46,25 +47,6 @@ const STATUS_OPTIONS = ["community", "labs", "supported", "legacy"];
 
 /** Allowed author-display modes (jnt:forgeModule/Package `authorNameDisplayedAs` choicelist). */
 const AUTHOR_DISPLAY_OPTIONS = ["username", "fullName", "organisation"];
-
-/**
- * Categories a developer can file a module under: the children of the site's
- * configured root category (Store administration → Categories). Empty if no root
- * category is set. Reading fails soft so the editor still renders without it.
- */
-function siteCategoryOptions(site: JCRNodeWrapper): { uuid: string; name: string }[] {
-  try {
-    if (!site.hasProperty("rootCategory")) return [];
-    const root = site.getProperty("rootCategory").getNode() as unknown as JCRNodeWrapper;
-    if (!root) return [];
-    return getChildNodes(root, 200, 0, (n) => n.isNodeType("jnt:category")).map((c) => ({
-      uuid: c.getIdentifier(),
-      name: c.getDisplayableName(),
-    }));
-  } catch {
-    return [];
-  }
-}
 
 function screenshotItems(node: JCRNodeWrapper): { name: string; url: string }[] {
   if (!node.hasNode("screenshots")) return [];
@@ -233,7 +215,11 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
       : null;
 
   // Metadata (editable by owners; shown to everyone in the Information panel).
-  const categoryOptions = siteCategoryOptions(renderContext.getSite());
+  // Resolve the editor's category choices from the SAME source as the storefront
+  // facet rail + the admin UI: the per-site OSGi forge config's root category
+  // (not the legacy JCR `rootCategory` property, which the settings migration left
+  // unset — that mismatch is why the editor showed "no categories configured").
+  const categoryOptions = forgeCategoryOptions(renderContext.getSite().getSiteKey(), session);
   const categoryValue = strValues(node, "j:defaultCategory");
   const categoryNames = forgeCategoryNames(node);
   const tags = strValues(node, "j:tagList");
