@@ -34,6 +34,33 @@ interface VideoManagerProps {
     query into the embed URL (mirrors the server-side guard in Videostreaming). */
 const SAFE_VIDEO_ID = /^[A-Za-z0-9_-]+$/;
 
+/**
+ * Accept either a bare video id or a pasted watch/share URL — users naturally paste the full URL.
+ * Extracts the id from common YouTube (watch?v=, youtu.be/, /embed/) and Vimeo (vimeo.com/<digits>)
+ * shapes; returns the trimmed input unchanged when it is already a bare id or unrecognised (the
+ * SAFE_VIDEO_ID guard in save() then rejects anything still invalid).
+ */
+function extractVideoId(provider: string, raw: string): string {
+  const value = raw.trim();
+  if (SAFE_VIDEO_ID.test(value)) return value;
+  try {
+    const url = new URL(value);
+    if (provider === "youtube") {
+      if (url.hostname.endsWith("youtu.be")) return url.pathname.slice(1);
+      const v = url.searchParams.get("v");
+      if (v) return v;
+      const embed = url.pathname.match(/\/embed\/([^/?]+)/);
+      if (embed) return embed[1];
+    } else if (provider === "vimeo") {
+      const digits = url.pathname.match(/\/(\d+)/);
+      if (digits) return digits[1];
+    }
+  } catch {
+    // Not a URL — leave as-is; save()'s SAFE_VIDEO_ID check will reject it.
+  }
+  return value;
+}
+
 /** `ws` is a server-computed enum, never user input - safe to interpolate. */
 const addVideoMutation = (ws: "EDIT" | "LIVE") => /* GraphQL */ `
   mutation AddVideo($path: String!) {
@@ -102,7 +129,7 @@ export default function VideoManager({
         setMessage(labels.saved);
         return;
       }
-      const id = idValue.trim();
+      const id = extractVideoId(providerValue, idValue);
       if (!SAFE_VIDEO_ID.test(id)) {
         setStatus("error");
         setMessage(labels.invalidId);
