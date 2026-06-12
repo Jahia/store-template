@@ -43,17 +43,19 @@
 }
 .sidebar .meta dt {
   margin-top: 0.7rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--color-text-muted);
+  /* Same size as the value below; the label is set apart by weight + the
+     high-contrast text token (gray_dark, ≈13:1), in normal case (not all-caps),
+     so it never reads smaller than its own value. */
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text);
 }
 .sidebar .meta dt:first-of-type {
   margin-top: 0;
 }
 .sidebar .meta dd {
   margin: 0.1rem 0 0;
+  font-size: 0.9rem;
 }
 @media (max-width: 820px) {
   .body {

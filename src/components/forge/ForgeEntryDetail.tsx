@@ -13,9 +13,9 @@ import { forgeAuthor, forgeCategoryNames, forgeIconUrl } from "./forgeCard";
 import { str, bool, strValues, jcrWorkspace, isoDay } from "./nodeProps";
 import { sanitizeHtml } from "./sanitizeHtml";
 import { requiredJahiaVersion, sortedVersionNodes, versionDownloadUrl } from "./versions";
+import { forgeCategoryOptions } from "./forgeFacets";
 import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
-import ScreenshotManager from "./ScreenshotManager.client";
 import PublishToggle from "./PublishToggle.client";
 import DetailTabs from "./DetailTabs.client";
 import VersionsDialog from "./VersionsDialog.client";
@@ -47,25 +47,6 @@ const STATUS_OPTIONS = ["community", "labs", "supported", "legacy"];
 
 /** Allowed author-display modes (jnt:forgeModule/Package `authorNameDisplayedAs` choicelist). */
 const AUTHOR_DISPLAY_OPTIONS = ["username", "fullName", "organisation"];
-
-/**
- * Categories a developer can file a module under: the children of the site's
- * configured root category (Store administration → Categories). Empty if no root
- * category is set. Reading fails soft so the editor still renders without it.
- */
-function siteCategoryOptions(site: JCRNodeWrapper): { uuid: string; name: string }[] {
-  try {
-    if (!site.hasProperty("rootCategory")) return [];
-    const root = site.getProperty("rootCategory").getNode() as unknown as JCRNodeWrapper;
-    if (!root) return [];
-    return getChildNodes(root, 200, 0, (n) => n.isNodeType("jnt:category")).map((c) => ({
-      uuid: c.getIdentifier(),
-      name: c.getDisplayableName(),
-    }));
-  } catch {
-    return [];
-  }
-}
 
 function screenshotItems(node: JCRNodeWrapper): { name: string; url: string }[] {
   if (!node.hasNode("screenshots")) return [];
@@ -134,8 +115,38 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
     tabInstall: t("editor.tabInstall"),
     tabLicense: t("editor.tabLicense"),
     tabAuthor: t("editor.tabAuthor"),
+    tabMedia: t("editor.tabMedia"),
     tablist: t("editor.tablist"),
     loading: t("editor.loading"),
+    screenshotsHeading: t("editor.screenshotsHeading"),
+    screenshots: {
+      empty: t("screenshots.empty"),
+      add: t("screenshots.add"),
+      uploading: t("screenshots.uploading"),
+      tooLarge: t("screenshots.tooLarge"),
+      invalidType: t("screenshots.invalidType"),
+      moveUp: t("screenshots.moveUp"),
+      moveDown: t("screenshots.moveDown"),
+      delete: t("screenshots.delete"),
+      confirmPrompt: t("screenshots.confirmPrompt"),
+      confirm: t("screenshots.confirm"),
+      cancel: t("screenshots.cancel"),
+      error: t("screenshots.error"),
+    },
+    video: {
+      heading: t("editor.video.heading"),
+      provider: t("editor.video.provider"),
+      providerNone: t("editor.video.providerNone"),
+      providerYoutube: t("editor.video.providerYoutube"),
+      providerVimeo: t("editor.video.providerVimeo"),
+      identifier: t("editor.video.identifier"),
+      identifierHelp: t("editor.video.identifierHelp"),
+      save: t("editor.video.save"),
+      saving: t("editor.video.saving"),
+      saved: t("editor.video.saved"),
+      invalidId: t("editor.video.invalidId"),
+      error: t("editor.video.error"),
+    },
     icon: {
       label: t("editor.icon.label"),
       choose: t("editor.icon.choose"),
@@ -173,18 +184,6 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
     error: t("addVersion.error"),
   };
 
-  // Labels for the owner screenshot manager island (passed in as props).
-  const SCREENSHOT_LABELS = {
-    empty: t("screenshots.empty"),
-    moveUp: t("screenshots.moveUp"),
-    moveDown: t("screenshots.moveDown"),
-    delete: t("screenshots.delete"),
-    confirmPrompt: t("screenshots.confirmPrompt"),
-    confirm: t("screenshots.confirm"),
-    cancel: t("screenshots.cancel"),
-    error: t("screenshots.error"),
-  };
-
   const title = str(node, "jcr:title") || node.getName();
   // Richtext fields are sanitized server-side before they reach the DOM (covers
   // direct GraphQL/JCR writes that bypass the editor — SECURITY-571 B2).
@@ -197,6 +196,8 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const screenshotsPath = node.hasNode("screenshots") ? node.getNode("screenshots").getPath() : "";
   const versions = sortedVersionNodes(node);
   const videoNode = node.hasNode("video") ? node.getNode("video") : null;
+  const videoProvider = videoNode ? str(videoNode, "provider") : "";
+  const videoId = videoNode ? str(videoNode, "identifier") : "";
   const canEdit = node.hasPermission("jcr:write");
   const language = currentResource.getLocale().getLanguage();
   const published = bool(node, "published");
@@ -214,7 +215,11 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
       : null;
 
   // Metadata (editable by owners; shown to everyone in the Information panel).
-  const categoryOptions = siteCategoryOptions(renderContext.getSite());
+  // Resolve the editor's category choices from the SAME source as the storefront
+  // facet rail + the admin UI: the per-site OSGi forge config's root category
+  // (not the legacy JCR `rootCategory` property, which the settings migration left
+  // unset — that mismatch is why the editor showed "no categories configured").
+  const categoryOptions = forgeCategoryOptions(renderContext.getSite().getSiteKey(), session);
   const categoryValue = strValues(node, "j:defaultCategory");
   const categoryNames = forgeCategoryNames(node);
   const tags = strValues(node, "j:tagList");
@@ -315,6 +320,11 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
               categoryOptions,
               categoryValue,
               tags,
+              screenshotsPath,
+              screenshots: shots,
+              videoProvider,
+              videoId,
+              hasVideo: Boolean(videoNode),
               labels: EDITOR_LABELS,
             }}
           />
@@ -426,25 +436,19 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
           {shots.length > 0 && (
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>{t("detail.sections.screenshots")}</h2>
-              {canEdit ? (
-                <Island
-                  component={ScreenshotManager}
-                  props={{ path: screenshotsPath, items: shots, labels: SCREENSHOT_LABELS }}
-                />
-              ) : (
-                <Island
-                  component={Lightbox}
-                  props={{
-                    images: shots.map((s) => s.url),
-                    labels: {
-                      open: t("lightbox.open"),
-                      close: t("lightbox.close"),
-                      previous: t("lightbox.previous"),
-                      next: t("lightbox.next"),
-                    },
-                  }}
-                />
-              )}
+              {/* Display-only here; owners manage screenshots in the editor's Media tab. */}
+              <Island
+                component={Lightbox}
+                props={{
+                  images: shots.map((s) => s.url),
+                  labels: {
+                    open: t("lightbox.open"),
+                    close: t("lightbox.close"),
+                    previous: t("lightbox.previous"),
+                    next: t("lightbox.next"),
+                  },
+                }}
+              />
             </section>
           )}
         </div>
@@ -481,6 +485,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
       <dialog
         className={styles.versionsDialog}
         data-versions-dialog=""
+        aria-modal="true"
         aria-labelledby="versions-dialog-title"
       >
         <div className={styles.dialogHead}>

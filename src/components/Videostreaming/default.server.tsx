@@ -20,9 +20,10 @@ jahiaComponent(
     const id = str(currentNode, "identifier");
 
     let src: string | null = null;
-    if (!id || !SAFE_VIDEO_ID.test(id)) src = null;
-    else if (provider === "youtube") src = `https://www.youtube.com/embed/${id}`;
-    else if (provider === "vimeo") src = `https://player.vimeo.com/video/${id}`;
+    if (id && SAFE_VIDEO_ID.test(id)) {
+      if (provider === "youtube") src = `https://www.youtube.com/embed/${id}`;
+      else if (provider === "vimeo") src = `https://player.vimeo.com/video/${id}`;
+    }
 
     if (!src) return <></>;
 

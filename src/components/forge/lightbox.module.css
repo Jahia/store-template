@@ -25,15 +25,32 @@
   object-fit: cover;
 }
 
-.overlay {
+/* Native <dialog> opened via showModal(): focus trap + inert background for free.
+   Reset the UA box and stretch it to the viewport; the dark layer is ::backdrop. */
+.dialog {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  overflow: hidden;
+}
+.dialog::backdrop {
+  background: rgba(15, 15, 22, 0.88);
+}
+.dialogInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: grid;
   place-items: center;
   padding: 3rem;
-  background: rgba(15, 15, 22, 0.88);
-  cursor: zoom-out;
+  box-sizing: border-box;
 }
 
 .full {
@@ -44,18 +61,6 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
   cursor: default;
-}
-
-/* Full-bleed click-catcher behind the image; closing the viewer. A real
-   <button> (not a div with an onClick) so it is keyboard-reachable and the
-   close interaction is lint-clean (no listener on a non-interactive element). */
-.backdrop {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border: none;
-  background: transparent;
-  cursor: zoom-out;
 }
 
 .close,
@@ -74,6 +79,11 @@
 .close:hover,
 .nav:hover {
   background: rgba(0, 0, 0, 0.75);
+}
+.close:focus-visible,
+.nav:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px #fff;
 }
 
 .close {

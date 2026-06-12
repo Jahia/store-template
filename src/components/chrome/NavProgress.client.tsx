@@ -15,7 +15,7 @@ import styles from "./nav-progress.module.css";
 export default function NavProgress() {
   const { t } = useTranslation();
   const barRef = useRef<HTMLDivElement>(null);
-  const liveRef = useRef<HTMLSpanElement>(null);
+  const liveRef = useRef<HTMLOutputElement>(null);
 
   useEffect(() => {
     const bar = barRef.current;
@@ -23,11 +23,11 @@ export default function NavProgress() {
     const live = liveRef.current;
 
     const show = () => {
-      bar.setAttribute("data-loading", "true");
+      bar.dataset.loading = "true";
       if (live) live.textContent = t("chrome.search.loading");
     };
     const hide = () => {
-      bar.removeAttribute("data-loading");
+      delete bar.dataset.loading;
       if (live) live.textContent = "";
     };
 
@@ -59,7 +59,7 @@ export default function NavProgress() {
   return (
     <>
       <div ref={barRef} className={styles.bar} data-nav-progress="" aria-hidden="true" />
-      <span ref={liveRef} className="sr-only" role="status" aria-live="polite" />
+      <output ref={liveRef} className="sr-only" aria-live="polite" data-nav-status="" />
     </>
   );
 }
