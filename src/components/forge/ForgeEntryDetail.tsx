@@ -20,7 +20,8 @@ import ModuleEditor from "./ModuleEditor.client";
 import PublishToggle from "./PublishToggle.client";
 import DetailTabs from "./DetailTabs.client";
 import VersionsDialog from "./VersionsDialog.client";
-import FileUploadForm from "~/components/FileUpload/FileUpload.client";
+import { DetailInfoRail } from "./DetailInfoRail";
+import { DetailVersionsDialog } from "./DetailVersionsDialog";
 
 interface TabDef {
   id: string;
@@ -56,11 +57,6 @@ function screenshotItems(node: JCRNodeWrapper): { name: string; url: string }[] 
   );
 }
 
-/** Only http(s) URLs are safe to render as a link href (blocks stored javascript:/data: URLs). */
-function isHttpUrl(url: string): boolean {
-  return /^https?:\/\//i.test(url.trim());
-}
-
 /**
  * Detail of a forge module/package: header, description, video, screenshots
  * (lightbox), versions (rendered via their `default` view), metadata and an
@@ -91,18 +87,6 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   };
 
   const EDITOR_LABELS = buildEditorLabels(t);
-
-  // Labels for the owner-only "upload a new version" form on the detail page. Posts
-  // to the same createEntryFromJar action as the my-modules upload - the action
-  // upserts (matches the module by groupId+name in the package) and appends the
-  // version - so the only thing missing was an entry point on the module's own page.
-  const ADD_VERSION_LABELS = {
-    fileLabel: t("addVersion.fileLabel"),
-    submit: t("addVersion.submit"),
-    submitting: t("addVersion.submitting"),
-    pickFile: t("addVersion.pickFile"),
-    error: t("addVersion.error"),
-  };
 
   const title = str(node, "jcr:title") || node.getName();
   // Richtext fields are sanitized server-side before they reach the DOM (covers
@@ -252,90 +236,18 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
       )}
 
       <div className={styles.body}>
-        {/* Persistent "Information" rail — always visible (not behind a tab) as in the old UI.
-            A <div>, not <aside>: a complementary landmark nested in <main> trips the axe AAA gate.
-            DOM order is main-first (reading order); CSS grid places this rail on the left. */}
-        <div className={styles.sidebar} data-detail-info="">
-          <h2 className={styles.sidebarTitle}>{t("detail.tabs.information")}</h2>
-          <dl className={styles.meta}>
-            <dt>{t("detail.meta.moduleId")}</dt>
-            <dd>{moduleId}</dd>
-            {groupId && (
-              <>
-                <dt>{t("detail.meta.groupId")}</dt>
-                <dd>{groupId}</dd>
-              </>
-            )}
-            {status && (
-              <>
-                <dt>{t("detail.meta.status")}</dt>
-                <dd className={styles.metaStatus}>{status}</dd>
-              </>
-            )}
-            {categoryNames.length > 0 && (
-              <>
-                <dt>{t("detail.meta.category")}</dt>
-                <dd>{categoryNames.join(", ")}</dd>
-              </>
-            )}
-            {author && (
-              <>
-                <dt>{t("detail.meta.author")}</dt>
-                <dd>{author}</dd>
-              </>
-            )}
-            {isHttpUrl(authorURL) && (
-              <>
-                <dt>{t("detail.meta.developerWebsite")}</dt>
-                <dd>
-                  <a href={authorURL} rel="noopener noreferrer nofollow" target="_blank">
-                    {authorURL}
-                  </a>
-                </dd>
-              </>
-            )}
-            {requiresJahia && (
-              <>
-                <dt>{t("detail.meta.requiresJahia")}</dt>
-                <dd>{requiresJahia}</dd>
-              </>
-            )}
-            {updated && (
-              <>
-                <dt>{t("detail.meta.updated")}</dt>
-                <dd>{updated}</dd>
-              </>
-            )}
-            {codeRepository && (
-              <>
-                <dt>{t("detail.meta.source")}</dt>
-                <dd>
-                  {isHttpUrl(codeRepository) ? (
-                    <a href={codeRepository} rel="noopener noreferrer nofollow" target="_blank">
-                      {codeRepository}
-                    </a>
-                  ) : (
-                    codeRepository
-                  )}
-                </dd>
-              </>
-            )}
-            {tags.length > 0 && (
-              <>
-                <dt>{t("detail.meta.tags")}</dt>
-                <dd>
-                  <ul className={styles.tagList} data-tag-list="">
-                    {tags.map((tag) => (
-                      <li key={tag} className={styles.tag}>
-                        {tag}
-                      </li>
-                    ))}
-                  </ul>
-                </dd>
-              </>
-            )}
-          </dl>
-        </div>
+        <DetailInfoRail
+          moduleId={moduleId}
+          groupId={groupId}
+          status={status}
+          categoryNames={categoryNames}
+          author={author}
+          authorURL={authorURL}
+          requiresJahia={requiresJahia}
+          updated={updated}
+          codeRepository={codeRepository}
+          tags={tags}
+        />
 
         <div className={styles.main}>
           {tabs.length > 0 && (
@@ -399,52 +311,11 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
         </div>
       </div>
 
-      {/* Versions popup, opened by the header "Versions" button (VersionsDialog island). A native
-          <dialog> gives a focus trap, Escape-to-close and an inert backdrop for free; its content
-          (Jahia version views + the owner upload form) is server-rendered. */}
-      <dialog
-        className={styles.versionsDialog}
-        data-versions-dialog=""
-        aria-modal="true"
-        aria-labelledby="versions-dialog-title"
-      >
-        <div className={styles.dialogHead}>
-          <h2 id="versions-dialog-title" className={styles.dialogTitle}>
-            {t("detail.tabs.versions")}
-          </h2>
-          <form method="dialog">
-            <button type="submit" className={styles.dialogClose} aria-label={t("detail.versions.close")}>
-              <span aria-hidden="true">×</span>
-            </button>
-          </form>
-        </div>
-        <div className={styles.dialogBody}>
-          {versions.length === 0 ? (
-            <p className={styles.muted}>{t("detail.versions.none")}</p>
-          ) : (
-            <div className={styles.versions}>
-              {versions.map((v) => (
-                <Render key={v.getIdentifier()} node={v} view="default" readOnly />
-              ))}
-            </div>
-          )}
-          {uploadActionUrl && (
-            <section className={styles.section} data-add-version="">
-              <h3 className={styles.sectionTitle}>{t("detail.versions.uploadTitle")}</h3>
-              <p className={styles.muted}>{t("detail.versions.uploadHelp")}</p>
-              <Island
-                component={FileUploadForm}
-                props={{
-                  actionUrl: uploadActionUrl,
-                  backUrl: buildNodeUrl(node),
-                  accept: ".jar",
-                  labels: ADD_VERSION_LABELS,
-                }}
-              />
-            </section>
-          )}
-        </div>
-      </dialog>
+      <DetailVersionsDialog
+        versions={versions}
+        uploadActionUrl={uploadActionUrl}
+        backUrl={buildNodeUrl(node)}
+      />
     </article>
   );
 }
