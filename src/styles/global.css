@@ -18,7 +18,10 @@
   --color-surface: #f7f9fc;
   --color-surface-2: #eef2f8;
   --color-text: var(--moon-color-gray_dark);
-  --color-text-muted: #45506a; /* AAA: ≈7.9:1 on white */
+  /* Muted secondary text. Darkened from the old #45506a so it clears the AAA 7:1
+     threshold not just on white (~9.9:1) but also on the tinted surfaces it lands on
+     (~8.8:1 on --color-surface-2), where #45506a only reached ~5.2:1. */
+  --color-text-muted: #3a4356;
   --color-border: #d9e0ea;
   --color-accent: #0e4ea8; /* Jahia blue - AAA both ways */
   --color-accent-hover: #0a3d85;

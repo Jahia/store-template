@@ -71,6 +71,10 @@
 .controls button:hover:not(:disabled) {
   background: var(--color-surface-2);
 }
+.controls button:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
 .controls button:disabled {
   opacity: 0.4;
   cursor: not-allowed;

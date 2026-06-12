@@ -485,6 +485,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
       <dialog
         className={styles.versionsDialog}
         data-versions-dialog=""
+        aria-modal="true"
         aria-labelledby="versions-dialog-title"
       >
         <div className={styles.dialogHead}>

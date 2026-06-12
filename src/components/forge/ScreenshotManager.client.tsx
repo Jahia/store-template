@@ -90,6 +90,7 @@ export default function ScreenshotManager({
   labels,
 }: Readonly<ScreenshotManagerProps>) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const confirmRef = useRef<HTMLButtonElement>(null);
   const [list, setList] = useState<Item[]>(items);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
@@ -97,6 +98,11 @@ export default function ScreenshotManager({
   const [confirming, setConfirming] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
+  // Move focus to the Confirm button when the inline delete prompt appears, so a keyboard user
+  // can act on it instead of being dropped onto <body> when the delete trigger unmounts.
+  useEffect(() => {
+    if (confirming) confirmRef.current?.focus();
+  }, [confirming]);
 
   const fail = (msg: string) => {
     setError(true);
@@ -146,6 +152,9 @@ export default function ScreenshotManager({
     const prev = list;
     setConfirming(null);
     setList(list.filter((x) => x.name !== item.name));
+    // The deleted row (and its focused button) unmounts; move focus to the upload control
+    // rather than letting it fall to <body> (WCAG 2.4.3).
+    requestAnimationFrame(() => inputRef.current?.focus());
     setBusy(true);
     setError(false);
     gqlRequest(deleteNodeMutation(workspace), { path: `${path}/${item.name}` })
@@ -205,10 +214,12 @@ export default function ScreenshotManager({
                 {confirming === it.name ? (
                   <span className={styles.confirm}>
                     <button
+                      ref={confirmRef}
                       type="button"
                       className={styles.confirmDelete}
                       disabled={busy}
                       onClick={() => remove(it)}
+                      aria-label={`${labels.confirm}: ${it.name}`}
                     >
                       {labels.confirm}
                     </button>
@@ -217,6 +228,7 @@ export default function ScreenshotManager({
                       className={styles.confirmCancel}
                       disabled={busy}
                       onClick={() => setConfirming(null)}
+                      aria-label={`${labels.cancel}: ${it.name}`}
                     >
                       {labels.cancel}
                     </button>

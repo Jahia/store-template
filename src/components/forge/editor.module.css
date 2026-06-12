@@ -209,7 +209,10 @@
   line-height: 1.3;
   white-space: nowrap;
   opacity: 0;
-  pointer-events: none;
+  /* Keep the tooltip hoverable (WCAG 2.2 SC 1.4.13): as the button's own ::after it
+     retains :hover, so the pointer can move onto it without it vanishing. The accessible
+     name is carried by aria-label regardless. */
+  pointer-events: auto;
   transform: translateY(-3px);
   transition: opacity 150ms var(--ease), transform 150ms var(--ease);
 }
@@ -229,6 +232,10 @@
   border-radius: 7px;
   border: 1px solid transparent;
   transition: background 150ms var(--ease);
+}
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
 }
 .btn:disabled {
   opacity: 0.5;
