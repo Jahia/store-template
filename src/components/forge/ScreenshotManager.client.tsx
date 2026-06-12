@@ -73,6 +73,15 @@ function safeFileName(name: string): string {
 }
 
 /**
+ * Only render thumbnails whose URL we trust: a server-rendered http(s)/relative path, or a
+ * `blob:` object URL minted by our own URL.createObjectURL below. Anything else is dropped, so
+ * a stray scheme can never reach the <img src> (defence-in-depth for js/xss-through-dom).
+ */
+function safeImageSrc(url: string): string {
+  return /^(?:https?:\/\/|\/|blob:)/i.test(url) ? url : "";
+}
+
+/**
  * Owner-facing screenshot manager (rendered in the editor's Media tab): upload new
  * screenshots, reorder (↑/↓) and delete existing ones via the generic jcr
  * mutations (gated by JCR ACLs - no custom Java). Upload/reorder/delete are
@@ -193,7 +202,7 @@ export default function ScreenshotManager({
         <ul className={styles.thumbs}>
           {list.map((it, i) => (
             <li key={it.name} className={styles.thumb} data-screenshot-name={it.name}>
-              <img src={it.url} alt="" loading="lazy" />
+              <img src={safeImageSrc(it.url)} alt="" loading="lazy" />
               <div className={styles.controls}>
                 <button
                   type="button"
