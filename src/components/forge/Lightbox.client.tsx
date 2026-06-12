@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import styles from "./lightbox.module.css";
 
@@ -21,6 +21,26 @@ export default function Lightbox({
 }: Readonly<{ images: string[]; labels: LightboxLabels }>) {
   const [open, setOpen] = useState<number | null>(null);
 
+  // While the viewer is open, ← / → step through images (clamped at the ends) and
+  // Escape closes it. A document listener works regardless of which control has
+  // focus; functional updates keep it correct without re-binding on every step.
+  useEffect(() => {
+    if (open === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(null);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        setOpen((i) => (i !== null && i > 0 ? i - 1 : i));
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        setOpen((i) => (i !== null && i < images.length - 1 ? i + 1 : i));
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, images.length]);
+
   if (images.length === 0) return null;
 
   return (
@@ -39,7 +59,8 @@ export default function Lightbox({
         ))}
       </div>
       {open !== null && (
-        <div className={styles.overlay}>
+        <div className={styles.overlay} data-lightbox="">
+
           <button
             type="button"
             className={styles.backdrop}
@@ -59,7 +80,7 @@ export default function Lightbox({
               ‹
             </button>
           )}
-          <img className={styles.full} src={images[open]} alt="" />
+          <img className={styles.full} src={images[open]} alt="" data-lightbox-image="" />
           {open < images.length - 1 && (
             <button
               type="button"
