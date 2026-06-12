@@ -17,6 +17,7 @@ import { forgeCategoryOptions } from "./forgeFacets";
 import { buildEditorLabels } from "./editorLabels";
 import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
+import EditMediaShortcut from "./EditMediaShortcut.client";
 import PublishToggle from "./PublishToggle.client";
 import DetailTabs from "./DetailTabs.client";
 import VersionsDialog from "./VersionsDialog.client";
@@ -267,8 +268,14 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
           )}
           {shots.length > 0 && (
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>{t("detail.sections.screenshots")}</h2>
-              {/* Display-only here; owners manage screenshots in the editor's Media tab. */}
+              <div className={styles.sectionHead}>
+                <h2 className={styles.sectionTitle}>{t("detail.sections.screenshots")}</h2>
+                {/* Screenshots are display-only here; owners jump to the editor's Media tab to
+                    manage them (the shortcut island signals the ModuleEditor island to open). */}
+                {canEdit && (
+                  <Island component={EditMediaShortcut} props={{ label: t("detail.editScreenshots") }} />
+                )}
+              </div>
               <Island
                 component={Lightbox}
                 props={{
