@@ -156,9 +156,24 @@
   background: transparent;
 }
 
+/* Editor-level action bar, pinned to the bottom of the viewport while the form
+   scrolls (sticky), so Save/Cancel stay reachable on long forms instead of
+   reading as part of the active tab. Negative side/bottom margins cancel the
+   form's 1.5rem padding so the bar spans edge-to-edge and sits flush on the
+   form's rounded bottom; the surface background covers content scrolling under
+   it. .form is the scroll context (no overflow clip), so sticky resolves
+   against the page. */
 .actions {
   display: flex;
   gap: 0.6rem;
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin: 1.5rem -1.5rem -1.5rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--color-border);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: var(--color-surface);
 }
 
 /* Buttons used by IconUpload + the per-version changelog editor (the storefront
