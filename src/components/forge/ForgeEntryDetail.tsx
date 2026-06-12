@@ -96,6 +96,9 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
     cancel: t("editor.cancel"),
     saved: t("editor.saved"),
     error: t("editor.error"),
+    discardPrompt: t("editor.discardPrompt"),
+    discard: t("editor.discard"),
+    keepEditing: t("editor.keepEditing"),
     title: t("editor.title"),
     description: t("editor.description"),
     howToInstall: t("editor.howToInstall"),
@@ -119,6 +122,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
     tablist: t("editor.tablist"),
     loading: t("editor.loading"),
     screenshotsHeading: t("editor.screenshotsHeading"),
+    mediaImmediateNote: t("editor.mediaImmediateNote"),
     screenshots: {
       empty: t("screenshots.empty"),
       add: t("screenshots.add"),
