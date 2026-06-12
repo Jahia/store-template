@@ -14,6 +14,7 @@ import { str, bool, strValues, jcrWorkspace, isoDay } from "./nodeProps";
 import { sanitizeHtml } from "./sanitizeHtml";
 import { requiredJahiaVersion, sortedVersionNodes, versionDownloadUrl } from "./versions";
 import { forgeCategoryOptions } from "./forgeFacets";
+import { buildEditorLabels } from "./editorLabels";
 import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
 import PublishToggle from "./PublishToggle.client";
@@ -89,92 +90,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
     error: t("publish.module.error"),
   };
 
-  const EDITOR_LABELS = {
-    edit: t("editor.edit"),
-    save: t("editor.save"),
-    saving: t("editor.saving"),
-    cancel: t("editor.cancel"),
-    saved: t("editor.saved"),
-    error: t("editor.error"),
-    discardPrompt: t("editor.discardPrompt"),
-    discard: t("editor.discard"),
-    keepEditing: t("editor.keepEditing"),
-    title: t("editor.title"),
-    description: t("editor.description"),
-    howToInstall: t("editor.howToInstall"),
-    faq: t("editor.faq"),
-    license: t("editor.license"),
-    authorEmail: t("editor.authorEmail"),
-    authorURL: t("editor.authorURL"),
-    codeRepository: t("editor.codeRepository"),
-    authorDisplay: t("editor.authorDisplay"),
-    authorDisplayOptions: {
-      username: t("editor.authorDisplayOptions.username"),
-      fullName: t("editor.authorDisplayOptions.fullName"),
-      organisation: t("editor.authorDisplayOptions.organisation"),
-    },
-    tabGeneral: t("editor.tabGeneral"),
-    tabDescription: t("editor.tabDescription"),
-    tabInstall: t("editor.tabInstall"),
-    tabLicense: t("editor.tabLicense"),
-    tabAuthor: t("editor.tabAuthor"),
-    tabMedia: t("editor.tabMedia"),
-    tablist: t("editor.tablist"),
-    loading: t("editor.loading"),
-    screenshotsHeading: t("editor.screenshotsHeading"),
-    mediaImmediateNote: t("editor.mediaImmediateNote"),
-    screenshots: {
-      empty: t("screenshots.empty"),
-      add: t("screenshots.add"),
-      uploading: t("screenshots.uploading"),
-      tooLarge: t("screenshots.tooLarge"),
-      invalidType: t("screenshots.invalidType"),
-      moveUp: t("screenshots.moveUp"),
-      moveDown: t("screenshots.moveDown"),
-      delete: t("screenshots.delete"),
-      confirmPrompt: t("screenshots.confirmPrompt"),
-      confirm: t("screenshots.confirm"),
-      cancel: t("screenshots.cancel"),
-      error: t("screenshots.error"),
-    },
-    video: {
-      heading: t("editor.video.heading"),
-      provider: t("editor.video.provider"),
-      providerNone: t("editor.video.providerNone"),
-      providerYoutube: t("editor.video.providerYoutube"),
-      providerVimeo: t("editor.video.providerVimeo"),
-      identifier: t("editor.video.identifier"),
-      identifierHelp: t("editor.video.identifierHelp"),
-      save: t("editor.video.save"),
-      saving: t("editor.video.saving"),
-      saved: t("editor.video.saved"),
-      invalidId: t("editor.video.invalidId"),
-      error: t("editor.video.error"),
-    },
-    icon: {
-      label: t("editor.icon.label"),
-      choose: t("editor.icon.choose"),
-      upload: t("editor.icon.upload"),
-      uploading: t("editor.icon.uploading"),
-      uploaded: t("editor.icon.uploaded"),
-      error: t("editor.icon.error"),
-      current: t("editor.icon.current"),
-      none: t("editor.icon.none"),
-      tooLarge: t("editor.icon.tooLarge"),
-      invalidType: t("editor.icon.invalidType"),
-    },
-    metadata: {
-      status: t("editor.metadata.status"),
-      category: t("editor.metadata.category"),
-      noCategories: t("editor.metadata.noCategories"),
-      tags: t("editor.metadata.tags"),
-      tag: {
-        add: t("editor.metadata.tag.add"),
-        remove: t("editor.metadata.tag.remove"),
-        placeholder: t("editor.metadata.tag.placeholder"),
-      },
-    },
-  };
+  const EDITOR_LABELS = buildEditorLabels(t);
 
   // Labels for the owner-only "upload a new version" form on the detail page. Posts
   // to the same createEntryFromJar action as the my-modules upload - the action
