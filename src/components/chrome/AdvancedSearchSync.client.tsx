@@ -30,8 +30,8 @@ export default function AdvancedSearchSync() {
     // that does NOT vary by query string, so these must be injected client-side from the live URL
     // rather than server-rendered (SSR values would freeze and leak the first visitor's filters).
     const form = markerRef.current?.closest<HTMLFormElement>("[role='search']");
+    const termInput = form?.querySelector<HTMLInputElement>("input[name='src_terms']") ?? null;
     if (form) {
-      const termInput = form.querySelector<HTMLInputElement>("input[name='src_terms']");
       if (termInput) termInput.value = params.get("src_terms") ?? "";
 
       for (const name of ["status", "category"]) {
@@ -44,6 +44,27 @@ export default function AdvancedSearchSync() {
         }
       }
     }
+
+    // 1b. Clearing the search re-applies. The native `type=search` "×" button empties the field
+    // but does NOT submit, so the listing would keep showing the old keyword filter until the user
+    // pressed Enter. The `search` event fires on that clear gesture (and on Enter); when it leaves
+    // the field empty we submit the header form — which now carries the active facets as hidden
+    // inputs — so the keyword is dropped immediately while the status/category selection is kept.
+    // Gate on a non-empty `src_terms` in the URL: that scopes us to a genuine clear of an active
+    // search, and stops an already-empty field from double-submitting alongside the browser's own
+    // Enter submit. A non-empty value (Enter on a typed term) is left to that native submit.
+    const onSearch = () => {
+      if (
+        form &&
+        termInput &&
+        !termInput.value.trim() &&
+        (params.get("src_terms") ?? "").trim()
+      ) {
+        if (typeof form.requestSubmit === "function") form.requestSubmit();
+        else form.submit();
+      }
+    };
+    termInput?.addEventListener("search", onSearch);
 
     // 2. Language switcher: carry the current filter/search query onto each link so
     // switching language preserves it. Drop `page` — the other-language catalogue may
@@ -91,6 +112,7 @@ export default function AdvancedSearchSync() {
     document.addEventListener("pointerdown", onPointerDown);
     globalThis.addEventListener("pageshow", onPageShow);
     return () => {
+      termInput?.removeEventListener("search", onSearch);
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("pointerdown", onPointerDown);
       globalThis.removeEventListener("pageshow", onPageShow);
