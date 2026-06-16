@@ -101,6 +101,10 @@ jahiaComponent(
       FORGE_STATUSES.includes(s),
     );
     const selectedCategories = multiParam(request.getParameterValues("category"));
+    // Sort order: "recent" (newest release first — the default) or "name" (title A–Z). Anything
+    // else falls back to "recent" (SECURITY-571 blind review: give users a second way to find a
+    // known module beyond search/pagination, and a visible label for the order).
+    const sort = request.getParameter("sort") === "name" ? "name" : "recent";
     let page = Number.parseInt(request.getParameter("page") || "1", 10);
     if (!Number.isFinite(page) || page < 1) page = 1;
 
@@ -133,9 +137,16 @@ jahiaComponent(
     }
 
     const releaseDates = latestReleaseDates(session, basePath);
-    const ordered = matched
-      .map((node) => ({ node, date: releaseDates.get(node.getIdentifier()) ?? "" }))
-      .sort((a, b) => b.date.localeCompare(a.date) || moduleTitle(a.node).localeCompare(moduleTitle(b.node)));
+    const byTitle = (a: { node: JCRNodeWrapper }, b: { node: JCRNodeWrapper }): number =>
+      moduleTitle(a.node).localeCompare(moduleTitle(b.node));
+    const decorated = matched.map((node) => ({
+      node,
+      date: releaseDates.get(node.getIdentifier()) ?? "",
+    }));
+    const ordered =
+      sort === "name"
+        ? decorated.sort(byTitle)
+        : decorated.sort((a, b) => b.date.localeCompare(a.date) || byTitle(a, b));
 
     const total = ordered.length;
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -152,6 +163,7 @@ jahiaComponent(
       if (term) parts.push(`src_terms=${encodeURIComponent(term)}`);
       for (const s of statuses) parts.push(`status=${encodeURIComponent(s)}`);
       for (const c of categories) parts.push(`category=${encodeURIComponent(c)}`);
+      if (sort === "name") parts.push(`sort=name`);
       parts.push(`page=${n}`);
       return `?${parts.join("&")}`;
     };
@@ -161,6 +173,9 @@ jahiaComponent(
       categories: t("store.filter.categories"),
       apply: t("store.filter.apply"),
       autoApplyHint: t("store.filter.autoApplyHint"),
+      sort: t("store.filter.sort"),
+      sortRecent: t("store.sort.recent"),
+      sortName: t("store.sort.name"),
     };
 
     return (
@@ -172,6 +187,23 @@ jahiaComponent(
             {/* Text search lives in the header's global search — carry the active term so toggling
                 a facet keeps it (a GET form only submits its own fields). */}
             {term && <input type="hidden" name="src_terms" value={term} />}
+            {/* Sort order. In the same GET form, so it auto-applies on change (FilterAutoSubmit)
+                and is carried alongside the facets; the chosen value persists via the URL. */}
+            <div className={filterStyles.sortRow}>
+              <label className={filterStyles.sortLabel} htmlFor="forge-sort">
+                {labels.sort}
+              </label>
+              <select
+                id="forge-sort"
+                name="sort"
+                className={filterStyles.sortSelect}
+                defaultValue={sort}
+                data-forge-sort=""
+              >
+                <option value="recent">{labels.sortRecent}</option>
+                <option value="name">{labels.sortName}</option>
+              </select>
+            </div>
             <fieldset className={filterStyles.facets}>
               <legend className={filterStyles.legend}>{labels.status}</legend>
               {/* Alphabetical so the facet is easy to scan (the constant keeps lifecycle order). */}
