@@ -28,7 +28,7 @@
     var(--color-accent-hover, var(--color-accent))
   );
   transform: translateX(-100%);
-  animation: navProgressSlide 1.05s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: navProgressSlide 1.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   will-change: transform;
 }
 @keyframes navProgressSlide {

@@ -173,6 +173,25 @@
   padding: 0.2rem;
   background: transparent;
 }
+/* Category add-dropdown: a borderless select that sits inside the chip box like the
+   tag field, so the category picker reads as the same chip control. It rests on its
+   placeholder option (the control is controlled at value=""), so the muted colour
+   styles the "Add a category…" prompt. */
+.tagPicker {
+  flex: 1;
+  min-width: 9rem;
+  border: 0;
+  outline: none;
+  font: inherit;
+  padding: 0.2rem;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.tagPicker:focus-visible {
+  box-shadow: var(--ring);
+  border-radius: 6px;
+}
 
 /* Save/Cancel as icon buttons in the editor's top-right corner — they sit at the
    right end of the tab bar, just above the tab underline, aligned with the tabs. */
