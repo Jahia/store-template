@@ -243,6 +243,8 @@
     "open": "Open screenshot",
     "close": "Close",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "title": "Screenshot viewer",
+    "image": "Screenshot"
   }
 }

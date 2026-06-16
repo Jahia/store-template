@@ -13,7 +13,10 @@
     "build": "vite build && npm run package",
     "package": "npm pack --pack-destination dist && mv -f dist/jahia-store-template-*.tgz dist/package.tgz",
     "watch": "vite build --watch",
-    "deploy": "jahia-deploy"
+    "deploy": "jahia-deploy",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@fontsource-variable/nunito-sans": "^5.2.7",
@@ -31,7 +34,8 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "typescript": "^5.9.3",
-    "vite": "^8.0.0"
+    "vite": "^8.0.0",
+    "vitest": "^4.1.9"
   },
   "engines": {
     "node": ">=20.19.0"

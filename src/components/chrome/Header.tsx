@@ -107,7 +107,11 @@ export function Header(): JSX.Element {
 
   // Language switcher: the site's configured languages (sorted for a stable order),
   // each linking the current page/content in that language. Hidden for a single-language site.
-  const languages = Array.from(site.getLanguages(), String).sort((a, b) => a.localeCompare(b));
+  // getLanguages() returns a java.util.Set proxy (iterable at runtime via GraalJS, but the
+  // generated types don't model it as ES-iterable), so spread it via an Iterable<string> cast.
+  const languages = [...(site.getLanguages() as unknown as Iterable<string>)]
+    .map(String)
+    .sort((a, b) => a.localeCompare(b));
   const currentLang = currentResource.getLocale().getLanguage();
 
   const homeUrl = home ? buildNodeUrl(home) : buildNodeUrl(site);
@@ -144,7 +148,7 @@ export function Header(): JSX.Element {
 
   let username = "";
   if (isLoggedIn) {
-    username = renderContext.getUser().getName();
+    username = renderContext.getUser().getUsername();
   }
   // Jahia's form login is the /cms/login servlet (NOT a POST to the page, which
   // returns 401). It authenticates username+password and redirects to `redirect`.

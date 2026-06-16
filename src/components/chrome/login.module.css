@@ -47,8 +47,10 @@
   margin: 0 0 0.2rem;
   padding: 0.5rem 0.65rem;
   font-size: 0.82rem;
-  color: var(--color-danger);
-  background: #fdeaef; /* tint of --color-danger; text clears AAA on it */
+  /* AAA enhanced contrast (~8:1 on the tint). --color-danger (#a00f33) was 6.97:1 here, a hair
+     under the 7:1 AAA threshold (WCAG 1.4.6, SECURITY-571 blind review). */
+  color: #92052b;
+  background: #fdeaef; /* tint of --color-danger */
   border: 1px solid var(--color-danger);
   border-radius: var(--radius);
 }

@@ -243,6 +243,8 @@
     "open": "Ouvrir la capture d'écran",
     "close": "Fermer",
     "previous": "Précédent",
-    "next": "Suivant"
+    "next": "Suivant",
+    "title": "Visionneuse de captures d'écran",
+    "image": "Capture d'écran"
   }
 }

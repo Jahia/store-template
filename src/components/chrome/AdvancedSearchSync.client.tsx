@@ -34,6 +34,15 @@ export default function AdvancedSearchSync() {
     if (form) {
       if (termInput) termInput.value = params.get("src_terms") ?? "";
 
+      // Drop any facet hidden inputs a previous run injected before re-adding them, so a bfcache
+      // restore or a re-mount can't leave stale status/category values on the form that would be
+      // submitted alongside the current ones (SECURITY-571 blind review).
+      for (const stale of form.querySelectorAll<HTMLInputElement>(
+        "input[type='hidden'][name='status'], input[type='hidden'][name='category']",
+      )) {
+        stale.remove();
+      }
+
       for (const name of ["status", "category"]) {
         for (const value of params.getAll(name)) {
           const hidden = document.createElement("input");
@@ -45,15 +54,16 @@ export default function AdvancedSearchSync() {
       }
     }
 
-    // 1b. Clearing the search re-applies. The native `type=search` "×" button empties the field
-    // but does NOT submit, so the listing would keep showing the old keyword filter until the user
-    // pressed Enter. The `search` event fires on that clear gesture (and on Enter); when it leaves
-    // the field empty we submit the header form — which now carries the active facets as hidden
-    // inputs — so the keyword is dropped immediately while the status/category selection is kept.
-    // Gate on a non-empty `src_terms` in the URL: that scopes us to a genuine clear of an active
-    // search, and stops an already-empty field from double-submitting alongside the browser's own
-    // Enter submit. A non-empty value (Enter on a typed term) is left to that native submit.
-    const onSearch = () => {
+    // 1b. Clearing the search re-applies. Emptying the field must drop the keyword filter and
+    // re-run the listing (carrying the active facets, which are now hidden inputs on the form) —
+    // without waiting for Enter. We listen on BOTH the native `search` event (the type=search "×"
+    // button / Escape) AND `input`, so the clear works however the user empties it: the "×", a
+    // select-all+Delete, or Backspace. The native `search` event is not emitted by every browser
+    // or gesture, which made the "×"-only trigger unreliable (SECURITY-571 blind review).
+    // Gate on a non-empty `src_terms` in the URL so this fires only on a genuine clear of an
+    // active search — never on an already-empty field (no double-submit with the Enter submit)
+    // and never mid-typing of a new term (a non-empty value is left to the native Enter submit).
+    const onMaybeClear = () => {
       if (
         form &&
         termInput &&
@@ -64,7 +74,8 @@ export default function AdvancedSearchSync() {
         else form.submit();
       }
     };
-    termInput?.addEventListener("search", onSearch);
+    termInput?.addEventListener("search", onMaybeClear);
+    termInput?.addEventListener("input", onMaybeClear);
 
     // 2. Language switcher: carry the current filter/search query onto each link so
     // switching language preserves it. Drop `page` — the other-language catalogue may
@@ -84,6 +95,19 @@ export default function AdvancedSearchSync() {
     // and bfcache can restore it open on back-navigation — handle all three here.
     const header = markerRef.current?.closest("header");
     const disclosures = Array.from(header?.querySelectorAll<HTMLDetailsElement>("details") ?? []);
+
+    // 3a. Mirror each <details> open-state onto its <summary> as aria-expanded. Native
+    // <details>/<summary> exposes open/closed through the `open` attribute, but Safari/VoiceOver
+    // does not reliably announce it; an explicit aria-expanded fixes that (WCAG 4.1.2, blind
+    // review). The `toggle` event fires for user clicks AND for the programmatic open changes made
+    // by the dismissal handlers below, so a single listener keeps it in sync everywhere.
+    const expandedSyncs = disclosures.map((d) => {
+      const summary = d.querySelector<HTMLElement>("summary");
+      const sync = () => summary?.setAttribute("aria-expanded", String(d.open));
+      sync();
+      d.addEventListener("toggle", sync);
+      return { d, sync };
+    });
 
     const closeOpen = (returnFocus: boolean) => {
       for (const d of disclosures) {
@@ -112,10 +136,12 @@ export default function AdvancedSearchSync() {
     document.addEventListener("pointerdown", onPointerDown);
     globalThis.addEventListener("pageshow", onPageShow);
     return () => {
-      termInput?.removeEventListener("search", onSearch);
+      termInput?.removeEventListener("search", onMaybeClear);
+      termInput?.removeEventListener("input", onMaybeClear);
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("pointerdown", onPointerDown);
       globalThis.removeEventListener("pageshow", onPageShow);
+      for (const { d, sync } of expandedSyncs) d.removeEventListener("toggle", sync);
     };
   }, []);
 

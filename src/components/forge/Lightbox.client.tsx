@@ -4,6 +4,10 @@ import styles from "./lightbox.module.css";
 
 export interface LightboxLabels {
   open: string;
+  /** Accessible name of the dialog itself (describes its purpose, not the open action). */
+  title: string;
+  /** Noun for the full-size image's alt text, suffixed with its position ("Screenshot 2 / 5"). */
+  image: string;
   close: string;
   previous: string;
   next: string;
@@ -76,7 +80,7 @@ export default function Lightbox({
       <dialog
         ref={dialogRef}
         className={styles.dialog}
-        aria-label={labels.open}
+        aria-label={labels.title}
         onClose={() => setOpen(null)}
       >
         {open !== null && (
@@ -99,7 +103,12 @@ export default function Lightbox({
                 ‹
               </button>
             )}
-            <img className={styles.full} src={images[open]} alt="" data-lightbox-image="" />
+            <img
+              className={styles.full}
+              src={images[open]}
+              alt={`${labels.image} ${open + 1} / ${images.length}`}
+              data-lightbox-image=""
+            />
             {open < images.length - 1 && (
               <button
                 type="button"

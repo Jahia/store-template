@@ -282,6 +282,8 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
                   images: shots.map((s) => s.url),
                   labels: {
                     open: t("lightbox.open"),
+                    title: t("lightbox.title"),
+                    image: t("lightbox.image"),
                     close: t("lightbox.close"),
                     previous: t("lightbox.previous"),
                     next: t("lightbox.next"),
