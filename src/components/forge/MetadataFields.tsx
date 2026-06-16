@@ -1,15 +1,17 @@
 import styles from "./editor.module.css";
 import TagInput, { type TagInputLabels } from "./TagInput";
+import CategorySelect, { type CategoryOption } from "./CategorySelect";
 
-export interface CategoryOption {
-  uuid: string;
-  name: string;
-}
+export type { CategoryOption };
 
 export interface MetadataLabels {
   status: string;
   category: string;
   noCategories: string;
+  /** Placeholder for the category "add" dropdown. */
+  categoryAdd: string;
+  /** Prefix for a category chip's remove-button accessible name. */
+  categoryRemove: string;
   tags: string;
   tag: TagInputLabels;
 }
@@ -66,23 +68,20 @@ export default function MetadataFields({
       </div>
 
       <div className={styles.field}>
-        <span className={styles.fieldLabel}>{labels.category}</span>
+        <label className={styles.fieldLabel} htmlFor="edit-category">
+          {labels.category}
+        </label>
         {categoryOptions.length === 0 ? (
           <p className={styles.muted}>{labels.noCategories}</p>
         ) : (
-          <fieldset className={styles.checkGroup}>
-            <legend className="sr-only">{labels.category}</legend>
-            {categoryOptions.map((category) => (
-              <label key={category.uuid} className={styles.check}>
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.includes(category.uuid)}
-                  onChange={() => onCategoryToggle(category.uuid)}
-                />
-                <span>{category.name}</span>
-              </label>
-            ))}
-          </fieldset>
+          <CategorySelect
+            id="edit-category"
+            options={categoryOptions}
+            selected={selectedCategories}
+            ariaLabel={labels.category}
+            labels={{ placeholder: labels.categoryAdd, remove: labels.categoryRemove }}
+            onToggle={onCategoryToggle}
+          />
         )}
       </div>
 

@@ -186,6 +186,8 @@
       "status": "Status",
       "category": "Category",
       "noCategories": "No categories are configured for this store yet.",
+      "categoryAdd": "Add a category…",
+      "categoryRemove": "Remove category",
       "tags": "Tags",
       "tag": {
         "add": "Add tag",

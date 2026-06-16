@@ -186,6 +186,8 @@
       "status": "Statut",
       "category": "Catégorie",
       "noCategories": "Aucune catégorie n'est encore configurée pour ce store.",
+      "categoryAdd": "Ajouter une catégorie…",
+      "categoryRemove": "Supprimer la catégorie",
       "tags": "Étiquettes",
       "tag": {
         "add": "Ajouter une étiquette",

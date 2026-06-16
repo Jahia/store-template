@@ -85,6 +85,8 @@ export function buildEditorLabels(t: (key: string) => string): Labels {
       status: t("editor.metadata.status"),
       category: t("editor.metadata.category"),
       noCategories: t("editor.metadata.noCategories"),
+      categoryAdd: t("editor.metadata.categoryAdd"),
+      categoryRemove: t("editor.metadata.categoryRemove"),
       tags: t("editor.metadata.tags"),
       tag: {
         add: t("editor.metadata.tag.add"),
