@@ -54,16 +54,16 @@ export default function AdvancedSearchSync() {
       }
     }
 
-    // 1b. Clearing the search re-applies. Emptying the field must drop the keyword filter and
-    // re-run the listing (carrying the active facets, which are now hidden inputs on the form) —
-    // without waiting for Enter. We listen on BOTH the native `search` event (the type=search "×"
-    // button / Escape) AND `input`, so the clear works however the user empties it: the "×", a
-    // select-all+Delete, or Backspace. The native `search` event is not emitted by every browser
-    // or gesture, which made the "×"-only trigger unreliable (SECURITY-571 blind review).
-    // Gate on a non-empty `src_terms` in the URL so this fires only on a genuine clear of an
-    // active search — never on an already-empty field (no double-submit with the Enter submit)
-    // and never mid-typing of a new term (a non-empty value is left to the native Enter submit).
-    const onMaybeClear = () => {
+    // 1b. Clearing the search re-applies. The native `type=search` "×" button empties the field
+    // but does NOT submit, so the listing would keep showing the old keyword filter until the user
+    // pressed Enter. The `search` event fires on that clear gesture (the "×" and Escape) AND on
+    // Enter — and is emitted by Chrome, Firefox, Safari and Edge for the native clear button — so
+    // we submit the header form on it. The form now carries the active facets as hidden inputs, so
+    // the keyword is dropped immediately while the status/category selection is kept.
+    // Gate on a non-empty `src_terms` in the URL so this fires only on a genuine clear of an active
+    // search — never on an already-empty field (no double-submit with the browser's Enter submit).
+    // A non-empty value (Enter on a typed term) is left to that native submit.
+    const onSearch = () => {
       if (
         form &&
         termInput &&
@@ -74,8 +74,7 @@ export default function AdvancedSearchSync() {
         else form.submit();
       }
     };
-    termInput?.addEventListener("search", onMaybeClear);
-    termInput?.addEventListener("input", onMaybeClear);
+    termInput?.addEventListener("search", onSearch);
 
     // 2. Language switcher: carry the current filter/search query onto each link so
     // switching language preserves it. Drop `page` — the other-language catalogue may
@@ -136,8 +135,7 @@ export default function AdvancedSearchSync() {
     document.addEventListener("pointerdown", onPointerDown);
     globalThis.addEventListener("pageshow", onPageShow);
     return () => {
-      termInput?.removeEventListener("search", onMaybeClear);
-      termInput?.removeEventListener("input", onMaybeClear);
+      termInput?.removeEventListener("search", onSearch);
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("pointerdown", onPointerDown);
       globalThis.removeEventListener("pageshow", onPageShow);
