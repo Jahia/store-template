@@ -46,7 +46,12 @@ export default function CategorySelect({
   };
 
   return (
-    <div className={styles.tagInput} data-category-select="">
+    <div
+      className={styles.tagInput}
+      data-category-select=""
+      role="group"
+      aria-label={ariaLabel}
+    >
       <ul className={styles.tagChips}>
         {selected.map((uuid) => {
           const name = nameOf.get(uuid) ?? uuid;

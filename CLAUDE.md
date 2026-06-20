@@ -59,5 +59,5 @@
 ## Standing repo rules
 
 - Commit each change immediately (`git commit -s`), staging only the files you
-  changed. Current feature branch: `SECURITY-571-js-module-migration`.
+  changed, on a dedicated feature branch (never commit directly to `master`).
 - Do not break the `moduleList.json` contract consumed by `jahia-store`.

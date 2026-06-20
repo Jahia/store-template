@@ -34,6 +34,15 @@ export default function AdvancedSearchSync() {
     if (form) {
       if (termInput) termInput.value = params.get("src_terms") ?? "";
 
+      // Drop any facet hidden inputs a previous run injected before re-adding them, so a bfcache
+      // restore or a re-mount can't leave stale status/category values on the form that would be
+      // submitted alongside the current ones (SECURITY-571 blind review).
+      for (const stale of form.querySelectorAll<HTMLInputElement>(
+        "input[type='hidden'][name='status'], input[type='hidden'][name='category']",
+      )) {
+        stale.remove();
+      }
+
       for (const name of ["status", "category"]) {
         for (const value of params.getAll(name)) {
           const hidden = document.createElement("input");
@@ -47,12 +56,13 @@ export default function AdvancedSearchSync() {
 
     // 1b. Clearing the search re-applies. The native `type=search` "×" button empties the field
     // but does NOT submit, so the listing would keep showing the old keyword filter until the user
-    // pressed Enter. The `search` event fires on that clear gesture (and on Enter); when it leaves
-    // the field empty we submit the header form — which now carries the active facets as hidden
-    // inputs — so the keyword is dropped immediately while the status/category selection is kept.
-    // Gate on a non-empty `src_terms` in the URL: that scopes us to a genuine clear of an active
-    // search, and stops an already-empty field from double-submitting alongside the browser's own
-    // Enter submit. A non-empty value (Enter on a typed term) is left to that native submit.
+    // pressed Enter. The `search` event fires on that clear gesture (the "×" and Escape) AND on
+    // Enter — and is emitted by Chrome, Firefox, Safari and Edge for the native clear button — so
+    // we submit the header form on it. The form now carries the active facets as hidden inputs, so
+    // the keyword is dropped immediately while the status/category selection is kept.
+    // Gate on a non-empty `src_terms` in the URL so this fires only on a genuine clear of an active
+    // search — never on an already-empty field (no double-submit with the browser's Enter submit).
+    // A non-empty value (Enter on a typed term) is left to that native submit.
     const onSearch = () => {
       if (
         form &&
@@ -85,6 +95,19 @@ export default function AdvancedSearchSync() {
     const header = markerRef.current?.closest("header");
     const disclosures = Array.from(header?.querySelectorAll<HTMLDetailsElement>("details") ?? []);
 
+    // 3a. Mirror each <details> open-state onto its <summary> as aria-expanded. Native
+    // <details>/<summary> exposes open/closed through the `open` attribute, but Safari/VoiceOver
+    // does not reliably announce it; an explicit aria-expanded fixes that (WCAG 4.1.2, blind
+    // review). The `toggle` event fires for user clicks AND for the programmatic open changes made
+    // by the dismissal handlers below, so a single listener keeps it in sync everywhere.
+    const expandedSyncs = disclosures.map((d) => {
+      const summary = d.querySelector<HTMLElement>("summary");
+      const sync = () => summary?.setAttribute("aria-expanded", String(d.open));
+      sync();
+      d.addEventListener("toggle", sync);
+      return { d, sync };
+    });
+
     const closeOpen = (returnFocus: boolean) => {
       for (const d of disclosures) {
         if (!d.open) continue;
@@ -116,6 +139,7 @@ export default function AdvancedSearchSync() {
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("pointerdown", onPointerDown);
       globalThis.removeEventListener("pageshow", onPageShow);
+      for (const { d, sync } of expandedSyncs) d.removeEventListener("toggle", sync);
     };
   }, []);
 

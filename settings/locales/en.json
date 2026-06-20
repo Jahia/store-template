@@ -44,7 +44,12 @@
       "unit": "modules",
       "apply": "Apply filters",
       "autoApplyHint": "Filters are applied automatically when you change a selection.",
-      "none": "No modules match your filters."
+      "none": "No modules match your filters.",
+      "sort": "Sort by"
+    },
+    "sort": {
+      "recent": "Newest",
+      "name": "Name (A–Z)"
     }
   },
   "modulesList": {
@@ -243,6 +248,8 @@
     "open": "Open screenshot",
     "close": "Close",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "title": "Screenshot viewer",
+    "image": "Screenshot"
   }
 }

@@ -14,14 +14,19 @@ The module-detail page renders a few owner-authored **richtext** fields
 so the author is semi-trusted - but a malicious or compromised author could store HTML that
 fires for every visitor (stored XSS). Defense-in-depth:
 
-1. **DOMPurify** sanitizes richtext **on save** (see `ModuleEditor.client.tsx`) - strips
-   `<script>`, inline event handlers and `javascript:` URLs before they are persisted.
-2. **CSP** is the backstop: a `script-src` without `'unsafe-inline'` neutralizes any inline
-   `<script>` / `onerror=` that ever slips past sanitization (e.g. content written directly
-   through the JCR API rather than the editor).
+1. **Server-side `xss` allowlist sanitizer** (`src/components/forge/sanitizeHtml.ts`) runs at
+   **render time** and is the PRIMARY XSS layer: it is the only layer covering every write path,
+   including HTML written straight through the Jahia GraphQL `mutateProperty` API (which bypasses
+   the editor). It is a pure-JS, allowlist-based tokenizer (no DOM dependency, so it runs in the
+   GraalJS SSR engine where DOMPurify cannot); unknown tags are stripped, all `on*` handlers
+   dropped, and non-http(s)/mailto scheme URLs removed.
+2. **DOMPurify** sanitizes richtext **on save** (CKEditor 5 output) as defense-in-depth - it does
+   NOT cover the GraphQL-API write path, so it is not the backstop.
+3. **CSP** is a further backstop: a `script-src` without `'unsafe-inline'` neutralizes any inline
+   `<script>` / `onerror=` that ever slips past sanitization.
 
-Neither layer alone is sufficient; ship both. Also enable Jahia's server-side richtext HTML
-filtering for the store site in production as a third layer.
+Ship all three. Also enable Jahia's server-side richtext HTML filtering for the store site in
+production as an additional layer.
 
 ## What the engine actually emits (verified)
 
@@ -41,7 +46,7 @@ A store page rendered by the engine contains, in `<head>`:
 Runtime network calls made by the islands (all same-origin):
 
 - `POST /modules/graphql` - admin screens, ModuleEditor, ScreenshotManager → `connect-src 'self'`
-- `POST …/<module>.submitReview.do` - review submission (XHR) → `form-action`/`connect-src 'self'`
+- `POST …modules-repository.createEntryFromJar.do` - JAR upload (XHR) → `form-action`/`connect-src 'self'`
 - dynamic `import('dompurify')` → `script-src 'self'`
 - login form `POST` to the current page, search `GET` to home → `form-action 'self'`
 
@@ -115,7 +120,7 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()
    a `report-uri`, watch for violations for a release cycle, then flip to enforcing. This
    catches any origin this doc missed (e.g. a new third-party embed).
 2. Verify video still plays (YouTube/Vimeo), the admin screens and ModuleEditor save
-   (GraphQL), review submission works (XHR), and no console CSP errors remain.
+   (GraphQL), JAR upload works (XHR), and no console CSP errors remain.
 3. Confirm the importmap loads (no "Refused to apply importmap" error) - the litmus test for
    the nonce wiring.
 
@@ -145,6 +150,8 @@ module: SSR runs after the response has begun and a `<meta http-equiv>` CSP cann
 ## Status
 
 - Header **spec** complete and tailored to the engine's real output (this file).
-- **DOMPurify** richtext sanitization is implemented and tested (`19-reviewsAndRichtext.cy.ts`).
+- Richtext sanitization is implemented and tested (`19-richtext.cy.ts`): the server-side `xss`
+  allowlist sanitizer (`sanitizeHtml.ts`) is the primary render-time layer; DOMPurify-on-save is
+  defense-in-depth.
 - **Enforcement** is deployment-side and gated on a per-request nonce for the engine importmap -
   the one engine-level dependency called out above.

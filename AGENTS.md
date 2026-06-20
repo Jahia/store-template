@@ -13,8 +13,10 @@ See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
 > **Store administration** (Forge settings / Categories / Roles) lives in the
 > **Jahia site administration (jContent)**, provided by the `jahia-store`
 > module's React app - it is NOT in-site here (an earlier in-site admin was
-> removed). The chrome reads site branding (logo + footer) from the
-> `jmix:forgeSettings` properties set there.
+> removed). The chrome reads site branding (logo + footer) server-side via the
+> `jahia-store` `ForgeSettingsService` OSGi bridge (see
+> `src/components/forge/forgeBranding.ts`), NOT from `jmix:forgeSettings` node
+> properties.
 
 - Packaging: a Jahia JS module shipped as a `.tgz` (not a JAR). `mvn package`
   shells out to npm; the build artifact is `dist/package.tgz`.
@@ -36,12 +38,14 @@ See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
   as a deterministic "hydrated" signal for tests.
 - **i18n**: site chrome uses the engine's `settings/locales`.
 - **Site branding**: the header logo + footer (copyright + privacy/terms/cookies
-  + facebook/linkedin/twitter/youtube) are read server-side by the chrome from the
-  site node's `jmix:forgeSettings` properties (`forgeSettingsLogo` weakreference +
-  `forgeSettings*Url`/`forgeSettingsCopyright`), configured in jContent's Store
-  administration → Settings. Each falls back to a Jahia default when unset. They
-  are read in the page's render workspace, so **publish the site** to push branding
-  to LIVE (manual publication is the expected flow).
+  + facebook/linkedin/twitter/youtube) are read server-side by the chrome from
+  `jahia-store`'s per-site OSGi configuration via the `ForgeSettingsService` OSGi
+  bridge (`src/components/forge/forgeBranding.ts` calls
+  `server.osgi.getService(...)` in-process — no GraphQL round-trip, no permission
+  gate, reads only public branding getters). The logo is a plain JCR path string.
+  Configured in jContent's Store administration → Settings. Each falls back to a
+  Jahia default when unset. (Storage was moved off the cross-module
+  `jmix:forgeSettings` node type, which is now legacy.)
 - **Page templates** are React components with `componentType: "template"`.
   `settings/import.xml` seeds a working store on every jahia-store-template site.
 
@@ -88,7 +92,7 @@ src/
                   CKEditor 5 richtext (loadCKEditor/CKEditorField), icon upload,
                   versions, store filter, publish + changelog editors
     chrome/       site header (logo, nav, search, login island), footer
-                  (reads jmix:forgeSettings branding), layout
+                  (branding via forgeBranding.ts → ForgeSettingsService), layout
     ForgeModulesList/, ForgeMyModulesList/, FileUpload/   server views
   lib/            graphql.ts (gqlRequest + gqlUpload multipart), helpers
 settings/         import.xml (seed structure) + locales

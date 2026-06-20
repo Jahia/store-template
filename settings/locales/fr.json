@@ -44,7 +44,12 @@
       "unit": "modules",
       "apply": "Appliquer les filtres",
       "autoApplyHint": "Les filtres sont appliqués automatiquement lorsque vous modifiez une sélection.",
-      "none": "Aucun module ne correspond à vos filtres."
+      "none": "Aucun module ne correspond à vos filtres.",
+      "sort": "Trier par"
+    },
+    "sort": {
+      "recent": "Plus récents",
+      "name": "Nom (A–Z)"
     }
   },
   "modulesList": {
@@ -243,6 +248,8 @@
     "open": "Ouvrir la capture d'écran",
     "close": "Fermer",
     "previous": "Précédent",
-    "next": "Suivant"
+    "next": "Suivant",
+    "title": "Visionneuse de captures d'écran",
+    "image": "Capture d'écran"
   }
 }

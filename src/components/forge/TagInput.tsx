@@ -47,7 +47,7 @@ export default function TagInput({ id, tags, ariaLabel, labels, onChange }: Read
   };
 
   return (
-    <div className={styles.tagInput}>
+    <div className={styles.tagInput} role="group" aria-label={ariaLabel}>
       <ul className={styles.tagChips}>
         {tags.map((tag) => (
           <li key={tag} className={styles.tagChip}>

@@ -21,7 +21,9 @@
 .saved {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #15633a;
+  /* AAA enhanced contrast (~9:1 on --color-surface). The previous #15633a was 6.92:1,
+     just under the 7:1 AAA threshold (WCAG 1.4.6, SECURITY-571 blind review). */
+  color: #124f2f;
 }
 
 .form {
@@ -151,8 +153,12 @@
 .tagRemove {
   display: inline-grid;
   place-items: center;
-  width: 1.1rem;
-  height: 1.1rem;
+  /* >= 24x24 CSS px hit target (WCAG 2.2 SC 2.5.8). The chip stays compact via a slight
+     negative margin so the larger target does not inflate the row (SECURITY-571 blind review).
+     The glyph keeps its 1rem size; the larger box is the pointer/touch target. */
+  width: 1.6rem;
+  height: 1.6rem;
+  margin: -0.2rem -0.1rem -0.2rem 0;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -160,6 +166,10 @@
   font-size: 1rem;
   line-height: 1;
   cursor: pointer;
+}
+.tagRemove:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
 }
 .tagRemove:hover {
   background: rgba(12, 63, 135, 0.15);

@@ -36,7 +36,7 @@ jahiaComponent(
     // `basePath` is server-derived (trusted); `username` is doubled-single-quote escaped
     // — the standard JCR-SQL2 string-literal escape. Keep this escape on any value added
     // to the query in future (there is no parameterized-query helper here).
-    const username = renderContext.getUser().getName().replaceAll("'", "''");
+    const username = renderContext.getUser().getUsername().replaceAll("'", "''");
 
     const query =
       `SELECT * FROM [jmix:forgeElement] AS e ` +

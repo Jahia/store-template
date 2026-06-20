@@ -1,10 +1,18 @@
 # store-template → Jahia JavaScript Module - Migration Plan
 
+> **Superseded / historical (banner added 2026-06-16)** — this document describes the
+> one-time JSP→JS migration and is kept for history. Some delivered-feature claims below have
+> since been removed or replaced: the **review-submission feature** (the `SubmitReview` action,
+> `ReviewForm` island, reviews display/UI, and the `19-reviewsAndRichtext.cy.ts` spec) was
+> **removed**, and the **contenteditable `RichTextEditor`** was **replaced by CKEditor 5**
+> (`loadCKEditor` → `CKEditorField`; spec is now `19-richtext.cy.ts`). See AGENTS.md for the
+> current state.
+
 Status: **COMPLETE (2026-05-31)** - Phases 0–5 done; `store-template` is a pure Jahia JavaScript
-module (no JSP). Full E2E **75/75** across 19 specs against the JS stack. The two deferred
-enhancements are now **DONE** (2026-05-31): in-site review **submission** (a `SubmitReview` Jahia
-action, CSRF-safe XHR, cross-owner elevation) and **rich-text editing** (a contenteditable editor
-+ DOMPurify sanitization). See the "Deferred enhancements - delivered" section near the end and
+module (no JSP). Full E2E across the JS stack. ~~The two deferred enhancements (in-site review
+**submission** and a contenteditable rich-text editor)~~ — *both have since been removed/replaced:
+the review feature was dropped entirely, and the editor is now CKEditor 5 (`19-richtext.cy.ts`).*
+See the "Deferred enhancements - delivered" section near the end and
 [SECURITY-CSP.md](./SECURITY-CSP.md) for the production CSP spec.
 Target: convert `store-template` from a JSP/Bootstrap3 OSGi template set into a Jahia
 **JavaScript Module** (SSR React via `@jahia/javascript-modules-engine`), modelled on
@@ -253,16 +261,14 @@ Only the JAR upload keeps the existing `createEntryFromJar` Java action (it runs
   multipart form posting to `…modules-repository.createEntryFromJar.do` (file + redirectURL +
   successRedirectUrl), gated on login. The existing Java action handles JAR parsing + Maven deploy +
   node creation (the only authoring piece keeping a Java action).
-- ✅ Reviews **display** in `ForgeEntryDetail`: lists `jnt:review` children (stars/title/content/
-  author) + an average-rating badge in the header. Read-only.
-- ✅ E2E `17-authoring.cy.ts` (5/5): the upload form is wired to `createEntryFromJar.do`; a seeded
-  review renders with its rating/title/content. Full set 15+16+17 = **15/15**.
+- ~~Reviews **display** in `ForgeEntryDetail`~~ — **REMOVED.** The review feature (display *and*
+  the later submission action) was dropped entirely; `ForgeEntryDetail` no longer renders reviews.
 
-**Phase 3 - COMPLETE** (owner authoring + JAR upload + reviews display all on JS views). The two
-items deferred at the time are now delivered - see "Deferred enhancements - delivered" below:
-- **Review submission** - a `SubmitReview` Jahia action (privilege elevation via
-  `doExecuteWithSystemSessionAsUser`), reached by the form island over CSRF-safe XHR.
-- **Rich-text editing** - a contenteditable `RichTextEditor` + DOMPurify sanitization on save.
+**Phase 3 - COMPLETE** (owner authoring + JAR upload all on JS views). The items "deferred and
+delivered" below were **subsequently removed/replaced** and are kept only as history:
+- ~~**Review submission**~~ — REMOVED with the rest of the review feature.
+- ~~**Rich-text editing** via a contenteditable `RichTextEditor`~~ — REPLACED by CKEditor 5
+  (`loadCKEditor` → `CKEditorField`); the editor is no longer contenteditable.
 - JSP edit views are retired at cutover (Phase 5).
 - **Exit criteria**: authoring flows run on JS views - ✅ achieved (bar the two deferred items).
 
@@ -289,7 +295,7 @@ items deferred at the time are now delivered - see "Deferred enhancements - deli
   (OSGi-jar machinery) and `jahia-depends` (deps now in `package.json`'s `jahia` block). The build
   runs the JS pipeline via `exec-maven-plugin` (`npm ci` + `npm run build`) and attaches
   `dist/package.tgz` (`build-helper`) + copies it to `target/` (`antrun`). **`mvn package` produces
-  `store-template-3.1.8-SNAPSHOT.tgz`** (verified).
+  the module tgz** (current version `5.0.0-SNAPSHOT`).
 - ✅ Removed the entire legacy `src/main` (284 files, ~4.4 MB): JSP views, the 3 Java classes
   (DeleteScreenshot/ReorderScreenshots → jcr mutations; ForgeFunctions → `versions.ts`), the legacy
   CND (jnt:storeFilter/Footer/Title/Link - unused by the JS module), CSS/LESS/jQuery, `repository.xml`.
@@ -321,28 +327,30 @@ items deferred at the time are now delivered - see "Deferred enhancements - deli
   importmap; enforcement is reverse-proxy/Jahia config, not a module concern).
 
 **Exit criteria - MET**: no JSP in store-template ✅; ships as a JS module (`mvn package` → tgz) ✅;
-full E2E green (75/75 across 19 specs) ✅; CI harness installs the tgz ✅.
+full E2E green ✅; CI harness installs the tgz ✅. (The suite has since grown to **20 specs**:
+`01-14`, `16-21` — `15` is unused.)
 
-## Deferred enhancements - delivered (2026-05-31)
+## Deferred enhancements - delivered (2026-05-31) — *then removed/replaced*
 
-All three originally-deferred items are now implemented and verified end-to-end against the running
-stack (`19-reviewsAndRichtext.cy.ts`, 4/4; full suite 75/75):
+> **Historical.** Two of the three items below were later undone: the **review** feature
+> (`SubmitReview` action + `ReviewForm` island) was **removed entirely**, and the contenteditable
+> editor was **replaced by CKEditor 5**. The spec `19-reviewsAndRichtext.cy.ts` is now
+> `19-richtext.cy.ts`. Only the **CSP / sanitization** item still stands. See AGENTS.md for the
+> current state.
 
-- **Review submission** - `SubmitReview` Jahia action in `privateappstore`
-  (`org.jahia.modules.forge.actions.SubmitReview`). Any authenticated user can review any
-  module/package: the write runs under `doExecuteWithSystemSessionAsUser` (ACL-bypass + correct
-  `jcr:createdBy`), one review per user, aggregate `jmix:rating` maintained, review created in the
-  page's own workspace (live/default). The `ReviewForm` island posts to it over **XMLHttpRequest**
-  (Jahia's CSRF guard patches XHR, not fetch). _Chosen over a GraphQL mutation because the Jahia
-  GraphQL endpoint is permission-gated and unreachable by ordinary users._ This also surfaced and
-  fixed a migration regression: `_dsannotations` had been narrowed to the `graphql` package,
-  silently un-registering every `@Component(service=Action.class)` (incl. the kept
-  `CreateEntryFromJar` upload) - restored by also scanning the `actions` package.
-- **Rich-text editing** - a dependency-free contenteditable `RichTextEditor` (bold/italic/headings/
-  lists/link/clear) for the richtext metadata fields; HTML sanitized with **DOMPurify**
-  (dynamically imported client-side, so it never enters the GraalVM SSR bundle) before persisting.
-- **CSP** - speced in [SECURITY-CSP.md](./SECURITY-CSP.md) (DOMPurify is the implemented
-  sanitization half; CSP enforcement is deployment config).
+- ~~**Review submission** - `SubmitReview` Jahia action in `privateappstore`~~ — **REMOVED.** The
+  review feature is gone; the `actions/` package now contains only `CreateEntryFromJar` +
+  `ActionSecurityUtils`. (Historical note that still applies: `_dsannotations` had once been
+  narrowed to the `graphql` package, silently un-registering every `@Component(service=Action.class)`
+  incl. `CreateEntryFromJar` — it must scan the `actions` package too.)
+- ~~**Rich-text editing** - a dependency-free contenteditable `RichTextEditor`~~ — **REPLACED** by
+  **CKEditor 5**, loaded at runtime from the deployed `richtext-ckeditor5` federated remote
+  (`loadCKEditor.ts` → `CKEditorField.tsx`), never bundled. DOMPurify still sanitizes on save
+  (defense-in-depth); the primary render-time XSS layer is now the server-side `xss` allowlist
+  sanitizer (`src/components/forge/sanitizeHtml.ts`).
+- **CSP** - speced in [SECURITY-CSP.md](./SECURITY-CSP.md). The implemented render-time XSS
+  defense is the server-side `xss` allowlist sanitizer (`sanitizeHtml.ts`); DOMPurify-on-save is
+  defense-in-depth; CSP enforcement is deployment config.
 
 ---
 
