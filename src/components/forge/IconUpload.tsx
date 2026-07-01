@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import clsx from "clsx";
 import styles from "./editor.module.css";
 import { gqlRequest, gqlUpload } from "~/lib/graphql";
+import { isTrustedRasterImage } from "./imageSniff";
 
 export interface IconLabels {
   label: string;
@@ -133,19 +134,21 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string>("");
 
-  const pick = (next: File | null) => {
+  const pick = async (next: File | null) => {
     if (!next) {
       setFile(null);
-      return;
-    }
-    if (!(ALLOWED_ICON_TYPES as readonly string[]).includes(next.type)) {
-      setStatus("error");
-      setMessage(labels.invalidType);
       return;
     }
     if (next.size > MAX_BYTES) {
       setStatus("error");
       setMessage(labels.tooLarge);
+      return;
+    }
+    // Verify the actual bytes are a raster image, not just the (spoofable) File.type — the
+    // server re-validates authoritatively (SECURITY-571 #28), this is the in-browser guard.
+    if (!(await isTrustedRasterImage(next))) {
+      setStatus("error");
+      setMessage(labels.invalidType);
       return;
     }
     setFile(next);
@@ -216,7 +219,7 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
             accept={ALLOWED_ICON_TYPES.join(",")}
             data-icon-input=""
             aria-label={labels.choose}
-            onChange={(e) => pick(e.target.files?.[0] ?? null)}
+            onChange={(e) => void pick(e.target.files?.[0] ?? null)}
           />
           <button
             type="button"

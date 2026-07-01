@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./screenshots.module.css";
 import { gqlRequest, gqlUpload } from "~/lib/graphql";
+import { isTrustedRasterImage } from "./imageSniff";
 
 interface Item {
   name: string;
@@ -120,8 +121,10 @@ export default function ScreenshotManager({
 
   const upload = async (file: File) => {
     if (busy) return;
-    if (!(ALLOWED_TYPES as readonly string[]).includes(file.type)) return fail(labels.invalidType);
     if (file.size > MAX_BYTES) return fail(labels.tooLarge);
+    // Verify the actual bytes are a raster image, not just the (spoofable) File.type — the server
+    // re-validates authoritatively (SECURITY-571 #28), this is the in-browser guard.
+    if (!(await isTrustedRasterImage(file))) return fail(labels.invalidType);
     setBusy(true);
     setError(false);
     setMessage("");
