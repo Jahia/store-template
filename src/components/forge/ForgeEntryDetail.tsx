@@ -75,6 +75,17 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const { t } = useTranslation();
   const { currentResource, renderContext } = useServerContext();
 
+  // Defense-in-depth publish gate (SECURITY-571 #54). The backend render filter
+  // (PublishedModuleFilter, now bound to the shared jmix:forgeElement mixin) is the
+  // primary gate and redirects anonymous visitors away from draft entries. This view
+  // must not rely on it alone: fail closed BEFORE any sensitive field (description,
+  // FAQ, author contact, download URLs…) is read, so an unpublished entry never
+  // discloses its detail to a caller who cannot edit it — even if the filter is ever
+  // mis-scoped or bypassed. Owners (jcr:write) keep the draft preview.
+  if (!bool(node, "published") && !node.hasPermission("jcr:write")) {
+    return <></>;
+  }
+
   // Labels for the owner islands are built server-side from t() and passed in as
   // props (the client islands never import react-i18next - they survive hydration
   // regardless of which keys SSR happened to collect).
