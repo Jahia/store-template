@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import clsx from "clsx";
 import styles from "./editor.module.css";
 import { gqlRequest, gqlUpload } from "~/lib/graphql";
+import { trustedRasterMime } from "./imageSniff";
 
 export interface IconLabels {
   label: string;
@@ -127,20 +128,18 @@ function safeFileName(name: string): string {
 export default function IconUpload({ path, workspace, iconUrl, labels }: Readonly<IconUploadProps>) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
+  // MIME type detected from the picked file's bytes (see trustedRasterMime), stored so the upload
+  // sends the real type rather than the spoofable File.type.
+  const [mime, setMime] = useState<string>("");
   // Object-URL preview of the picked/just-uploaded file (avoids recomputing the
   // server URL); falls back to the server-rendered icon.
   const [preview, setPreview] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string>("");
 
-  const pick = (next: File | null) => {
+  const pick = async (next: File | null) => {
     if (!next) {
       setFile(null);
-      return;
-    }
-    if (!(ALLOWED_ICON_TYPES as readonly string[]).includes(next.type)) {
-      setStatus("error");
-      setMessage(labels.invalidType);
       return;
     }
     if (next.size > MAX_BYTES) {
@@ -148,7 +147,16 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
       setMessage(labels.tooLarge);
       return;
     }
+    // Verify the actual bytes are a raster image, not just the (spoofable) File.type — the
+    // server re-validates authoritatively (SECURITY-571 #28), this is the in-browser guard.
+    const detected = await trustedRasterMime(next);
+    if (!detected) {
+      setStatus("error");
+      setMessage(labels.invalidType);
+      return;
+    }
     setFile(next);
+    setMime(detected);
     setStatus("idle");
     setMessage("");
     setPreview(URL.createObjectURL(next));
@@ -179,7 +187,7 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
 
       await gqlUpload(
         addFileMutation(workspace),
-        { iconId, name: safeFileName(file.name), mime: file.type },
+        { iconId, name: safeFileName(file.name), mime: mime || file.type },
         file,
       );
 
@@ -216,7 +224,7 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
             accept={ALLOWED_ICON_TYPES.join(",")}
             data-icon-input=""
             aria-label={labels.choose}
-            onChange={(e) => pick(e.target.files?.[0] ?? null)}
+            onChange={(e) => void pick(e.target.files?.[0] ?? null)}
           />
           <button
             type="button"
