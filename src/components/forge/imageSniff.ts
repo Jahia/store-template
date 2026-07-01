@@ -41,11 +41,16 @@ export async function sniffRasterMime(file: File): Promise<string | null> {
 }
 
 /**
- * True when the file's declared `File.type` is an allow-listed raster AND its actual bytes match
- * that same type — i.e. the declaration is not spoofed.
+ * The trustworthy MIME type to store for an uploaded file: the type detected from its actual bytes
+ * when they are an allow-listed raster, else `null` (reject the upload).
+ *
+ * We deliberately trust the sniffed bytes over the browser-supplied `File.type`: `File.type` is
+ * derived from the extension and is often wrong for legitimate files (e.g. a real WebP saved as
+ * `logo.png` → the browser reports `image/png`). Any of the four allow-listed rasters is safe to
+ * store/serve, so a mismatch between declared and detected type is not a security problem — only a
+ * *non-raster* (SVG/HTML/…) is. Uploading the detected type also keeps `jcr:mimeType` correct from
+ * the start (the server listener would otherwise have to correct it).
  */
-export async function isTrustedRasterImage(file: File): Promise<boolean> {
-  if (!(ALLOWED_RASTER_MIMES as readonly string[]).includes(file.type)) return false;
-  const detected = await sniffRasterMime(file);
-  return detected !== null && detected === file.type;
+export async function trustedRasterMime(file: File): Promise<string | null> {
+  return sniffRasterMime(file);
 }

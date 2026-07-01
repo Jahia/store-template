@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import clsx from "clsx";
 import styles from "./editor.module.css";
 import { gqlRequest, gqlUpload } from "~/lib/graphql";
-import { isTrustedRasterImage } from "./imageSniff";
+import { trustedRasterMime } from "./imageSniff";
 
 export interface IconLabels {
   label: string;
@@ -128,6 +128,9 @@ function safeFileName(name: string): string {
 export default function IconUpload({ path, workspace, iconUrl, labels }: Readonly<IconUploadProps>) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
+  // MIME type detected from the picked file's bytes (see trustedRasterMime), stored so the upload
+  // sends the real type rather than the spoofable File.type.
+  const [mime, setMime] = useState<string>("");
   // Object-URL preview of the picked/just-uploaded file (avoids recomputing the
   // server URL); falls back to the server-rendered icon.
   const [preview, setPreview] = useState<string | null>(null);
@@ -146,12 +149,14 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
     }
     // Verify the actual bytes are a raster image, not just the (spoofable) File.type — the
     // server re-validates authoritatively (SECURITY-571 #28), this is the in-browser guard.
-    if (!(await isTrustedRasterImage(next))) {
+    const detected = await trustedRasterMime(next);
+    if (!detected) {
       setStatus("error");
       setMessage(labels.invalidType);
       return;
     }
     setFile(next);
+    setMime(detected);
     setStatus("idle");
     setMessage("");
     setPreview(URL.createObjectURL(next));
@@ -182,7 +187,7 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
 
       await gqlUpload(
         addFileMutation(workspace),
-        { iconId, name: safeFileName(file.name), mime: file.type },
+        { iconId, name: safeFileName(file.name), mime: mime || file.type },
         file,
       );
 

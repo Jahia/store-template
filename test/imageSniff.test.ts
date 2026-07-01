@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { sniffRasterMime, isTrustedRasterImage } from "../src/components/forge/imageSniff";
+import { sniffRasterMime, trustedRasterMime } from "../src/components/forge/imageSniff";
 
 /**
  * Client-side magic-byte guard for module media uploads. It is a UX-level check only (the
@@ -42,22 +42,25 @@ describe("sniffRasterMime", () => {
   });
 });
 
-describe("isTrustedRasterImage", () => {
-  it("accepts a real raster whose declared type matches its bytes", async () => {
-    expect(await isTrustedRasterImage(fileOf(PNG, "image/png"))).toBe(true);
+describe("trustedRasterMime", () => {
+  it("returns the detected type for a real raster whose declared type matches", async () => {
+    expect(await trustedRasterMime(fileOf(PNG, "image/png"))).toBe("image/png");
   });
 
-  it("rejects a spoofed declared type (SVG bytes claiming image/png)", async () => {
+  it("rejects a spoofed non-raster (SVG bytes claiming image/png)", async () => {
     const svg = [...new TextEncoder().encode("<svg><script>alert(1)</script></svg>")];
-    expect(await isTrustedRasterImage(fileOf(svg, "image/png"))).toBe(false);
+    expect(await trustedRasterMime(fileOf(svg, "image/png"))).toBeNull();
   });
 
-  it("rejects when the declared type is off the allow-list even if bytes are a raster", async () => {
-    expect(await isTrustedRasterImage(fileOf(PNG, "image/svg+xml"))).toBe(false);
+  it("trusts the bytes over a misleading extension: WebP bytes named .png", async () => {
+    // Real case: assets/icon.png in the E2E suite is actually a WebP; the browser reports
+    // File.type=image/png from the extension. We accept it (a safe raster) and store its true type.
+    expect(await trustedRasterMime(fileOf(WEBP, "image/png"))).toBe("image/webp");
   });
 
-  it("rejects when real bytes disagree with an otherwise-allowed declared type", async () => {
-    // PNG bytes declared as JPEG — a mismatch, so not trusted.
-    expect(await isTrustedRasterImage(fileOf(PNG, "image/jpeg"))).toBe(false);
+  it("accepts a real raster even when File.type disagrees (PNG bytes labelled JPEG)", async () => {
+    // All four allow-listed rasters are safe to serve; a declared/detected mismatch is not a
+    // security problem — only a non-raster is. So we accept and report the detected type.
+    expect(await trustedRasterMime(fileOf(PNG, "image/jpeg"))).toBe("image/png");
   });
 });

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./screenshots.module.css";
 import { gqlRequest, gqlUpload } from "~/lib/graphql";
-import { isTrustedRasterImage } from "./imageSniff";
+import { trustedRasterMime } from "./imageSniff";
 
 interface Item {
   name: string;
@@ -123,14 +123,16 @@ export default function ScreenshotManager({
     if (busy) return;
     if (file.size > MAX_BYTES) return fail(labels.tooLarge);
     // Verify the actual bytes are a raster image, not just the (spoofable) File.type — the server
-    // re-validates authoritatively (SECURITY-571 #28), this is the in-browser guard.
-    if (!(await isTrustedRasterImage(file))) return fail(labels.invalidType);
+    // re-validates authoritatively (SECURITY-571 #28), this is the in-browser guard. Upload the
+    // detected type so jcr:mimeType is correct even when the extension/File.type is misleading.
+    const mime = await trustedRasterMime(file);
+    if (!mime) return fail(labels.invalidType);
     setBusy(true);
     setError(false);
     setMessage("");
     const name = safeFileName(file.name);
     try {
-      await gqlUpload(addScreenshotMutation(workspace), { parent: path, name, mime: file.type }, file);
+      await gqlUpload(addScreenshotMutation(workspace), { parent: path, name, mime }, file);
       // Optimistic: show the new thumbnail from a local object URL (the real,
       // server-rendered URL arrives on the next page load).
       setList((prev) => [...prev, { name, url: URL.createObjectURL(file) }]);
