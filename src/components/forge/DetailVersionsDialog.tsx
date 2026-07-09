@@ -53,6 +53,20 @@ export function DetailVersionsDialog({
         </form>
       </div>
       <div className={styles.dialogBody}>
+        {uploadActionUrl && (
+          <section className={styles.addVersion} data-add-version="">
+            <Island
+              component={FileUploadForm}
+              props={{
+                actionUrl: uploadActionUrl,
+                backUrl,
+                accept: ".jar",
+                labels: ADD_VERSION_LABELS,
+                compact: true,
+              }}
+            />
+          </section>
+        )}
         {versions.length === 0 ? (
           <p className={styles.muted}>{t("detail.versions.none")}</p>
         ) : (
@@ -61,21 +75,6 @@ export function DetailVersionsDialog({
               <Render key={v.getIdentifier()} node={v} view="default" readOnly />
             ))}
           </div>
-        )}
-        {uploadActionUrl && (
-          <section className={styles.section} data-add-version="">
-            <h3 className={styles.sectionTitle}>{t("detail.versions.uploadTitle")}</h3>
-            <p className={styles.muted}>{t("detail.versions.uploadHelp")}</p>
-            <Island
-              component={FileUploadForm}
-              props={{
-                actionUrl: uploadActionUrl,
-                backUrl,
-                accept: ".jar",
-                labels: ADD_VERSION_LABELS,
-              }}
-            />
-          </section>
         )}
       </div>
     </dialog>

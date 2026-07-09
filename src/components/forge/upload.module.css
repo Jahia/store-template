@@ -50,3 +50,45 @@
   color: #92052b; /* AAA: 8.08:1 on the error background */
   font-size: 0.9rem;
 }
+
+/* Single-line variant (owner "add version" row above the version list): no
+   boxed/dashed container, label + picker + button inline instead of stacked. */
+.uploadCompact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.fieldCompact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.fieldCompact label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.btnCompact {
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 650;
+  cursor: pointer;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--color-accent);
+  color: #fff;
+  white-space: nowrap;
+  transition: background 150ms var(--ease);
+}
+.btnCompact:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+.btnCompact:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
