@@ -55,6 +55,8 @@ export function DetailVersionsDialog({
       <div className={styles.dialogBody}>
         {uploadActionUrl && (
           <section className={styles.addVersion} data-add-version="">
+            <h3 className={styles.addVersionTitle}>{t("detail.versions.uploadTitle")}</h3>
+            <p className={styles.muted}>{t("detail.versions.uploadHelp")}</p>
             <Island
               component={FileUploadForm}
               props={{

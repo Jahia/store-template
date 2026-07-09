@@ -106,7 +106,9 @@
     "versions": {
       "open": "Versions ({{count}})",
       "close": "Close",
-      "none": "No versions published yet."
+      "none": "No versions published yet.",
+      "uploadTitle": "Upload a new version",
+      "uploadHelp": "Upload a .jar whose module name and group ID match this module to add it as a new version."
     },
     "editScreenshots": "Edit screenshots"
   },
