@@ -107,8 +107,7 @@
       "open": "Versions ({{count}})",
       "close": "Fermer",
       "none": "Aucune version publiée pour le moment.",
-      "uploadTitle": "Téléverser une nouvelle version",
-      "uploadHelp": "Téléversez un .jar dont le nom de module et l'identifiant de groupe correspondent à ce module pour l'ajouter comme nouvelle version."
+      "uploadTitle": "Téléverser une nouvelle version"
     },
     "editScreenshots": "Modifier les captures d'écran"
   },

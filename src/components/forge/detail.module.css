@@ -310,6 +310,25 @@
   color: var(--color-text);
 }
 
+/* Owner-only "add version" card, above the version list in the Versions popup.
+   Same bordered-box treatment as a .version card below it, so it reads as one
+   more entry in the list rather than a visually distinct panel; title + helper
+   text sit above the upload form, which stays a single inline row (label +
+   picker + button). */
+.addVersion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+}
+.addVersionTitle {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
 /* "Versions" popup (native <dialog>, centered by showModal in the top layer). */
 .versionsDialog {
   width: min(680px, 92vw);

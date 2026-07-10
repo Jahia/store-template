@@ -18,6 +18,8 @@ interface FileUploadFormProps {
   accept: string;
   /** Translated labels, computed server-side and passed in (survives hydration). */
   labels: UploadLabels;
+  /** Single-line layout (label + picker + button inline), no bordered box. Default: the boxed, stacked layout. */
+  compact?: boolean;
 }
 
 /**
@@ -90,7 +92,13 @@ function safeRedirect(url: string | undefined, fallback: string): string {
  * island posts via XHR (CSRF token attached) and renders the action's success /
  * error response inline.
  */
-export default function FileUploadForm({ actionUrl, backUrl, accept, labels }: Readonly<FileUploadFormProps>) {
+export default function FileUploadForm({
+  actionUrl,
+  backUrl,
+  accept,
+  labels,
+  compact,
+}: Readonly<FileUploadFormProps>) {
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [message, setMessage] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -133,7 +141,7 @@ export default function FileUploadForm({ actionUrl, backUrl, accept, labels }: R
 
   return (
     <form
-      className={styles.upload}
+      className={compact ? styles.uploadCompact : styles.upload}
       data-upload-ready={ready ? "true" : undefined}
       onSubmit={(e) => {
         e.preventDefault();
@@ -145,11 +153,15 @@ export default function FileUploadForm({ actionUrl, backUrl, accept, labels }: R
           {message}
         </div>
       )}
-      <div className={styles.field}>
+      <div className={compact ? styles.fieldCompact : styles.field}>
         <label htmlFor="module-jar">{labels.fileLabel}</label>
         <input id="module-jar" ref={fileRef} type="file" name="file" accept={accept} />
       </div>
-      <button type="submit" className={styles.btn} disabled={status === "submitting"}>
+      <button
+        type="submit"
+        className={compact ? styles.btnCompact : styles.btn}
+        disabled={status === "submitting"}
+      >
         {status === "submitting" ? labels.submitting : labels.submit}
       </button>
     </form>
