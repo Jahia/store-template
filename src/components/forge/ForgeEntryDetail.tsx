@@ -110,11 +110,13 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const icon = forgeIconUrl(node);
   const shots = screenshotItems(node);
   const screenshotsPath = node.hasNode("screenshots") ? node.getNode("screenshots").getPath() : "";
-  const versions = sortedVersionNodes(node);
   const videoNode = node.hasNode("video") ? node.getNode("video") : null;
   const videoProvider = videoNode ? str(videoNode, "provider") : "";
   const videoId = videoNode ? str(videoNode, "identifier") : "";
   const canEdit = node.hasPermission("jcr:write");
+  // Owners manage drafts from this list; everyone else only ever sees released
+  // versions - mirrors the module-level published gate above (line 85).
+  const versions = sortedVersionNodes(node).filter((v) => canEdit || bool(v, "published"));
   const language = currentResource.getLocale().getLanguage();
   const published = bool(node, "published");
   const workspace = jcrWorkspace(node);
