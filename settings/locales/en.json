@@ -68,7 +68,7 @@
   "upload": {
     "signInPrompt": "Please log in to submit a module.",
     "repoUnavailable": "The module repository is not available on this site.",
-    "fileLabel": "Module package (.jar)",
+    "fileLabel": "Module package (.jar or .tgz)",
     "submit": "Upload module",
     "submitting": "Uploading…",
     "pickFile": "Please choose a module package first.",
@@ -201,7 +201,7 @@
     }
   },
   "addVersion": {
-    "fileLabel": "New version package (.jar)",
+    "fileLabel": "New version package (.jar or .tgz)",
     "submit": "Upload new version",
     "submitting": "Uploading…",
     "pickFile": "Please choose a module package first.",

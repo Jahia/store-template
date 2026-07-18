@@ -45,7 +45,7 @@ jahiaComponent(
     return (
       <Island
         component={FileUploadForm}
-        props={{ actionUrl, backUrl: back, accept: ".jar", labels }}
+        props={{ actionUrl, backUrl: back, accept: ".jar,.tgz", labels }}
       />
     );
   },
