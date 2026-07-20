@@ -16,3 +16,6 @@ node_modules/
 !.yarn/releases
 *.tgz
 .vite/
+
+# Claude Code personal overrides
+.claude/settings.local.json

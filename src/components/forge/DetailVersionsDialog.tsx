@@ -61,7 +61,7 @@ export function DetailVersionsDialog({
               props={{
                 actionUrl: uploadActionUrl,
                 backUrl,
-                accept: ".jar",
+                accept: ".jar,.tgz",
                 labels: ADD_VERSION_LABELS,
                 compact: true,
               }}

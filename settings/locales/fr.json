@@ -68,7 +68,7 @@
   "upload": {
     "signInPrompt": "Veuillez vous connecter pour soumettre un module.",
     "repoUnavailable": "Le dépôt de modules n'est pas disponible sur ce site.",
-    "fileLabel": "Paquet du module (.jar)",
+    "fileLabel": "Paquet du module (.jar ou .tgz)",
     "submit": "Téléverser le module",
     "submitting": "Téléversement…",
     "pickFile": "Veuillez d'abord choisir un paquet de module.",
@@ -201,7 +201,7 @@
     }
   },
   "addVersion": {
-    "fileLabel": "Paquet de la nouvelle version (.jar)",
+    "fileLabel": "Paquet de la nouvelle version (.jar ou .tgz)",
     "submit": "Téléverser la nouvelle version",
     "submitting": "Téléversement…",
     "pickFile": "Veuillez d'abord choisir un paquet de module.",
