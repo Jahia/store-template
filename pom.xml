@@ -17,7 +17,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jahia.modules.javascript</groupId>
     <artifactId>jahia-store-template</artifactId>
-    <version>5.0.3-SNAPSHOT</version>
+    <version>5.0.3</version>
     <!-- JavaScript module: the deployable artifact is dist/package.tgz, produced by the
          npm build (Vite + @jahia/vite-plugin) and attached below. The Jahia module
          metadata (module-type, dependencies, static-resources, server entry) lives in
@@ -29,7 +29,7 @@
         <connection>scm:git:git@github.com:Jahia/store-template.git</connection>
         <url>scm:git:git@github.com:Jahia/store-template</url>
         <developerConnection>scm:git:git@github.com:Jahia/store-template.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>5_0_3</tag>
     </scm>
     <distributionManagement>
         <repository>
