@@ -13,6 +13,7 @@ import { forgeAuthor, forgeCategoryNames, forgeIconUrl } from "./forgeCard";
 import { str, bool, strValues, jcrWorkspace, isoDay } from "./nodeProps";
 import { sanitizeHtml } from "./sanitizeHtml";
 import { requiredJahiaVersion, sortedVersionNodes, versionDownloadUrl } from "./versions";
+import { forgeDependencyGraph } from "./dependencies";
 import { forgeCategoryOptions } from "./forgeFacets";
 import { buildEditorLabels } from "./editorLabels";
 import Lightbox from "./Lightbox.client";
@@ -23,6 +24,7 @@ import DetailTabs from "./DetailTabs.client";
 import VersionsDialog from "./VersionsDialog.client";
 import { DetailInfoRail } from "./DetailInfoRail";
 import { DetailVersionsDialog } from "./DetailVersionsDialog";
+import { DependencyLists } from "./DependencyLists";
 
 interface TabDef {
   id: string;
@@ -152,6 +154,8 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   // Prominent download for the newest version (mirrors store.jahia.com's title CTA).
   const latestVersionNumber = versions[0] ? str(versions[0], "versionNumber") : "";
   const latestDownloadUrl = versions[0] ? versionDownloadUrl(versions[0]) : null;
+  // Two queries at most, none for a package; versions[0] is already in hand.
+  const { dependencies, dependants } = forgeDependencyGraph(node, versions[0]);
 
   // The detail sections are grouped into tabs (DetailTabs island) for easier
   // browsing. Only include a tab when it has content; the first one is the SSR
@@ -330,6 +334,10 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
           <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: license }} />
         </div>
       )}
+
+          {(dependencies.length > 0 || dependants.length > 0) && (
+            <DependencyLists dependencies={dependencies} dependants={dependants} />
+          )}
         </div>
       </div>
 

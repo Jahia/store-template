@@ -89,6 +89,12 @@
       "howToInstall": "Comment installer",
       "faq": "FAQ"
     },
+    "dependencies": {
+      "dependencies": "Dépendances",
+      "dependants": "Modules dépendants",
+      "noneDependencies": "Aucune dépendance.",
+      "noneDependants": "Aucun module n'en dépend."
+    },
     "meta": {
       "moduleId": "Identifiant du module",
       "groupId": "Identifiant de groupe",
