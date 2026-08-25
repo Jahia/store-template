@@ -119,7 +119,9 @@ dist/             build output (client islands, server bundle, package.tgz)
   preserve: `[data-editor-ready]`, `[data-filter-ready]`, `[data-upload-ready]`,
   `[data-forge-card]`, `[role="tab"]`/`[role="tabpanel"]` (admin + module editor),
   `[data-ckeditor-state]`, `[data-icon-input]`/`[data-icon-status]`,
-  `[data-changelog-ready]`, `#forge-url`/`#forge-id`/`#forge-user`.
+  `[data-changelog-ready]`, `[data-dependency-lists]`/`[data-dependency-column]`/
+  `[data-dependency]`, `#forge-url`/`#forge-id`/`#forge-user`. CLAUDE.md carries a
+  longer copy of this list; keep additions in both.
 
 ## SonarQube
 

@@ -5,6 +5,7 @@ import {
 } from "@jahia/javascript-modules-library";
 import { useTranslation } from "react-i18next";
 import styles from "~/components/forge/forge.module.css";
+import { sql } from "~/components/forge/nodeProps";
 
 /**
  * The logged-in user's own modules/packages (published or not), queried by
@@ -36,7 +37,7 @@ jahiaComponent(
     // `basePath` is server-derived (trusted); `username` is doubled-single-quote escaped
     // — the standard JCR-SQL2 string-literal escape. Keep this escape on any value added
     // to the query in future (there is no parameterized-query helper here).
-    const username = renderContext.getUser().getUsername().replaceAll("'", "''");
+    const username = sql(renderContext.getUser().getUsername());
 
     const query =
       `SELECT * FROM [jmix:forgeElement] AS e ` +

@@ -335,6 +335,8 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
         </div>
       )}
 
+          {/* Dependencies, like Versions above, are intentionally not a tab: this section is a
+              sibling of the tab panels so it stays visible under every tab, not scoped to one. */}
           {(dependencies.length > 0 || dependants.length > 0) && (
             <DependencyLists dependencies={dependencies} dependants={dependants} />
           )}

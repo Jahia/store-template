@@ -33,10 +33,12 @@ function DependencyColumn({
       {links.length > 0 ? (
         <ul className={depStyles.list} aria-labelledby={headingId}>
           {links.map((link) => (
-            <li key={link.name} className={depStyles.item}>
+            <li key={link.id} className={depStyles.item}>
               <a className={depStyles.link} href={link.url} data-dependency={link.name}>
                 {link.title}
-                {ambiguous.has(link.title) && <span className="sr-only"> ({link.name})</span>}
+                {ambiguous.has(link.title) && (
+                  <span className={depStyles.disambiguator}>({link.name})</span>
+                )}
               </a>
             </li>
           ))}

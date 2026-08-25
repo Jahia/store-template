@@ -1,8 +1,9 @@
 import { buildNodeUrl, getNodesByJCRQuery } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
-import { bool, str, strValues } from "./nodeProps";
+import { bool, sql, str, strValues } from "./nodeProps";
 
 export interface DependencyLink {
+  id: string;
   name: string;
   title: string;
   url: string;
@@ -42,9 +43,6 @@ const SAFE_REF_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
 /** Legacy sentinel for "declares no dependencies". */
 const EMPTY_REFERENCES = "none";
 
-/** Escape a value for a JCR-SQL2 string literal. */
-const sql = (v: string): string => v.replaceAll("'", "''");
-
 /**
  * Escape for a LIKE pattern: `_` and `%` are wildcards, and `_` is also a legal module-name
  * character. The backslash must be escaped FIRST - escaping the wildcards first would let the
@@ -56,6 +54,7 @@ const likeSafe = (v: string): string =>
 const moduleTitle = (n: JCRNodeWrapper): string => str(n, "jcr:title") || n.getName();
 
 const toLink = (n: JCRNodeWrapper): DependencyLink => ({
+  id: n.getIdentifier(),
   name: n.getName(),
   title: moduleTitle(n),
   url: buildNodeUrl(n),
@@ -91,16 +90,20 @@ export function dependencyRefNames(
 /**
  * Resolve names to published store modules in the same site - one query, or none when `names` is
  * empty. Names resolving to nothing (platform modules such as `default`) are silently skipped, as
- * the legacy view skipped them. Exported for a future package-view "Embedded Modules" reuse.
+ * the legacy view skipped them.
  */
 export function resolveStoreModules(node: JCRNodeWrapper, names: string[]): DependencyLink[] {
   if (names.length === 0) return [];
-  const wanted = new Set(names);
+  // Lowercased up front so a caller passing mixed case (not just this module's own
+  // already-lowercased `dependencyRefNames`) still matches: `wanted` and the query patterns must
+  // agree on case, or a name like "SEO" would query for "SEO" and never match the "seo" it read back.
+  const lowerNames = names.map((n) => n.toLowerCase());
+  const wanted = new Set(lowerNames);
   const sitePath = node.getResolveSite().getPath();
   // LOWER(...) LIKE, not `=`: Jackrabbit's equality branch ignores the LOWER() transform and
   // compares the raw local name, so `= 'SEO'` never matches a node named `seo` - and these names
   // come from a hand-written manifest. The patterns hold no wildcards, so each is an exact lookup.
-  const nameOr = names.map((n) => `LOWER(LOCALNAME(m)) LIKE '${likeSafe(n)}'`).join(" OR ");
+  const nameOr = lowerNames.map((n) => `LOWER(LOCALNAME(m)) LIKE '${likeSafe(n)}'`).join(" OR ");
   // Site-scoped rather than modules-repository-scoped: the E2E suite creates modules directly under
   // /sites/<key>/contents, outside that folder, and legacy scoped to the site too.
   const query = `SELECT * FROM [jnt:forgeModule] AS m WHERE ISDESCENDANTNODE(m, '${sql(sitePath)}') AND m.[published] = true AND (${nameOr})`;
@@ -113,7 +116,10 @@ export function resolveStoreModules(node: JCRNodeWrapper, names: string[]): Depe
       // Re-checked here so a LIKE over-match can never link the WRONG module: escaping then only
       // has to keep the query well-formed, not guarantee correctness.
       if (!wanted.has(name) || seen.has(name)) continue;
-      if (module.getIdentifier() === self || bool(module, "deleted")) continue;
+      if (module.getIdentifier() === self) continue;
+      // `published` re-checked here too, not just trusted from the query clause - the same
+      // app-side backstop forgeDependants already applies to its own query's `published` clause.
+      if (!bool(module, "published") || bool(module, "deleted")) continue;
       seen.add(name);
       links.push(toLink(module));
     } catch {
@@ -140,21 +146,21 @@ export function forgeDependants(node: JCRNodeWrapper): DependencyLink[] {
   const name = node.getName();
   if (!SAFE_REF_NAME.test(name)) return [];
   const sitePath = node.getResolveSite().getPath();
-  const exact = sql(name);
-  const prefix = likeSafe(name);
-  // Four forms: a reference may be bare or version-ranged (`seo=[1.1,2)`), and the writer's
-  // untrimmed split can leave a leading space. All are prefix-bounded, so each stays a bounded
-  // term-dictionary scan. Matching a ranged reference is deliberately better than legacy, whose
-  // exact-only compare silently missed every pinned dependant.
-  const refOr = [
-    `v.[references] = '${exact}'`,
-    `v.[references] LIKE '${prefix}=%'`,
-    `v.[references] = ' ${exact}'`,
-    `v.[references] LIKE ' ${prefix}=%'`,
-  ].join(" OR ");
+  const wanted = name.toLowerCase();
+  // VERIFIED against the live Jackrabbit backend by a direct probe: LOWER() IS applied per-value on
+  // this multi-valued property, even to a value that isn't the array's first entry. An earlier E2E
+  // run seemed to show LOWER() being ignored here, but that run was against a stale .tgz (a same-
+  // version install silently no-ops) - not a real backend limitation. LIKE, not `=`, because
+  // Jackrabbit's `=` branch ignores the LOWER() transform, the same quirk already documented in
+  // resolveStoreModules. The trailing `%` deliberately over-matches (e.g. `seo-tools` for `seo`, or
+  // a version-ranged spelling like `seo=[1.1,2)`) - the app-side re-check below is what makes the
+  // result exact.
+  const term = likeSafe(wanted);
+  const refOr = [`LOWER(v.[references]) LIKE '${term}%'`, `LOWER(v.[references]) LIKE ' ${term}%'`].join(
+    " OR ",
+  );
   const query = `SELECT * FROM [jnt:forgeModuleVersion] AS v WHERE ISDESCENDANTNODE(v, '${sql(sitePath)}') AND v.[published] = true AND (${refOr})`;
   const self = node.getIdentifier();
-  const wanted = name.toLowerCase();
   const links: DependencyLink[] = [];
   const seen = new Set<string>();
   for (const version of getNodesByJCRQuery(node.getSession(), query, DEPENDANT_SCAN_CAP)) {
@@ -188,8 +194,15 @@ export function forgeDependencyGraph(
   latestVersion: JCRNodeWrapper | undefined,
 ): { dependencies: DependencyLink[]; dependants: DependencyLink[] } {
   if (!node.isNodeType("jnt:forgeModule")) return { dependencies: [], dependants: [] };
-  return {
-    dependencies: forgeDependencies(node, latestVersion),
-    dependants: forgeDependants(node),
-  };
+  try {
+    return {
+      dependencies: forgeDependencies(node, latestVersion),
+      dependants: forgeDependants(node),
+    };
+  } catch {
+    // Both queries call node.getResolveSite().getPath() unguarded; a module whose site can't be
+    // resolved would otherwise 500 the whole anonymous detail page. Skipped instead, same as this
+    // file's per-row "skip on dangling reference" handling.
+    return { dependencies: [], dependants: [] };
+  }
 }

@@ -10,6 +10,14 @@ export function bool(node: JCRNodeWrapper, name: string): boolean {
   return node.hasProperty(name) && node.getProperty(name).getBoolean();
 }
 
+/**
+ * Escape a value for a JCR-SQL2 string literal (doubles embedded single quotes). Security-relevant:
+ * every value interpolated into a query built by this module must be passed through this first.
+ */
+export function sql(v: string): string {
+  return v.replaceAll("'", "''");
+}
+
 /** A date property (e.g. jcr:lastModified) as an ISO day "YYYY-MM-DD", or "". */
 export function isoDay(node: JCRNodeWrapper, name: string): string {
   return node.hasProperty(name) ? node.getProperty(name).getString().slice(0, 10) : "";

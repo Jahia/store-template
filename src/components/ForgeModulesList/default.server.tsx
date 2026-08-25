@@ -10,6 +10,7 @@ import styles from "~/components/forge/forge.module.css";
 import filterStyles from "~/components/forge/store-filter.module.css";
 import { FORGE_STATUSES, forgeCategoryOptions } from "~/components/forge/forgeFacets";
 import { latestReleaseDates } from "~/components/forge/versions";
+import { sql } from "~/components/forge/nodeProps";
 import FilterAutoSubmit from "~/components/forge/FilterAutoSubmit.client";
 
 interface ForgeModulesListProps {
@@ -20,9 +21,6 @@ interface ForgeModulesListProps {
 const DEFAULT_PAGE_SIZE = 12;
 /** Bound the matched-module fetch so an unbounded catalogue can never run away. */
 const COUNT_CAP = 5000;
-
-/** Escape a value for safe inclusion in a JCR-SQL2 string literal. */
-const sql = (v: string): string => v.replaceAll("'", "''");
 
 /** A module's display title (jcr:title), falling back to its node name — the ordering tiebreaker. */
 const moduleTitle = (n: JCRNodeWrapper): string =>
