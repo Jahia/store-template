@@ -18,17 +18,11 @@
   upload, `createEntryFromJar`) use the `jahia-store` Action over
   **XMLHttpRequest** (CSRF patches XHR, not `fetch`/plain `<form>` posts).
   `gqlRequest`/`fetch` to `/modules/graphql` is fine - not CSRF-gated.
-- **Preserve E2E selectors** when refactoring markup: `[data-editor-ready]`,
-  `[data-filter-ready]`, `[data-upload-ready]`, `[data-forge-card]`,
-  `[role="tab"]`/`[role="tabpanel"]`, `[data-ckeditor-state]`,
-  `[data-ckeditor5-styles]`, `[data-icon-input]`/`[data-icon-status]`,
-  `[data-changelog-ready]`, `[data-tag-list]`, `#edit-status`/`#edit-tags`,
-  `[data-dependency-lists]`/`[data-dependency-column]`/`[data-dependency]`,
-  `[data-version-delete-scope]`/`[data-version-delete-ready]`, `[data-add-version]`
-  (owner upload-new-version form in the detail Versions tab), and the shared
-  global `.store-btn` button classes (incl. `.store-btn--danger`),
-  `[data-detail-tabs-ready]`, `[role="tab"]`/`[data-detail-panel]`. The Cypress
-  suite in `../privateappstore/tests` must stay green (`npx cypress run`).
+- **Preserve E2E selectors** when refactoring markup. The canonical list lives
+  in AGENTS.md under "Preserved E2E selectors" - check it before renaming or
+  dropping any `data-*` attribute, role, `.store-btn` class, or `#forge-*`/
+  `#edit-*` id. The Cypress suite in `../privateappstore/tests` must stay green
+  (`npx cypress run`).
 - **Two tablists exist** when an owner opens the editor on a detail page: the
   detail section tabs (`aria-label="Module sections"`, DetailTabs) and the editor
   field tabs (`aria-label="Module fields"`, ModuleEditor). A bare `[role="tab"]`

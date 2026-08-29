@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import styles from "./detail.module.css";
 import depStyles from "./dependencies.module.css";
-import { duplicateTitles, type DependencyLink } from "./dependencies";
+import { disambiguators, type DependencyLink } from "./dependencies";
 
 interface DependencyColumnProps {
   column: string;
@@ -24,7 +24,7 @@ function DependencyColumn({
 }: Readonly<DependencyColumnProps>): JSX.Element {
   // Derived from `column`, not an index, so the id is stable under SSR.
   const headingId = `dependency-${column}-heading`;
-  const ambiguous = duplicateTitles(links);
+  const disambiguatorMap = disambiguators(links);
   return (
     <section className={styles.section} data-dependency-column={column}>
       <h2 id={headingId} className={styles.sectionTitle}>
@@ -32,16 +32,19 @@ function DependencyColumn({
       </h2>
       {links.length > 0 ? (
         <ul className={depStyles.list} aria-labelledby={headingId}>
-          {links.map((link) => (
-            <li key={link.id} className={depStyles.item}>
-              <a className={depStyles.link} href={link.url} data-dependency={link.name}>
-                {link.title}
-                {ambiguous.has(link.title) && (
-                  <span className={depStyles.disambiguator}>({link.name})</span>
-                )}
-              </a>
-            </li>
-          ))}
+          {links.map((link) => {
+            const disambiguator = disambiguatorMap.get(link.id);
+            return (
+              <li key={link.id} className={depStyles.item}>
+                <a className={depStyles.link} href={link.url} data-dependency={link.name}>
+                  {link.title}
+                  {disambiguator && (
+                    <span className={depStyles.disambiguator}>({disambiguator})</span>
+                  )}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <p className={clsx(styles.muted, depStyles.empty)}>{empty}</p>

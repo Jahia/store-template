@@ -336,7 +336,15 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
       )}
 
           {/* Dependencies, like Versions above, are intentionally not a tab: this section is a
-              sibling of the tab panels so it stays visible under every tab, not scoped to one. */}
+              sibling of the tab panels so it stays visible under every tab, not scoped to one.
+              Guarded on EITHER column having content, not rendered unconditionally: most of the
+              catalogue predates the `references` property (it is only written at module upload
+              time, with no backfill for older entries), so an unconditional render would show an
+              empty two-column "NONE / NONE" block on the majority of module pages. The tradeoff is
+              that `noneDependencies` / `noneDependants` are reachable only when the OTHER column
+              has at least one link - a module with neither never shows this section at all, unlike
+              the pre-5.0 page, which always showed both columns. Intentional; do not "fix" by
+              rendering unconditionally. */}
           {(dependencies.length > 0 || dependants.length > 0) && (
             <DependencyLists dependencies={dependencies} dependants={dependants} />
           )}

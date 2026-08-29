@@ -116,12 +116,26 @@ dist/             build output (client islands, server bundle, package.tgz)
   ```
 - **E2E** lives in `../privateappstore/tests` (Cypress, `baseUrl` localhost:8080).
   `npx cypress run`. The suite must stay green. Selectors that code changes must
-  preserve: `[data-editor-ready]`, `[data-filter-ready]`, `[data-upload-ready]`,
-  `[data-forge-card]`, `[role="tab"]`/`[role="tabpanel"]` (admin + module editor),
-  `[data-ckeditor-state]`, `[data-icon-input]`/`[data-icon-status]`,
-  `[data-changelog-ready]`, `[data-dependency-lists]`/`[data-dependency-column]`/
-  `[data-dependency]`, `#forge-url`/`#forge-id`/`#forge-user`. CLAUDE.md carries a
-  longer copy of this list; keep additions in both.
+  preserve are listed below under "Preserved E2E selectors" - that section is
+  the single canonical list (CLAUDE.md just points here; do not fork a second
+  copy).
+
+### Preserved E2E selectors
+
+Refactoring markup must not break any of these, exercised by the Cypress suite
+in `../privateappstore/tests`:
+
+`[data-editor-ready]`, `[data-filter-ready]`, `[data-upload-ready]`,
+`[data-forge-card]`, `[role="tab"]`/`[role="tabpanel"]` (admin + module editor),
+`[data-ckeditor-state]`, `[data-ckeditor5-styles]`,
+`[data-icon-input]`/`[data-icon-status]`, `[data-changelog-ready]`,
+`[data-tag-list]`, `#edit-status`/`#edit-tags`,
+`[data-dependency-lists]`/`[data-dependency-column]`/`[data-dependency]`,
+`[data-version-delete-scope]`/`[data-version-delete-ready]`, `[data-add-version]`
+(owner upload-new-version form in the detail Versions tab), the shared global
+`.store-btn` button classes (incl. `.store-btn--danger`),
+`[data-detail-tabs-ready]`, `[role="tab"]`/`[data-detail-panel]`, and
+`#forge-url`/`#forge-id`/`#forge-user`.
 
 ## SonarQube
 
@@ -165,6 +179,12 @@ regress them. Verified against an axe-core / EqualWeb audit.
   gray. The token is tuned to WCAG **AAA** enhanced contrast (≥7:1) on every
   surface; hardcoding a lighter gray silently drops below 7:1 and re-introduces
   the contrast violation.
+- **`--ring` must stay opaque and two-tone** (inner `--color-bg` band, outer
+  `--color-accent` band). The outer band measures ~7.85:1 against white; the old
+  single translucent ring measured ~1.61:1 on white and ~1.00:1 (invisible) on
+  `.store-btn--primary` - a module-wide WCAG 2.2 SC 1.4.11 Non-text Contrast
+  (3:1) failure. Collapsing it back to one translucent value silently
+  reintroduces that failure; no unit test catches it.
 
 ## Conventions
 
