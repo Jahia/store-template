@@ -1,0 +1,70 @@
+/* Rendered inside the detail content column, so the block stays parallel to the Information rail
+   instead of running full-width beneath it. Collapses to one column when that column gets narrow. */
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* No max-height/overflow-y, unlike the legacy 250px scroll box: a focusable scroll region trips the
+   AAA audit, and REF_CAP / DEPENDANT_CAP already bound the height. */
+.item {
+  border-bottom: 1px solid var(--color-border);
+}
+.item:last-child {
+  border-bottom: 0;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  /* min-height rather than padding arithmetic for WCAG 2.2 SC 2.5.5 (44px): body line-height is
+     1.5, so this text plus padding is only ~38px alone, and the guarantee has to survive a later
+     change to either value. */
+  min-height: 44px;
+  padding: 0.5rem 0;
+  color: var(--color-accent);
+  /* One tier down from body copy, matching the Information rail's dt/dd. The accent on white is
+     ~7.9:1, past the AAA 7:1 floor for normal-size text. */
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  overflow-wrap: break-word;
+}
+.link:hover,
+.link:focus-visible {
+  text-decoration: underline;
+}
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: var(--radius);
+}
+
+/* Disambiguates two links in the same column that share a jcr:title (module name is unique, the
+   title is not). Visible - not sr-only - so the two labels actually read differently for sighted,
+   low-vision and Voice Control users too (WCAG 2.2 SC 2.4.9): a screen-reader-only suffix leaves
+   sighted/voice users looking at two identical link labels. --color-text-muted is the same AAA
+   token .muted uses (#3a4356 on white, >7:1), so this stays legible while reading as secondary. */
+.disambiguator {
+  color: var(--color-text-muted);
+  font-weight: 400;
+  font-size: 0.8125rem;
+  margin-left: 0.375rem;
+}
+
+/* Sized with .link: the columns sit side by side, so at body size an empty column would out-weigh
+   a populated one. .muted supplies the AAA text token. */
+.empty {
+  margin: 0;
+  font-size: 0.9rem;
+}

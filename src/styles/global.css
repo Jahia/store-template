@@ -43,7 +43,10 @@
   --shadow-sm: 0 1px 2px rgba(20, 30, 50, 0.06);
   --shadow-md: 0 8px 24px rgba(20, 30, 50, 0.1);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --ring: 0 0 0 3px rgba(14, 78, 168, 0.28); /* accent focus ring */
+  /* Opaque and two-tone: a translucent ring composites to ~1.61:1 on white, failing WCAG 2.2 SC
+     1.4.11 (3:1), and a single accent ring would be ~1:1 on the accent-filled .store-btn--primary.
+     The --color-bg band separates ring from element, the accent band then reaches ~7.85:1. */
+  --ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-accent);
 }
 
 * {

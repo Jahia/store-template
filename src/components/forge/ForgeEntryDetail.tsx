@@ -13,6 +13,7 @@ import { forgeAuthor, forgeCategoryNames, forgeIconUrl } from "./forgeCard";
 import { str, bool, strValues, jcrWorkspace, isoDay } from "./nodeProps";
 import { sanitizeHtml } from "./sanitizeHtml";
 import { requiredJahiaVersion, sortedVersionNodes, versionDownloadUrl } from "./versions";
+import { forgeDependencyGraph } from "./dependencies";
 import { forgeCategoryOptions } from "./forgeFacets";
 import { buildEditorLabels } from "./editorLabels";
 import Lightbox from "./Lightbox.client";
@@ -23,6 +24,7 @@ import DetailTabs from "./DetailTabs.client";
 import VersionsDialog from "./VersionsDialog.client";
 import { DetailInfoRail } from "./DetailInfoRail";
 import { DetailVersionsDialog } from "./DetailVersionsDialog";
+import { DependencyLists } from "./DependencyLists";
 
 interface TabDef {
   id: string;
@@ -152,6 +154,8 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   // Prominent download for the newest version (mirrors store.jahia.com's title CTA).
   const latestVersionNumber = versions[0] ? str(versions[0], "versionNumber") : "";
   const latestDownloadUrl = versions[0] ? versionDownloadUrl(versions[0]) : null;
+  // Two queries at most, none for a package; versions[0] is already in hand.
+  const { dependencies, dependants } = forgeDependencyGraph(node, versions[0]);
 
   // The detail sections are grouped into tabs (DetailTabs island) for easier
   // browsing. Only include a tab when it has content; the first one is the SSR
@@ -330,6 +334,20 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
           <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: license }} />
         </div>
       )}
+
+          {/* Dependencies, like Versions above, are intentionally not a tab: this section is a
+              sibling of the tab panels so it stays visible under every tab, not scoped to one.
+              Guarded on EITHER column having content, not rendered unconditionally: most of the
+              catalogue predates the `references` property (it is only written at module upload
+              time, with no backfill for older entries), so an unconditional render would show an
+              empty two-column "NONE / NONE" block on the majority of module pages. The tradeoff is
+              that `noneDependencies` / `noneDependants` are reachable only when the OTHER column
+              has at least one link - a module with neither never shows this section at all, unlike
+              the pre-5.0 page, which always showed both columns. Intentional; do not "fix" by
+              rendering unconditionally. */}
+          {(dependencies.length > 0 || dependants.length > 0) && (
+            <DependencyLists dependencies={dependencies} dependants={dependants} />
+          )}
         </div>
       </div>
 

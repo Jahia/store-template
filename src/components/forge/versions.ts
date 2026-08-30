@@ -1,5 +1,6 @@
 import { buildNodeUrl, getChildNodes, getNodesByJCRQuery } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper, JCRSessionWrapper } from "org.jahia.services.content";
+import { sql } from "./nodeProps";
 
 function parseVersion(v: string): number[] {
   return (v || "").split(/\D+/).filter(Boolean).map(Number);
@@ -88,7 +89,7 @@ export function latestReleaseDates(
   session: JCRSessionWrapper,
   basePath: string,
 ): Map<string, string> {
-  const escaped = basePath.replaceAll("'", "''");
+  const escaped = sql(basePath);
   const dates = new Map<string, string>();
   const scan = (type: string): void => {
     const versions = getNodesByJCRQuery(
