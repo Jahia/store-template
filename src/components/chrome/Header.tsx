@@ -253,7 +253,7 @@ export function Header(): JSX.Element {
              is the username; the panel holds "My modules" (owners) + Log out. */
           <details className={styles.account}>
             <summary className={styles.accountToggle} data-account-toggle="">
-              <span className={styles.accountName} title={username}>
+              <span className={styles.accountName} data-account-name="" title={username}>
                 {username}
               </span>
               <svg
