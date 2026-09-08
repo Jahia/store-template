@@ -18,6 +18,14 @@ jahiaComponent(
     name: "default",
     displayName: "Store page (default)",
     componentType: "template",
+    // SECURITY (SEC-375 / GHSA-g6wp-ghxm-mx76): this fragment carries the account
+    // widget, reached through Layout -> Header, which renders the viewer's OWN
+    // username. Jahia keys a cached fragment on what the viewer may do (an ACL
+    // component, which also separates anonymous from authenticated) but never on
+    // who they are - so without this line two users holding the same role share
+    // the slot and are served each other's name. Any per-user datum rendered into
+    // Layout depends on this declaration; see AGENTS.md "Hard engine constraints".
+    properties: { "cache.perUser": "true" },
   },
   ({ "jcr:title": title }: { "jcr:title"?: string }, { currentNode }) => (
     // Layout supplies the single <main> landmark; this template only fills it.
