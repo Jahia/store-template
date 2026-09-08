@@ -75,7 +75,12 @@ See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
    `templates/Page/default.server.tsx` (the header renders the viewer's username)
    and `components/ForgeMyModulesList/default.server.tsx` (rows selected on
    `jcr:createdBy`). Not knowing this cost SEC-375 / GHSA-g6wp-ghxm-mx76, where
-   one logged-in Store user was served another's username. Note that
+   one logged-in Store user was served another's username. **The victims are
+   ordinary accounts**: Jahia does not cache a fragment for a user who can edit
+   the resource, so a role carrying `jcr:write_live` (store-developer does)
+   incidentally immunises its holder - which makes the defect *easy to test
+   wrongly*, since a two-user check built from privileged accounts passes against
+   fully vulnerable code. Note that
    `cache.expiration: "0"` on a *nested* view does not help the enclosing page
    fragment - each fragment carries its own policy. Guarded by
    `../privateappstore/tests/cypress/e2e/25-fragmentCacheIdentity.cy.ts`; read its
