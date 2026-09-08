@@ -63,6 +63,24 @@ See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
    browser-only lib used only in a handler/effect, import it the same way.
 5. `manualPureFunctions: ["useEffect"]` strips effects from the SSR render - do
    not rely on an effect running server-side.
+6. **Every fragment is cached, and the cache key knows permissions but NOT
+   identity.** Jahia keys a rendered fragment on the resource plus an ACL-derived
+   component (which also separates anonymous from authenticated). It does *not*
+   include the user. So two people holding the same role share one cached
+   fragment, and anything you render that varies between *them* leaks from one to
+   the other. Anything reaching `Layout` - the whole `Header`/`Footer` chrome - is
+   shared this way on every page. A template or view whose output varies per
+   **user** (not merely per permission) MUST declare it:
+   `properties: { "cache.perUser": "true" }`. Worked examples:
+   `templates/Page/default.server.tsx` (the header renders the viewer's username)
+   and `components/ForgeMyModulesList/default.server.tsx` (rows selected on
+   `jcr:createdBy`). Not knowing this cost SEC-375 / GHSA-g6wp-ghxm-mx76, where
+   one logged-in Store user was served another's username. Note that
+   `cache.expiration: "0"` on a *nested* view does not help the enclosing page
+   fragment - each fragment carries its own policy. Guarded by
+   `../privateappstore/tests/cypress/e2e/25-fragmentCacheIdentity.cy.ts`; read its
+   header before changing it, because the obvious ways to "improve" that spec all
+   make a broken build pass.
 
 ## The GraphQL permission wall (critical for authoring features)
 
@@ -134,8 +152,10 @@ in `../privateappstore/tests`:
 `[data-version-delete-scope]`/`[data-version-delete-ready]`, `[data-add-version]`
 (owner upload-new-version form in the detail Versions tab), the shared global
 `.store-btn` button classes (incl. `.store-btn--danger`),
-`[data-detail-tabs-ready]`, `[role="tab"]`/`[data-detail-panel]`, and
-`#forge-url`/`#forge-id`/`#forge-user`.
+`[data-detail-tabs-ready]`, `[role="tab"]`/`[data-detail-panel]`,
+`#forge-url`/`#forge-id`/`#forge-user`, and `[data-account-name]` (the header
+account-name span - spec 25 asserts *which* username a cached page carries, so
+`[data-account-toggle]` alone is not enough).
 
 ## SonarQube
 

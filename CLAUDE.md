@@ -18,6 +18,15 @@
   upload, `createEntryFromJar`) use the `jahia-store` Action over
   **XMLHttpRequest** (CSRF patches XHR, not `fetch`/plain `<form>` posts).
   `gqlRequest`/`fetch` to `/modules/graphql` is fine - not CSRF-gated.
+- **Rendered fragments are shared between users of equal permission.** Jahia's
+  cache key includes an ACL component but *not* the user, so anything you render
+  that varies by **identity** rather than by permission leaks from one logged-in
+  user to the next - and everything in `Layout` (all the `Header`/`Footer` chrome)
+  is on that path on every page. Declare `properties: { "cache.perUser": "true" }`
+  on any template/view whose output varies per user; `Page/default.server.tsx` and
+  `ForgeMyModulesList/default.server.tsx` are the two worked examples. This is
+  SEC-375 / GHSA-g6wp-ghxm-mx76 - see AGENTS.md constraint 6 for the full rule and
+  the trap in verifying a fix.
 - **Preserve E2E selectors** when refactoring markup. The canonical list lives
   in AGENTS.md under "Preserved E2E selectors" - check it before renaming or
   dropping any `data-*` attribute, role, `.store-btn` class, or `#forge-*`/
