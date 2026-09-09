@@ -242,6 +242,17 @@ Only the JAR upload keeps the existing `createEntryFromJar` Java action (it runs
   `setValue` mutation. Gated server-side by `node.hasPermission("jcr:write")` in `ForgeEntryDetail`.
 - ✅ Detail templates set `cache.expiration:"0"` so edits show on next load (the cached fragment's
   flush raced the save; proper cache deps deferred to the Phase 5 perf pass).
+  - ⚠️ **This deferral had a security cost — closed 2026-09-08.** Deferring "proper cache deps"
+    left the *page* template (`Page/default.server.tsx`) declaring no cache policy at all, and its
+    header renders the viewer's own username. Jahia's fragment key models permissions but not
+    identity, so one logged-in Store user was served another's username: SEC-375 /
+    GHSA-g6wp-ghxm-mx76. `ForgeMyModulesList` had the same shape (rows selected on
+    `jcr:createdBy`, drafts included). Both now declare `cache.perUser`, guarded by
+    `25-fragmentCacheIdentity.cy.ts`. Note what the workaround did and did not cover: the
+    `cache.expiration:"0"` above made the *detail* pages incidentally safe, which is why the leak
+    only ever showed on home/listing pages — a nested view's policy does not propagate to the
+    page fragment that encloses it. The remaining perf item (real cache dependencies in place of
+    `expiration:0` on the detail templates) is still open.
 - ✅ E2E `17-authoring.cy.ts` (2/2): the editor shows for jcr:write users; editing title +
   codeRepository persists (verified via reload). Full set 15+16+17 = **12/12**.
 - Island lessons codified: wait on a `data-*-ready` hydration marker before clicking; avoid async

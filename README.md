@@ -51,6 +51,22 @@ job is to provide an AAA-capable structure and style system; the
 changes. The target is currently verified by manual axe-core / EqualWeb audits -
 there is no automated gate in the E2E suite yet.
 
+## Caching and per-user rendering
+
+Jahia caches every rendered fragment under a key that includes the viewer's
+permissions but **not** their identity, so two users holding the same role are
+served the same cached HTML. Anything this template renders that varies per
+*user* rather than per *permission* must therefore say so explicitly, with
+`properties: { "cache.perUser": "true" }` on the template or view. Two components
+do: the `jnt:page` `default` template (its header shows the viewer's own
+username) and the My-modules list (its rows are selected on `jcr:createdBy`).
+
+This is not a performance detail - getting it wrong discloses one user's data to
+another, which is what [GHSA-g6wp-ghxm-mx76](https://github.com/Jahia/store-template/security/advisories/GHSA-g6wp-ghxm-mx76)
+records. The rule and the trap in verifying a fix are in
+[AGENTS.md](./AGENTS.md) under "Hard engine constraints"; the guard is
+`../privateappstore/tests/cypress/e2e/25-fragmentCacheIdentity.cy.ts`.
+
 ## Documentation
 
 - [AGENTS.md](./AGENTS.md) - architecture, engine constraints, build/deploy/test,

@@ -18,6 +18,13 @@ jahiaComponent(
     name: "default",
     displayName: "My modules",
     componentType: "view",
+    // SECURITY (SEC-375 / GHSA-g6wp-ghxm-mx76): every row below is selected by
+    // `jcr:createdBy = <the viewer's username>`, and unlike the public list this
+    // view deliberately shows UNPUBLISHED drafts. Two holders of store-developer
+    // have identical ACLs, so without this line they share the cached fragment and
+    // one is served the other's modules - including unreleased ones. The output
+    // varies by identity, which Jahia's default fragment key does not model.
+    properties: { "cache.perUser": "true" },
   },
   (_props: object, { currentNode, renderContext }) => {
     const { t } = useTranslation();
