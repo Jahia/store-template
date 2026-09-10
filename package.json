@@ -21,7 +21,7 @@
   "dependencies": {
     "@fontsource-variable/nunito-sans": "^5.2.7",
     "clsx": "^2.1.1",
-    "dompurify": "^3.4.11",
+    "dompurify": "^3.4.13",
     "i18next": "^25.8.18",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
