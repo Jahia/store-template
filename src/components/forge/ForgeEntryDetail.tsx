@@ -10,9 +10,14 @@ import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import styles from "./detail.module.css";
 import { forgeAuthor, forgeCategoryNames, forgeIconUrl } from "./forgeCard";
-import { str, bool, strValues, jcrWorkspace, isoDay } from "./nodeProps";
+import { str, bool, strValues, jcrWorkspace } from "./nodeProps";
 import { sanitizeHtml } from "./sanitizeHtml";
-import { requiredJahiaVersion, sortedVersionNodes, versionDownloadUrl } from "./versions";
+import {
+  latestReleaseDate,
+  requiredJahiaVersion,
+  sortedVersionNodes,
+  versionDownloadUrl,
+} from "./versions";
 import { forgeDependencyGraph } from "./dependencies";
 import { forgeCategoryOptions } from "./forgeFacets";
 import { buildEditorLabels } from "./editorLabels";
@@ -149,7 +154,9 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const groupId = str(node, "groupId");
   const author = forgeAuthor(node);
   const authorURL = str(node, "authorURL");
-  const updated = isoDay(node, "jcr:lastModified");
+  // Release date of the newest PUBLISHED version - not the module node's jcr:lastModified, which
+  // any metadata edit would move. Empty while every version is still a draft (the row is omitted).
+  const released = latestReleaseDate(versions);
   const requiresJahia = requiredJahiaVersion(versions[0]);
   // Prominent download for the newest version (mirrors store.jahia.com's title CTA).
   const latestVersionNumber = versions[0] ? str(versions[0], "versionNumber") : "";
@@ -262,7 +269,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
           author={author}
           authorURL={authorURL}
           requiresJahia={requiresJahia}
-          updated={updated}
+          released={released}
           codeRepository={codeRepository}
           tags={tags}
         />

@@ -14,7 +14,8 @@ interface DetailInfoRailProps {
   author: string;
   authorURL: string;
   requiresJahia: string;
-  updated: string;
+  /** Release day of the newest published version, or "" (module still in draft) to omit the row. */
+  released: string;
   codeRepository: string;
   tags: string[];
 }
@@ -33,7 +34,7 @@ export function DetailInfoRail({
   author,
   authorURL,
   requiresJahia,
-  updated,
+  released,
   codeRepository,
   tags,
 }: Readonly<DetailInfoRailProps>): JSX.Element {
@@ -84,10 +85,10 @@ export function DetailInfoRail({
             <dd>{requiresJahia}</dd>
           </>
         )}
-        {updated && (
+        {released && (
           <>
-            <dt>{t("detail.meta.updated")}</dt>
-            <dd>{updated}</dd>
+            <dt>{t("detail.meta.released")}</dt>
+            <dd>{released}</dd>
           </>
         )}
         {codeRepository && (
