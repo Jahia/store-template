@@ -47,7 +47,11 @@ export default function TagInput({ id, tags, ariaLabel, labels, onChange }: Read
   };
 
   return (
-    <div className={styles.tagInput} role="group" aria-label={ariaLabel}>
+    /* A real <fieldset> rather than a <div role="group"> (typescript:S6819): the native
+       grouping element is announced reliably everywhere, and its accessible name comes from
+       the <legend>, hidden visually because the field's own label is already shown. */
+    <fieldset className={styles.tagInput}>
+      <legend className="sr-only">{ariaLabel}</legend>
       <ul className={styles.tagChips}>
         {tags.map((tag) => (
           <li key={tag} className={styles.tagChip}>
@@ -73,6 +77,6 @@ export default function TagInput({ id, tags, ariaLabel, labels, onChange }: Read
         onKeyDown={onKeyDown}
         onBlur={() => addTag(text)}
       />
-    </div>
+    </fieldset>
   );
 }

@@ -5,7 +5,7 @@ import {
   Render,
   useServerContext,
 } from "@jahia/javascript-modules-library";
-import type { JCRNodeWrapper } from "org.jahia.services.content";
+import type { JCRNodeWrapper, JCRSessionWrapper } from "org.jahia.services.content";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import styles from "./detail.module.css";
@@ -52,6 +52,27 @@ const STATUS_OPTIONS = ["community", "labs", "supported", "legacy"];
 
 /** Allowed author-display modes (jnt:forgeModule/Package `authorNameDisplayedAs` choicelist). */
 const AUTHOR_DISPLAY_OPTIONS = ["username", "fullName", "organisation"];
+
+/** Path of a named child node, or "" when the module has none. */
+function childPath(node: JCRNodeWrapper, name: string): string {
+  return node.hasNode(name) ? node.getNode(name).getPath() : "";
+}
+
+/** Provider + identifier of the module's video child, or empty strings when it has none. */
+function videoSettings(videoNode: JCRNodeWrapper | null): { provider: string; identifier: string } {
+  if (!videoNode) return { provider: "", identifier: "" };
+  return { provider: str(videoNode, "provider"), identifier: str(videoNode, "identifier") };
+}
+
+/**
+ * URL of the `createEntryFromJar` action on the site's modules-repository, or null when that
+ * repository is missing. Resolved in the rendered workspace, exactly like the my-modules
+ * upload form - the action upserts the module and appends the uploaded version.
+ */
+function createEntryActionUrl(session: JCRSessionWrapper, repoPath: string): string | null {
+  if (!session.nodeExists(repoPath)) return null;
+  return `${buildNodeUrl(session.getNode(repoPath)).replace(/\.html$/, "")}.createEntryFromJar.do`;
+}
 
 function screenshotItems(node: JCRNodeWrapper): { name: string; url: string }[] {
   if (!node.hasNode("screenshots")) return [];
@@ -111,10 +132,9 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const status = str(node, "status");
   const icon = forgeIconUrl(node);
   const shots = screenshotItems(node);
-  const screenshotsPath = node.hasNode("screenshots") ? node.getNode("screenshots").getPath() : "";
+  const screenshotsPath = childPath(node, "screenshots");
   const videoNode = node.hasNode("video") ? node.getNode("video") : null;
-  const videoProvider = videoNode ? str(videoNode, "provider") : "";
-  const videoId = videoNode ? str(videoNode, "identifier") : "";
+  const { provider: videoProvider, identifier: videoId } = videoSettings(videoNode);
   const canEdit = node.hasPermission("jcr:write");
   // Owners manage drafts from this list; everyone else only ever sees released
   // versions - mirrors the module-level published gate above (line 85).
@@ -129,10 +149,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   // and appends the version. Null for non-owners or if the repo is unavailable.
   const repoPath = `${renderContext.getSite().getPath()}/contents/modules-repository`;
   const session = node.getSession();
-  const uploadActionUrl =
-    canEdit && session.nodeExists(repoPath)
-      ? `${buildNodeUrl(session.getNode(repoPath)).replace(/\.html$/, "")}.createEntryFromJar.do`
-      : null;
+  const uploadActionUrl = canEdit ? createEntryActionUrl(session, repoPath) : null;
 
   // Metadata (editable by owners; shown to everyone in the Information panel).
   // Resolve the editor's category choices from the SAME source as the storefront

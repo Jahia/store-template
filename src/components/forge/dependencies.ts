@@ -48,43 +48,58 @@ const DISAMBIGUATOR_SEPARATOR = " - ";
  * sharing a title and a name whose identifiers also share their first 8 characters. Not resolved
  * here, and not reachable from JCR identifiers in practice.
  */
+/**
+ * NUL separator: it cannot occur in a JCR node name or a free-text `jcr:title`, whereas a
+ * printable one would make the tuple ambiguous - title "A B" + name "c" would key the same as
+ * title "A" + name "B c", escalating rows to a tier they do not need. Never rendered.
+ */
+const nameKey = (link: DependencyLink): string => `${link.title}\u0000${link.name}`;
+
+const groupKey = (link: DependencyLink): string =>
+  `${link.title}\u0000${link.name}\u0000${link.groupId}`;
+
+/** How many of `links` share each key, counting only the rows `include` accepts. */
+function countByKey(
+  links: DependencyLink[],
+  key: (link: DependencyLink) => string,
+  include: (link: DependencyLink) => boolean,
+): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const link of links) {
+    if (!include(link)) continue;
+    const k = key(link);
+    counts.set(k, (counts.get(k) ?? 0) + 1);
+  }
+  return counts;
+}
+
+/** Tier-4 label: the name plus a short id prefix - the one value that always varies per node. */
+const idLabel = (link: DependencyLink): string =>
+  `${link.name}${DISAMBIGUATOR_SEPARATOR}${link.id.slice(0, 8)}`;
+
 export function disambiguators(links: DependencyLink[]): Map<string, string> {
   const result = new Map<string, string>();
   const duplicateTitleSet = duplicateTitles(links);
   if (duplicateTitleSet.size === 0) return result;
 
-  // NUL separator: it cannot occur in a JCR node name or a free-text `jcr:title`, whereas a
-  // printable one would make the tuple ambiguous - title "A B" + name "c" would key the same as
-  // title "A" + name "B c", escalating rows to a tier they do not need. Never rendered.
-  const nameKey = (link: DependencyLink): string => `${link.title}\u0000${link.name}`;
-  const nameKeyCounts = new Map<string, number>();
-  for (const link of links) {
-    if (!duplicateTitleSet.has(link.title)) continue;
-    const key = nameKey(link);
-    nameKeyCounts.set(key, (nameKeyCounts.get(key) ?? 0) + 1);
-  }
+  const titleCollides = (link: DependencyLink): boolean => duplicateTitleSet.has(link.title);
+  const nameKeyCounts = countByKey(links, nameKey, titleCollides);
+  const nameCollides = (link: DependencyLink): boolean =>
+    (nameKeyCounts.get(nameKey(link)) ?? 0) > 1;
+  const groupKeyCounts = countByKey(
+    links,
+    groupKey,
+    (link) => titleCollides(link) && nameCollides(link),
+  );
 
-  const groupKey = (link: DependencyLink): string =>
-    `${link.title}\u0000${link.name}\u0000${link.groupId}`;
-  const groupKeyCounts = new Map<string, number>();
+  // Tier 2 (name), tier 3 (name + groupId) or tier 4 (name + id prefix), in that order of
+  // preference - the first one that actually tells two same-titled rows apart.
   for (const link of links) {
-    if (!duplicateTitleSet.has(link.title)) continue;
-    if ((nameKeyCounts.get(nameKey(link)) ?? 0) <= 1) continue;
-    const key = groupKey(link);
-    groupKeyCounts.set(key, (groupKeyCounts.get(key) ?? 0) + 1);
-  }
-
-  for (const link of links) {
-    if (!duplicateTitleSet.has(link.title)) continue;
-    const nameCollides = (nameKeyCounts.get(nameKey(link)) ?? 0) > 1;
-    if (!nameCollides) {
+    if (!titleCollides(link)) continue;
+    if (!nameCollides(link)) {
       result.set(link.id, link.name);
-      continue;
-    }
-    const groupUseless = link.groupId === "" || (groupKeyCounts.get(groupKey(link)) ?? 0) > 1;
-    if (groupUseless) {
-      const shortId = link.id.slice(0, 8);
-      result.set(link.id, `${link.name}${DISAMBIGUATOR_SEPARATOR}${shortId}`);
+    } else if (link.groupId === "" || (groupKeyCounts.get(groupKey(link)) ?? 0) > 1) {
+      result.set(link.id, idLabel(link));
     } else {
       result.set(link.id, `${link.name}${DISAMBIGUATOR_SEPARATOR}${link.groupId}`);
     }
@@ -94,18 +109,11 @@ export function disambiguators(links: DependencyLink[]): Map<string, string> {
   // (name + groupId) and a tier-4 one (name + id prefix) can still coincide. Re-check the rendered
   // label - what the reader actually sees is the title plus this label - and demote any row that
   // is still ambiguous to tier 4, which at least varies per node.
-  const labelCounts = new Map<string, number>();
-  for (const link of links) {
-    const label = result.get(link.id);
-    if (label === undefined) continue;
-    const key = `${link.title}\u0000${label}`;
-    labelCounts.set(key, (labelCounts.get(key) ?? 0) + 1);
-  }
-  for (const link of links) {
-    const label = result.get(link.id);
-    if (label === undefined) continue;
-    if ((labelCounts.get(`${link.title}\u0000${label}`) ?? 0) <= 1) continue;
-    result.set(link.id, `${link.name}${DISAMBIGUATOR_SEPARATOR}${link.id.slice(0, 8)}`);
+  const labelled = links.filter((link) => result.has(link.id));
+  const labelKey = (link: DependencyLink): string => `${link.title}\u0000${result.get(link.id)}`;
+  const labelCounts = countByKey(labelled, labelKey, () => true);
+  for (const link of labelled) {
+    if ((labelCounts.get(labelKey(link)) ?? 0) > 1) result.set(link.id, idLabel(link));
   }
   return result;
 }
@@ -136,8 +144,14 @@ const EMPTY_REFERENCES = "none";
  * character. The backslash must be escaped FIRST - escaping the wildcards first would let the
  * backslash pass double the escapes we just inserted, making the wildcard live again.
  */
+// The backslash pair stays written as escapes: String.raw cannot express a lone trailing
+// backslash (it would escape the closing backtick), so only the wildcard replacements below
+// use it (typescript:S7780).
 const likeSafe = (v: string): string =>
-  sql(v).replaceAll("\\", "\\\\").replaceAll("_", "\\_").replaceAll("%", "\\%");
+  sql(v)
+    .replaceAll("\\", "\\\\")
+    .replaceAll("_", String.raw`\_`)
+    .replaceAll("%", String.raw`\%`);
 
 const moduleTitle = (n: JCRNodeWrapper): string => str(n, "jcr:title") || n.getName();
 

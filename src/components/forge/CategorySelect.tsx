@@ -46,12 +46,9 @@ export default function CategorySelect({
   };
 
   return (
-    <div
-      className={styles.tagInput}
-      data-category-select=""
-      role="group"
-      aria-label={ariaLabel}
-    >
+    /* A real <fieldset> rather than a <div role="group"> (typescript:S6819) - see TagInput. */
+    <fieldset className={styles.tagInput} data-category-select="">
+      <legend className="sr-only">{ariaLabel}</legend>
       <ul className={styles.tagChips}>
         {selected.map((uuid) => {
           const name = nameOf.get(uuid) ?? uuid;
@@ -88,6 +85,6 @@ export default function CategorySelect({
           ))}
         </select>
       )}
-    </div>
+    </fieldset>
   );
 }

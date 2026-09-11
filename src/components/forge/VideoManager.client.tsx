@@ -49,10 +49,10 @@ function extractVideoId(provider: string, raw: string): string {
       if (url.hostname.endsWith("youtu.be")) return url.pathname.slice(1);
       const v = url.searchParams.get("v");
       if (v) return v;
-      const embed = url.pathname.match(/\/embed\/([^/?]+)/);
+      const embed = /\/embed\/([^/?]+)/.exec(url.pathname);
       if (embed) return embed[1];
     } else if (provider === "vimeo") {
-      const digits = url.pathname.match(/\/(\d+)/);
+      const digits = /\/(\d+)/.exec(url.pathname);
       if (digits) return digits[1];
     }
   } catch {
