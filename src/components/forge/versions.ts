@@ -81,9 +81,8 @@ const RELEASE_SCAN_CAP = 20000;
  * child version nodes, which JCR-SQL2 can't ORDER BY from the module), so we make ONE pass over the
  * published version nodes of both types — two queries — and reduce to the max date per owning
  * module, rather than an N+1 child lookup per module. ISO date strings sort chronologically as
- * plain strings. The date is the version's `releaseStamp` (the immutable upload date, falling back
- * to jcr:lastModified) - never jcr:created, which is the migration run date for content copied
- * from the legacy store. Modules with no published version are simply absent from the map
+ * plain strings. Never jcr:created: that is the migration run date for content copied from the
+ * legacy store. Modules with no published version are simply absent from the map
  * (callers treat that as "" = oldest).
  */
 export function latestReleaseDates(
@@ -129,14 +128,9 @@ export function sortedVersionNodes(node: JCRNodeWrapper): JCRNodeWrapper[] {
 }
 
 /**
- * Release day ("YYYY-MM-DD") of the most recently released PUBLISHED version, or "" when the
- * module has none - the module-level "Released" date in the detail Information rail.
- *
- * Takes the version list the caller already holds (no second child fetch) and ignores drafts,
- * so the rail shows the same date to an owner and to an anonymous visitor. Reduces by MAX
- * release timestamp rather than taking the highest version number: a 4.x patch published after
- * 5.0 is the newest release in time, which is what "Released" means. Mirrors how
- * `latestReleaseDates` ranks modules on the storefront grid, so the two never disagree.
+ * Release day of the newest PUBLISHED version, or "". Drafts are excluded so an owner and a
+ * visitor see the same date, and the MAX is by time, not version number: a 4.x patch released
+ * after 5.0 is the newer release.
  */
 export function latestReleaseDate(versions: JCRNodeWrapper[]): string {
   let latest = "";

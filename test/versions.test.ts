@@ -97,7 +97,6 @@ describe("latestReleaseDate (module-level 'Released' date)", () => {
   });
 
   it("takes the most recent release in TIME, not the highest version number", () => {
-    // A 4.x patch published after 5.0 is the newest release; sortedVersionNodes puts 5.0 first.
     const versions = [
       mockRelease({ published: true, uploadDate: "2026-01-10T10:00:00.000+02:00" }), // 5.0.0
       mockRelease({ published: true, uploadDate: "2026-06-22T10:00:00.000+02:00" }), // 4.9.1

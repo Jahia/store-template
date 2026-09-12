@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 
-// nodeProps.ts imports only TYPES from the engine, so it loads in a plain Node test without stubs.
 import { releaseStamp, releaseDay } from "../src/components/forge/nodeProps";
 
 /** Minimal JCRNodeWrapper-ish stub: only the property accessors str() touches. */
@@ -16,13 +15,11 @@ const EDITED = "2026-07-19T09:15:00.000+02:00";
 
 describe("releaseStamp", () => {
   it("prefers the immutable uploadDate over jcr:lastModified", () => {
-    // The whole point: the node was edited in July, but it was RELEASED in March.
     const node = mockNode({ uploadDate: UPLOADED, "jcr:lastModified": EDITED });
     expect(releaseStamp(node)).toBe(UPLOADED);
   });
 
   it("falls back to jcr:lastModified when uploadDate is absent", () => {
-    // Versions created before the property existed, or outside the upload action.
     expect(releaseStamp(mockNode({ "jcr:lastModified": EDITED }))).toBe(EDITED);
   });
 

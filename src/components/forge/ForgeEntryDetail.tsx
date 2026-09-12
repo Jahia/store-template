@@ -154,8 +154,6 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const groupId = str(node, "groupId");
   const author = forgeAuthor(node);
   const authorURL = str(node, "authorURL");
-  // Release date of the newest PUBLISHED version - not the module node's jcr:lastModified, which
-  // any metadata edit would move. Empty while every version is still a draft (the row is omitted).
   const released = latestReleaseDate(versions);
   const requiresJahia = requiredJahiaVersion(versions[0]);
   // Prominent download for the newest version (mirrors store.jahia.com's title CTA).

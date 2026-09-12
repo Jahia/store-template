@@ -19,16 +19,8 @@ export function sql(v: string): string {
 }
 
 /**
- * Raw release timestamp of a version node - the FULL JCR date string, for ordering.
- *
- * Reads `uploadDate`, which jahia-store's createEntryFromJar stamps once when the version node
- * is created and never rewrites, so later edits (changelog, publish toggle, a metadata fix) do
- * NOT move a release date. Falls back to jcr:lastModified for version nodes that predate the
- * property or were created outside the upload action (jContent, GraphQL, provisioning) - that
- * is the value the storefront showed before, so the fallback is a no-op for existing content.
- *
- * Keep the FULL timestamp for comparisons: two versions released on the same day must still
- * order by time of day (the storefront's "newest release first" grid relies on it).
+ * Release timestamp of a version node, full precision - same-day releases must still order by
+ * time of day. `uploadDate` is stamped once at upload; the fallback covers versions predating it.
  */
 export function releaseStamp(version: JCRNodeWrapper): string {
   return str(version, "uploadDate") || str(version, "jcr:lastModified");
