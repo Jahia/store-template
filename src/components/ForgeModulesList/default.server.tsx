@@ -145,9 +145,7 @@ jahiaComponent(
       node,
       date: releaseDates.get(node.getIdentifier()) ?? "",
     }));
-    // Sort as its own statement: sort() mutates in place, and hiding that inside a ternary
-    // reads as if it returned a new array (typescript:S4043). `ordered` is a fresh array from
-    // map(), so mutating it is safe. Not toSorted() - that is ES2023 and SSR runs on GraalJS.
+    // Not toSorted(): ES2023, and SSR runs on GraalJS.
     ordered.sort(sort === "name" ? byTitle : byDateDesc);
 
     const total = ordered.length;

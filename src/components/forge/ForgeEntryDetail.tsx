@@ -64,11 +64,7 @@ function videoSettings(videoNode: JCRNodeWrapper | null): { provider: string; id
   return { provider: str(videoNode, "provider"), identifier: str(videoNode, "identifier") };
 }
 
-/**
- * URL of the `createEntryFromJar` action on the site's modules-repository, or null when that
- * repository is missing. Resolved in the rendered workspace, exactly like the my-modules
- * upload form - the action upserts the module and appends the uploaded version.
- */
+/** Resolved in the rendered workspace: forge content authored on the live site lives in LIVE. */
 function createEntryActionUrl(session: JCRSessionWrapper, repoPath: string): string | null {
   if (!session.nodeExists(repoPath)) return null;
   return `${buildNodeUrl(session.getNode(repoPath)).replace(/\.html$/, "")}.createEntryFromJar.do`;

@@ -123,9 +123,7 @@
 }
 
 /* Tag chips */
-/* A <fieldset> (TagInput / CategorySelect): reset the UA defaults it carries over a plain
-   div - the 2px inline margin, and min-inline-size:min-content, which would stop the chips
-   wrapping and let the control overflow its column. Border/padding are set explicitly below. */
+/* min-inline-size:0 defeats the UA fieldset minimum, which would stop the chips wrapping. */
 .tagInput {
   display: flex;
   flex-wrap: wrap;

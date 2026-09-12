@@ -92,8 +92,6 @@ export function disambiguators(links: DependencyLink[]): Map<string, string> {
     (link) => titleCollides(link) && nameCollides(link),
   );
 
-  // Tier 2 (name), tier 3 (name + groupId) or tier 4 (name + id prefix), in that order of
-  // preference - the first one that actually tells two same-titled rows apart.
   for (const link of links) {
     if (!titleCollides(link)) continue;
     if (!nameCollides(link)) {
@@ -144,9 +142,7 @@ const EMPTY_REFERENCES = "none";
  * character. The backslash must be escaped FIRST - escaping the wildcards first would let the
  * backslash pass double the escapes we just inserted, making the wildcard live again.
  */
-// The backslash pair stays written as escapes: String.raw cannot express a lone trailing
-// backslash (it would escape the closing backtick), so only the wildcard replacements below
-// use it (typescript:S7780).
+// The backslash pair stays escaped: String.raw cannot express a lone trailing backslash.
 const likeSafe = (v: string): string =>
   sql(v)
     .replaceAll("\\", "\\\\")
