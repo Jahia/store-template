@@ -9,7 +9,7 @@ vi.mock("@jahia/javascript-modules-library", () => ({
   getNodesByJCRQuery: () => [],
 }));
 
-const { compareVersionsDesc, versionDownloadUrl } = await import(
+const { compareVersionsDesc, versionDownloadUrl, latestReleaseDate } = await import(
   "../src/components/forge/versions"
 );
 
@@ -73,5 +73,48 @@ describe("versionDownloadUrl (MavenProxy URL grammar guard)", () => {
 
   it("returns null when a coordinate is missing", () => {
     expect(versionDownloadUrl(mockVersion({ groupId: "" }))).toBeNull();
+  });
+});
+
+/** Version-node stub carrying just the properties latestReleaseDate reads. */
+function mockRelease(props: Record<string, string | boolean>) {
+  return {
+    hasProperty: (name: string) => Object.hasOwn(props, name),
+    getProperty: (name: string) => ({
+      getString: () => String(props[name]),
+      getBoolean: () => props[name] === true,
+    }),
+  } as never;
+}
+
+describe("latestReleaseDate (module-level 'Released' date)", () => {
+  it("ignores drafts, so an owner and a visitor see the same date", () => {
+    const versions = [
+      mockRelease({ published: false, uploadDate: "2026-09-01T10:00:00.000+02:00" }),
+      mockRelease({ published: true, uploadDate: "2026-03-04T10:00:00.000+02:00" }),
+    ];
+    expect(latestReleaseDate(versions)).toBe("2026-03-04");
+  });
+
+  it("takes the most recent release in TIME, not the highest version number", () => {
+    const versions = [
+      mockRelease({ published: true, uploadDate: "2026-01-10T10:00:00.000+02:00" }), // 5.0.0
+      mockRelease({ published: true, uploadDate: "2026-06-22T10:00:00.000+02:00" }), // 4.9.1
+    ];
+    expect(latestReleaseDate(versions)).toBe("2026-06-22");
+  });
+
+  it("falls back to jcr:lastModified for versions with no uploadDate", () => {
+    const versions = [mockRelease({ published: true, "jcr:lastModified": "2026-02-02T10:00:00Z" })];
+    expect(latestReleaseDate(versions)).toBe("2026-02-02");
+  });
+
+  it("returns '' when every version is still a draft", () => {
+    const drafts = [mockRelease({ published: false, uploadDate: "2026-09-01T10:00:00.000+02:00" })];
+    expect(latestReleaseDate(drafts)).toBe("");
+  });
+
+  it("returns '' for a module with no versions at all", () => {
+    expect(latestReleaseDate([])).toBe("");
   });
 });

@@ -18,9 +18,17 @@ export function sql(v: string): string {
   return v.replaceAll("'", "''");
 }
 
-/** A date property (e.g. jcr:lastModified) as an ISO day "YYYY-MM-DD", or "". */
-export function isoDay(node: JCRNodeWrapper, name: string): string {
-  return node.hasProperty(name) ? node.getProperty(name).getString().slice(0, 10) : "";
+/**
+ * Release timestamp of a version node, full precision - same-day releases must still order by
+ * time of day. `uploadDate` is stamped once at upload; the fallback covers versions predating it.
+ */
+export function releaseStamp(version: JCRNodeWrapper): string {
+  return str(version, "uploadDate") || str(version, "jcr:lastModified");
+}
+
+/** Release timestamp of a version node as an ISO day "YYYY-MM-DD" for display, or "". */
+export function releaseDay(version: JCRNodeWrapper): string {
+  return releaseStamp(version).slice(0, 10);
 }
 
 /** Read a multi-valued property as a string[] (each value's string form), or []. */

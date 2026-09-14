@@ -48,10 +48,10 @@ export interface VersionCardProps {
   requiresJahia: string;
   /** Translated "Requires Jahia" label. */
   requiresJahiaLabel: string;
-  /** Release date as "YYYY-MM-DD", or "" to omit. */
-  updated: string;
-  /** Translated "Updated" label. */
-  updatedLabel: string;
+  /** Release date as "YYYY-MM-DD" (the upload date, not the last edit), or "" to omit. */
+  released: string;
+  /** Translated "Released" label. */
+  releasedLabel: string;
   publishControl?: VersionPublishControl | null;
   changelogControl?: VersionChangelogControl | null;
   deleteControl?: VersionDeleteControl | null;
@@ -67,8 +67,8 @@ export function VersionCard({
   draftLabel,
   requiresJahia,
   requiresJahiaLabel,
-  updated,
-  updatedLabel,
+  released,
+  releasedLabel,
   publishControl,
   changelogControl,
   deleteControl,
@@ -123,16 +123,16 @@ export function VersionCard({
           }}
         />
       )}
-      {(requiresJahia || updated) && (
+      {(requiresJahia || released) && (
         <footer className={styles.versionFooter}>
           {requiresJahia && (
             <span>
               <strong>{requiresJahiaLabel}</strong> {requiresJahia}
             </span>
           )}
-          {updated && (
+          {released && (
             <span>
-              <strong>{updatedLabel}</strong> {updated}
+              <strong>{releasedLabel}</strong> {released}
             </span>
           )}
         </footer>

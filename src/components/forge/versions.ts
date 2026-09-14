@@ -1,6 +1,6 @@
 import { buildNodeUrl, getChildNodes, getNodesByJCRQuery } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper, JCRSessionWrapper } from "org.jahia.services.content";
-import { sql } from "./nodeProps";
+import { bool, releaseStamp, sql } from "./nodeProps";
 
 function parseVersion(v: string): number[] {
   return (v || "").split(/\D+/).filter(Boolean).map(Number);
@@ -81,9 +81,9 @@ const RELEASE_SCAN_CAP = 20000;
  * child version nodes, which JCR-SQL2 can't ORDER BY from the module), so we make ONE pass over the
  * published version nodes of both types — two queries — and reduce to the max date per owning
  * module, rather than an N+1 child lookup per module. ISO date strings sort chronologically as
- * plain strings. We read jcr:lastModified (not jcr:created) so dates preserved from the
- * legacy-store migration are honoured (jcr:created would be the migration run date). Modules with
- * no published version are simply absent from the map (callers treat that as "" = oldest).
+ * plain strings. Never jcr:created: that is the migration run date for content copied from the
+ * legacy store. Modules with no published version are simply absent from the map
+ * (callers treat that as "" = oldest).
  */
 export function latestReleaseDates(
   session: JCRSessionWrapper,
@@ -99,9 +99,7 @@ export function latestReleaseDates(
     );
     for (const version of versions) {
       try {
-        const date = version.hasProperty("jcr:lastModified")
-          ? version.getProperty("jcr:lastModified").getString()
-          : "";
+        const date = releaseStamp(version);
         if (!date) continue;
         const moduleId = (version.getParent() as unknown as JCRNodeWrapper).getIdentifier();
         const current = dates.get(moduleId);
@@ -127,4 +125,19 @@ export function sortedVersionNodes(node: JCRNodeWrapper): JCRNodeWrapper[] {
   const versionNumber = (v: JCRNodeWrapper) =>
     v.hasProperty("versionNumber") ? v.getProperty("versionNumber").getString() : v.getName();
   return versions.sort((a, b) => compareVersionsDesc(versionNumber(a), versionNumber(b)));
+}
+
+/**
+ * Release day of the newest PUBLISHED version, or "". Drafts are excluded so an owner and a
+ * visitor see the same date, and the MAX is by time, not version number: a 4.x patch released
+ * after 5.0 is the newer release.
+ */
+export function latestReleaseDate(versions: JCRNodeWrapper[]): string {
+  let latest = "";
+  for (const version of versions) {
+    if (!bool(version, "published")) continue;
+    const stamp = releaseStamp(version);
+    if (stamp > latest) latest = stamp;
+  }
+  return latest.slice(0, 10);
 }

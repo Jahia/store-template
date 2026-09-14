@@ -23,6 +23,15 @@ See `docs/JS-MODULE-MIGRATION.md` for the full migration history and rationale.
 - Runtime data (modules, categories, versions) lives in the JCR and is mostly
   produced by the sibling **`jahia-store`** Java module. This repo is the
   *presentation + authoring UI*; `jahia-store` is the *backend/contract*.
+- **Release dates come from `uploadDate`, not `jcr:lastModified`.** `jahia-store`'s
+  `createEntryFromJar` stamps `uploadDate` once, when a version node is created, and
+  never rewrites it - so a changelog edit or a publish toggle no longer moves a
+  release date. Read it through `releaseStamp`/`releaseDay` (`nodeProps.ts`), which
+  fall back to `jcr:lastModified` for versions created before the property existed or
+  outside the upload action. Never use `jcr:created`: it is the migration run date for
+  content copied from the legacy store. The module-level date (detail Information rail)
+  is the MAX over *published* versions - `latestReleaseDate` - so it matches the
+  storefront grid order and is the same for an owner and a visitor.
 
 ## Architecture
 
@@ -154,7 +163,8 @@ in `../privateappstore/tests`:
 `[data-icon-input]`/`[data-icon-status]`, `[data-changelog-ready]`,
 `[data-tag-list]`, `#edit-status`/`#edit-tags`,
 `[data-dependency-lists]`/`[data-dependency-column]`/`[data-dependency]`,
-`[data-version-delete-scope]`/`[data-version-delete-ready]`, `[data-add-version]`
+`[data-forge-version]` (one version card, incl. its "Released"/"Requires Jahia"
+footer), `[data-version-delete-scope]`/`[data-version-delete-ready]`, `[data-add-version]`
 (owner upload-new-version form in the detail Versions tab), the shared global
 `.store-btn` button classes (incl. `.store-btn--danger`),
 `[data-detail-tabs-ready]`, `[role="tab"]`/`[data-detail-panel]`,
