@@ -47,7 +47,8 @@ export default function TagInput({ id, tags, ariaLabel, labels, onChange }: Read
   };
 
   return (
-    <div className={styles.tagInput} role="group" aria-label={ariaLabel}>
+    <fieldset className={styles.tagInput}>
+      <legend className="sr-only">{ariaLabel}</legend>
       <ul className={styles.tagChips}>
         {tags.map((tag) => (
           <li key={tag} className={styles.tagChip}>
@@ -73,6 +74,6 @@ export default function TagInput({ id, tags, ariaLabel, labels, onChange }: Read
         onKeyDown={onKeyDown}
         onBlur={() => addTag(text)}
       />
-    </div>
+    </fieldset>
   );
 }

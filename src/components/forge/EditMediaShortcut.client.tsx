@@ -24,7 +24,7 @@ export default function EditMediaShortcut({ label }: Readonly<EditMediaShortcutP
       className="store-btn store-btn--ghost store-btn--sm"
       data-edit-media=""
       data-edit-media-ready={ready ? "true" : undefined}
-      onClick={() => window.dispatchEvent(new CustomEvent(EDIT_MEDIA_EVENT))}
+      onClick={() => globalThis.dispatchEvent(new CustomEvent(EDIT_MEDIA_EVENT))}
     >
       {label}
     </button>

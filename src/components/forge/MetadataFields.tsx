@@ -2,7 +2,7 @@ import styles from "./editor.module.css";
 import TagInput, { type TagInputLabels } from "./TagInput";
 import CategorySelect, { type CategoryOption } from "./CategorySelect";
 
-export type { CategoryOption };
+export type { CategoryOption } from "./CategorySelect";
 
 export interface MetadataLabels {
   status: string;

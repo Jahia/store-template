@@ -137,14 +137,16 @@ jahiaComponent(
     const releaseDates = latestReleaseDates(session, basePath);
     const byTitle = (a: { node: JCRNodeWrapper }, b: { node: JCRNodeWrapper }): number =>
       moduleTitle(a.node).localeCompare(moduleTitle(b.node));
-    const decorated = matched.map((node) => ({
+    const byDateDesc = (
+      a: { node: JCRNodeWrapper; date: string },
+      b: { node: JCRNodeWrapper; date: string },
+    ): number => b.date.localeCompare(a.date) || byTitle(a, b);
+    const ordered = matched.map((node) => ({
       node,
       date: releaseDates.get(node.getIdentifier()) ?? "",
     }));
-    const ordered =
-      sort === "name"
-        ? decorated.sort(byTitle)
-        : decorated.sort((a, b) => b.date.localeCompare(a.date) || byTitle(a, b));
+    // Not toSorted(): ES2023, and SSR runs on GraalJS.
+    ordered.sort(sort === "name" ? byTitle : byDateDesc);
 
     const total = ordered.length;
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
