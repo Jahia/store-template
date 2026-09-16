@@ -32,34 +32,6 @@ interface LoginProps {
  * The trigger is a proper disclosure (aria-expanded + aria-controls): opening moves focus
  * to the username field, and Escape closes the panel and returns focus to the trigger.
  */
-/**
- * SUPPORT-687 — the storefront is reachable from the public internet through
- * CloudFront, where `/cms/login` is blocked at HAProxy. Every authenticated user of
- * this site holds a `j:privilegedAccess="true"` role (store-developer /
- * store-administrator), there is no self-registration and no site-member role, so
- * signing in only ever makes sense from Jahia's VPN. HAProxy marks CDN-fronted
- * traffic with the `store_public` cookie, and we hide the trigger for those
- * visitors rather than offer a form that 404s on submit.
- *
- * Two choices here are deliberate, and both are load-bearing:
- *
- *  - The decision is made CLIENT-side. `templates/Page/default.server.tsx` is
- *    `cache.perUser`, and that key is `guest` for an anonymous VPN visitor and an
- *    anonymous public visitor alike — so a server-side conditional would be cached
- *    and served to the wrong audience in BOTH directions (a public visitor gets the
- *    button, or worse, a VPN operator loses it). This is the SEC-375 /
- *    GHSA-g6wp-ghxm-mx76 shape. Emitting identical markup for everyone is what
- *    keeps it safe.
- *
- *  - The cookie HIDES rather than shows. With no HAProxy in front — CI, local dev,
- *    the Cypress harness — there is no cookie and the trigger behaves exactly as
- *    before, which is what keeps `16-storefront.cy.ts` green without touching it.
- *
- * This is presentation only. What actually stops a public login is the 404 on
- * `/cms/login` at the edge, never this check.
- */
-const PUBLIC_EDGE_COOKIE = "store_public";
-
 export default function Login({ loginUrl, loginRedirect, labels }: Readonly<LoginProps>) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,13 +41,8 @@ export default function Login({ loginUrl, loginRedirect, labels }: Readonly<Logi
 
   // Signal hydration: the sign-in trigger is server-rendered, so a click before the
   // onClick is wired wouldn't open the panel. Tests wait for data-login-ready.
-  // Visitors arriving through the CDN never become ready, so the trigger stays
-  // hidden for them (see PUBLIC_EDGE_COOKIE above).
   useEffect(() => {
-    const isPublicEdge = document.cookie
-      .split("; ")
-      .some((entry) => entry.startsWith(`${PUBLIC_EDGE_COOKIE}=`));
-    if (!isPublicEdge) setReady(true);
+    setReady(true);
   }, []);
 
   // After a failed login, Jahia's /cms/login servlet redirects back here with
@@ -115,9 +82,7 @@ export default function Login({ loginUrl, loginRedirect, labels }: Readonly<Logi
   }, [open]);
 
   return (
-    // `hidden` (not a CSS class) so the area is collapsed before hydration too;
-    // .login sets only position, so the UA display:none applies cleanly.
-    <div className={styles.login} hidden={!ready}>
+    <div className={styles.login}>
       <button
         ref={triggerRef}
         type="button"

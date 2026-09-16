@@ -146,6 +146,24 @@ export function Header(): JSX.Element {
   const request = renderContext.getRequest();
   const searchTerm = (request.getParameter("src_terms") || "").trim();
 
+  // SUPPORT-687 — store.jahia.com is locked down at HAProxy so the public internet gets
+  // anonymous, read-only use only; /cms/login is restricted to Jahia's VPN. Every
+  // authenticated user of this site holds a j:privilegedAccess="true" role
+  // (store-developer / store-administrator), there is no self-registration and no
+  // site-member role, so signing in only ever makes sense from the VPN. Hide the trigger
+  // for CDN visitors rather than offer a form that 404s on submit.
+  //
+  // Safe to decide server-side ONLY because EdgeOriginCacheKeyPartGenerator (jahia-store)
+  // puts this same distinction into the fragment cache key. This template is
+  // cache.perUser, and that key is "guest" for anonymous VPN and anonymous public
+  // visitors alike — without the extra key component the first render would be cached and
+  // served to the wrong audience in both directions.
+  //
+  // HAProxy strips and re-sets this header on every request, so a client cannot forge it.
+  // Absent header (local dev, CI, the Cypress harness) means "not public", so those
+  // environments behave exactly as before and 16-storefront.cy.ts stays green untouched.
+  const isPublicEdge = (request.getHeader("X-Jahia-Edge") || "").toLowerCase() === "public";
+
   let username = "";
   if (isLoggedIn) {
     username = renderContext.getUser().getUsername();
@@ -288,7 +306,7 @@ export function Header(): JSX.Element {
               </form>
             </div>
           </details>
-        ) : (
+        ) : isPublicEdge ? null : (
           <Island
             component={Login}
             props={{
