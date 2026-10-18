@@ -72,7 +72,15 @@
     "submit": "Téléverser le module",
     "submitting": "Téléversement…",
     "pickFile": "Veuillez d'abord choisir un paquet de module.",
-    "error": "Échec du téléversement - veuillez réessayer."
+    "error": "Échec du téléversement - veuillez réessayer.",
+    "git": {
+      "intro": "Ou enregistrez un dépôt git : le store lit son STORE.md et liste une version par tag.",
+      "urlLabel": "Dépôt git (lien https)",
+      "submit": "Enregistrer le dépôt",
+      "submitting": "Lecture du dépôt…",
+      "missingUrl": "Veuillez saisir le lien https du dépôt.",
+      "error": "Échec de l'enregistrement - veuillez réessayer."
+    }
   },
   "detail": {
     "tabs": {

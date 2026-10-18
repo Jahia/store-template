@@ -72,7 +72,15 @@
     "submit": "Upload module",
     "submitting": "Uploading…",
     "pickFile": "Please choose a module package first.",
-    "error": "Upload failed - please try again."
+    "error": "Upload failed - please try again.",
+    "git": {
+      "intro": "Or register a git repository: the store reads its STORE.md and lists one version per tag.",
+      "urlLabel": "Git repository (https link)",
+      "submit": "Register repository",
+      "submitting": "Reading the repository…",
+      "missingUrl": "Please enter the https link of the repository.",
+      "error": "Registration failed - please try again."
+    }
   },
   "detail": {
     "tabs": {
