@@ -76,6 +76,40 @@ describe("versionDownloadUrl (MavenProxy URL grammar guard)", () => {
   });
 });
 
+/** Version-node stub of a git-backed module: no file, a declared `url`, plus the coordinates. */
+function mockDeclared(url: string) {
+  const props: Record<string, string> = { versionNumber: "1.1.0", url };
+  const module = {
+    hasProperty: (p: string) => p === "groupId",
+    getProperty: () => ({ getString: () => "org.jahia.community.samples" }),
+    getResolveSite: () => ({ getSiteKey: () => "store" }),
+    getName: () => "sample-module",
+  };
+  return {
+    getParent: () => module,
+    hasProperty: (p: string) => Object.hasOwn(props, p),
+    getProperty: (p: string) => ({ getString: () => props[p] }),
+    getName: () => "1.1.0",
+  } as never;
+}
+
+describe("versionDownloadUrl (declared artefact URL of a git-backed module)", () => {
+  it("links to the URL the version declares instead of the proxy", () => {
+    expect(versionDownloadUrl(mockDeclared("https://github.com/org/m/releases/download/v1.1.0/m-1.1.0.jar"))).toBe(
+      "https://github.com/org/m/releases/download/v1.1.0/m-1.1.0.jar",
+    );
+  });
+
+  it("ignores a declared URL that is not absolute http(s) and falls back to the proxy", () => {
+    expect(versionDownloadUrl(mockDeclared("ftp://example.com/m.jar"))).toBe(
+      "/modules/mavenproxy/store/org/jahia/community/samples/sample-module/1.1.0/sample-module-1.1.0.jar",
+    );
+    expect(versionDownloadUrl(mockDeclared("javascript:alert(1)"))).toBe(
+      "/modules/mavenproxy/store/org/jahia/community/samples/sample-module/1.1.0/sample-module-1.1.0.jar",
+    );
+  });
+});
+
 /** Version-node stub carrying just the properties latestReleaseDate reads. */
 function mockRelease(props: Record<string, string | boolean>) {
   return {

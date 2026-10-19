@@ -25,18 +25,36 @@ export function compareVersionsDesc(a: string, b: string): number {
  */
 const SAFE_MAVEN_SEGMENT = /^(?!\.{1,2}$)[A-Za-z0-9._-]+$/;
 
+/** An artefact URL a version declares: absolute, http or https, and nothing else. */
+const DECLARED_ARTIFACT_URL = /^https?:\/\/[^\s"'<>]+$/;
+
+/**
+ * The artefact URL the version node declares in its `url` property, when it is an absolute
+ * http(s) URL: a git-backed module (jahia-store docs/git-backed-modules.md) carries the link
+ * of its STORE.md there, and the storefront links to it as it is. Null otherwise.
+ */
+export function declaredArtifactUrl(version: JCRNodeWrapper): string | null {
+  if (!version.hasProperty("url")) return null;
+  const url = version.getProperty("url").getString().trim();
+  return DECLARED_ARTIFACT_URL.test(url) ? url : null;
+}
+
 /**
  * Download URL for a version. If a jnt:file is attached (JS modules / packages),
- * link to that genuine artifact. Otherwise (JAR modules deployed to the site's
- * Maven repo) build the MavenProxy URL from the module coordinates instead of a
- * stored absolute URL - a root-relative `/modules/mavenproxy/…` so the browser
- * resolves it against whatever scheme/host/port the storefront is served on.
- * Mirrors the catalog moduleList.jsp generation. Returns null when any
- * coordinate fails validation rather than emitting a traversable href.
+ * link to that genuine artifact. If the version declares its artefact URL (a
+ * git-backed module), link to that URL as the store description gives it.
+ * Otherwise (JAR modules deployed to the site's Maven repo) build the MavenProxy
+ * URL from the module coordinates instead of a stored absolute URL - a
+ * root-relative `/modules/mavenproxy/…` so the browser resolves it against
+ * whatever scheme/host/port the storefront is served on. Mirrors the catalog
+ * moduleList.jsp generation. Returns null when any coordinate fails validation
+ * rather than emitting a traversable href.
  */
 export function versionDownloadUrl(version: JCRNodeWrapper): string | null {
   const files = getChildNodes(version, 1, 0, (n) => n.isNodeType("jnt:file"));
   if (files.length > 0) return buildNodeUrl(files[0]);
+  const declared = declaredArtifactUrl(version);
+  if (declared) return declared;
   const module = version.getParent() as unknown as JCRNodeWrapper;
   if (!module) return null;
   const groupId = module.hasProperty("groupId") ? module.getProperty("groupId").getString() : "";
