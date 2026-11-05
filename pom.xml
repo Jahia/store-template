@@ -48,7 +48,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.6.4</version>
                 <executions>
                     <execution>
                         <id>npm-ci</id>
@@ -83,7 +83,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <id>attach-tgz-artifact</id>
@@ -106,7 +106,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>copy-dist-package</id>
@@ -125,7 +125,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.3.1</version>
                 <configuration>
                     <preparationGoals>-P release-prepare clean verify scm:checkin</preparationGoals>
                     <completionGoals>-P release-prepare clean install scm:checkin</completionGoals>
@@ -144,7 +144,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.6.4</version>
                         <executions>
                             <execution>
                                 <id>sync-package-json-version</id>
@@ -165,7 +165,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-scm-plugin</artifactId>
-                        <version>2.1.0</version>
+                        <version>2.2.1</version>
                         <configuration>
                             <includes>package.json,package-lock.json</includes>
                             <message>chore: sync package.json version to ${project.version} [skip ci]</message>
