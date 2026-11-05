@@ -25,7 +25,7 @@
     "i18next": "^25.8.18",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-i18next": "^16.5.8",
+    "react-i18next": "^17.1.11",
     "xss": "^1.0.15"
   },
   "devDependencies": {
