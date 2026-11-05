@@ -22,7 +22,7 @@
     "@fontsource-variable/nunito-sans": "^5.2.7",
     "clsx": "^2.1.1",
     "dompurify": "^3.4.17",
-    "i18next": "^25.8.18",
+    "i18next": "^26.7.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-i18next": "^16.5.8",
