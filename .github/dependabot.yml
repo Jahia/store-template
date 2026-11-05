@@ -23,6 +23,25 @@ updates:
       # engine deployed in Jahia, so upgrade those by hand. Patches are fine.
       - dependency-name: "@jahia/*"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      # Supplied at runtime by the javascript-modules engine (@jahia/vite-plugin
+      # marks them external): the bundle never ships them, and the
+      # @jahia/javascript-modules-library peer ranges pin their majors. Upgrade
+      # by hand, together with the @jahia/* packages, when the engine moves.
+      - dependency-name: "i18next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-i18next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react-dom"
+        update-types: ["version-update:semver-major"]
+      # TypeScript majors are capped by the i18next/react-i18next peer ranges above.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       npm-security:
         applies-to: security-updates
