@@ -22,7 +22,7 @@
     },
     "language": {
       "label": "Language",
-      "choose": "Choose language"
+      "choose": "{{lang}} – choose language"
     },
     "breadcrumb": "Breadcrumb",
     "home": "Home",

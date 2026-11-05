@@ -233,7 +233,14 @@ export function Header(): JSX.Element {
 
         {languages.length > 1 && (
           <details className={styles.langSwitcher}>
-            <summary className={styles.langToggle} aria-label={t("chrome.language.choose")} data-lang-toggle="">
+            {/* WCAG 2.5.3 Label in Name: the accessible name must contain the visible text
+                (the current language code), so a voice-control user can say "click EN".
+                The code comes first, as the visible label should. */}
+            <summary
+              className={styles.langToggle}
+              aria-label={t("chrome.language.choose", { lang: currentLang.toUpperCase() })}
+              data-lang-toggle=""
+            >
               <svg
                 className={styles.langGlobe}
                 viewBox="0 0 16 16"
