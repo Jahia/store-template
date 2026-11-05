@@ -22,7 +22,7 @@
     },
     "language": {
       "label": "Langue",
-      "choose": "Choisir la langue"
+      "choose": "{{lang}} – choisir la langue"
     },
     "breadcrumb": "Fil d'Ariane",
     "home": "Accueil",
