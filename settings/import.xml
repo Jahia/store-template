@@ -5,6 +5,7 @@
     - a home page rendering the published-modules grid (Area "main")
     - a "My modules" page (JAR upload + the user's own modules)
     - a modules-repository folder where uploaded modules are created
+    - a security-advisories folder for the security advisories (jahia-store 5.2.0+)
   Store administration (Settings / Categories / Roles) lives in the Jahia site
   administration (jContent), provided by the jahia-store module - not in-site.
 -->
@@ -44,6 +45,10 @@
                      per-Jahia-version child node on upload. Without this folder the
                      action fails with PathNotFoundException. -->
                 <modules-required-versions jcr:primaryType="jnt:contentFolder"/>
+                <!-- Security advisories (jahia-store jnt:forgeSecurityAdvisory), written by the store's
+                     administrators in jContent and listed in securityUpdates.json once their `published`
+                     box is checked. -->
+                <security-advisories jcr:primaryType="jnt:contentFolder"/>
             </contents>
         </jahia-store-template>
     </modules>
