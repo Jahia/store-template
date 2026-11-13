@@ -9,8 +9,11 @@
 export const SECURITY_SEVERITIES = ["low", "medium", "high", "critical"] as const;
 export type SecuritySeverity = (typeof SECURITY_SEVERITIES)[number];
 
-/** Same pattern as the CND constraint on securityReferences: a JSA, CVE or GHSA identifier. */
-const SECURITY_REFERENCE = /^(JSA-\d{4}-\d{4}|CVE-\d{4}-\d{4,}|GHSA(-[23456789cfghjmpqrvwx]{4}){3})$/;
+/**
+ * Same pattern as the CND constraint on securityReferences: a JSA identifier (JSA-YYYY-NNNN, with an
+ * optional numeric suffix such as JSA-2026-0036.1066), a CVE or a GHSA identifier.
+ */
+const SECURITY_REFERENCE = /^(JSA-\d{4}-\d{4}(\.\d+)?|CVE-\d{4}-\d{4,}|GHSA(-[23456789cfghjmpqrvwx]{4}){3})$/;
 
 export interface VersionSecurity {
   flagged: boolean;

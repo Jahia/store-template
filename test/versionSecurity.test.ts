@@ -14,6 +14,13 @@ describe("parseReferences", () => {
     });
   });
 
+  it("accepts a JSA identifier with a numeric suffix, and refuses a malformed suffix", () => {
+    expect(parseReferences("JSA-2026-0036.1066 JSA-2026-0036. JSA-2026-0036.10a")).toEqual({
+      valid: ["JSA-2026-0036.1066"],
+      invalid: ["JSA-2026-0036.", "JSA-2026-0036.10a"],
+    });
+  });
+
   it("drops duplicates and returns nothing for blank input", () => {
     expect(parseReferences(" JSA-2026-0011 JSA-2026-0011 ").valid).toEqual(["JSA-2026-0011"]);
     expect(parseReferences("   ")).toEqual({ valid: [], invalid: [] });

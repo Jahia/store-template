@@ -249,7 +249,7 @@
       "flag": "This version contains security fixes",
       "severityNone": "Not specified",
       "references": "References",
-      "referencesHelp": "JSA, CVE or GHSA identifiers, separated by commas or spaces. Example: CVE-2026-1234.",
+      "referencesHelp": "JSA, CVE or GHSA identifiers, separated by commas or spaces. Example: JSA-2026-0036.1066.",
       "referencesInvalid": "Not a JSA, CVE or GHSA identifier:",
       "note": "Note for administrators",
       "error": "Save failed - check your permissions and try again."
