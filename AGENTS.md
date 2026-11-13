@@ -164,7 +164,9 @@ in `../privateappstore/tests`:
 `[data-tag-list]`, `#edit-status`/`#edit-tags`,
 `[data-dependency-lists]`/`[data-dependency-column]`/`[data-dependency]`,
 `[data-forge-version]` (one version card, incl. its "Released"/"Requires Jahia"
-footer), `[data-version-delete-scope]`/`[data-version-delete-ready]`, `[data-add-version]`
+footer), `[data-version-delete-scope]`/`[data-version-delete-ready]`,
+`[data-version-security]` (the owner-reported "Security fix" notice of a version) and
+`[data-security-editor]`/`[data-security-ready]` (its owner editor), `[data-add-version]`
 (owner upload-new-version form in the detail Versions tab), the shared global
 `.store-btn` button classes (incl. `.store-btn--danger`),
 `[data-detail-tabs-ready]`, `[role="tab"]`/`[data-detail-panel]`,
