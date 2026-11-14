@@ -3,6 +3,8 @@ import styles from "./detail.module.css";
 import PublishToggle from "./PublishToggle.client";
 import VersionChangelogEditor, { type ChangelogLabels } from "./VersionChangelogEditor.client";
 import VersionDeleteButton, { type VersionDeleteLabels } from "./VersionDeleteButton.client";
+import VersionSecurityEditor, { type SecurityEditorLabels } from "./VersionSecurityEditor.client";
+import type { VersionSecurity } from "./versionSecurity";
 
 interface PublishLabels {
   publish: string;
@@ -35,6 +37,23 @@ interface VersionDeleteControl {
   labels: VersionDeleteLabels;
 }
 
+/** Owner-only security editor for this version (omitted for non-owners). */
+interface VersionSecurityControl {
+  path: string;
+  workspace: "EDIT" | "LIVE";
+  labels: SecurityEditorLabels;
+}
+
+/** Translated texts of the security badge. */
+export interface SecurityBadgeLabels {
+  /** "Security fix", the badge text. */
+  badge: string;
+  /** Says who reported it, e.g. "reported by the module owner". */
+  source: string;
+  severity: string;
+  severities: Record<string, string>;
+}
+
 export interface VersionCardProps {
   versionNumber: string;
   published: boolean;
@@ -55,6 +74,10 @@ export interface VersionCardProps {
   publishControl?: VersionPublishControl | null;
   changelogControl?: VersionChangelogControl | null;
   deleteControl?: VersionDeleteControl | null;
+  /** Owner-declared security information of this version. */
+  security: VersionSecurity;
+  securityLabels: SecurityBadgeLabels;
+  securityControl?: VersionSecurityControl | null;
 }
 
 /** Presentational card for one module/package version (changelog is sanitized richtext). */
@@ -72,6 +95,9 @@ export function VersionCard({
   publishControl,
   changelogControl,
   deleteControl,
+  security,
+  securityLabels,
+  securityControl,
 }: Readonly<VersionCardProps>): JSX.Element {
   return (
     <div className={styles.version} data-forge-version="">
@@ -108,6 +134,33 @@ export function VersionCard({
           />
         )}
       </div>
+      {security.flagged && (
+        <div className={styles.securityFix} data-version-security="">
+          <p className={styles.securityFixHead}>
+            <strong>{securityLabels.badge}</strong> <span>({securityLabels.source})</span>
+            {security.severity && (
+              <span>
+                {" "}
+                - {securityLabels.severity}{" "}
+                {securityLabels.severities[security.severity] ?? security.severity}
+              </span>
+            )}
+          </p>
+          {security.references.length > 0 && <p>{security.references.join(", ")}</p>}
+          {security.note && <p>{security.note}</p>}
+        </div>
+      )}
+      {securityControl && (
+        <Island
+          component={VersionSecurityEditor}
+          props={{
+            path: securityControl.path,
+            workspace: securityControl.workspace,
+            value: security,
+            labels: securityControl.labels,
+          }}
+        />
+      )}
       {changeLogHtml && (
         <div className={styles.changelog} dangerouslySetInnerHTML={{ __html: changeLogHtml }} />
       )}

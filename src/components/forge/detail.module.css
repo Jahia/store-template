@@ -421,3 +421,20 @@
   color: #0c3f87; /* AAA on the soft-blue chip */
 }
 
+/* Owner-declared "contains security fixes" notice on a version. Text, not colour alone, carries the
+   meaning; #a00f33 on #fdecef is the editor's error pair, which passes the AAA contrast gate. */
+.securityFix {
+  margin-top: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 4px solid #a00f33;
+  border-radius: 6px;
+  background: #fdecef;
+  color: #a00f33;
+  font-size: 0.88rem;
+}
+.securityFix p {
+  margin: 0.15rem 0;
+}
+.securityFixHead strong {
+  font-weight: 700;
+}

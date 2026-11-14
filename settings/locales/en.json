@@ -233,6 +233,26 @@
       "cancel": "Cancel",
       "deleting": "Deleting…",
       "error": "Could not remove the version - check your permissions and try again."
+    },
+    "security": {
+      "badge": "Security fix",
+      "source": "reported by the module owner",
+      "severity": "Severity:",
+      "severities": {
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "critical": "critical"
+      },
+      "edit": "Edit security information",
+      "legend": "Security information",
+      "flag": "This version contains security fixes",
+      "severityNone": "Not specified",
+      "references": "References",
+      "referencesHelp": "JSA, CVE or GHSA identifiers, separated by commas or spaces. Example: JSA-2026-0036.1066.",
+      "referencesInvalid": "Not a JSA, CVE or GHSA identifier:",
+      "note": "Note for administrators",
+      "error": "Save failed - check your permissions and try again."
     }
   },
   "screenshots": {

@@ -233,6 +233,26 @@
       "cancel": "Annuler",
       "deleting": "Suppression…",
       "error": "Impossible de supprimer la version - vérifiez vos autorisations et réessayez."
+    },
+    "security": {
+      "badge": "Correctif de sécurité",
+      "source": "signalé par le propriétaire du module",
+      "severity": "Sévérité :",
+      "severities": {
+        "low": "faible",
+        "medium": "moyenne",
+        "high": "élevée",
+        "critical": "critique"
+      },
+      "edit": "Modifier les informations de sécurité",
+      "legend": "Informations de sécurité",
+      "flag": "Cette version contient des correctifs de sécurité",
+      "severityNone": "Non précisée",
+      "references": "Références",
+      "referencesHelp": "Identifiants JSA, CVE ou GHSA, séparés par des virgules ou des espaces. Exemple : JSA-2026-0036.1066.",
+      "referencesInvalid": "Identifiant JSA, CVE ou GHSA invalide :",
+      "note": "Note pour les administrateurs",
+      "error": "L'enregistrement a échoué - vérifiez vos droits et réessayez."
     }
   },
   "screenshots": {
