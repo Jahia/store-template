@@ -1,6 +1,23 @@
 # Changelog
 
-## 5.1.0 (unreleased)
+## 5.1.0 (2026-11-18)
+
+**Requires `jahia-store` 5.2.0**, which defines the version security properties, the security advisories
+and the published-only rules this version relies on.
+
+### Added
+
+- **Security fixes on module versions.** Module owners can flag a version as containing security fixes,
+  with a severity, references (JSA, CVE or GHSA ids) and a note, from the version editor. The store
+  publishes these flags in its security updates feed, which Jahia instances read to warn their
+  administrators.
+- **Security advisories folder.** New store sites get the `contents/security-advisories` folder, where
+  store administrators write the security advisories of the store.
+
+### Fixed
+
+- The version security editor accepts JSA references with a numeric suffix.
+- Accessibility: the accessible name of the language toggle contains its visible text (WCAG 2.5.3).
 
 ### Security
 
@@ -22,3 +39,4 @@
 
   **What to do:** deploy this version with the `jahia-store` version that has the JSTORE-SEC-012 fix.
   Module owners who use an SVG icon or screenshot must upload a PNG, JPEG, GIF or WebP image instead.
+- The open Dependabot security alerts of the build and test dependencies are resolved.
