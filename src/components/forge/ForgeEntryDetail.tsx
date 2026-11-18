@@ -9,7 +9,7 @@ import type { JCRNodeWrapper, JCRSessionWrapper } from "org.jahia.services.conte
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import styles from "./detail.module.css";
-import { forgeAuthor, forgeCategoryNames, forgeIconUrl } from "./forgeCard";
+import { forgeAuthor, forgeCategoryNames, forgeIconUrl, isMediaFile } from "./forgeCard";
 import { str, bool, strValues, jcrWorkspace } from "./nodeProps";
 import { sanitizeHtml } from "./sanitizeHtml";
 import {
@@ -77,7 +77,8 @@ function createEntryActionUrl(session: JCRSessionWrapper, repoPath: string): str
 
 function screenshotItems(node: JCRNodeWrapper): { name: string; url: string }[] {
   if (!node.hasNode("screenshots")) return [];
-  return getChildNodes(node.getNode("screenshots"), 20, 0, (n) => n.isNodeType("jnt:file")).map(
+  // SVG/HTML files are never shown as screenshots (JSTORE-SEC-012).
+  return getChildNodes(node.getNode("screenshots"), 20, 0, isMediaFile).map(
     (f) => ({ name: f.getName(), url: buildNodeUrl(f) }),
   );
 }

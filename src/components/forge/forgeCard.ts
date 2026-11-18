@@ -1,5 +1,6 @@
 import { buildNodeUrl, getChildNodes, server } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
+import { isSvgOrHtmlMedia } from "./imageSniff";
 
 /**
  * Strip HTML tags + collapse whitespace from a Jahia richtext value.
@@ -26,11 +27,30 @@ export function excerpt(html: string, max = 150): string {
   return `${(lastSpace > 60 ? cut.slice(0, lastSpace) : cut).trimEnd()}…`;
 }
 
-/** URL of the first image inside a forge entry's `icon` folder, if any. */
+/**
+ * False for a media file that is SVG or HTML by its name or stored `jcr:mimeType`: SVG and HTML are never
+ * accepted as module media (JSTORE-SEC-012), so the storefront never links one as an icon or screenshot,
+ * even one stored before the rule existed. jahia-store's ForgeMediaMimeListener removes such files.
+ */
+export function isDisplayableMedia(file: JCRNodeWrapper): boolean {
+  let mime = "";
+  if (file.hasNode("jcr:content")) {
+    const content = file.getNode("jcr:content");
+    if (content.hasProperty("jcr:mimeType")) mime = content.getProperty("jcr:mimeType").getString();
+  }
+  return !isSvgOrHtmlMedia(file.getName(), mime);
+}
+
+/** True for a `jnt:file` the storefront may show as module media. */
+export function isMediaFile(node: JCRNodeWrapper): boolean {
+  return node.isNodeType("jnt:file") && isDisplayableMedia(node);
+}
+
+/** URL of the first displayable image inside a forge entry's `icon` folder, if any. */
 export function forgeIconUrl(node: JCRNodeWrapper): string | null {
   if (!node.hasNode("icon")) return null;
   const folder = node.getNode("icon");
-  const files = getChildNodes(folder, 1, 0, (n) => n.isNodeType("jnt:file"));
+  const files = getChildNodes(folder, 1, 0, isMediaFile);
   return files.length > 0 ? buildNodeUrl(files[0]) : null;
 }
 
