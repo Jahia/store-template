@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import styles from "./screenshots.module.css";
 import { gqlRequest, gqlUpload } from "~/lib/graphql";
-import { trustedRasterMime } from "./imageSniff";
+import { MEDIA_ACCEPT, checkMediaFile, mediaRejectionMessage } from "./imageSniff";
 
 interface Item {
   name: string;
@@ -14,6 +14,8 @@ export interface ScreenshotLabels {
   uploading: string;
   tooLarge: string;
   invalidType: string;
+  /** Shown when the picked file is SVG or HTML, which are never accepted (JSTORE-SEC-012). */
+  svgHtmlRefused: string;
   moveUp: string;
   moveDown: string;
   delete: string;
@@ -33,8 +35,6 @@ interface ScreenshotManagerProps {
   labels: ScreenshotLabels;
 }
 
-/** Raster image types only (SVG can carry scripts when served inline). */
-const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"] as const;
 /** Screenshots are page-width images; cap the multipart part at a sane size. */
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -106,6 +106,9 @@ export default function ScreenshotManager({
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
   const [confirming, setConfirming] = useState<string | null>(null);
+  // True while the picked file is refused: the input is marked invalid and points at the message.
+  const [invalid, setInvalid] = useState(false);
+  const errorId = useId();
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   // Move focus to the Confirm button when the inline delete prompt appears, so a keyboard user
@@ -119,14 +122,24 @@ export default function ScreenshotManager({
     setMessage(msg);
   };
 
+  /** Refuses the picked file before any upload, and clears the input so it is not kept selected. */
+  const refuse = (msg: string) => {
+    if (inputRef.current) inputRef.current.value = "";
+    setInvalid(true);
+    fail(msg);
+  };
+
   const upload = async (file: File) => {
     if (busy) return;
-    if (file.size > MAX_BYTES) return fail(labels.tooLarge);
-    // Verify the actual bytes are a raster image, not just the (spoofable) File.type — the server
-    // re-validates authoritatively (SECURITY-571 #28), this is the in-browser guard. Upload the
-    // detected type so jcr:mimeType is correct even when the extension/File.type is misleading.
-    const mime = await trustedRasterMime(file);
-    if (!mime) return fail(labels.invalidType);
+    if (file.size > MAX_BYTES) return refuse(labels.tooLarge);
+    // SVG and HTML are never accepted (JSTORE-SEC-012), and the actual bytes must be a raster image,
+    // not just the (spoofable) File.type. The server re-validates authoritatively (SECURITY-571 #28,
+    // jahia-store's ForgeMediaMimeListener); this is the in-browser guard. Upload the detected type
+    // so jcr:mimeType is correct even when the extension/File.type is misleading.
+    const check = await checkMediaFile(file);
+    if (!check.ok) return refuse(mediaRejectionMessage(check.reason, labels));
+    const mime = check.mime;
+    setInvalid(false);
     setBusy(true);
     setError(false);
     setMessage("");
@@ -182,7 +195,7 @@ export default function ScreenshotManager({
   return (
     <div className={styles.manager} data-screenshots-ready={ready ? "true" : undefined}>
       {error && (
-        <div className={styles.error} role="alert">
+        <div id={errorId} className={styles.error} role="alert">
           {message}
         </div>
       )}
@@ -190,8 +203,10 @@ export default function ScreenshotManager({
         <input
           ref={inputRef}
           type="file"
-          accept={ALLOWED_TYPES.join(",")}
+          accept={MEDIA_ACCEPT}
           aria-label={labels.add}
+          aria-invalid={invalid || undefined}
+          aria-describedby={error ? errorId : undefined}
           data-screenshot-input=""
           disabled={busy}
           onChange={(e) => {

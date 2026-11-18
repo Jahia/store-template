@@ -47,6 +47,7 @@ export function buildEditorLabels(t: (key: string) => string): Labels {
       uploading: t("screenshots.uploading"),
       tooLarge: t("screenshots.tooLarge"),
       invalidType: t("screenshots.invalidType"),
+      svgHtmlRefused: t("screenshots.svgHtmlRefused"),
       moveUp: t("screenshots.moveUp"),
       moveDown: t("screenshots.moveDown"),
       delete: t("screenshots.delete"),
@@ -80,6 +81,7 @@ export function buildEditorLabels(t: (key: string) => string): Labels {
       none: t("editor.icon.none"),
       tooLarge: t("editor.icon.tooLarge"),
       invalidType: t("editor.icon.invalidType"),
+      svgHtmlRefused: t("editor.icon.svgHtmlRefused"),
     },
     metadata: {
       status: t("editor.metadata.status"),

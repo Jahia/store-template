@@ -190,7 +190,8 @@
       "current": "Icône actuelle",
       "none": "-",
       "tooLarge": "L'image est trop volumineuse (max. 2 Mo).",
-      "invalidType": "Veuillez choisir un fichier image."
+      "invalidType": "Ce fichier n'est pas une image. Choisissez une image PNG, JPEG, GIF ou WebP.",
+      "svgHtmlRefused": "Les fichiers SVG et HTML ne sont pas acceptés comme icône. Choisissez une image PNG, JPEG, GIF ou WebP."
     },
     "metadata": {
       "status": "Statut",
@@ -261,6 +262,7 @@
     "uploading": "Téléversement…",
     "tooLarge": "L'image est trop volumineuse (5 Mo maximum).",
     "invalidType": "Veuillez choisir une image PNG, JPEG, GIF ou WebP.",
+    "svgHtmlRefused": "Les fichiers SVG et HTML ne sont pas acceptés comme capture d'écran. Choisissez une image PNG, JPEG, GIF ou WebP.",
     "moveUp": "Déplacer vers le haut",
     "moveDown": "Déplacer vers le bas",
     "delete": "Supprimer la capture d'écran",

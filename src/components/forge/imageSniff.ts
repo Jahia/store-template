@@ -4,13 +4,35 @@
  * The editor already rejects a picked file whose `File.type` is not an allow-listed raster, but
  * `File.type` is derived from the extension and is trivially spoofable. This reads the file's
  * leading bytes and confirms they match a real raster signature, so a renamed SVG/HTML file is
- * caught in the browser too. It is only a UX guard: the authoritative re-validation runs
+ * caught in the browser too. SVG and HTML are refused outright, by extension, type and content
+ * (JSTORE-SEC-012). It is only a UX guard: the authoritative re-validation runs
  * server-side (`ForgeMediaMimeListener` in `jahia-store`), since any client check can be bypassed
  * by calling the JCR GraphQL mutation directly (SECURITY-571 #28).
  */
 
 /** Canonical MIME types for the accepted raster formats. Mirrors the server allow-list. */
 export const ALLOWED_RASTER_MIMES = ["image/png", "image/jpeg", "image/gif", "image/webp"] as const;
+
+/** File extensions of the accepted raster formats. */
+const ALLOWED_RASTER_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".webp"] as const;
+
+/**
+ * The `accept` list of the icon and screenshot file inputs: the four raster types and their extensions,
+ * never SVG or HTML (JSTORE-SEC-012). `accept` only filters the picker; {@link checkMediaFile} is the check.
+ */
+export const MEDIA_ACCEPT = [...ALLOWED_RASTER_MIMES, ...ALLOWED_RASTER_EXTENSIONS].join(",");
+
+/** SVG and HTML file extensions (lower case). Mirrors jahia-store's MagicByteImageValidator. */
+const SVG_HTML_EXTENSIONS = ["svg", "svgz", "html", "htm", "xhtml", "xht", "shtml"];
+
+/** SVG and HTML MIME types (lower case, without parameters). */
+const SVG_HTML_MIMES = ["image/svg+xml", "text/html", "application/xhtml+xml"];
+
+/** Lower-case tokens that mark SVG or HTML content anywhere in the sniffed bytes. */
+const SVG_HTML_TOKENS = ["<svg", "<!doctype html", "<html", "<script"];
+
+/** Bytes read for the content check; matches the server's sniff window. */
+const MARKUP_SNIFF_LENGTH = 512;
 
 /** Enough leading bytes to identify every signature below (WEBP needs bytes 8-11 = "WEBP"). */
 const SNIFF_LENGTH = 16;
@@ -52,5 +74,57 @@ export async function sniffRasterMime(file: File): Promise<string | null> {
  * the start (the server listener would otherwise have to correct it).
  */
 export async function trustedRasterMime(file: File): Promise<string | null> {
-  return sniffRasterMime(file);
+  const check = await checkMediaFile(file);
+  return check.ok ? check.mime : null;
+}
+
+/** Why a picked file is refused: SVG or HTML (never accepted), or another non-raster file. */
+export type MediaRejection = "svgHtml" | "notRaster";
+
+export type MediaCheck = { ok: true; mime: string } | { ok: false; reason: MediaRejection };
+
+function isSvgOrHtmlName(name: string): boolean {
+  const dot = name.lastIndexOf(".");
+  return dot >= 0 && SVG_HTML_EXTENSIONS.includes(name.slice(dot + 1).toLowerCase());
+}
+
+function isSvgOrHtmlType(type: string): boolean {
+  return SVG_HTML_MIMES.includes(type.split(";")[0].trim().toLowerCase());
+}
+
+/**
+ * True when a media file is SVG or HTML by its name or its MIME type. Used server-side, where the stored
+ * `jcr:mimeType` and node name are at hand, to never link such a file as an icon or screenshot.
+ */
+export function isSvgOrHtmlMedia(name: string, type: string): boolean {
+  return isSvgOrHtmlName(name) || isSvgOrHtmlType(type);
+}
+
+async function containsSvgOrHtmlMarkup(file: File): Promise<boolean> {
+  const buffer = await file.slice(0, MARKUP_SNIFF_LENGTH).arrayBuffer();
+  // latin1 maps every byte to one character, so the tokens are found whatever the rest of the bytes are.
+  const head = new TextDecoder("latin1").decode(buffer).toLowerCase();
+  return SVG_HTML_TOKENS.some((token) => head.includes(token));
+}
+
+/**
+ * Checks a file picked as module media (icon or screenshot) before it is uploaded. SVG and HTML are never
+ * accepted (JSTORE-SEC-012), whether the file says so by its extension, its type or its content; any other
+ * file must be one of the four allow-listed rasters by its bytes. On success, `mime` is the type detected
+ * from the bytes, the one to store. jahia-store's ForgeMediaMimeListener applies the same rule server-side.
+ */
+export async function checkMediaFile(file: File): Promise<MediaCheck> {
+  if (isSvgOrHtmlMedia(file.name, file.type) || (await containsSvgOrHtmlMarkup(file))) {
+    return { ok: false, reason: "svgHtml" };
+  }
+  const mime = await sniffRasterMime(file);
+  return mime ? { ok: true, mime } : { ok: false, reason: "notRaster" };
+}
+
+/** The message to show for a refused media file: SVG/HTML are named, other files get the generic message. */
+export function mediaRejectionMessage(
+  reason: MediaRejection,
+  labels: Readonly<{ invalidType: string; svgHtmlRefused: string }>,
+): string {
+  return reason === "svgHtml" ? labels.svgHtmlRefused : labels.invalidType;
 }

@@ -10,6 +10,8 @@ const locales = readdirSync(LOCALES_DIR)
     file,
     messages: JSON.parse(readFileSync(join(LOCALES_DIR, file), "utf8")) as {
       chrome?: { language?: { choose?: string } };
+      editor?: { icon?: { svgHtmlRefused?: string; invalidType?: string } };
+      screenshots?: { svgHtmlRefused?: string; invalidType?: string };
     },
   }));
 
@@ -26,5 +28,23 @@ describe("locales", () => {
     const label = messages.chrome?.language?.choose;
     expect(label, "chrome.language.choose is missing").toBeTypeOf("string");
     expect(label).toContain("{{lang}}");
+  });
+
+  // JSTORE-SEC-012: SVG and HTML are never accepted as module media. Each language must say so, name
+  // the refused formats and suggest the accepted ones (WCAG 3.3.1 Error Identification, 3.3.3 Error
+  // Suggestion), for the icon and the screenshot upload alike.
+  it.each(locales)("$file: the media uploads explain that SVG and HTML are refused", ({ messages }) => {
+    for (const label of [messages.editor?.icon?.svgHtmlRefused, messages.screenshots?.svgHtmlRefused]) {
+      expect(label, "svgHtmlRefused is missing").toBeTypeOf("string");
+      expect(label).toMatch(/SVG/);
+      expect(label).toMatch(/HTML/);
+      expect(label).toMatch(/PNG.*JPEG.*GIF.*WebP/);
+    }
+  });
+
+  it.each(locales)("$file: the generic invalid-type messages list the accepted formats", ({ messages }) => {
+    for (const label of [messages.editor?.icon?.invalidType, messages.screenshots?.invalidType]) {
+      expect(label).toMatch(/PNG.*JPEG.*GIF.*WebP/);
+    }
   });
 });

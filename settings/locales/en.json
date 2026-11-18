@@ -190,7 +190,8 @@
       "current": "Current icon",
       "none": "-",
       "tooLarge": "Image is too large (max 2 MB).",
-      "invalidType": "Please choose an image file."
+      "invalidType": "This file is not an image. Choose a PNG, JPEG, GIF or WebP image.",
+      "svgHtmlRefused": "SVG and HTML files are not accepted as an icon. Choose a PNG, JPEG, GIF or WebP image."
     },
     "metadata": {
       "status": "Status",
@@ -261,6 +262,7 @@
     "uploading": "Uploading…",
     "tooLarge": "Image is too large (max 5 MB).",
     "invalidType": "Please choose a PNG, JPEG, GIF or WebP image.",
+    "svgHtmlRefused": "SVG and HTML files are not accepted as a screenshot. Choose a PNG, JPEG, GIF or WebP image.",
     "moveUp": "Move up",
     "moveDown": "Move down",
     "delete": "Delete screenshot",

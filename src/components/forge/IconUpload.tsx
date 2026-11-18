@@ -1,8 +1,8 @@
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import clsx from "clsx";
 import styles from "./editor.module.css";
 import { gqlRequest, gqlUpload } from "~/lib/graphql";
-import { trustedRasterMime } from "./imageSniff";
+import { MEDIA_ACCEPT, checkMediaFile, mediaRejectionMessage } from "./imageSniff";
 
 export interface IconLabels {
   label: string;
@@ -15,6 +15,8 @@ export interface IconLabels {
   none: string;
   tooLarge: string;
   invalidType: string;
+  /** Shown when the picked file is SVG or HTML, which are never accepted (JSTORE-SEC-012). */
+  svgHtmlRefused: string;
 }
 
 interface IconUploadProps {
@@ -30,11 +32,6 @@ interface IconUploadProps {
 /** Icons are small; cap the upload so the multipart part stays reasonable (the file
     is sent as a GraphQL multipart request part via gqlUpload, not a base64 JSON value). */
 const MAX_BYTES = 2 * 1024 * 1024;
-
-/** Raster image types only. SVG is deliberately excluded: image/svg+xml can carry
-    scripts when served inline, and the stored jcr:mimeType drives how Jahia serves
-    the file back. The same list feeds the input's `accept` attribute. */
-const ALLOWED_ICON_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"] as const;
 
 type Status = "idle" | "uploading" | "uploaded" | "error";
 
@@ -128,7 +125,7 @@ function safeFileName(name: string): string {
 export default function IconUpload({ path, workspace, iconUrl, labels }: Readonly<IconUploadProps>) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
-  // MIME type detected from the picked file's bytes (see trustedRasterMime), stored so the upload
+  // MIME type detected from the picked file's bytes (see checkMediaFile), stored so the upload
   // sends the real type rather than the spoofable File.type.
   const [mime, setMime] = useState<string>("");
   // Object-URL preview of the picked/just-uploaded file (avoids recomputing the
@@ -136,6 +133,20 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
   const [preview, setPreview] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string>("");
+  // True while the picked file is refused: the input is marked invalid and points at the message.
+  const [invalid, setInvalid] = useState(false);
+  const errorId = useId();
+
+  /** Refuses the picked file before any upload: nothing stays selected, so nothing can be sent. */
+  const refuse = (msg: string) => {
+    setFile(null);
+    setMime("");
+    setPreview(null);
+    if (inputRef.current) inputRef.current.value = "";
+    setInvalid(true);
+    setStatus("error");
+    setMessage(msg);
+  };
 
   const pick = async (next: File | null) => {
     if (!next) {
@@ -143,20 +154,20 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
       return;
     }
     if (next.size > MAX_BYTES) {
-      setStatus("error");
-      setMessage(labels.tooLarge);
+      refuse(labels.tooLarge);
       return;
     }
-    // Verify the actual bytes are a raster image, not just the (spoofable) File.type — the
-    // server re-validates authoritatively (SECURITY-571 #28), this is the in-browser guard.
-    const detected = await trustedRasterMime(next);
-    if (!detected) {
-      setStatus("error");
-      setMessage(labels.invalidType);
+    // SVG and HTML are never accepted (JSTORE-SEC-012), and the actual bytes must be a raster image,
+    // not just the (spoofable) File.type. The server re-validates authoritatively (SECURITY-571 #28,
+    // jahia-store's ForgeMediaMimeListener); this is the in-browser guard.
+    const check = await checkMediaFile(next);
+    if (!check.ok) {
+      refuse(mediaRejectionMessage(check.reason, labels));
       return;
     }
     setFile(next);
-    setMime(detected);
+    setMime(check.mime);
+    setInvalid(false);
     setStatus("idle");
     setMessage("");
     setPreview(URL.createObjectURL(next));
@@ -221,9 +232,11 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
           <input
             ref={inputRef}
             type="file"
-            accept={ALLOWED_ICON_TYPES.join(",")}
+            accept={MEDIA_ACCEPT}
             data-icon-input=""
             aria-label={labels.choose}
+            aria-invalid={invalid || undefined}
+            aria-describedby={status === "error" ? errorId : undefined}
             onChange={(e) => void pick(e.target.files?.[0] ?? null)}
           />
           <button
@@ -238,7 +251,7 @@ export default function IconUpload({ path, workspace, iconUrl, labels }: Readonl
       </div>
       {status === "uploaded" && <output className={styles.saved}>{message}</output>}
       {status === "error" && (
-        <span className={styles.error} role="alert">
+        <span id={errorId} className={styles.error} role="alert">
           {message}
         </span>
       )}
