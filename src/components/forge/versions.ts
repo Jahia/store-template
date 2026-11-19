@@ -29,12 +29,14 @@ const SAFE_MAVEN_SEGMENT = /^(?!\.{1,2}$)[A-Za-z0-9._-]+$/;
 const DECLARED_ARTIFACT_URL = /^https?:\/\/[^\s"'<>]+$/;
 
 /**
- * The artefact URL the version node declares in its `url` property, when it is an absolute
- * http(s) URL: a git-backed module (jahia-store docs/git-backed-modules.md) carries the link
- * of its STORE.md there, and the storefront links to it as it is. Null otherwise.
+ * The artefact URL the version node declares in its `url` property, when the version is served
+ * by an external provider and the value is an absolute http(s) URL: a git-backed module
+ * (jahia-store docs/git-backed-modules.md) carries the link of its STORE.md there, and the
+ * storefront links to it as it is. Null otherwise. A version of the default provider may still
+ * carry a stale `url` from before 5.0.0, which the migration script drops; it is never linked.
  */
 export function declaredArtifactUrl(version: JCRNodeWrapper): string | null {
-  if (!version.hasProperty("url")) return null;
+  if (version.getProvider().isDefault() || !version.hasProperty("url")) return null;
   const url = version.getProperty("url").getString().trim();
   return DECLARED_ARTIFACT_URL.test(url) ? url : null;
 }

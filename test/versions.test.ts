@@ -48,6 +48,7 @@ function mockVersion({
   };
   return {
     getParent: () => module,
+    getProvider: () => ({ isDefault: () => true }),
     hasProperty: (p: string) => p === "versionNumber",
     getProperty: () => ({ getString: () => versionNumber }),
     getName: () => versionNumber,
@@ -76,8 +77,11 @@ describe("versionDownloadUrl (MavenProxy URL grammar guard)", () => {
   });
 });
 
-/** Version-node stub of a git-backed module: no file, a declared `url`, plus the coordinates. */
-function mockDeclared(url: string) {
+/**
+ * Version-node stub with a declared `url` plus the coordinates: of a git-backed module (served
+ * by an external provider) by default, or of the default provider, as legacy data may carry.
+ */
+function mockDeclared(url: string, defaultProvider = false) {
   const props: Record<string, string> = { versionNumber: "1.1.0", url };
   const module = {
     hasProperty: (p: string) => p === "groupId",
@@ -87,6 +91,7 @@ function mockDeclared(url: string) {
   };
   return {
     getParent: () => module,
+    getProvider: () => ({ isDefault: () => defaultProvider }),
     hasProperty: (p: string) => Object.hasOwn(props, p),
     getProperty: (p: string) => ({ getString: () => props[p] }),
     getName: () => "1.1.0",
@@ -97,6 +102,12 @@ describe("versionDownloadUrl (declared artefact URL of a git-backed module)", ()
   it("links to the URL the version declares instead of the proxy", () => {
     expect(versionDownloadUrl(mockDeclared("https://github.com/org/m/releases/download/v1.1.0/m-1.1.0.jar"))).toBe(
       "https://github.com/org/m/releases/download/v1.1.0/m-1.1.0.jar",
+    );
+  });
+
+  it("ignores a stale url on a version of the default provider (pre-5.0.0 data) and links the proxy", () => {
+    expect(versionDownloadUrl(mockDeclared("https://old-store.example.com/download/m-1.1.0.jar", true))).toBe(
+      "/modules/mavenproxy/store/org/jahia/community/samples/sample-module/1.1.0/sample-module-1.1.0.jar",
     );
   });
 
