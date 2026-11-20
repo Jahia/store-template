@@ -25,6 +25,10 @@ const STORE_ROLE_PERMISSION = "jahiaForgeUploadModule";
 /** Conventional node name of the "My modules" page in the jahia-store-template seed. */
 const MY_MODULES_PAGE_NAME = "my-modules";
 
+/** Conventional node name of the validation dashboard page of the seed, for store administrators. */
+const VALIDATIONS_PAGE_NAME = "validations";
+const MODERATE_PERMISSION = "jahiaForgeModerateModule";
+
 /**
  * Identifiers of nav pages that host the developer-only "My modules" list
  * (jnt:forgeMyModulesList). These are hidden from the nav unless the visitor is a
@@ -126,10 +130,15 @@ export function Header(): JSX.Element {
     ? getChildNodes(home, 50).filter((n) => n.isNodeType("jnt:page"))
     : [];
   const myModulesIds = home ? myModulesPageIds(home, childPages) : new Set<string>();
-  const navPages = childPages.filter((n) => !myModulesIds.has(n.getIdentifier()));
+  // The validation dashboard is for store administrators: out of the nav, in the account menu.
+  const validationsPage = childPages.find((p) => p.getName() === VALIDATIONS_PAGE_NAME) ?? null;
+  const navPages = childPages.filter(
+    (n) => !myModulesIds.has(n.getIdentifier()) && n.getName() !== VALIDATIONS_PAGE_NAME,
+  );
   const myModulesPage = canManageStore
     ? (childPages.find((p) => myModulesIds.has(p.getIdentifier())) ?? null)
     : null;
+  const dashboardPage = isLoggedIn && validationsPage && site.hasPermission(MODERATE_PERMISSION) ? validationsPage : null;
   // Serializable nav links for the mobile disclosure island (same pages as the
   // desktop nav; the island only renders ≤720px where the desktop nav is hidden).
   const navLinks = navPages.map((p) => ({ href: buildNodeUrl(p), label: p.getDisplayableName() }));
@@ -296,6 +305,11 @@ export function Header(): JSX.Element {
               {myModulesPage && (
                 <a className={styles.accountItem} href={buildNodeUrl(myModulesPage)} data-my-modules="">
                   {myModulesPage.getDisplayableName()}
+                </a>
+              )}
+              {dashboardPage && (
+                <a className={styles.accountItem} href={buildNodeUrl(dashboardPage)} data-validations="">
+                  {dashboardPage.getDisplayableName()}
                 </a>
               )}
               {/* Jahia's logout servlet accepts GET, so a plain form navigates without JS/CSRF. */}

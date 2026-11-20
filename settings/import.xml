@@ -35,6 +35,18 @@
                         <mine jcr:primaryType="jnt:forgeMyModulesList"/>
                     </main>
                 </my-modules>
+
+                <!-- The validation dashboard of the store administrators: the versions waiting
+                     for a check, the rejected ones, and the approved ones to invalidate. -->
+                <validations j:templateName="default" jcr:primaryType="jnt:page">
+                    <j:translation_en jcr:language="en"
+                                      jcr:primaryType="jnt:translation"
+                                      jcr:mixinTypes="mix:title"
+                                      jcr:title="Validations"/>
+                    <main jcr:primaryType="jnt:contentList">
+                        <dashboard jcr:primaryType="jnt:forgeValidationDashboard"/>
+                    </main>
+                </validations>
             </home>
 
             <contents jcr:primaryType="jnt:contentFolder">

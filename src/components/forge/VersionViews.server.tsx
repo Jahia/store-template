@@ -5,6 +5,8 @@ import { VersionCard } from "~/components/forge/VersionCard";
 import { bool, str, isExternalNode, jcrWorkspace, releaseDay } from "~/components/forge/nodeProps";
 import { sanitizeHtml } from "~/components/forge/sanitizeHtml";
 import { requiredJahiaVersion, versionDownloadUrl } from "~/components/forge/versions";
+import { validationOf } from "~/components/forge/validation";
+import { validationLabels } from "~/components/forge/validationLabels";
 
 /** A link the storefront follows as it is: absolute http(s) only, so a stored value never becomes a script URL. */
 function externalUrl(value: string): string | null {
@@ -13,7 +15,7 @@ function externalUrl(value: string): string | null {
 
 const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrapper }) => {
   const { t } = useTranslation();
-  const { currentResource } = useServerContext();
+  const { currentResource, renderContext } = useServerContext();
 
   // Owner-island labels built server-side from t() and passed in as props (the
   // client islands never import react-i18next - they survive hydration).
@@ -53,9 +55,37 @@ const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrap
   const canEdit = currentNode.hasPermission("jcr:write") && !isExternalNode(currentNode);
   const workspace = jcrWorkspace(currentNode);
   const language = currentResource.getLocale().getLanguage();
+
+  // The validation of the version (jahia-store docs/validation.md): everyone sees the status of
+  // the checks; the owner of the module, the developer who registered a git-backed one and a
+  // store administrator can run the checks again. A version is published once approved.
+  const versionNumber = str(currentNode, "versionNumber") || currentNode.getName();
+  const module = currentNode.getParent() as unknown as JCRNodeWrapper;
+  const siteKey = renderContext.getSite().getSiteKey();
+  const validation = validationOf(currentNode.getSession(), siteKey, module.getName(), versionNumber);
+  const user = renderContext.isLoggedIn() ? renderContext.getUser().getUsername() : "";
+  const moderator = renderContext.isLoggedIn() && renderContext.getSite().hasPermission("jahiaForgeModerateModule");
+  const owner = canEdit || (user !== "" && str(module, "jcr:createdBy") === user);
+  const approved = validation?.status === "approved";
   return (
     <VersionCard
-      versionNumber={str(currentNode, "versionNumber") || currentNode.getName()}
+      versionNumber={versionNumber}
+      validation={validation}
+      validationLabels={validationLabels(t)}
+      publishBlocked={canEdit && !approved && !bool(currentNode, "published") ? t("validation.publishBlocked") : null}
+      validationControl={
+        owner || moderator
+          ? {
+              siteKey,
+              moduleName: module.getName(),
+              labels: {
+                request: t("validation.request"),
+                requesting: t("validation.requesting"),
+                error: t("validation.error"),
+              },
+            }
+          : null
+      }
       published={bool(currentNode, "published")}
       changeLogHtml={sanitizeHtml(str(currentNode, "changeLog"))}
       downloadUrl={versionDownloadUrl(currentNode)}

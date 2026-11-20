@@ -289,5 +289,40 @@
     "source": {
       "git": "Git"
     }
+  },
+  "validation": {
+    "title": "Validation",
+    "reason": "Motif :",
+    "request": "Valider",
+    "requesting": "Validation…",
+    "error": "La validation n'a pas pu être mise à jour - vérifiez vos droits et réessayez.",
+    "publishBlocked": "Approbation requise avant publication",
+    "status": {
+      "none": "Non validée",
+      "pending": "En attente",
+      "approved": "Approuvée",
+      "review": "En attente de revue",
+      "rejected": "Refusée"
+    },
+    "dashboard": {
+      "forbidden": "Le tableau de bord des validations est réservé aux administrateurs du store.",
+      "waiting": "En attente de validation",
+      "rejected": "Refusées",
+      "approved": "Approuvées",
+      "empty": "Rien ici.",
+      "requestedBy": "demandée par {{user}} le {{date}}",
+      "artifact": "archive",
+      "prompt": "Prompt à donner à l'assistant",
+      "copy": "Copier le prompt",
+      "copied": "Copié",
+      "answerPlaceholder": "Collez ici la réponse de l'assistant : le JSON qu'il renvoie, ou un texte commençant par approved, rejected ou review",
+      "record": "Enregistrer la réponse",
+      "recording": "Enregistrement…",
+      "invalidate": "Invalider cette version",
+      "reasonPlaceholder": "Pourquoi cette version ne doit pas être publique",
+      "confirmInvalidate": "Invalider",
+      "cancel": "Annuler",
+      "invalidating": "Invalidation…"
+    }
   }
 }

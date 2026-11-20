@@ -1,6 +1,9 @@
 import { Island } from "@jahia/javascript-modules-library";
 import styles from "./detail.module.css";
 import PublishToggle from "./PublishToggle.client";
+import RequestValidationButton, { type RequestValidationLabels } from "./RequestValidationButton.client";
+import { ValidationSummary, type ValidationLabels } from "./ValidationBadge";
+import type { Validation } from "./validation";
 import VersionChangelogEditor, { type ChangelogLabels } from "./VersionChangelogEditor.client";
 import VersionDeleteButton, { type VersionDeleteLabels } from "./VersionDeleteButton.client";
 
@@ -63,6 +66,13 @@ export interface VersionCardProps {
   publishControl?: VersionPublishControl | null;
   changelogControl?: VersionChangelogControl | null;
   deleteControl?: VersionDeleteControl | null;
+  /** The validation of the version, null when it was never validated, undefined to show nothing. */
+  validation?: Validation | null;
+  validationLabels?: ValidationLabels;
+  /** Shown in place of the publish control while the version is not approved. */
+  publishBlocked?: string | null;
+  /** Owner-only control that runs the checks again (omitted for visitors). */
+  validationControl?: { siteKey: string; moduleName: string; labels: RequestValidationLabels } | null;
 }
 
 /** Presentational card for one module/package version (changelog is sanitized richtext). */
@@ -84,12 +94,21 @@ export function VersionCard({
   publishControl,
   changelogControl,
   deleteControl,
+  validation,
+  validationLabels,
+  publishBlocked,
+  validationControl,
 }: Readonly<VersionCardProps>): JSX.Element {
   return (
     <div className={styles.version} data-forge-version="">
       <div className={styles.versionHead}>
         <span className={styles.versionNumber}>{versionNumber}</span>
-        {publishControl ? (
+        {publishBlocked && (
+          <span className={styles.draft} data-publish-blocked="">
+            {publishBlocked}
+          </span>
+        )}
+        {publishControl && !publishBlocked ? (
           <Island
             component={PublishToggle}
             props={{
@@ -101,7 +120,18 @@ export function VersionCard({
             }}
           />
         ) : (
-          !published && <span className={styles.draft}>{draftLabel}</span>
+          !published && !publishBlocked && <span className={styles.draft}>{draftLabel}</span>
+        )}
+        {validationControl && (
+          <Island
+            component={RequestValidationButton}
+            props={{
+              siteKey: validationControl.siteKey,
+              moduleName: validationControl.moduleName,
+              version: versionNumber,
+              labels: validationControl.labels,
+            }}
+          />
         )}
         {downloadUrl && (
           <a className={styles.download} href={downloadUrl}>
@@ -122,6 +152,9 @@ export function VersionCard({
       </div>
       {changeLogHtml && (
         <div className={styles.changelog} dangerouslySetInnerHTML={{ __html: changeLogHtml }} />
+      )}
+      {validation !== undefined && validationLabels && (
+        <ValidationSummary validation={validation} labels={validationLabels} />
       )}
       {changelogControl && (
         <Island
