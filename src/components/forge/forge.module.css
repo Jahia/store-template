@@ -167,6 +167,12 @@
   background: var(--color-surface-2);
   color: var(--color-text-muted);
 }
+/* Where a module comes from, when it is not uploaded: a git repository. */
+.source {
+  background: var(--color-primary-soft, #e8f0fe);
+  color: var(--color-primary, #1a56db);
+  text-transform: none;
+}
 
 .author {
   display: inline-flex;

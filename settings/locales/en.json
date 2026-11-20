@@ -130,6 +130,16 @@
       "refreshing": "Reading the repository…",
       "refreshed": "Refreshed",
       "error": "Refresh failed - please try again."
+    },
+    "delete": {
+      "remove": "Delete module",
+      "unregister": "Remove from the store",
+      "confirmPrompt": "Delete this module and all its versions?",
+      "confirmUnregister": "Remove this module from the store? The repository is untouched.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "deleting": "Deleting…",
+      "error": "Could not remove the module - check your permissions and try again."
     }
   },
   "publish": {
@@ -248,7 +258,8 @@
       "cancel": "Cancel",
       "deleting": "Deleting…",
       "error": "Could not remove the version - check your permissions and try again."
-    }
+    },
+    "disabled": "disabled"
   },
   "screenshots": {
     "empty": "No screenshots.",
@@ -271,5 +282,10 @@
     "next": "Next",
     "title": "Screenshot viewer",
     "image": "Screenshot"
+  },
+  "card": {
+    "source": {
+      "git": "Git"
+    }
   }
 }

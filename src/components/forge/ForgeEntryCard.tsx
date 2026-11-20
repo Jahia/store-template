@@ -11,6 +11,8 @@ export interface ForgeEntryCardProps {
   author?: string;
   /** Category display names - drives the storefront's category facet filter. */
   categories?: string[];
+  /** Where the module comes from when it is not uploaded: a git repository. Absent for a local module. */
+  source?: { kind: "git"; label: string };
 }
 
 /**
@@ -27,6 +29,7 @@ export function ForgeEntryCard({
   status,
   author,
   categories = [],
+  source,
 }: Readonly<ForgeEntryCardProps>): JSX.Element {
   return (
     <a
@@ -34,6 +37,7 @@ export function ForgeEntryCard({
       href={detailUrl}
       data-forge-card=""
       data-status={status || ""}
+      data-source={source?.kind || "local"}
       data-title={title.toLowerCase()}
       data-categories={categories.join("|")}
     >
@@ -55,6 +59,11 @@ export function ForgeEntryCard({
             {status && (
               <span className={clsx(styles.badge, styles.status)} data-status={status}>
                 {status}
+              </span>
+            )}
+            {source && (
+              <span className={clsx(styles.badge, styles.source)} data-source={source.kind}>
+                {source.label}
               </span>
             )}
           </div>

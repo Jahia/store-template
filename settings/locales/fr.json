@@ -130,6 +130,16 @@
       "refreshing": "Lecture du dépôt…",
       "refreshed": "Rafraîchi",
       "error": "Échec du rafraîchissement - veuillez réessayer."
+    },
+    "delete": {
+      "remove": "Supprimer le module",
+      "unregister": "Retirer du store",
+      "confirmPrompt": "Supprimer ce module et toutes ses versions ?",
+      "confirmUnregister": "Retirer ce module du store ? Le dépôt n'est pas modifié.",
+      "confirm": "Supprimer",
+      "cancel": "Annuler",
+      "deleting": "Suppression…",
+      "error": "Impossible de retirer le module - vérifiez vos droits et réessayez."
     }
   },
   "publish": {
@@ -248,7 +258,8 @@
       "cancel": "Annuler",
       "deleting": "Suppression…",
       "error": "Impossible de supprimer la version - vérifiez vos autorisations et réessayez."
-    }
+    },
+    "disabled": "désactivée"
   },
   "screenshots": {
     "empty": "Aucune capture d'écran.",
@@ -271,5 +282,10 @@
     "next": "Suivant",
     "title": "Visionneuse de captures d'écran",
     "image": "Capture d'écran"
+  },
+  "card": {
+    "source": {
+      "git": "Git"
+    }
   }
 }

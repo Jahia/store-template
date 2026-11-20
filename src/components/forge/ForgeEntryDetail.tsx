@@ -28,6 +28,7 @@ import PublishToggle from "./PublishToggle.client";
 import DetailTabs from "./DetailTabs.client";
 import VersionsDialog from "./VersionsDialog.client";
 import GitRefreshButton from "./GitRefreshButton.client";
+import ModuleDeleteButton from "./ModuleDeleteButton.client";
 import { DetailInfoRail } from "./DetailInfoRail";
 import { DetailVersionsDialog } from "./DetailVersionsDialog";
 import { DependencyLists } from "./DependencyLists";
@@ -147,16 +148,29 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
     renderContext.isLoggedIn() &&
     (str(node, "jcr:createdBy") === renderContext.getUser().getUsername() ||
       renderContext.getSite().hasPermission("siteAdminForgeSettings"));
-  const refreshActionUrl = `${buildNodeUrl(node).replace(/\.html$/, "")}.refreshGitModule.do`;
+  const nodeUrl = buildNodeUrl(node).replace(/\.html$/, "");
+  const refreshActionUrl = `${nodeUrl}.refreshGitModule.do`;
   const GIT_LABELS = {
     refresh: t("detail.git.refresh"),
     refreshing: t("detail.git.refreshing"),
     refreshed: t("detail.git.refreshed"),
     error: t("detail.git.error"),
   };
-  // Owners manage drafts from this list; everyone else only ever sees released
-  // versions - mirrors the module-level published gate above (line 85).
-  const versions = sortedVersionNodes(node).filter((v) => canEdit || bool(v, "published"));
+  const DELETE_LABELS = {
+    remove: t(gitBacked ? "detail.delete.unregister" : "detail.delete.remove"),
+    confirmPrompt: t(gitBacked ? "detail.delete.confirmUnregister" : "detail.delete.confirmPrompt"),
+    confirm: t("detail.delete.confirm"),
+    cancel: t("detail.delete.cancel"),
+    deleting: t("detail.delete.deleting"),
+    error: t("detail.delete.error"),
+  };
+  // The editors of the module see its drafts: the owner of a local module, and the developer
+  // who registered a git-backed one, whose disabled versions are served unpublished. Everyone
+  // else only ever sees released versions - mirrors the module-level published gate above.
+  const editor = canEdit || canRefresh;
+  const versions = sortedVersionNodes(node).filter((v) => editor || bool(v, "published"));
+  // Where the browser goes once the module is removed: the My modules page of the site.
+  const myModulesUrl = `${renderContext.getSite().getPath()}/home/my-modules.html`;
   const language = currentResource.getLocale().getLanguage();
   const published = bool(node, "published");
   const workspace = jcrWorkspace(node);
@@ -186,9 +200,11 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const authorURL = str(node, "authorURL");
   const released = latestReleaseDate(versions);
   const requiresJahia = requiredJahiaVersion(versions[0]);
-  // Prominent download for the newest version (mirrors store.jahia.com's title CTA).
-  const latestVersionNumber = versions[0] ? str(versions[0], "versionNumber") : "";
-  const latestDownloadUrl = versions[0] ? versionDownloadUrl(versions[0]) : null;
+  // Prominent download for the newest RELEASED version (mirrors store.jahia.com's title CTA):
+  // an editor sees drafts and disabled versions in the list, not in the download button.
+  const latest = versions.find((v) => bool(v, "published")) ?? versions[0];
+  const latestVersionNumber = latest ? str(latest, "versionNumber") : "";
+  const latestDownloadUrl = latest ? versionDownloadUrl(latest) : null;
   // Two queries at most, none for a package; versions[0] is already in hand.
   const { dependencies, dependants } = forgeDependencyGraph(node, versions[0]);
 
@@ -254,6 +270,17 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
             {codeRepository ? <a href={codeRepository}>{codeRepository}</a> : null}
           </span>
           <Island component={GitRefreshButton} props={{ actionUrl: refreshActionUrl, labels: GIT_LABELS }} />
+          <Island
+            component={ModuleDeleteButton}
+            props={{
+              path: node.getPath(),
+              workspace,
+              unregisterActionUrl: `${nodeUrl}.unregisterGitModule.do`,
+              backUrl: myModulesUrl,
+              title,
+              labels: DELETE_LABELS,
+            }}
+          />
         </div>
       )}
 
@@ -293,6 +320,17 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
               videoId,
               hasVideo: Boolean(videoNode),
               labels: EDITOR_LABELS,
+            }}
+          />
+          <Island
+            component={ModuleDeleteButton}
+            props={{
+              path: node.getPath(),
+              workspace,
+              unregisterActionUrl: null,
+              backUrl: myModulesUrl,
+              title,
+              labels: DELETE_LABELS,
             }}
           />
         </div>
