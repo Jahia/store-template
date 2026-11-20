@@ -52,6 +52,14 @@ export interface VersionCardProps {
   released: string;
   /** Translated "Released" label. */
   releasedLabel: string;
+  /** The git tag of the version and its page on the git host, when the version declares one. */
+  tag?: { name: string; url: string | null } | null;
+  /** Translated "Tag" label. */
+  tagLabel: string;
+  /** The page of the changelog of the version on the git host, or null. */
+  changelogUrl?: string | null;
+  /** Translated "Changelog" link text. */
+  changelogLabel: string;
   publishControl?: VersionPublishControl | null;
   changelogControl?: VersionChangelogControl | null;
   deleteControl?: VersionDeleteControl | null;
@@ -69,6 +77,10 @@ export function VersionCard({
   requiresJahiaLabel,
   released,
   releasedLabel,
+  tag,
+  tagLabel,
+  changelogUrl,
+  changelogLabel,
   publishControl,
   changelogControl,
   deleteControl,
@@ -123,7 +135,7 @@ export function VersionCard({
           }}
         />
       )}
-      {(requiresJahia || released) && (
+      {(requiresJahia || released || tag || changelogUrl) && (
         <footer className={styles.versionFooter}>
           {requiresJahia && (
             <span>
@@ -133,6 +145,25 @@ export function VersionCard({
           {released && (
             <span>
               <strong>{releasedLabel}</strong> {released}
+            </span>
+          )}
+          {tag && (
+            <span data-version-tag="">
+              <strong>{tagLabel}</strong>{" "}
+              {tag.url ? (
+                <a href={tag.url} rel="noopener">
+                  {tag.name}
+                </a>
+              ) : (
+                tag.name
+              )}
+            </span>
+          )}
+          {changelogUrl && (
+            <span>
+              <a href={changelogUrl} rel="noopener" data-version-changelog="">
+                {changelogLabel}
+              </a>
             </span>
           )}
         </footer>

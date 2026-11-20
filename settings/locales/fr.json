@@ -249,7 +249,8 @@
       "saved": "Enregistré",
       "error": "Échec de l'enregistrement - vérifiez vos autorisations et réessayez.",
       "ariaLabel": "Journal des modifications",
-      "loading": "Chargement de l'éditeur…"
+      "loading": "Chargement de l'éditeur…",
+      "link": "Changelog sur le dépôt"
     },
     "delete": {
       "remove": "Supprimer la version",
@@ -259,7 +260,8 @@
       "deleting": "Suppression…",
       "error": "Impossible de supprimer la version - vérifiez vos autorisations et réessayez."
     },
-    "disabled": "désactivée"
+    "disabled": "désactivée",
+    "tag": "Tag"
   },
   "screenshots": {
     "empty": "Aucune capture d'écran.",

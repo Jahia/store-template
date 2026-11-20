@@ -249,7 +249,8 @@
       "saved": "Saved",
       "error": "Save failed - check your permissions and try again.",
       "ariaLabel": "Changelog",
-      "loading": "Loading editor…"
+      "loading": "Loading editor…",
+      "link": "Changelog on the repository"
     },
     "delete": {
       "remove": "Remove version",
@@ -259,7 +260,8 @@
       "deleting": "Deleting…",
       "error": "Could not remove the version - check your permissions and try again."
     },
-    "disabled": "disabled"
+    "disabled": "disabled",
+    "tag": "Tag"
   },
   "screenshots": {
     "empty": "No screenshots.",

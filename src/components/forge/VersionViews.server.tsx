@@ -6,6 +6,11 @@ import { bool, str, isExternalNode, jcrWorkspace, releaseDay } from "~/component
 import { sanitizeHtml } from "~/components/forge/sanitizeHtml";
 import { requiredJahiaVersion, versionDownloadUrl } from "~/components/forge/versions";
 
+/** A link the storefront follows as it is: absolute http(s) only, so a stored value never becomes a script URL. */
+function externalUrl(value: string): string | null {
+  return /^https?:\/\/[^\s"'<>]+$/.test(value) ? value : null;
+}
+
 const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrapper }) => {
   const { t } = useTranslation();
   const { currentResource } = useServerContext();
@@ -60,6 +65,10 @@ const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrap
       requiresJahiaLabel={t("detail.meta.requiresJahia")}
       released={releaseDay(currentNode)}
       releasedLabel={t("detail.meta.released")}
+      tag={str(currentNode, "tag") ? { name: str(currentNode, "tag"), url: externalUrl(str(currentNode, "tagUrl")) } : null}
+      tagLabel={t("version.tag")}
+      changelogUrl={externalUrl(str(currentNode, "changelogUrl"))}
+      changelogLabel={t("version.changelog.link")}
       publishControl={
         canEdit
           ? { path: currentNode.getPath(), workspace, labels: VERSION_PUBLISH_LABELS }
