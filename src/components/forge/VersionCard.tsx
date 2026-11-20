@@ -122,17 +122,29 @@ export function VersionCard({
         ) : (
           !published && !publishBlocked && <span className={styles.draft}>{draftLabel}</span>
         )}
-        {validationControl && (
-          <Island
-            component={RequestValidationButton}
-            props={{
-              siteKey: validationControl.siteKey,
-              moduleName: validationControl.moduleName,
-              version: versionNumber,
-              labels: validationControl.labels,
-            }}
-          />
-        )}
+        {validationControl &&
+          (validation?.status === "review" && validationLabels ? (
+            // A check waits for a human: nothing to run again until the answer is recorded.
+            <button
+              type="button"
+              className="store-btn store-btn--ghost store-btn--sm"
+              disabled
+              data-request-validation={versionNumber}
+              data-request-validation-waiting=""
+            >
+              {validationLabels.statuses.review}
+            </button>
+          ) : (
+            <Island
+              component={RequestValidationButton}
+              props={{
+                siteKey: validationControl.siteKey,
+                moduleName: validationControl.moduleName,
+                version: versionNumber,
+                labels: validationControl.labels,
+              }}
+            />
+          ))}
         {downloadUrl && (
           <a className={styles.download} href={downloadUrl}>
             {downloadLabel}
