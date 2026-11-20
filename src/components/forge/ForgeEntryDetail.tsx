@@ -214,11 +214,21 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const hasOverview = Boolean(description || videoNode || shots.length);
   const hasInstall = Boolean(howToInstall || faq);
   const hasLicense = Boolean(license);
+  // The tabs the module declares itself (a git-backed module lists them in its STORE.md), each
+  // a jnt:forgeTab child of `tabs` with a title and a richtext content, in the order of the list.
+  const customTabs = node.hasNode("tabs")
+    ? getChildNodes(node.getNode("tabs"), 50, 0, (n) => n.isNodeType("jnt:forgeTab")).map((tab) => ({
+        id: `tab-${tab.getName()}`,
+        label: str(tab, "jcr:title") || tab.getName(),
+        html: sanitizeHtml(str(tab, "content")),
+      }))
+    : [];
   // Versions are no longer a tab — they open in a popup (VersionsDialog) from the header.
   const tabs: TabDef[] = [
     ...(hasOverview ? [{ id: "overview", label: t("detail.tabs.overview") }] : []),
     ...(hasInstall ? [{ id: "install", label: t("detail.tabs.install") }] : []),
     ...(hasLicense ? [{ id: "license", label: t("detail.tabs.license") }] : []),
+    ...customTabs.map(({ id, label }) => ({ id, label })),
   ];
   // May be empty (a module with only versions) — guard the tablist + default panel.
   const defaultTab = tabs[0]?.id ?? "";
@@ -417,6 +427,12 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
           <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: license }} />
         </div>
       )}
+
+      {customTabs.map(({ id, html }) => (
+        <div key={id} {...panelProps(id, defaultTab)} className={styles.panel}>
+          <div className={styles.richtext} dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
+      ))}
 
           {/* Dependencies, like Versions above, are intentionally not a tab: this section is a
               sibling of the tab panels so it stays visible under every tab, not scoped to one.
