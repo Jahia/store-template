@@ -5,8 +5,8 @@ import { VersionCard } from "~/components/forge/VersionCard";
 import { bool, str, isExternalNode, jcrWorkspace, releaseDay } from "~/components/forge/nodeProps";
 import { sanitizeHtml } from "~/components/forge/sanitizeHtml";
 import { requiredJahiaVersion, versionDownloadUrl } from "~/components/forge/versions";
-import { validationOf } from "~/components/forge/validation";
-import { validationLabels } from "~/components/forge/validationLabels";
+import { storeSteps, validationOf } from "~/components/forge/validation";
+import { validationStepsLabels } from "~/components/forge/validationLabels";
 
 /** A link the storefront follows as it is: absolute http(s) only, so a stored value never becomes a script URL. */
 function externalUrl(value: string): string | null {
@@ -71,7 +71,8 @@ const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrap
     <VersionCard
       versionNumber={versionNumber}
       validation={validation}
-      validationLabels={validationLabels(t)}
+      validationLabels={validationStepsLabels(t)}
+      validationSteps={validation ? undefined : storeSteps(currentNode.getSession(), siteKey)}
       publishBlocked={canEdit && !approved && !bool(currentNode, "published") ? t("validation.publishBlocked") : null}
       validationControl={
         owner || moderator
@@ -79,7 +80,7 @@ const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrap
               siteKey,
               moduleName: module.getName(),
               labels: {
-                request: t("validation.request"),
+                request: t(validation ? "validation.steps.again" : "validation.steps.start"),
                 requesting: t("validation.requesting"),
                 error: t("validation.error"),
               },

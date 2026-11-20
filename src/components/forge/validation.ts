@@ -7,6 +7,10 @@ export type ValidationStatus = "pending" | "approved" | "review" | "rejected";
 export interface ValidationCheck {
   key: string;
   label: string;
+  /** One sentence on what the check looks at. */
+  description: string;
+  /** The place of the check among the steps. */
+  order: number;
   status: ValidationStatus;
   comments: string[];
   /** The prompt a human follows to answer the check, when it waits for one. */
@@ -41,6 +45,8 @@ function readValidation(node: JCRNodeWrapper): Validation {
     checks.push({
       key: str(child, "checkKey") || child.getName(),
       label: str(child, "label") || child.getName(),
+      description: str(child, "description"),
+      order: child.hasProperty("stepOrder") ? Number(child.getProperty("stepOrder").getLong()) : 100,
       status: statusOf(str(child, "status")),
       comments: strValues(child, "comments"),
       prompt: str(child, "prompt"),
@@ -48,6 +54,7 @@ function readValidation(node: JCRNodeWrapper): Validation {
       updatedAt: str(child, "updatedAt").slice(0, 16).replace("T", " "),
     });
   }
+  checks.sort((a, b) => a.order - b.order || a.key.localeCompare(b.key));
   return {
     moduleName: str(node, "moduleName"),
     version: str(node, "versionNumber"),
@@ -58,6 +65,16 @@ function readValidation(node: JCRNodeWrapper): Validation {
     reason: str(node, "reason"),
     checks,
   };
+}
+
+/**
+ * The checks of the store as steps to do, for a version that was never validated: the ones
+ * of the newest record of the site, which every record of the store carries alike. Empty when
+ * the site holds no record yet.
+ */
+export function storeSteps(session: JCRSessionWrapper, siteKey: string): { key: string; label: string; description: string }[] {
+  const latest = validationsOf(session, siteKey)[0];
+  return latest ? latest.checks.map(({ key, label, description }) => ({ key, label, description })) : [];
 }
 
 /** The validation record of a version, published beside the site content, or null when it was never validated. */

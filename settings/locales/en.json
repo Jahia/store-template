@@ -323,6 +323,13 @@
       "confirmInvalidate": "Invalidate",
       "cancel": "Cancel",
       "invalidating": "Invalidating…"
+    },
+    "steps": {
+      "validated": "Validated",
+      "rejected": "Rejected",
+      "none": "Not run yet",
+      "start": "Start the validation",
+      "again": "Validate again"
     }
   }
 }

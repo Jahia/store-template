@@ -68,6 +68,117 @@
   color: var(--color-text-muted);
 }
 
+/* The steps of a validation */
+.steps {
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+}
+
+.stepsHead {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+.chain {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.step {
+  --step-color: #9aa5b5; /* grey: not done yet */
+  --step-fill: #eef1f5;
+  position: relative;
+  flex: 1 1 9rem;
+  min-width: 9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.2rem 0.8rem 0.2rem 0;
+}
+/* The line to the next step, at the height of the markers and in the colour of the step it leaves. */
+.step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: calc(0.2rem + 0.8rem - 1.5px);
+  left: 1.6rem;
+  right: 0;
+  height: 3px;
+  background: var(--step-color);
+  z-index: 0;
+}
+.step_progress {
+  --step-color: #e08a00; /* orange: in progress */
+  --step-fill: #fff4e0;
+}
+.step_done {
+  --step-color: #1b8f4a; /* green: done */
+  --step-fill: #e7f6ec;
+}
+.step_failed {
+  --step-color: #c9184a; /* red: failed */
+  --step-fill: #fde8ec;
+}
+
+.stepMarker {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  border: 3px solid var(--step-color);
+  background: var(--step-fill);
+  color: var(--step-color);
+  font-weight: 700;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.stepName {
+  font-weight: 700;
+  color: var(--step-color);
+}
+
+.stepDescription {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.stepStatus {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--step-color);
+}
+
+.stepComments {
+  margin: 0.2rem 0 0;
+  padding-left: 1rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.stepFinal {
+  flex: 0 1 8rem;
+}
+
 /* The dashboard */
 .dashboard {
   display: grid;

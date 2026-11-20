@@ -2,7 +2,7 @@ import { Island } from "@jahia/javascript-modules-library";
 import styles from "./detail.module.css";
 import PublishToggle from "./PublishToggle.client";
 import RequestValidationButton, { type RequestValidationLabels } from "./RequestValidationButton.client";
-import { ValidationSummary, type ValidationLabels } from "./ValidationBadge";
+import { ValidationSteps, type StepDefinition, type ValidationStepsLabels } from "./ValidationSteps";
 import type { Validation } from "./validation";
 import VersionChangelogEditor, { type ChangelogLabels } from "./VersionChangelogEditor.client";
 import VersionDeleteButton, { type VersionDeleteLabels } from "./VersionDeleteButton.client";
@@ -68,10 +68,12 @@ export interface VersionCardProps {
   deleteControl?: VersionDeleteControl | null;
   /** The validation of the version, null when it was never validated, undefined to show nothing. */
   validation?: Validation | null;
-  validationLabels?: ValidationLabels;
+  validationLabels?: ValidationStepsLabels;
+  /** The checks of the store, as steps to do while the version was never validated. */
+  validationSteps?: StepDefinition[];
   /** Shown in place of the publish control while the version is not approved. */
   publishBlocked?: string | null;
-  /** Owner-only control that runs the checks again (omitted for visitors). */
+  /** Owner-only control that starts the checks or runs them again (omitted for visitors). */
   validationControl?: { siteKey: string; moduleName: string; labels: RequestValidationLabels } | null;
 }
 
@@ -96,9 +98,23 @@ export function VersionCard({
   deleteControl,
   validation,
   validationLabels,
+  validationSteps,
   publishBlocked,
   validationControl,
 }: Readonly<VersionCardProps>): JSX.Element {
+  // The checks run again on demand once they are done or failed, never while one waits.
+  const validationAction =
+    validationControl && validation?.status !== "review" && validation?.status !== "pending" ? (
+      <Island
+        component={RequestValidationButton}
+        props={{
+          siteKey: validationControl.siteKey,
+          moduleName: validationControl.moduleName,
+          version: versionNumber,
+          labels: validationControl.labels,
+        }}
+      />
+    ) : null;
   return (
     <div className={styles.version} data-forge-version="">
       <div className={styles.versionHead}>
@@ -122,29 +138,6 @@ export function VersionCard({
         ) : (
           !published && !publishBlocked && <span className={styles.draft}>{draftLabel}</span>
         )}
-        {validationControl &&
-          (validation?.status === "review" && validationLabels ? (
-            // A check waits for a human: nothing to run again until the answer is recorded.
-            <button
-              type="button"
-              className="store-btn store-btn--ghost store-btn--sm"
-              disabled
-              data-request-validation={versionNumber}
-              data-request-validation-waiting=""
-            >
-              {validationLabels.statuses.review}
-            </button>
-          ) : (
-            <Island
-              component={RequestValidationButton}
-              props={{
-                siteKey: validationControl.siteKey,
-                moduleName: validationControl.moduleName,
-                version: versionNumber,
-                labels: validationControl.labels,
-              }}
-            />
-          ))}
         {downloadUrl && (
           <a className={styles.download} href={downloadUrl}>
             {downloadLabel}
@@ -166,7 +159,7 @@ export function VersionCard({
         <div className={styles.changelog} dangerouslySetInnerHTML={{ __html: changeLogHtml }} />
       )}
       {validation !== undefined && validationLabels && (
-        <ValidationSummary validation={validation} labels={validationLabels} />
+        <ValidationSteps validation={validation} steps={validationSteps} labels={validationLabels} action={validationAction} />
       )}
       {changelogControl && (
         <Island
