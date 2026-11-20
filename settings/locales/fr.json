@@ -74,7 +74,7 @@
     "pickFile": "Veuillez d'abord choisir un paquet de module.",
     "error": "Échec du téléversement - veuillez réessayer.",
     "git": {
-      "intro": "Ou enregistrez un dépôt git : le store lit son STORE.md et liste une version par tag.",
+      "intro": "Ou enregistrez un dépôt git : le store lit son STORE.md et les versions qu'il liste.",
       "urlLabel": "Dépôt git (lien https)",
       "submit": "Enregistrer le dépôt",
       "submitting": "Lecture du dépôt…",
@@ -123,7 +123,14 @@
       "none": "Aucune version publiée pour le moment.",
       "uploadTitle": "Téléverser une nouvelle version"
     },
-    "editScreenshots": "Modifier les captures d'écran"
+    "editScreenshots": "Modifier les captures d'écran",
+    "git": {
+      "readFrom": "Lu depuis le dépôt git",
+      "refresh": "Rafraîchir depuis git",
+      "refreshing": "Lecture du dépôt…",
+      "refreshed": "Rafraîchi",
+      "error": "Échec du rafraîchissement - veuillez réessayer."
+    }
   },
   "publish": {
     "module": {

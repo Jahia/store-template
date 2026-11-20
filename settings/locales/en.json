@@ -74,7 +74,7 @@
     "pickFile": "Please choose a module package first.",
     "error": "Upload failed - please try again.",
     "git": {
-      "intro": "Or register a git repository: the store reads its STORE.md and lists one version per tag.",
+      "intro": "Or register a git repository: the store reads its STORE.md and the versions it lists.",
       "urlLabel": "Git repository (https link)",
       "submit": "Register repository",
       "submitting": "Reading the repository…",
@@ -123,7 +123,14 @@
       "none": "No versions published yet.",
       "uploadTitle": "Upload a new version"
     },
-    "editScreenshots": "Edit screenshots"
+    "editScreenshots": "Edit screenshots",
+    "git": {
+      "readFrom": "Read from the git repository",
+      "refresh": "Refresh from git",
+      "refreshing": "Reading the repository…",
+      "refreshed": "Refreshed",
+      "error": "Refresh failed - please try again."
+    }
   },
   "publish": {
     "module": {

@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import styles from "./detail.module.css";
 import { forgeAuthor, forgeCategoryNames, forgeIconUrl } from "./forgeCard";
-import { str, bool, strValues, jcrWorkspace } from "./nodeProps";
+import { str, bool, strValues, isExternalNode, jcrWorkspace } from "./nodeProps";
 import { sanitizeHtml } from "./sanitizeHtml";
 import {
   latestReleaseDate,
@@ -27,6 +27,7 @@ import EditMediaShortcut from "./EditMediaShortcut.client";
 import PublishToggle from "./PublishToggle.client";
 import DetailTabs from "./DetailTabs.client";
 import VersionsDialog from "./VersionsDialog.client";
+import GitRefreshButton from "./GitRefreshButton.client";
 import { DetailInfoRail } from "./DetailInfoRail";
 import { DetailVersionsDialog } from "./DetailVersionsDialog";
 import { DependencyLists } from "./DependencyLists";
@@ -136,7 +137,23 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
   const screenshotsPath = childPath(node, "screenshots");
   const videoNode = node.hasNode("video") ? node.getNode("video") : null;
   const { provider: videoProvider, identifier: videoId } = videoSettings(videoNode);
-  const canEdit = node.hasPermission("jcr:write");
+  // A git-backed module is read from its repository (jahia-store docs/git-backed-modules.md):
+  // nothing on it is edited here, and the developer who registered it, or a store
+  // administrator, refreshes it from the repository instead.
+  const gitBacked = isExternalNode(node);
+  const canEdit = node.hasPermission("jcr:write") && !gitBacked;
+  const canRefresh =
+    gitBacked &&
+    renderContext.isLoggedIn() &&
+    (str(node, "jcr:createdBy") === renderContext.getUser().getUsername() ||
+      renderContext.getSite().hasPermission("siteAdminForgeSettings"));
+  const refreshActionUrl = `${buildNodeUrl(node).replace(/\.html$/, "")}.refreshGitModule.do`;
+  const GIT_LABELS = {
+    refresh: t("detail.git.refresh"),
+    refreshing: t("detail.git.refreshing"),
+    refreshed: t("detail.git.refreshed"),
+    error: t("detail.git.error"),
+  };
   // Owners manage drafts from this list; everyone else only ever sees released
   // versions - mirrors the module-level published gate above (line 85).
   const versions = sortedVersionNodes(node).filter((v) => canEdit || bool(v, "published"));
@@ -229,6 +246,16 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
           )}
         </div>
       </header>
+
+      {canRefresh && (
+        <div className={styles.ownerBar} data-git-bar="">
+          <span className={styles.muted}>
+            {t("detail.git.readFrom")}{" "}
+            {codeRepository ? <a href={codeRepository}>{codeRepository}</a> : null}
+          </span>
+          <Island component={GitRefreshButton} props={{ actionUrl: refreshActionUrl, labels: GIT_LABELS }} />
+        </div>
+      )}
 
       {canEdit && (
         <div className={styles.ownerBar} data-owner-bar="">

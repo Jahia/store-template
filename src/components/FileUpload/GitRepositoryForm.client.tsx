@@ -60,8 +60,8 @@ function parseResult(body: string): { error?: string; module?: string } {
  * "Register a git repository" form on the My modules page, client island.
  *
  * A store developer pastes the HTTPS URL of a repository that holds a STORE.md; the store
- * reads it and lists it as a git-backed module, read-only, with one version per tag. The
- * page reloads on success so the new module shows in the list below.
+ * reads it and lists it as a git-backed module, read-only, with the versions the STORE.md
+ * lists. The page reloads on success so the new module shows in the list below.
  */
 export default function GitRepositoryForm({ actionUrl, backUrl, labels }: Readonly<GitRepositoryFormProps>) {
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");

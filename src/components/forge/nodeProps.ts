@@ -45,6 +45,17 @@ export function strValues(node: JCRNodeWrapper, name: string): string[] {
 }
 
 /**
+ * True when an external provider serves the node: a git-backed module or one of its versions
+ * (jahia-store docs/git-backed-modules.md), which the store reads from a repository and never
+ * writes. The storefront offers no edit on such a node, only a refresh.
+ */
+export function isExternalNode(node: JCRNodeWrapper): boolean {
+  // JCRNodeWrapper#getProvider exists at runtime; the published typings omit it.
+  const provider = (node as unknown as { getProvider(): { isDefault(): boolean } }).getProvider();
+  return !provider.isDefault();
+}
+
+/**
  * GraphQL workspace enum ("EDIT" | "LIVE") for the workspace this node was read
  * from. Client islands that mutate the node must target the same workspace -
  * forge content uploaded on the live site is created directly in LIVE.

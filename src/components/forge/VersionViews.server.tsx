@@ -2,7 +2,7 @@ import { jahiaComponent, useServerContext } from "@jahia/javascript-modules-libr
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import { useTranslation } from "react-i18next";
 import { VersionCard } from "~/components/forge/VersionCard";
-import { bool, str, jcrWorkspace, releaseDay } from "~/components/forge/nodeProps";
+import { bool, str, isExternalNode, jcrWorkspace, releaseDay } from "~/components/forge/nodeProps";
 import { sanitizeHtml } from "~/components/forge/sanitizeHtml";
 import { requiredJahiaVersion, versionDownloadUrl } from "~/components/forge/versions";
 
@@ -43,8 +43,9 @@ const VersionView = (_props: object, { currentNode }: { currentNode: JCRNodeWrap
 
   // Owners get publish + changelog controls on each version; everyone else sees
   // the published/draft state and read-only changelog. The controls mutate the
-  // same workspace the page is rendered in (live content is authored in LIVE).
-  const canEdit = currentNode.hasPermission("jcr:write");
+  // same workspace the page is rendered in (live content is authored in LIVE). A version of a
+  // git-backed module is read from its repository: nothing on it can be edited here.
+  const canEdit = currentNode.hasPermission("jcr:write") && !isExternalNode(currentNode);
   const workspace = jcrWorkspace(currentNode);
   const language = currentResource.getLocale().getLanguage();
   return (

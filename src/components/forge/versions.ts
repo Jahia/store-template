@@ -1,6 +1,6 @@
 import { buildNodeUrl, getChildNodes, getNodesByJCRQuery } from "@jahia/javascript-modules-library";
 import type { JCRNodeWrapper, JCRSessionWrapper } from "org.jahia.services.content";
-import { bool, releaseStamp, sql } from "./nodeProps";
+import { bool, isExternalNode, releaseStamp, sql } from "./nodeProps";
 
 function parseVersion(v: string): number[] {
   return (v || "").split(/\D+/).filter(Boolean).map(Number);
@@ -36,7 +36,7 @@ const DECLARED_ARTIFACT_URL = /^https?:\/\/[^\s"'<>]+$/;
  * carry a stale `url` from before 5.0.0, which the migration script drops; it is never linked.
  */
 export function declaredArtifactUrl(version: JCRNodeWrapper): string | null {
-  if (version.getProvider().isDefault() || !version.hasProperty("url")) return null;
+  if (!isExternalNode(version) || !version.hasProperty("url")) return null;
   const url = version.getProperty("url").getString().trim();
   return DECLARED_ARTIFACT_URL.test(url) ? url : null;
 }
