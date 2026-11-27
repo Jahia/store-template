@@ -52,6 +52,14 @@
       "name": "Nom (A–Z)"
     }
   },
+  "statuses": {
+    "community": "Community",
+    "community-reviewed": "Community (reviewed)",
+    "labs": "Labs",
+    "prereleased": "Prereleased",
+    "supported": "Supported",
+    "legacy": "Legacy"
+  },
   "modulesList": {
     "empty": "Aucun module publié pour le moment.",
     "showingCount": "Affichage de {{shown}} module(s) sur {{total}}",

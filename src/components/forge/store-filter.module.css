@@ -90,9 +90,6 @@
   box-shadow: var(--ring);
   border-radius: 4px;
 }
-.facetStatus {
-  text-transform: capitalize;
-}
 
 /* No-JS fallback "Apply filters" button (rendered only inside <noscript>). With JS,
    filters auto-submit on change via the FilterAutoSubmit island, so this never shows. */

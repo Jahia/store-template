@@ -6,6 +6,8 @@ export type { CategoryOption } from "./CategorySelect";
 
 export interface MetadataLabels {
   status: string;
+  /** The label of each status choice, keyed by its stored value. */
+  statusOptions: Record<string, string>;
   category: string;
   noCategories: string;
   /** Placeholder for the category "add" dropdown. */
@@ -27,10 +29,6 @@ interface MetadataFieldsProps {
   onTagsChange: (tags: string[]) => void;
   labels: MetadataLabels;
 }
-
-/** Title-case a lowercase choicelist value ("supported" → "Supported"). */
-const titleCase = (value: string): string =>
-  value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
 
 /**
  * Metadata controls for the General tab: the module's status (choicelist),
@@ -61,7 +59,7 @@ export default function MetadataFields({
         >
           {statusOptions.map((option) => (
             <option key={option} value={option}>
-              {titleCase(option)}
+              {labels.statusOptions[option] ?? option}
             </option>
           ))}
         </select>

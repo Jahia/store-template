@@ -1,4 +1,5 @@
 import type { Labels } from "./ModuleEditor.client";
+import { FORGE_STATUSES, forgeStatusLabel } from "./forgeFacets";
 
 /**
  * Build the ModuleEditor's translated label bag. Kept next to ModuleEditor (which owns the
@@ -6,7 +7,9 @@ import type { Labels } from "./ModuleEditor.client";
  * was dominated by this ~85-line literal. `t` is react-i18next's translation function; every key
  * here resolves to a plain string.
  */
-export function buildEditorLabels(t: (key: string) => string): Labels {
+export function buildEditorLabels(
+  t: (key: string, options?: { defaultValue: string }) => string,
+): Labels {
   return {
     edit: t("editor.edit"),
     save: t("editor.save"),
@@ -85,6 +88,7 @@ export function buildEditorLabels(t: (key: string) => string): Labels {
     },
     metadata: {
       status: t("editor.metadata.status"),
+      statusOptions: Object.fromEntries(FORGE_STATUSES.map((s) => [s, forgeStatusLabel(t, s)])),
       category: t("editor.metadata.category"),
       noCategories: t("editor.metadata.noCategories"),
       categoryAdd: t("editor.metadata.categoryAdd"),

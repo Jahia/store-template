@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.2.0 (unreleased)
+
+**Requires `jahia-store` 5.3.0**, which defines the `community-reviewed` status.
+
+### Added
+
+- **Community (reviewed) status.** Module owners can pick *Community (reviewed)* in the module editor, and
+  the storefront offers it as a Status filter. Each status now shows a label from the locales (`statuses`)
+  instead of its capitalized key.
+
 ## 5.1.0 (2026-11-18)
 
 **Requires `jahia-store` 5.2.0**, which defines the version security properties, the security advisories

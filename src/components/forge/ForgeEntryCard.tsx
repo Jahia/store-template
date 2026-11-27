@@ -1,4 +1,6 @@
 import clsx from "clsx";
+import { useTranslation } from "react-i18next";
+import { forgeStatusLabel } from "./forgeFacets";
 import styles from "./forge.module.css";
 
 export interface ForgeEntryCardProps {
@@ -28,6 +30,7 @@ export function ForgeEntryCard({
   author,
   categories = [],
 }: Readonly<ForgeEntryCardProps>): JSX.Element {
+  const { t } = useTranslation();
   return (
     <a
       className={styles.card}
@@ -54,7 +57,7 @@ export function ForgeEntryCard({
           <div className={styles.badges}>
             {status && (
               <span className={clsx(styles.badge, styles.status)} data-status={status}>
-                {status}
+                {forgeStatusLabel(t, status)}
               </span>
             )}
           </div>

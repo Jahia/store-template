@@ -19,7 +19,7 @@ import {
   versionDownloadUrl,
 } from "./versions";
 import { forgeDependencyGraph } from "./dependencies";
-import { forgeCategoryOptions } from "./forgeFacets";
+import { FORGE_STATUSES, forgeCategoryOptions, forgeStatusLabel } from "./forgeFacets";
 import { buildEditorLabels } from "./editorLabels";
 import Lightbox from "./Lightbox.client";
 import ModuleEditor from "./ModuleEditor.client";
@@ -47,13 +47,6 @@ function panelProps(id: string, defaultTab: string) {
     hidden: id !== defaultTab,
   };
 }
-
-/**
- * Module status values offered in the editor — a deliberate subset of the
- * `jmix:forgeElement` `status` choicelist: `prereleased` is intentionally omitted
- * from the UI (the CND still permits it for existing/migrated data).
- */
-const STATUS_OPTIONS = ["community", "labs", "supported", "legacy"];
 
 /** Allowed author-display modes (jnt:forgeModule/Package `authorNameDisplayedAs` choicelist). */
 const AUTHOR_DISPLAY_OPTIONS = ["username", "fullName", "organisation"];
@@ -208,7 +201,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
           <div className={styles.badges}>
             {status && (
               <span className={clsx(styles.badge, styles.status)} data-status={status}>
-                {status}
+                {forgeStatusLabel(t, status)}
               </span>
             )}
           </div>
@@ -255,7 +248,7 @@ export function ForgeEntryDetail({ node }: Readonly<{ node: JCRNodeWrapper }>): 
                 codeRepository,
               },
               status,
-              statusOptions: STATUS_OPTIONS,
+              statusOptions: [...FORGE_STATUSES],
               authorDisplay: str(node, "authorNameDisplayedAs") || "username",
               authorDisplayOptions: AUTHOR_DISPLAY_OPTIONS,
               categoryOptions,

@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import type { JCRNodeWrapper } from "org.jahia.services.content";
 import styles from "~/components/forge/forge.module.css";
 import filterStyles from "~/components/forge/store-filter.module.css";
-import { FORGE_STATUSES, forgeCategoryOptions } from "~/components/forge/forgeFacets";
+import { FORGE_STATUSES, forgeCategoryOptions, forgeStatusLabel } from "~/components/forge/forgeFacets";
 import { latestReleaseDates } from "~/components/forge/versions";
 import { sql } from "~/components/forge/nodeProps";
 import FilterAutoSubmit from "~/components/forge/FilterAutoSubmit.client";
@@ -212,7 +212,7 @@ jahiaComponent(
                 .map((s) => (
                   <label key={s} className={filterStyles.facet}>
                     <input type="checkbox" name="status" value={s} defaultChecked={statuses.includes(s)} />
-                    <span className={filterStyles.facetStatus}>{s}</span>
+                    <span>{forgeStatusLabel(t, s)}</span>
                   </label>
                 ))}
             </fieldset>

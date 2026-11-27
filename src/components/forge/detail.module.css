@@ -162,7 +162,6 @@
   font-weight: 600;
   padding: 0.18rem 0.6rem;
   border-radius: 999px;
-  text-transform: capitalize;
 }
 .status {
   background: var(--color-surface-2);
@@ -399,9 +398,6 @@
 .meta dd {
   margin: 0;
   word-break: break-word;
-}
-.metaStatus {
-  text-transform: capitalize;
 }
 
 .tagList {

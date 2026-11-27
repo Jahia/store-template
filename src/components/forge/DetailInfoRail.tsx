@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { forgeStatusLabel } from "./forgeFacets";
 import styles from "./detail.module.css";
 
 /** Only http(s) URLs are safe to render as a link href (blocks stored javascript:/data: URLs). */
@@ -54,7 +55,7 @@ export function DetailInfoRail({
         {status && (
           <>
             <dt>{t("detail.meta.status")}</dt>
-            <dd className={styles.metaStatus}>{status}</dd>
+            <dd>{forgeStatusLabel(t, status)}</dd>
           </>
         )}
         {categoryNames.length > 0 && (
